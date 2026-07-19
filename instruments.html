@@ -3,11 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Play on the instruments</title>
+
+<!-- ============ SEO ============ -->
+<title>Play Sound Healing Instruments Online — Gong, Singing Bowl, Handpan &amp; More | Holistic Loader</title>
+<meta name="description" content="Play interactive sound healing instruments free in your browser: gong, crystal &amp; Tibetan singing bowls, handpan, tongue drum, wind chimes, harp, sansula, monochord and pan flute. Tune each instrument to its own Hz frequency and relax, meditate or focus. No app, no sign-up.">
+<meta name="keywords" content="sound healing, sound bath, play instruments online, virtual gong, singing bowl online, crystal singing bowl, tibetan singing bowl, handpan online, tongue drum, wind chimes, monochord, sansula, kalimba, pan flute, solfeggio frequencies, meditation instruments, relaxation sounds, online meditation, stress relief, mindfulness, holistic loader">
+<meta name="author" content="Holistic Loader">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="theme-color" content="#0b0712">
+<meta name="application-name" content="Holistic Loader">
+<meta name="apple-mobile-web-app-title" content="Holistic Loader">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="canonical" id="canonicalLink" href="https://my-peaceful-place.netlify.app/instruments.html">
+<link rel="icon" type="image/png" href="images/icon-holistic.png">
+<link rel="apple-touch-icon" href="images/icon-holistic.png">
+<link rel="shortcut icon" href="images/icon-holistic.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Holistic Loader">
+<meta property="og:title" content="Play Sound Healing Instruments Online — Holistic Loader">
+<meta property="og:description" content="A free interactive sound bath: play a gong, crystal &amp; Tibetan singing bowls, handpan, tongue drum, wind chimes, harp, sansula, monochord and pan flute — each tunable to its own healing frequency.">
+<meta property="og:image" id="ogImage" content="https://my-peaceful-place.netlify.app/images/icon-holistic.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:alt" content="Holistic Loader — sound healing instruments">
+<meta property="og:url" id="ogUrl" content="https://my-peaceful-place.netlify.app/instruments.html">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Play Sound Healing Instruments Online — Holistic Loader">
+<meta name="twitter:description" content="Play a gong, singing bowls, handpan, tongue drum, wind chimes and more, each tunable to its own healing frequency. Free, no app, no sign-up.">
+<meta name="twitter:image" id="twImage" content="https://my-peaceful-place.netlify.app/images/icon-holistic.png">
+<meta name="twitter:image:alt" content="Holistic Loader — sound healing instruments preview">
+
+<!-- Structured data -->
+<script type="application/ld+json" id="ldjson">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Holistic Loader — Play on the Instruments",
+  "url": "https://my-peaceful-place.netlify.app/instruments.html",
+  "description": "A free interactive sound healing app. Play and tune a gong, crystal and Tibetan singing bowls, handpan, tongue drum, wind chimes, harp, sansula, monochord and pan flute, each with adjustable Hz frequency, for relaxation, meditation and focus.",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Any (web browser)",
+  "browserRequirements": "Requires JavaScript",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "featureList": [
+    "Interactive gong with adjustable tone and mallet styles",
+    "Crystal and Tibetan singing bowls tuned by Hz frequency",
+    "Handpan, tongue drum, wind chimes and triangle",
+    "Harp, sansula, monochord and pan flute",
+    "Randomized play patterns with tempo and duration controls"
+  ]
+}
+</script>
+<!-- ========== /SEO ========== -->
+<script>
+(function(){try{
+  var loc=location.href.split('#')[0];
+  var set=function(id,prop,val){var el=document.getElementById(id);if(!el)return;if(prop==='href')el.href=val;else el.content=val;};
+  set('canonicalLink','href',loc);
+  set('ogUrl','content',loc);
+}catch(e){}})();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+
   :root{
     --ink:#f3efe4;
     --soft:#b3a98f;
@@ -368,8 +438,17 @@
     #donateWrap{left:max(16px,env(safe-area-inset-left))}
   }
   #donateFixed{position:static;margin:0}
-  /* contact / email — one button that expands to the right, sits right under the donate button */
-  #contactBtn{position:absolute;top:calc(100% + 7px);left:0;display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
+  /* facebook / instagram share + contact row — sits right under the donate button */
+  #donateSecondRow{position:absolute;top:calc(100% + 7px);left:0;display:flex;align-items:center;gap:6px}
+  .shareIconBtn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:999px;flex-shrink:0;
+    box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease;color:#fff}
+  .shareIconBtn:hover{transform:translateY(-1px)}
+  .shareIconBtn:active{transform:scale(.92)}
+  .shareIconBtn svg{width:14px;height:14px;display:block}
+  .shareIconBtn.shareFb{background:#1877F2}
+  .shareIconBtn.shareIg{background:radial-gradient(circle at 30% 107%,#fdf497,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%)}
+  /* contact / email — one button that expands to the right */
+  #contactBtn{display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
     border-radius:999px;padding:8px 11px;background:var(--panel);border:1px solid var(--line);color:var(--ink);cursor:pointer;
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
   #contactBtn:hover{background:rgba(243,239,228,.12)}
@@ -398,13 +477,21 @@
     </svg>
     <span>Thank you!</span>
   </a>
-  <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
-    <svg class="env" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-      <rect x="2.5" y="5" width="19" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
-      <path d="M3 6.5 L12 13 L21 6.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
-  </button>
+  <div id="donateSecondRow">
+    <a class="shareIconBtn shareFb" id="shareFbTop" href="#" target="_blank" rel="noopener" aria-label="Share on Facebook" title="Share on Facebook">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.16 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.78 8.44-4.94 8.44-9.94Z"/></svg>
+    </a>
+    <a class="shareIconBtn shareIg" id="shareIgTop" href="#" target="_blank" rel="noopener" aria-label="Share on Instagram" title="Share on Instagram">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.15.55.55.89 1.11 1.15 1.77.25.64.42 1.37.47 2.43.05 1.06.06 1.4.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.64.25-1.37.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.72 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.15-1.77a4.9 4.9 0 0 1 1.77-1.15c.64-.25 1.37-.42 2.43-.47C8.94 2.01 9.28 2 12 2Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.25a3.25 3.25 0 1 1 0-6.5 3.25 3.25 0 0 1 0 6.5ZM17.4 6.15a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0Z"/></svg>
+    </a>
+    <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
+      <svg class="env" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <rect x="2.5" y="5" width="19" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <path d="M3 6.5 L12 13 L21 6.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
+    </button>
+  </div>
 </div>
 
 <header id="topNav">
@@ -423,7 +510,7 @@
 <div id="bgdim"></div>
 <canvas id="cosmos"></canvas>
 
-<h1>HOLISTIC LOADER - SOUND HEALING</h1>
+<h1>PLAY ON THE INSTRUMENTS</h1>
 <div class="donate-row">
 </div>
 
@@ -907,6 +994,25 @@
   const FMIN=20, FMAX=20000;
   const $=id=>document.getElementById(id);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* facebook / instagram delningsknappar */
+  (function(){
+    const pageUrl = window.location.href;
+    const fbLink = $('shareFbTop');
+    if(fbLink) fbLink.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(pageUrl);
+    const igLink = $('shareIgTop');
+    if(igLink){
+      igLink.addEventListener('click', function(e){
+        e.preventDefault();
+        navigator.clipboard.writeText(pageUrl).then(()=>{
+          const original = igLink.innerHTML;
+          igLink.setAttribute('title', 'Link copied!');
+          igLink.innerHTML = '✓';
+          setTimeout(()=>{ igLink.innerHTML = original; }, 2000);
+        }).catch(()=>{ window.open('https://www.instagram.com/', '_blank'); });
+      });
+    }
+  })();
 
   /* kontaktknapp: tryck på kuvertet för att fälla ut och visa mejladressen */
   (function(){
