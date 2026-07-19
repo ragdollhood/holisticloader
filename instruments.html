@@ -196,17 +196,15 @@
     #mixBtn{left:max(16px,env(safe-area-inset-left));bottom:max(16px,env(safe-area-inset-bottom))}
     #mixMenu{left:max(16px,env(safe-area-inset-left));bottom:max(88px,calc(env(safe-area-inset-bottom) + 72px))}
   }
-  /* per-instrument: längdmeny som fälls ut under Random sound-knappen */
-  .rand-menu{
-    display:flex;flex-wrap:wrap;gap:5px;margin:-4px 0 10px;max-width:min(92vw,360px);
-  }
-  .rand-menu[hidden]{display:none}
-  .rand-menu button{
-    font-family:inherit;font-size:10.5px;letter-spacing:.04em;color:var(--soft);
+  /* per-instrument: tempo- och längd-rullistor bredvid REPEAT-knappen */
+  .rand-tempo,.rand-dur{
+    font-family:inherit;font-size:10.5px;letter-spacing:.04em;color:var(--ink);
     background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;
-    padding:6px 12px;cursor:pointer;
+    padding:6px 10px;cursor:pointer;position:relative;z-index:6;
+    -webkit-appearance:none;appearance:none;
   }
-  .rand-menu button:active{color:var(--gold);border-color:var(--gold)}
+  .rand-tempo:disabled,.rand-dur:disabled{opacity:.5;cursor:default}
+  .rand-row{justify-content:center}
   @keyframes glowG{
     6%{filter:drop-shadow(0 0 50px rgba(255,210,120,.95)) brightness(1.25) saturate(1.2)}
     30%{filter:drop-shadow(0 0 30px rgba(255,210,120,.55)) brightness(1.1)}
@@ -424,7 +422,25 @@
     <button data-v="tibetan">Tibetan</button>
     <button data-v="tamtam">Tam-tam</button>
   </div>
-  <button class="rand" data-i="gong">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="gong">Random sound</button>
+    <select class="rand-tempo" data-i="gong" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="gong" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Crystal bowl · tap or circle the rim</div>
   <div class="bowl-wrap" id="bowlWrap">
@@ -436,21 +452,75 @@
     <button data-v="tibetan">Tibetan</button>
     <button data-v="deep">Deep quartz</button>
   </div>
-  <button class="rand" data-i="bowl">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="bowl">Random sound</button>
+    <select class="rand-tempo" data-i="bowl" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="bowl" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Handpan · tap the tone fields</div>
   <div class="hand-wrap" id="handWrap">
     <img src="images/handpan.jpg" alt="Dark steel handpan engraved with golden celestial patterns, seen from above">
   </div>
   <div class="tune h"><span>TUNE</span><input type="range" id="handTune" min="110" max="220" value="147" aria-label="Tune the handpan"><span id="handHz">147 Hz</span></div>
-  <button class="rand" data-i="hand">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="hand">Random sound</button>
+    <select class="rand-tempo" data-i="hand" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="hand" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Tongue drum · tap the tongues</div>
   <div class="tongue-wrap" id="tongueWrap">
     <img src="images/tonguedrum.jpg" alt="Black steel tongue drum engraved with golden constellations, seen from above">
   </div>
   <div class="tune h"><span>TUNE</span><input type="range" id="tongueTune" min="220" max="440" value="294" aria-label="Tune the tongue drum"><span id="tongueHz">294 Hz</span></div>
-  <button class="rand" data-i="tongue">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="tongue">Random sound</button>
+    <select class="rand-tempo" data-i="tongue" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="tongue" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
 
   <div class="instr-label">Wind chimes · tap the tubes, or the wind sail for a breeze</div>
@@ -458,75 +528,291 @@
     <img src="images/chimes.jpg" alt="Dark bronze wind chimes engraved with golden celestial symbols, hanging in space">
   </div>
   <div class="tune c"><span>TUNE</span><input type="range" id="chimeTune" min="440" max="880" value="587" aria-label="Tune the wind chimes"><span id="chimeHz">587 Hz</span></div>
-  <button class="rand" data-i="chime">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="chime">Random sound</button>
+    <select class="rand-tempo" data-i="chime" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="chime" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Triangle · tap for a shimmering ting</div>
   <div class="tri-wrap" id="triWrap">
     <img src="images/triangle.jpg" alt="Golden orchestral triangle with beater, hanging among galaxies">
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="triTune" min="1800" max="4200" value="2900" aria-label="Tune the triangle"><span id="triHz">2900 Hz</span></div>
-  <button class="rand" data-i="tri">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="tri">Random sound</button>
+    <select class="rand-tempo" data-i="tri" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="tri" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Harp · pluck a string, or sweep for a glissando</div>
   <div class="harp-wrap" id="harpWrap">
     <img src="images/harpa.jpg" alt="Black and gold celestial harp engraved with stars and moons, standing in space">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="harpTune" min="110" max="294" value="147" aria-label="Tune the harp"><span id="harpHz">147 Hz</span></div>
-  <button class="rand" data-i="harp">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="harp">Random sound</button>
+    <select class="rand-tempo" data-i="harp" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="harp" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Sansula · pluck the tines, sweep for a ripple</div>
   <div class="sans-wrap" id="sansWrap">
     <img src="images/sansula.jpg" alt="Dark kalimba sansula with golden engraved tines on a starry soundboard">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="sansTune" min="196" max="392" value="220" aria-label="Tune the sansula"><span id="sansHz">220 Hz</span></div>
-  <button class="rand" data-i="sans">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="sans">Random sound</button>
+    <select class="rand-tempo" data-i="sans" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="sans" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
   <div class="instr-label">Monochord · tap to pluck, rub for a drone</div>
   <div class="mono-wrap" id="monoWrap">
     <img src="images/monochord.jpg" alt="Long black monochord engraved with moons and stars, floating in space">
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="monoTune" min="49" max="110" value="65" aria-label="Tune the monochord"><span id="monoHz">65 Hz</span></div>
-  <button class="rand" data-i="mono">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="mono">Random sound</button>
+    <select class="rand-tempo" data-i="mono" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="mono" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
   <div class="instr-label">Pan flute · tap a pipe, sweep to ripple</div>
   <div class="pan-wrap" id="panWrap">
     <img src="images/panflute.jpg" alt="Black pan flute with golden celestial engravings on its pipes">
   </div>
   <div class="tune c"><span>TUNE</span><input type="range" id="panTune" min="294" max="587" value="392" aria-label="Tune the pan flute"><span id="panHz">392 Hz</span></div>
-  <button class="rand" data-i="pan">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="pan">Random sound</button>
+    <select class="rand-tempo" data-i="pan" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="pan" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
   <div class="instr-label">Native flute · press and hold, slide to change note</div>
   <div class="naf-wrap" id="nafWrap">
     <img src="images/native_american_fluit.jpg" alt="Native American style flute with an eagle head block and hanging feathers">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="nafTune" min="220" max="440" value="294" aria-label="Tune the native flute"><span id="nafHz">294 Hz</span></div>
-  <button class="rand" data-i="naf">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="naf">Random sound</button>
+    <select class="rand-tempo" data-i="naf" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="naf" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
   <div class="instr-label">Shaman drum · tap — center deep, rim sharp</div>
   <div class="shaman-wrap" id="shamanWrap">
     <img src="images/shaman_drum.jpg" alt="Shamanic frame drum with golden spirit animals and feathers">
   </div>
-  <button class="rand" data-i="shaman">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="shaman">Random sound</button>
+    <select class="rand-tempo" data-i="shaman" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="shaman" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Djembe · center bass, middle tone, rim slap</div>
   <div class="djembe-wrap" id="djembeWrap">
     <img src="images/djembe.jpg" alt="Carved wooden djembe drum with lotus mandala on its head">
   </div>
-  <button class="rand" data-i="djembe">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="djembe">Random sound</button>
+    <select class="rand-tempo" data-i="djembe" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="djembe" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Thunder drum · tap for thunder, rub for rumble</div>
   <div class="thunder-wrap" id="thunderWrap">
     <img src="images/thunder_drum.jpg" alt="Large dark drum with golden lightning across its head">
   </div>
-  <button class="rand" data-i="thunder">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="thunder">Random sound</button>
+    <select class="rand-tempo" data-i="thunder" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="thunder" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Ocean drum · rub to roll the waves, tap for a splash</div>
   <div class="ocean-wrap" id="oceanWrap">
     <img src="images/ocean_drum.jpg" alt="Ocean drum filled with beads forming a golden sea under moon phases">
   </div>
-  <button class="rand" data-i="ocean">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="ocean">Random sound</button>
+    <select class="rand-tempo" data-i="ocean" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="ocean" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
   <div class="instr-label">Rainstick · tap for a shower, tilt with a drag</div>
   <div class="rain-wrap" id="rainWrap">
     <img src="images/rainstick.jpg" alt="Engraved rainstick with feathers, drifting among galaxies">
   </div>
-  <button class="rand" data-i="rain">Random sound</button>
+  <div class="rand-row">
+    <button class="rand" data-i="rain">Random sound</button>
+    <select class="rand-tempo" data-i="rain" aria-label="Tempo">
+      <option value="40">40 BPM</option>
+      <option value="60">60 BPM</option>
+      <option value="80" selected>80 BPM</option>
+      <option value="100">100 BPM</option>
+      <option value="120">120 BPM</option>
+      <option value="160">160 BPM</option>
+    </select>
+    <select class="rand-dur" data-i="rain" aria-label="Duration">
+      <option value="15">15s</option>
+      <option value="30" selected>30s</option>
+      <option value="60">1 min</option>
+      <option value="120">2 min</option>
+      <option value="300">5 min</option>
+      <option value="600">10 min</option>
+    </select>
+  </div>
 
 
 
@@ -2508,8 +2794,10 @@
     const L=randLoops.get(k);
     if(!L) return;
     clearTimeout(L.timer); clearInterval(L.tick);
-    if(L.lbl) L.lbl.textContent='Random sound';
+    if(L.lbl) L.lbl.textContent='REPEAT';
     L.btn.classList.remove('on');
+    if(L.tempoSel) L.tempoSel.disabled=false;
+    if(L.durSel) L.durSel.disabled=false;
     randLoops.delete(k);
     scheduleSuspend();
   }
@@ -2527,61 +2815,38 @@
     '</svg>';
   document.querySelectorAll('.rand').forEach(function(b){
     // högtalarikon till vänster om texten
-    b.innerHTML=SPEAKER_SVG+'<span>Random sound</span>';
+    b.innerHTML=SPEAKER_SVG+'<span>REPEAT</span>';
     b.classList.add('hasicon');
     const lbl=b.querySelector('span');
     const k=b.dataset.i;
-    // utfällbar längdmeny under knappen (dold tills man trycker på Random sound)
-    const menu=document.createElement('div');
-    menu.className='rand-menu';
-    menu.hidden=true;
-    [['5s','once'],['15s',15],['30s',30],['1m',60],['2m',120],['5m',300]].forEach(function(o){
-      const mb=document.createElement('button'); mb.textContent=o[0]; mb.dataset.sec=o[1];
-      menu.appendChild(mb);
-    });
-    b.parentNode.insertBefore(menu, b.nextSibling);
+    const tempoSel=document.querySelector('.rand-tempo[data-i="'+k+'"]');
+    const durSel=document.querySelector('.rand-dur[data-i="'+k+'"]');
 
-    function startLoop(val){
-      if(val==='once'){ fireRand(k); scheduleSuspend(); return; }
-      const end=Date.now()+(+val)*1000;
+    function startLoop(bpm,sec){
+      const interval=60000/bpm;
+      const end=Date.now()+sec*1000;
       b.classList.add('on');
+      if(tempoSel) tempoSel.disabled=true;
+      if(durSel) durSel.disabled=true;
       function step(){
         if(Date.now()>=end){ stopRandLoop(k); return; }
         fireRand(k);
         const L=randLoops.get(k);
-        if(L) L.timer=setTimeout(step,1600+Math.random()*2200);
+        if(L) L.timer=setTimeout(step,interval);
       }
       const tick=setInterval(function(){
         const s=Math.max(0,Math.ceil((end-Date.now())/1000));
         lbl.textContent='■ '+Math.floor(s/60)+':'+('0'+s%60).slice(-2);
       },400);
-      randLoops.set(k,{timer:null,tick:tick,btn:b,lbl:lbl});
+      randLoops.set(k,{timer:null,tick:tick,btn:b,lbl:lbl,tempoSel:tempoSel,durSel:durSel});
       step();
     }
-    // tryck på Random sound: spelar → stoppa, annars öppna/stäng längdmenyn
-    b.addEventListener('click',function(e){
+    // tryck på REPEAT: spelar → stoppa, annars starta med valt tempo och vald längd
+    b.addEventListener('click',async function(e){
       e.stopPropagation();
       if(randLoops.has(k)){ stopRandLoop(k); return; }
-      // stäng övriga öppna menyer
-      document.querySelectorAll('.rand-menu').forEach(function(m){ if(m!==menu) m.hidden=true; });
-      menu.hidden=!menu.hidden;
-    });
-    // välj längd → starta direkt och stäng menyn
-    menu.querySelectorAll('button').forEach(function(mb){
-      mb.addEventListener('click',async function(e){
-        e.stopPropagation();
-        menu.hidden=true;
-        await ensureAudio();
-        startLoop(mb.dataset.sec);
-      });
-    });
-  });
-  // tryck utanför stänger öppna instrument-menyer
-  document.addEventListener('pointerdown',function(e){
-    document.querySelectorAll('.rand-menu').forEach(function(m){
-      if(m.hidden) return;
-      if(e.target.closest && (e.target.closest('.rand-menu')||e.target.closest('.rand'))) return;
-      m.hidden=true;
+      await ensureAudio();
+      startLoop(+(tempoSel?tempoSel.value:80),+(durSel?durSel.value:30));
     });
   });
 
