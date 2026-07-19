@@ -123,24 +123,47 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   background:radial-gradient(120% 95% at 50% 14%,transparent 36%,rgba(6,7,10,.32) 100%),
   linear-gradient(to bottom,rgba(6,7,10,.5) 0%,transparent 26%,transparent 44%,rgba(6,7,10,.74) 100%)}
 
-#brand{position:absolute;top:max(82px,calc(env(safe-area-inset-top) + 66px));left:0;right:0;z-index:6;text-align:center;pointer-events:none;transition:opacity .6s ease;margin:0}
-#brand span{display:inline-block;font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
-  font-size:clamp(22px,5vw,42px);line-height:1;
+#brand{position:absolute;top:max(190px,calc(env(safe-area-inset-top) + 170px));left:0;right:0;z-index:6;text-align:center;pointer-events:none;transition:opacity .6s ease;margin:0}
+#brandLogo{display:inline-block;height:clamp(40px,8vw,72px);width:auto;max-width:80vw;
+  filter:drop-shadow(0 2px 10px rgba(0,0,0,.5));
+  font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  font-size:clamp(22px,5vw,42px);line-height:1;color:#f4f1ea}
+
+/* ===== Top logo + tab navigation ===== */
+#topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
+  padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(6,7,10,.82) 0%,rgba(6,7,10,.5) 65%,transparent 100%)}
+#topNavBrand{display:flex;align-items:center;gap:10px;pointer-events:auto;text-decoration:none;margin-bottom:10px}
+#topNavLogo{height:36px;width:auto;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+#topNavTitle{font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  font-size:clamp(15px,3.4vw,21px);line-height:1;
   background-color:#eef2f6;
   background-image:linear-gradient(180deg,#ffffff 0%,#f3f6fa 36%,#d9e0e8 58%,#f6f9fc 78%,#ffffff 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
-  filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+#topTabs{display:flex;pointer-events:auto}
+#topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
+  padding:9px 20px;color:var(--muted);text-decoration:none;white-space:nowrap;
+  background:var(--glass);border:1px solid var(--line);border-bottom:none;
+  border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
+#topTabs .tab:hover{color:var(--ink)}
+#topTabs .tab.active{color:var(--ink);background:var(--glass-strong);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2}
+body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease}
+
 @media(max-width:560px){
-  #frontMeta{top:max(14px,env(safe-area-inset-top));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
-  #brand{top:max(74px,calc(env(safe-area-inset-top) + 58px))}
+  #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
+  #brand{top:max(170px,calc(env(safe-area-inset-top) + 150px))}
   #mainButtons{flex-wrap:nowrap;gap:7px;padding:0 10px}
   .mbtn{min-width:0;flex:1 1 0;max-width:none;padding:9px 6px;font-size:10px;letter-spacing:.04em;gap:6px;border-radius:999px}
   .mbtn svg{width:20px;height:20px}
   .mbtn .sub{display:none}
+  #topNavLogo{height:28px}
+  #topNavTitle{font-size:13px}
+  #topTabs .tab{padding:8px 13px;font-size:11px}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
-#timerCluster{position:absolute;top:max(18px,env(safe-area-inset-top));right:18px;z-index:7;display:flex;align-items:center;gap:3px;
+#timerCluster{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));right:18px;z-index:7;display:flex;align-items:center;gap:3px;
   padding:5px 6px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
 .tc-time{font-variant-numeric:tabular-nums;font-weight:300;font-size:16px;letter-spacing:.08em;color:var(--gold);padding:0 6px;min-width:52px;text-align:center}
 .tc-btn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;color:var(--ink);transition:background .2s ease,transform .12s ease}
@@ -183,6 +206,28 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
 .freqfront{display:flex;flex-direction:column;align-items:stretch;gap:7px;max-width:420px;margin:0 auto 6px;padding:0 6px}
 #freqLabelFront{margin-top:0}
 .freqfront .v{text-align:center;font-size:12px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em}
+
+/* ===== shared control tab bar (Frequency / Tempo / Resonance) ===== */
+#ctrlTabs{display:flex;justify-content:center;gap:0;max-width:420px;margin:0 auto 8px;padding:0 6px}
+.ctrl-tab{flex:1 1 0;font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:9px 6px;color:var(--muted);text-align:center;white-space:nowrap;
+  background:rgba(244,241,234,.04);border:1px solid var(--line);border-bottom:none;
+  border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;transition:color .2s ease,background .2s ease}
+.ctrl-tab:hover{color:var(--ink)}
+.ctrl-tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold);top:0;box-shadow:0 -6px 18px rgba(0,0,0,.25);z-index:2}
+.ctrl-tab:first-child{border-radius:12px 0 0 0}
+.ctrl-tab:last-child{border-radius:0 12px 0 0}
+
+.breath-subtabs{display:flex;justify-content:center;gap:7px;max-width:420px;margin:8px auto 0;padding:0 6px}
+.breath-subtabs.hidden{display:none}
+.breath-subtab{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:10.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  padding:7px 4px;border-radius:12px;color:var(--muted);background:rgba(244,241,234,.04);border:1px solid var(--line);
+  transition:color .2s ease,background .2s ease,border-color .2s ease}
+.breath-subtab:hover{color:var(--ink)}
+.breath-subtab.active{color:var(--gold);border-color:var(--gold);background:rgba(231,201,162,.14)}
+.breath-subtab .bs-val{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink);letter-spacing:.02em;text-transform:lowercase}
+.breath-subtab.active .bs-val{color:var(--gold)}
 #reelWrap{position:relative;margin-bottom:0}
 #reelWrap::before,#reelWrap::after{content:"";position:absolute;top:0;bottom:0;width:46px;z-index:2;pointer-events:none}
 #reelWrap::before{left:0;background:linear-gradient(90deg,rgba(8,9,13,.6),transparent)}
@@ -303,7 +348,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .pcard .ptxt{min-width:0}
 .pcard .pn{font-size:14px;font-weight:500;letter-spacing:.01em}
 .pcard .pt{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.3}
-#frontMeta{position:absolute;top:max(14px,env(safe-area-inset-top));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
+#frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
 #donateWrap{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
 #donateNote{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.25;max-width:210px}
 #visitors{font-size:12px;letter-spacing:.06em;color:var(--muted)}
@@ -387,6 +432,18 @@ body.immersive #brand{opacity:0}
   <h2>A free online place to breathe, relax and heal</h2>
   <p>My Peaceful Place is a calming meditation web app. Follow the guided breathing circle, choose healing sound frequencies such as 528&nbsp;Hz and other Solfeggio tones, planetary tones and singing-bowl gongs, and relax with serene nature scenes — beach, forest, meadow, mountains and the cosmos. Set a session timer and unwind. It is free to use, with no sign-up and no app to install.</p>
 </div>
+<header id="topNav">
+  <a href="index.html" id="topNavBrand" aria-label="Holistic Loader — home">
+    <img src="images/logga-holistic.png" alt="Holistic Loader logo" id="topNavLogo">
+    <span id="topNavTitle">Holistic Loader</span>
+  </a>
+  <nav id="topTabs" aria-label="Main sections">
+    <a href="index.html" class="tab active" aria-current="page">Breathing</a>
+    <a href="instruments.html" class="tab">Sound Healing</a>
+    <a href="https://nutriloader.com" class="tab">Nutrition</a>
+  </nav>
+</header>
+
 <div id="stage">
   <div id="bgDrift"><div id="bgBreath"><div id="bgA"></div><div id="bgB"></div></div></div>
   <div id="shine"></div>
@@ -396,7 +453,7 @@ body.immersive #brand{opacity:0}
   <div id="lens"><div id="lensBlur"></div><div id="lensImg"></div></div>
   <div id="scrim"></div>
 
-  <h1 id="brand"><span>My Peaceful Place</span></h1>
+  <h1 id="brand"><img src="images/logga-holistic.png" alt="Holistic Loader" id="brandLogo"></h1>
   <div id="frontMeta">
     <div id="donateWrap">
       <a id="coffee" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=ingenskit@hotmail.com&amp;item_name=My+Peaceful+Place&amp;currency_code=SEK" target="_blank" rel="noopener noreferrer">
@@ -438,10 +495,20 @@ body.immersive #brand{opacity:0}
       <div class="iscroll" id="soundScrollFront"></div>
       <svg class="scrollcue" id="soundCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
     </div>
-    <div class="reel-label" id="freqLabelFront"><span class="kw">My frequency</span></div>
+    <div class="reel-label" id="freqLabelFront"><span class="kw" id="ctrlKw">My frequency</span></div>
+    <div id="ctrlTabs" role="tablist" aria-label="Sound &amp; breath controls">
+      <button class="ctrl-tab active" id="ctrlTabFreq" data-ctrl="freq" role="tab" aria-selected="true">Frequency</button>
+      <button class="ctrl-tab" id="ctrlTabTempo" data-ctrl="tempo" role="tab" aria-selected="false">Tempo</button>
+      <button class="ctrl-tab" id="ctrlTabResonance" data-ctrl="resonance" role="tab" aria-selected="false">Resonance</button>
+    </div>
     <div class="freqfront">
-      <input type="range" id="freqFront" min="45" max="963" step="1" value="432">
-      <span class="v" id="freqValFront">432 Hz · A4</span>
+      <input type="range" id="ctrlSlider" min="45" max="963" step="1" value="432">
+      <span class="v" id="ctrlVal">432 Hz · A4</span>
+    </div>
+    <div class="breath-subtabs hidden" id="breathSubTabs" role="tablist" aria-label="Breath phase">
+      <button class="breath-subtab active" data-phase="inhale" role="tab" aria-selected="true">Breath in<span class="bs-val" id="bsValInhale">4 sec</span></button>
+      <button class="breath-subtab" data-phase="hold" role="tab" aria-selected="false">Hold<span class="bs-val" id="bsValHold">4 sec</span></button>
+      <button class="breath-subtab" data-phase="exhale" role="tab" aria-selected="false">Breath out<span class="bs-val" id="bsValExhale">4 sec</span></button>
     </div>
     <div id="mainButtons">
       <button class="mbtn" id="btnSound">
@@ -560,7 +627,7 @@ const INSTRUMENT_ICONS = {"crystal_bowl": "images/crystal_bowl.jpg", "quartz_bow
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'tibetan_bowl', freq:432, tempo:12, tempoFollow:true,
-  animMode:'breath', inhale:4, hold:7, exhale:8, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, running:false, ended:false};
+  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, running:false, ended:false};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
 
@@ -784,17 +851,85 @@ function renderSolf(){const w=$('freqSolf');w.innerHTML='';SOLF.forEach(o=>w.app
 function updateFreq(){
   const txt=`${fmtHz(S.freq)} Hz · ${noteName(S.freq)}`;
   const fv=$('freqVal'); if(fv)fv.textContent=txt;
-  const fvf=$('freqValFront'); if(fvf)fvf.textContent=txt;
   const r=Math.round(S.freq);
   const f1=$('freq'); if(f1&&+f1.value!==r)f1.value=r;
-  const f2=$('freqFront'); if(f2&&+f2.value!==r)f2.value=r;
+  if(ctrlTab==='freq'){
+    const f2=$('ctrlSlider'); if(f2&&+f2.value!==r)f2.value=r;
+    const fvf=$('ctrlVal'); if(fvf)fvf.textContent=txt;
+  }
   renderQuick();renderPlanets();renderSolf();
   const pl=PLANET.find(o=>Math.abs(S.freq-o.hz)<0.5),d=$('planetDesc');
   if(pl){d.textContent=pl.ds;d.style.display='block';}else{d.style.display='none';}
 }
 {const f=$('freq'); if(f){f.addEventListener('input',e=>{S.freq=+e.target.value;clearPreset();updateFreq();});f.addEventListener('change',()=>preview());}}
-$('freqFront').addEventListener('input',e=>{S.freq=+e.target.value;clearPreset();updateFreq();});
-$('freqFront').addEventListener('change',()=>preview());
+
+/* ===== shared front-page control (Frequency / Tempo / Resonance) ===== */
+let ctrlTab='freq', breathPhase='inhale';
+const BREATH_LABEL={inhale:'Breathe in',hold:'Hold',exhale:'Breathe out'};
+function syncBreathBadges(){
+  const bi=$('bsValInhale'); if(bi)bi.textContent=S.inhale+' sec';
+  const bh=$('bsValHold'); if(bh)bh.textContent=S.hold+' sec';
+  const be=$('bsValExhale'); if(be)be.textContent=S.exhale+' sec';
+}
+function syncCtrlSlider(){
+  const slider=$('ctrlSlider'), val=$('ctrlVal'), kw=$('ctrlKw');
+  if(!slider||!val)return;
+  if(ctrlTab==='freq'){
+    kw.textContent='My frequency';
+    slider.min=45;slider.max=963;slider.step=1;slider.value=Math.round(S.freq);
+    val.textContent=`${fmtHz(S.freq)} Hz · ${noteName(S.freq)}`;
+  }else if(ctrlTab==='tempo'){
+    kw.textContent='My tempo';
+    slider.min=0;slider.max=15;slider.step=1;slider.value=S[breathPhase];
+    val.textContent=`${BREATH_LABEL[breathPhase]} · ${S[breathPhase]} s`;
+  }else if(ctrlTab==='resonance'){
+    kw.textContent='My resonance';
+    slider.min=0;slider.max=100;slider.step=1;slider.value=S.resonance;
+    val.textContent=`${S.resonance}% reverb`;
+  }
+  syncBreathBadges();
+}
+function renderCtrlTabs(){
+  ['freq','tempo','resonance'].forEach(k=>{
+    const b=$('ctrlTab'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(!b)return;
+    const on=(ctrlTab===k);
+    b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');
+  });
+  const sub=$('breathSubTabs'); if(sub)sub.classList.toggle('hidden',ctrlTab!=='tempo');
+}
+function renderBreathSubtabs(){
+  document.querySelectorAll('.breath-subtab').forEach(b=>{
+    const on=(b.dataset.phase===breathPhase);
+    b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');
+  });
+}
+function setCtrlTab(tab){ctrlTab=tab;renderCtrlTabs();syncCtrlSlider();}
+document.querySelectorAll('.ctrl-tab').forEach(b=>b.addEventListener('click',()=>setCtrlTab(b.dataset.ctrl)));
+document.querySelectorAll('.breath-subtab').forEach(b=>b.addEventListener('click',()=>{breathPhase=b.dataset.phase;renderBreathSubtabs();syncCtrlSlider();}));
+
+function setResonance(v){
+  S.resonance=Math.max(0,Math.min(100,Math.round(v)));
+  if(audio.ctx&&audio.revGain)audio.revGain.gain.setTargetAtTime(S.resonance/100,audio.ctx.currentTime,.12);
+}
+
+$('ctrlSlider').addEventListener('input',e=>{
+  const v=+e.target.value;
+  if(ctrlTab==='freq'){
+    S.freq=v;clearPreset();updateFreq();
+  }else if(ctrlTab==='tempo'){
+    S[breathPhase]=v;clearPreset();
+    const idMap={inhale:'inhale',hold:'hold',exhale:'exhale'}, numMap={inhale:'inNum',hold:'holdNum',exhale:'outNum'};
+    const panelInput=$(idMap[breathPhase]); if(panelInput)panelInput.value=v;
+    const panelNum=$(numMap[breathPhase]); if(panelNum)panelNum.textContent=v;
+    applyTempoFollow();renderBreathPresets();syncBreathBadges();
+    $('ctrlVal').textContent=`${BREATH_LABEL[breathPhase]} · ${v} s`;
+  }else if(ctrlTab==='resonance'){
+    setResonance(v);
+    $('ctrlVal').textContent=`${S.resonance}% reverb`;
+  }
+});
+$('ctrlSlider').addEventListener('change',()=>{if(ctrlTab!=='tempo')preview();});
 /* collapsible planetary / solfeggio sections */
 function setDisc(btn,body,open){btn.classList.toggle('open',open);btn.setAttribute('aria-expanded',open);body.classList.toggle('hidden',!open);}
 function bindDisc(btnId,bodyId){const btn=$(btnId),body=$(bodyId);
@@ -818,7 +953,7 @@ $('tempo').addEventListener('input',e=>{S.tempo=+e.target.value;S.tempoFollow=fa
 $('tempoFollow').onclick=()=>{S.tempoFollow=!S.tempoFollow;clearPreset();applyTempoFollow();};
 
 /* breathing rhythm */
-function bindBreath(id,key,num){$(id).addEventListener('input',e=>{S[key]=+e.target.value;$(num).textContent=e.target.value;clearPreset();applyTempoFollow();renderBreathPresets();});}
+function bindBreath(id,key,num){$(id).addEventListener('input',e=>{S[key]=+e.target.value;$(num).textContent=e.target.value;clearPreset();applyTempoFollow();renderBreathPresets();syncBreathBadges();if(ctrlTab==='tempo'&&breathPhase===key)syncCtrlSlider();});}
 bindBreath('inhale','inhale','inNum');bindBreath('hold','hold','holdNum');bindBreath('exhale','exhale','outNum');
 const BREATH_PRESETS=[
   {l:'4·7·8',i:4,h:7,o:8,info:"4·7·8 is Dr. Andrew Weil's relaxing breath — inhale 4, hold 7, exhale 8 — a natural tranquilizer for the nervous system, often used to ease into sleep."},
@@ -899,6 +1034,8 @@ function syncControls(){
   $('inhale').value=S.inhale;$('hold').value=S.hold;$('exhale').value=S.exhale;
   $('inNum').textContent=S.inhale;$('holdNum').textContent=S.hold;$('outNum').textContent=S.exhale;
   renderBreathPresets();
+  syncBreathBadges();
+  if(ctrlTab!=='freq')syncCtrlSlider();
   renderSounds();
   setShowCircle(S.showCircle);
   renderTimers();$('timerVal').textContent=S.timerMin+' min';$('lengthSub').textContent=S.timerMin+' min';
@@ -942,7 +1079,7 @@ function initAudio(){if(audio.ctx)return;
   const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;comp.knee.value=24;comp.ratio.value=3;comp.attack.value=.01;comp.release.value=.3;
   const dry=ctx.createGain();dry.gain.value=.85;
   const rev=ctx.createConvolver();rev.buffer=makeImpulse(ctx,2.8,2.4);
-  const revGain=ctx.createGain();revGain.gain.value=.55;
+  const revGain=ctx.createGain();revGain.gain.value=S.resonance/100;
   dry.connect(master);rev.connect(revGain);revGain.connect(master);master.connect(comp);comp.connect(ctx.destination);
   Object.assign(audio,{ctx,master,dry,rev,revGain});}
 function makeImpulse(ctx,sec,decay){const rate=ctx.sampleRate,len=Math.floor(rate*sec),buf=ctx.createBuffer(2,len,rate);
@@ -1229,6 +1366,7 @@ async function initVisits(){
 
 /* init */
 renderReel();renderSounds(true);updateFreq();renderBreathPresets();renderTimers();renderPresets();applyTempoFollow();
+renderCtrlTabs();syncCtrlSlider();renderBreathSubtabs();
 setBackground(IMAGES[0].id,true);
 $('timerReadout').textContent=fmt(S.timerMin*60);
 positionBrand();
