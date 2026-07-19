@@ -371,18 +371,36 @@
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
   #topTabs .tab:hover{color:var(--ink)}
   #topTabs .tab.active{color:var(--ink);background:var(--panel);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
+  #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
+    background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
+    opacity:.55}
+  #donateFixed{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto;margin:0}
+  @supports(padding:max(0px)){
+    #donateFixed{left:max(16px,env(safe-area-inset-left))}
+  }
   @media(max-width:560px){
     #topNavLogo{height:28px}
     #topNavTitle{font-size:13px}
     #topTabs .tab{padding:8px 13px;font-size:11px}
+    #donateFixed{padding:8px 14px;font-size:11px}
+    #donateFixed span{display:none}
   }
 </style>
 </head>
 <body>
 
+<a id="donateFixed" class="donate" target="_blank" rel="noopener"
+   href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ingenskit%40hotmail.com&item_name=Gong%20on%20the%20go&currency_code=SEK&no_shipping=1">
+  <svg class="ppmark" viewBox="0 0 24 28" width="16" height="18" aria-hidden="true">
+    <path d="M7.4 27 l.9-5.6 H6 L8.6 4.3 h7.3 c3.7 0 6 1.9 5.4 5.8 -.6 4.2 -3.7 6.2 -7.8 6.2 H10 l-.9 5.7 -.2 1.4 Z" fill="#003087"/>
+    <path d="M9.1 22.8 l.9-5.6 h2.9 c4.6 0 8-2.2 8.7-7 .1-.5.1-1 .1-1.4 1.6 .9 2.3 2.6 1.8 5.3 -.8 4.7 -4.1 6.9 -8.7 6.9 h-1.6 l-.9 5.6 -.2 1.4 H9 Z" fill="#0070e0"/>
+  </svg>
+  <span>Thanks for you support!</span>
+</a>
+
 <header id="topNav">
   <a href="index.html" id="topNavBrand" aria-label="Holistic Loader — home">
-    <img src="images/icon-holistic.png" alt="Holistic Loader logo" id="topNavLogo">
+    <img src="images/logga-holistic.png" alt="Holistic Loader logo" id="topNavLogo">
     <span id="topNavTitle">Holistic Loader</span>
   </a>
   <nav id="topTabs" aria-label="Main sections">
@@ -390,6 +408,7 @@
     <a href="instruments.html" class="tab active" aria-current="page">Sound Healing</a>
     <a href="https://nutriloader.com" class="tab">Nutrition</a>
   </nav>
+  <div id="topNavLine"></div>
 </header>
 
 <div id="bg" style="background-image:url(images/bg.jpg)"></div>
@@ -398,14 +417,6 @@
 
 <h1>HOLISTIC LOADER - SOUND HEALING</h1>
 <div class="donate-row">
-  <a class="donate" target="_blank" rel="noopener"
-     href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ingenskit%40hotmail.com&item_name=Gong%20on%20the%20go&currency_code=SEK&no_shipping=1">
-    <svg class="ppmark" viewBox="0 0 24 28" width="16" height="18" aria-hidden="true">
-      <path d="M7.4 27 l.9-5.6 H6 L8.6 4.3 h7.3 c3.7 0 6 1.9 5.4 5.8 -.6 4.2 -3.7 6.2 -7.8 6.2 H10 l-.9 5.7 -.2 1.4 Z" fill="#003087"/>
-      <path d="M9.1 22.8 l.9-5.6 h2.9 c4.6 0 8-2.2 8.7-7 .1-.5.1-1 .1-1.4 1.6 .9 2.3 2.6 1.8 5.3 -.8 4.7 -4.1 6.9 -8.7 6.9 h-1.6 l-.9 5.6 -.2 1.4 H9 Z" fill="#0070e0"/>
-    </svg>
-    <span>Thanks for you support!</span>
-  </a>
   <div class="visits" id="visits"></div>
 </div>
 
