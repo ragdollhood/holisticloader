@@ -149,11 +149,6 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   background:linear-gradient(to bottom,rgba(6,7,10,.82) 0%,rgba(6,7,10,.5) 65%,transparent 100%)}
 #topNavBrand{display:flex;align-items:center;gap:10px;pointer-events:auto;text-decoration:none;margin-bottom:10px}
 #topNavLogo{height:50px;width:auto;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
-#topNavTitle{font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-  font-size:clamp(15px,3.4vw,21px);line-height:1;
-  background-color:#eef2f6;
-  background-image:linear-gradient(180deg,#ffffff 0%,#f3f6fa 36%,#d9e0e8 58%,#f6f9fc 78%,#ffffff 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 #topTabs{display:flex;pointer-events:auto}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
   padding:9px 20px;color:var(--muted);text-decoration:none;white-space:nowrap;
@@ -175,7 +170,6 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   .mbtn svg{width:20px;height:20px}
   .mbtn .sub{display:none}
   #topNavLogo{height:28px}
-  #topNavTitle{font-size:13px}
   #topTabs .tab{padding:8px 13px;font-size:11px}
   #donateFixed{padding:8px 10px}
   #donateFixed span{display:none}
@@ -487,8 +481,7 @@ body.immersive #brand{opacity:0}
 
 <header id="topNav">
   <a href="index.html" id="topNavBrand" aria-label="Holistic Loader — home">
-    <img src="images/logga-holistic.png" alt="Holistic Loader logo" id="topNavLogo">
-    <span id="topNavTitle">Holistic Loader</span>
+    <img src="images/logga-holistictitel.png" alt="Holistic Loader" id="topNavLogo">
   </a>
   <nav id="topTabs" aria-label="Main sections">
     <a href="index.html" class="tab active" aria-current="page">Breathing</a>
