@@ -125,7 +125,7 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
 
 #brand{
   position:absolute;
-  top:max(190px,calc(env(safe-area-inset-top) + 170px));
+  top:max(128px,calc(env(safe-area-inset-top) + 112px));
   left:0;
   right:0;
   z-index:6;
@@ -154,11 +154,6 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   background-color:#eef2f6;
   background-image:linear-gradient(180deg,#ffffff 0%,#f3f6fa 36%,#d9e0e8 58%,#f6f9fc 78%,#ffffff 100%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-#brandText{display:block;margin-top:12px;font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-  font-size:clamp(38px,10vw,72px);line-height:1;
-  background-color:#eef2f6;
-  background-image:linear-gradient(180deg,#ffffff 0%,#f3f6fa 36%,#d9e0e8 58%,#f6f9fc 78%,#ffffff 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 #topTabs{display:flex;pointer-events:auto}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
   padding:9px 20px;color:var(--muted);text-decoration:none;white-space:nowrap;
@@ -174,7 +169,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 
 @media(max-width:560px){
   #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
-  #brand{top:max(170px,calc(env(safe-area-inset-top) + 150px))}
+  #brand{top:max(96px,calc(env(safe-area-inset-top) + 86px))}
   #mainButtons{flex-wrap:nowrap;gap:7px;padding:0 10px}
   .mbtn{min-width:0;flex:1 1 0;max-width:none;padding:9px 6px;font-size:10px;letter-spacing:.04em;gap:6px;border-radius:999px}
   .mbtn svg{width:20px;height:20px}
@@ -512,7 +507,7 @@ body.immersive #brand{opacity:0}
   <div id="lens"><div id="lensBlur"></div><div id="lensImg"></div></div>
   <div id="scrim"></div>
 
-  <h1 id="brand"><img src="images/logga-holistic.png" alt="Holistic Loader" id="brandLogo"><span id="brandText">HOLISTIC LOADER</span></h1>
+  <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
   <div id="frontMeta">
   </div>
   <div id="timerCluster" class="hidden">
