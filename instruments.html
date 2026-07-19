@@ -348,12 +348,6 @@
     font-size:11px;color:#8a8070;text-align:center;
     margin-top:26px;max-width:420px;line-height:1.6;letter-spacing:.02em;
   }
-  .contact{
-    display:flex;align-items:center;justify-content:center;gap:7px;
-    margin:22px auto 34px;font-size:12px;letter-spacing:.1em;color:var(--soft);
-    text-align:center;
-  }
-  .contact .env{flex:0 0 auto;opacity:.85}
 
   /* ===== shared top logo + tab navigation (same system as index.html) ===== */
   #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
@@ -374,10 +368,21 @@
   #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
     background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
     opacity:.55}
-  #donateFixed{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto;margin:0}
+  #donateWrap{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto}
   @supports(padding:max(0px)){
-    #donateFixed{left:max(16px,env(safe-area-inset-left))}
+    #donateWrap{left:max(16px,env(safe-area-inset-left))}
   }
+  #donateFixed{position:static;margin:0}
+  /* contact / email — one button that expands to the right, sits right under the donate button */
+  #contactBtn{position:absolute;top:calc(100% + 7px);left:0;display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
+    border-radius:999px;padding:8px 11px;background:var(--panel);border:1px solid var(--line);color:var(--ink);cursor:pointer;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
+  #contactBtn:hover{background:rgba(243,239,228,.12)}
+  #contactBtn:active{transform:scale(.97)}
+  #contactBtn .env{flex:0 0 auto;width:18px;height:18px;display:block}
+  #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
+  #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:8px}
+  #contactBtn .ctext b{color:var(--gold);font-weight:600;letter-spacing:.12em;margin-right:5px}
   @media(max-width:560px){
     #topNavLogo{height:28px}
     #topNavTitle{font-size:13px}
@@ -389,14 +394,23 @@
 </head>
 <body>
 
-<a id="donateFixed" class="donate" target="_blank" rel="noopener"
-   href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ingenskit%40hotmail.com&item_name=Gong%20on%20the%20go&currency_code=SEK&no_shipping=1">
-  <svg class="ppmark" viewBox="0 0 24 28" width="16" height="18" aria-hidden="true">
-    <path d="M7.4 27 l.9-5.6 H6 L8.6 4.3 h7.3 c3.7 0 6 1.9 5.4 5.8 -.6 4.2 -3.7 6.2 -7.8 6.2 H10 l-.9 5.7 -.2 1.4 Z" fill="#003087"/>
-    <path d="M9.1 22.8 l.9-5.6 h2.9 c4.6 0 8-2.2 8.7-7 .1-.5.1-1 .1-1.4 1.6 .9 2.3 2.6 1.8 5.3 -.8 4.7 -4.1 6.9 -8.7 6.9 h-1.6 l-.9 5.6 -.2 1.4 H9 Z" fill="#0070e0"/>
-  </svg>
-  <span>Thanks for you support!</span>
-</a>
+<div id="donateWrap">
+  <a id="donateFixed" class="donate" target="_blank" rel="noopener"
+     href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ingenskit%40hotmail.com&item_name=Gong%20on%20the%20go&currency_code=SEK&no_shipping=1">
+    <svg class="ppmark" viewBox="0 0 24 28" width="16" height="18" aria-hidden="true">
+      <path d="M7.4 27 l.9-5.6 H6 L8.6 4.3 h7.3 c3.7 0 6 1.9 5.4 5.8 -.6 4.2 -3.7 6.2 -7.8 6.2 H10 l-.9 5.7 -.2 1.4 Z" fill="#003087"/>
+      <path d="M9.1 22.8 l.9-5.6 h2.9 c4.6 0 8-2.2 8.7-7 .1-.5.1-1 .1-1.4 1.6 .9 2.3 2.6 1.8 5.3 -.8 4.7 -4.1 6.9 -8.7 6.9 h-1.6 l-.9 5.6 -.2 1.4 H9 Z" fill="#0070e0"/>
+    </svg>
+    <span>Thanks for you support!</span>
+  </a>
+  <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
+    <svg class="env" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <rect x="2.5" y="5" width="19" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="M3 6.5 L12 13 L21 6.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
+  </button>
+</div>
 
 <header id="topNav">
   <a href="index.html" id="topNavBrand" aria-label="Holistic Loader — home">
@@ -882,14 +896,6 @@
   Human hearing spans, at its best, roughly 20 Hz to 20,000 Hz. Start at a low volume, especially with headphones. And one cosmic truth: in real space nothing can be heard at all – sound needs air. These tones stay safely here with you.
 </p>
 
-<div class="contact">
-  <svg class="env" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
-    <rect x="2.5" y="5" width="19" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
-    <path d="M3 6.5 L12 13 L21 6.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-  <span>CONTACT ME: ragdollhood@gmail.com</span>
-</div>
-
 <button id="silence" aria-label="Silence all sound">Silence</button>
 <button id="mixBtn" aria-label="Random mix">Random<br>mix</button>
 <div id="mixMenu" hidden>
@@ -908,6 +914,22 @@
   const FMIN=20, FMAX=20000;
   const $=id=>document.getElementById(id);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* kontaktknapp: tryck på kuvertet för att fälla ut och visa mejladressen */
+  (function(){
+    const cBtn=$('contactBtn');
+    if(!cBtn) return;
+    const hide=function(){ cBtn.classList.remove('open'); cBtn.setAttribute('aria-expanded','false'); };
+    cBtn.addEventListener('click',function(e){
+      e.stopPropagation();
+      const open=cBtn.classList.toggle('open');
+      cBtn.setAttribute('aria-expanded',open?'true':'false');
+    });
+    document.addEventListener('click',function(e){
+      if(cBtn.classList.contains('open') && !cBtn.contains(e.target)) hide();
+    });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') hide(); });
+  })();
 
   /* ============ KOSMOS: galaxer som roterar, norrsken, supernovor ============
      Himlen lever när du spelar: spiralgalaxerna snurrar sakta igång,

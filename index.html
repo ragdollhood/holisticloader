@@ -148,6 +148,9 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
 #topTabs .tab:hover{color:var(--ink)}
 #topTabs .tab.active{color:var(--ink);background:var(--glass-strong);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2}
+#topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--gold-soft) 50%,var(--gold) 85%,transparent);
+  opacity:.55}
 body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease}
 
 @media(max-width:560px){
@@ -160,6 +163,8 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   #topNavLogo{height:28px}
   #topNavTitle{font-size:13px}
   #topTabs .tab{padding:8px 13px;font-size:11px}
+  #coffee{padding:8px 10px}
+  #coffee span{display:none}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
@@ -349,9 +354,12 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .pcard .pn{font-size:14px;font-weight:500;letter-spacing:.01em}
 .pcard .pt{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.3}
 #frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
-#donateWrap{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+#donateWrap{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto;display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+@supports(padding:max(0px)){
+  #donateWrap{left:max(16px,env(safe-area-inset-left))}
+}
 #donateNote{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.25;max-width:210px}
-#visitors{font-size:12px;letter-spacing:.06em;color:var(--muted)}
+#visitors{font-size:12px;letter-spacing:.06em;color:var(--muted);margin-left:auto}
 #visitors b{color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}
 #coffee{display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:999px;font-size:12px;letter-spacing:.04em;font-weight:600;text-decoration:none;
   background:linear-gradient(180deg,#f2c87a,#d9a85c);color:#2a1d0c;box-shadow:0 8px 24px rgba(231,201,162,.32);transition:transform .12s ease,filter .2s ease}
@@ -414,7 +422,6 @@ body.immersive #brand{opacity:0}
 .mini.off .wv{display:none}
 .mini.off .sl{display:inline}
 /* contact / email — one button that expands to the right */
-#donateWrap{position:relative}
 #contactBtn{position:absolute;top:calc(100% + 7px);left:0;display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
   border-radius:999px;padding:8px 11px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
@@ -432,6 +439,17 @@ body.immersive #brand{opacity:0}
   <h2>A free online place to breathe, relax and heal</h2>
   <p>My Peaceful Place is a calming meditation web app. Follow the guided breathing circle, choose healing sound frequencies such as 528&nbsp;Hz and other Solfeggio tones, planetary tones and singing-bowl gongs, and relax with serene nature scenes — beach, forest, meadow, mountains and the cosmos. Set a session timer and unwind. It is free to use, with no sign-up and no app to install.</p>
 </div>
+<div id="donateWrap">
+  <a id="coffee" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=ingenskit@hotmail.com&amp;item_name=My+Peaceful+Place&amp;currency_code=SEK" target="_blank" rel="noopener noreferrer">
+    <svg viewBox="0 0 384 512" aria-hidden="true"><path d="M111.4 295.9c-3.5 19.2-17.4 108.7-21.5 134-.3 1.8-1 2.5-3 2.5H12.3c-7.6 0-13.1-6.6-12.1-13.9L58.8 46.6c1.5-9.6 10.1-16.9 20-16.9 152.3 0 165.1-3.7 204 11.4 60.1 23.3 65.6 79.5 44 140.3-21.5 62.6-72.5 89.5-140.1 90.3-43.4 .7-69.5-7-77.2 24.2zM357.1 152c-1.8-1.3-2.5-1.8-3 1.3-2 11.4-5.1 22.5-8.8 33.6-39.9 113.8-150.5 103.9-204.5 103.9-6.2 0-10.6 3.2-12.4 14.6l-3.5 22.3c.7 8.8 .8 8.8 7.7 8.8 33.6 0 64.7 .2 95.5-4.8 50.9-8.3 90.5-32.4 110.5-78.3 7.4-17.4 13.4-37.7 13.4-58.3 0-19.1-6.1-30.8-15.4-38.8z"/></svg>
+    <span>Thanks for your support!</span>
+  </a>
+  <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
+    <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
+    <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
+  </button>
+</div>
+
 <header id="topNav">
   <a href="index.html" id="topNavBrand" aria-label="Holistic Loader — home">
     <img src="images/logga-holistic.png" alt="Holistic Loader logo" id="topNavLogo">
@@ -442,6 +460,7 @@ body.immersive #brand{opacity:0}
     <a href="instruments.html" class="tab">Sound Healing</a>
     <a href="https://nutriloader.com" class="tab">Nutrition</a>
   </nav>
+  <div id="topNavLine"></div>
 </header>
 
 <div id="stage">
@@ -455,16 +474,6 @@ body.immersive #brand{opacity:0}
 
   <h1 id="brand"><img src="images/logga-holistic.png" alt="Holistic Loader" id="brandLogo"></h1>
   <div id="frontMeta">
-    <div id="donateWrap">
-      <a id="coffee" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=ingenskit@hotmail.com&amp;item_name=My+Peaceful+Place&amp;currency_code=SEK" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 384 512" aria-hidden="true"><path d="M111.4 295.9c-3.5 19.2-17.4 108.7-21.5 134-.3 1.8-1 2.5-3 2.5H12.3c-7.6 0-13.1-6.6-12.1-13.9L58.8 46.6c1.5-9.6 10.1-16.9 20-16.9 152.3 0 165.1-3.7 204 11.4 60.1 23.3 65.6 79.5 44 140.3-21.5 62.6-72.5 89.5-140.1 90.3-43.4 .7-69.5-7-77.2 24.2zM357.1 152c-1.8-1.3-2.5-1.8-3 1.3-2 11.4-5.1 22.5-8.8 33.6-39.9 113.8-150.5 103.9-204.5 103.9-6.2 0-10.6 3.2-12.4 14.6l-3.5 22.3c.7 8.8 .8 8.8 7.7 8.8 33.6 0 64.7 .2 95.5-4.8 50.9-8.3 90.5-32.4 110.5-78.3 7.4-17.4 13.4-37.7 13.4-58.3 0-19.1-6.1-30.8-15.4-38.8z"/></svg>
-        Thanks for your support!
-      </a>
-      <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
-        <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
-        <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
-      </button>
-    </div>
     <span id="visitors">✦ <b id="visitCount">…</b> visits</span>
   </div>
   <div id="timerCluster" class="hidden">
@@ -1160,9 +1169,9 @@ function positionOrb(){
   updateLensGeom();
 }
 function positionBrand(){
-  const br=$('brand'),cb=$('contactBtn'); if(!br||!cb) return;
-  const r=cb.getBoundingClientRect();
-  if(r.height) br.style.top=(r.bottom+7)+'px';
+  /* contactBtn now lives fixed in the top-left corner, detached from the
+     content flow, so #brand keeps its static CSS position instead of
+     being pushed down below it. */
 }
 function onLayout(){ closeSoundSub(); updateCues(); positionBrand(); if(S.running) updateLensGeom(); else positionOrb(); }
 addEventListener('resize',onLayout);
@@ -1286,7 +1295,7 @@ function startSession(){
   audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);
   audio.master.gain.setTargetAtTime(S.soundOn?MASTER:.0001,audio.ctx.currentTime,.1);
   if(S.soundOn)playVoice(S.sound,S.freq,audio.ctx.currentTime+.06);
-  $('center').classList.add('live');$('front').classList.add('gone');$('brand').style.opacity='0';$('frontMeta').classList.add('hidden');$('contactBtn')&&$('contactBtn').classList.remove('open');closeSub();closeSoundSub();
+  $('center').classList.add('live');$('front').classList.add('gone');$('brand').style.opacity='0';$('frontMeta').classList.add('hidden');$('donateWrap')&&$('donateWrap').classList.add('hidden');$('contactBtn')&&$('contactBtn').classList.remove('open');closeSub();closeSoundSub();
   $('timerCluster').classList.remove('hidden');
   $('sessToggles').classList.remove('hidden');
   setButtonsHidden(false);
@@ -1314,13 +1323,13 @@ function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=
   // return to the start page while the closing tone rings out
   $('endOverlay').classList.remove('show');
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
-  $('timerCluster').classList.add('hidden');$('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
+  $('timerCluster').classList.add('hidden');$('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
 function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
   if(audio.ctx){audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.25);}
   $('endOverlay').classList.remove('show');
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
   $('timerCluster').classList.add('hidden');$('breathCue').style.opacity=0;
-  $('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
+  $('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
 
 /* panel */
 const TITLES={sound:'My tempo',breath:'Breathing',preset:'Preset',length:'Session length'};
