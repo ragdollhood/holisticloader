@@ -194,6 +194,14 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   /* preset active: hide the Breathing / Sound Healing / Nutrition tabs and the line under them */
   body.preset-active #topTabs,
   body.preset-active #topNavLine{display:none}
+
+  /* "How to use" — smaller, transparent, sits right under the gold line on mobile */
+  #howToBtn{top:max(80px,calc(env(safe-area-inset-top) + 68px));font-size:9.5px;padding:5px 10px;
+    background:transparent;border-color:rgba(244,241,234,.22);backdrop-filter:none;-webkit-backdrop-filter:none}
+  #howToBox{top:calc(max(80px,calc(env(safe-area-inset-top) + 68px)) + 34px);max-width:150px;
+    padding:12px 12px 14px;background:rgba(13,15,21,.55);backdrop-filter:none;-webkit-backdrop-filter:none}
+  #howToBox h3{font-size:9px}
+  #howToBox li{font-size:9.5px}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
@@ -1093,7 +1101,8 @@ function syncSoundSubtabs(){
 function applyTempoFollow(){if(S.tempoFollow){S.tempo=breathCycle();}syncTempoUI();}
 $('soundFollowBtn').onclick=()=>{S.tempoFollow=!S.tempoFollow;clearPreset();
   if(!S.tempoFollow){S.tempo=S.inhale;}
-  applyTempoFollow();syncSoundSubtabs();};
+  applyTempoFollow();syncSoundSubtabs();
+  if(S.running)startScheduler();};
 $('soundInBtn').onclick=()=>{S.soundBreathIn=!S.soundBreathIn;syncSoundSubtabs();};
 $('soundOutBtn').onclick=()=>{S.soundBreathOut=!S.soundBreathOut;syncSoundSubtabs();};
 
@@ -1292,7 +1301,9 @@ function soundPhaseAllowed(){
   if(p<S.inhale+S.hold)return true;
   return S.soundBreathOut;
 }
-function startScheduler(){nextToneTime=audio.ctx.currentTime+.05;clearInterval(schedTimer);
+function startScheduler(){
+  if(S.tempoFollow){clearInterval(schedTimer);schedTimer=null;lastBreathPhase=null;return;}
+  nextToneTime=audio.ctx.currentTime+.05;clearInterval(schedTimer);
   schedTimer=setInterval(()=>{if(!S.running)return;const ahead=audio.ctx.currentTime+.2;
     while(nextToneTime<ahead){if(soundPhaseAllowed())playVoice(S.sound,S.freq,nextToneTime);nextToneTime+=S.tempo;}},40);}
 function stopScheduler(){clearInterval(schedTimer);schedTimer=null;}
@@ -1325,7 +1336,8 @@ function positionOrb(){
   const b=$('brand').getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
   if(!r.height) return;
   const oh=ow.offsetHeight;
-  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38);
+  const mobileOffset=innerWidth<=560?36:0;
+  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38 + mobileOffset);
   ow.style.marginTop=mt+'px';
   updateLensGeom();
 }
@@ -1346,6 +1358,7 @@ const GP=[{sx:16,sy:11,px:21,py:29,fo:13,a:.55},{sx:-14,sy:15,px:16,py:12,fo:17,
 
 /* visual loop */
 let breathClock=0,ambient=0,wanderT=0,remainingMs=0,lastTs=0,liveAmt=0,frameN=0;
+let lastBreathPhase=null;
 let cueTarget='',cueText='',cueState='out',cueOp=0;
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const ease=u=>(1-Math.cos(Math.PI*u))/2;
@@ -1379,6 +1392,12 @@ function loop(ts){requestAnimationFrame(loop);
     if(p<S.inhale){phase=ease(p/S.inhale);cue='Breathe in';}
     else if(p<S.inhale+S.hold){phase=1;cue='Hold';}
     else{phase=1-ease((p-S.inhale-S.hold)/S.exhale);cue='Breathe out';}
+    if(S.running&&S.tempoFollow&&audio.ctx){
+      const ph=cue==='Breathe in'?'in':cue==='Hold'?'hold':'out';
+      if(ph!==lastBreathPhase){lastBreathPhase=ph;
+        const allowed=ph==='in'?S.soundBreathIn:ph==='hold'?true:S.soundBreathOut;
+        if(S.soundOn&&allowed)playVoice(S.sound,S.freq,audio.ctx.currentTime+.03);}
+    }
   }else{const cyc=Math.max(2,S.tempo),u=(breathClock%cyc)/cyc;phase=(1-Math.cos(2*Math.PI*u))/2;cue=u<.5?'Breathe in':'Breathe out';}
   const amp=reduceMotion?.4:1;
   const showC = S.running ? S.showCircle : true;
