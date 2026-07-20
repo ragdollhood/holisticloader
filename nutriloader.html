@@ -329,7 +329,7 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
 #langBtn .flag{width:22px;height:15px;border-radius:2px;overflow:hidden;display:block;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
 /* below 560px the facebook icon jumps to fixed top-right, so the flag follows it there */
 @media(max-width:560px){
-  #langBtn{top:calc(max(12px,env(safe-area-inset-top)) + 30px);left:auto;right:max(16px,env(safe-area-inset-right));}
+  #langBtn{top:calc(max(12px,env(safe-area-inset-top)) + 50px);left:auto;right:max(16px,env(safe-area-inset-right));}
 }
 
 /* ---------- layout ---------- */
@@ -988,6 +988,9 @@ body{padding-top:max(122px,calc(env(safe-area-inset-top) + 106px))}
   #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
   /* instagram icon removed on mobile */
   #shareIgTop{display:none}
+  /* pull page logo up much closer to the gold line under the tabs */
+  body{padding-top:max(100px,calc(env(safe-area-inset-top) + 84px))}
+  header{padding-top:0}
 }
 
 </style>
