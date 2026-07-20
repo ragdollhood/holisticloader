@@ -197,7 +197,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
-#timerCluster{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));right:18px;z-index:7;display:flex;align-items:center;gap:3px;
+#timerCluster{position:absolute;top:max(16px,calc(env(safe-area-inset-top) + 10px));left:18px;z-index:7;display:flex;align-items:center;gap:3px;
   padding:5px 6px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
 .tc-time{font-variant-numeric:tabular-nums;font-weight:300;font-size:16px;letter-spacing:.08em;color:var(--gold);padding:0 6px;min-width:52px;text-align:center}
 .tc-btn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;color:var(--ink);transition:background .2s ease,transform .12s ease}
@@ -444,7 +444,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .end-card h2{font-family:var(--display);font-weight:300;font-style:italic;font-size:clamp(30px,6vw,46px)}
 .end-card p{color:var(--muted);margin:12px 0 26px;font-weight:300;letter-spacing:.04em}
 body.immersive #brand{opacity:0}
-.sess-toggles{position:absolute;top:max(72px,calc(env(safe-area-inset-top) + 56px));right:18px;z-index:7;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-start}
+.sess-toggles{position:absolute;top:max(70px,calc(env(safe-area-inset-top) + 64px));left:18px;z-index:7;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-start}
 #sessBtns{display:flex;flex-direction:column;align-items:center;gap:8px}
 .sess-toggles.collapsed #sessBtns{display:none}
 #btnToggleBtns{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
@@ -612,7 +612,7 @@ body.immersive #brand{opacity:0}
     </div>
   </div>
 
-  <!-- SESSION BAR (icons under the countdown, top-right) -->
+  <!-- SESSION BAR (icons under the countdown, top-left) -->
   <div id="sessToggles" class="sess-toggles hidden">
     <button id="btnToggleBtns" aria-label="Show or hide buttons">
       <svg class="ic-show" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -1401,6 +1401,7 @@ function startSession(){
   audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);
   audio.master.gain.setTargetAtTime(S.soundOn?MASTER:.0001,audio.ctx.currentTime,.1);
   if(S.soundOn)playVoice(S.sound,S.freq,audio.ctx.currentTime+.06);
+  document.body.classList.add('immersive');
   $('center').classList.add('live');$('front').classList.add('gone');$('brand').style.opacity='0';$('frontMeta').classList.add('hidden');$('donateWrap')&&$('donateWrap').classList.add('hidden');$('contactBtn')&&$('contactBtn').classList.remove('open');closeSub();closeSoundSub();
   $('timerCluster').classList.remove('hidden');
   $('sessToggles').classList.remove('hidden');
@@ -1427,11 +1428,13 @@ function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=
     } else { audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.25); }
   }
   // return to the start page while the closing tone rings out
+  document.body.classList.remove('immersive');
   $('endOverlay').classList.remove('show');
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
   $('timerCluster').classList.add('hidden');$('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
 function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
   if(audio.ctx){audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.25);}
+  document.body.classList.remove('immersive');
   $('endOverlay').classList.remove('show');
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
   $('timerCluster').classList.add('hidden');$('breathCue').style.opacity=0;
