@@ -556,7 +556,7 @@ body.immersive #brand{opacity:0}
       <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabTempo" data-ctrl="tempo" role="tab" aria-selected="false" aria-label="Breathing tempo">
         <svg viewBox="0 0 24 24"><path d="M9 3.5h6l3 17H6l3-17Z"/><path d="M12.5 16.5l3-9.5"/><path d="M7 16h10"/></svg>
       </button>
-      <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabSoundTempo" data-panel="sound" role="tab" aria-selected="false" aria-label="Sound tempo">
+      <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabSoundTempo" data-ctrl="soundtempo" role="tab" aria-selected="false" aria-label="Sound tempo">
         <svg viewBox="0 0 24 24"><path d="M3 12h3l2-7 4 14 2-10 2 3h5"/></svg>
       </button>
       <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabLength" data-ctrl="length" role="tab" aria-selected="false" aria-label="Session length">
@@ -571,15 +571,18 @@ body.immersive #brand{opacity:0}
       <span class="v" id="ctrlVal">432 Hz · A4</span>
     </div>
     <div class="freqfront hidden" id="lengthFrontWrap">
-      <div class="blk-lbl" style="justify-content:center;gap:10px"><span>Session length</span><span class="v" id="timerVal">10 min</span></div>
-      <div class="chips" id="timerChips" style="justify-content:center"></div>
       <input type="range" id="timerSlider" min="1" max="60" step="1" value="10">
-      <div class="hintline" style="text-align:center">When the time is up, a soft resonant tone sounds before silence.</div>
+      <div class="chips" id="timerChips" style="justify-content:center"></div>
     </div>
     <div class="breath-subtabs hidden" id="breathSubTabs" role="tablist" aria-label="Breath phase">
       <button class="breath-subtab active" data-phase="inhale" role="tab" aria-selected="true">Breath in<span class="bs-val" id="bsValInhale">4 sec</span></button>
       <button class="breath-subtab" data-phase="hold" role="tab" aria-selected="false">Hold<span class="bs-val" id="bsValHold">4 sec</span></button>
       <button class="breath-subtab" data-phase="exhale" role="tab" aria-selected="false">Breath out<span class="bs-val" id="bsValExhale">4 sec</span></button>
+    </div>
+    <div class="breath-subtabs hidden" id="soundSubTabs" role="group" aria-label="Sound options">
+      <button class="breath-subtab active" id="soundFollowBtn" aria-pressed="true">Sound follows your breath<span class="bs-val" id="soundFollowVal">on</span></button>
+      <button class="breath-subtab active" id="soundInBtn" aria-pressed="true">Sound breathing in<span class="bs-val" id="soundInVal">on</span></button>
+      <button class="breath-subtab active" id="soundOutBtn" aria-pressed="true">Sound breathing out<span class="bs-val" id="soundOutVal">on</span></button>
     </div>
   </div>
 
@@ -610,18 +613,6 @@ body.immersive #brand{opacity:0}
     <div class="grip"></div>
     <div id="panelTitle">My sound tempo</div>
     <div class="panel-body">
-      <div class="tabpane" id="panesound">
-        <div class="block">
-          <div class="blk-lbl"><span>Sound interval</span><span class="v" id="tempoVal">every 12.0 s</span></div>
-          <button class="followbtn active" id="tempoFollow" aria-pressed="true">
-            <span class="fb-lbl">Follows your breath</span>
-            <span class="fb-seg"><span class="fb-on">On</span><span class="fb-off">Off</span></span>
-          </button>
-          <input type="range" id="tempo" min="1" max="15" step="0.5" value="10">
-          <div class="hintline">Each tone lands with one full breath. Drag the slider to set your own pace instead.</div>
-        </div>
-      </div>
-
       <div class="tabpane" id="panepreset">
         <div class="block">
           <div class="blk-lbl"><span>Preset frequencies</span></div>
@@ -676,7 +667,7 @@ const INSTRUMENT_ICONS = {"crystal_bowl": "images/crystal_bowl.jpg", "quartz_bow
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'tibetan_bowl', freq:432, tempo:12, tempoFollow:true,
-  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, running:false, ended:false};
+  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
 
@@ -935,15 +926,23 @@ function syncCtrlSlider(){
     kw.textContent='My resonance';
     slider.min=0;slider.max=100;slider.step=1;slider.value=S.resonance;
     val.textContent=`${S.resonance}% reverb`;
+  }else if(ctrlTab==='soundtempo'){
+    kw.textContent='My sound tempo';
+    slider.min=1;slider.max=15;slider.step=0.5;slider.value=Math.min(15,Math.max(1,S.tempo));
+    val.textContent='every '+S.tempo.toFixed(1)+' s';
+    syncSoundSubtabs();
+  }else if(ctrlTab==='length'){
+    kw.textContent='My session length';
   }
   syncBreathBadges();
 }
 function renderCtrlTabs(){
   document.querySelectorAll('.ctrl-tab').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});
-  const idMap={freq:'ctrlTabFreq',tempo:'ctrlTabTempo',resonance:'ctrlTabResonance',length:'ctrlTabLength'};
+  const idMap={freq:'ctrlTabFreq',tempo:'ctrlTabTempo',resonance:'ctrlTabResonance',length:'ctrlTabLength',soundtempo:'ctrlTabSoundTempo'};
   const b=$(idMap[ctrlTab]);
   if(b){b.classList.add('active');b.setAttribute('aria-selected','true');}
   const sub=$('breathSubTabs'); if(sub)sub.classList.toggle('hidden',ctrlTab!=='tempo');
+  const ssub=$('soundSubTabs'); if(ssub)ssub.classList.toggle('hidden',ctrlTab!=='soundtempo');
   const ff=$('freqFrontWrap'); if(ff)ff.classList.toggle('hidden',ctrlTab==='length');
   const lf=$('lengthFrontWrap'); if(lf)lf.classList.toggle('hidden',ctrlTab!=='length');
 }
@@ -954,7 +953,7 @@ function renderBreathSubtabs(){
   });
 }
 function setCtrlTab(tab){ctrlTab=tab;renderCtrlTabs();syncCtrlSlider();
-  if(tab==='length'){renderTimers();$('timerVal').textContent=S.timerMin+' min';}}
+  if(tab==='length'){renderTimers();}}
 document.querySelectorAll('.ctrl-tab[data-ctrl]').forEach(b=>b.addEventListener('click',()=>setCtrlTab(b.dataset.ctrl)));
 /* Sound tempo & Presets open the bottom panel instead of swapping the inline slider */
 function openPanelFromTab(btn,name){
@@ -984,9 +983,13 @@ $('ctrlSlider').addEventListener('input',e=>{
   }else if(ctrlTab==='resonance'){
     setResonance(v);
     $('ctrlVal').textContent=`${S.resonance}% reverb`;
+  }else if(ctrlTab==='soundtempo'){
+    S.tempo=v;S.tempoFollow=false;clearPreset();
+    $('ctrlVal').textContent='every '+v.toFixed(1)+' s';
+    syncSoundSubtabs();
   }
 });
-$('ctrlSlider').addEventListener('change',()=>{if(ctrlTab!=='tempo')preview();});
+$('ctrlSlider').addEventListener('change',()=>{if(ctrlTab!=='tempo'&&ctrlTab!=='soundtempo')preview();});
 /* collapsible planetary / solfeggio sections */
 function setDisc(btn,body,open){btn.classList.toggle('open',open);btn.setAttribute('aria-expanded',open);body.classList.toggle('hidden',!open);}
 function bindDisc(btnId,bodyId){const btn=$(btnId),body=$(bodyId);
@@ -1000,14 +1003,22 @@ function autoOpenTone(){
 /* tone interval — follows the breath cycle, or a custom pace */
 function breathCycle(){return Math.max(2,S.inhale+S.hold+S.exhale);}
 function syncTempoUI(){
-  $('tempo').value=Math.min(15,Math.max(1,S.tempo));
-  $('tempoVal').textContent='every '+S.tempo.toFixed(1)+' s';
-  $('tempoFollow').classList.toggle('active',S.tempoFollow);
-  $('tempoFollow').setAttribute('aria-pressed',S.tempoFollow?'true':'false');
+  syncSoundSubtabs();
+  if(ctrlTab==='soundtempo'){
+    const slider=$('ctrlSlider'),val=$('ctrlVal');
+    if(slider)slider.value=Math.min(15,Math.max(1,S.tempo));
+    if(val)val.textContent='every '+S.tempo.toFixed(1)+' s';
+  }
+}
+function syncSoundSubtabs(){
+  const f=$('soundFollowBtn'); if(f){f.classList.toggle('active',S.tempoFollow);f.setAttribute('aria-pressed',S.tempoFollow?'true':'false');const v=$('soundFollowVal');if(v)v.textContent=S.tempoFollow?'on':'off';}
+  const i=$('soundInBtn'); if(i){i.classList.toggle('active',S.soundBreathIn);i.setAttribute('aria-pressed',S.soundBreathIn?'true':'false');const v=$('soundInVal');if(v)v.textContent=S.soundBreathIn?'on':'off';}
+  const o=$('soundOutBtn'); if(o){o.classList.toggle('active',S.soundBreathOut);o.setAttribute('aria-pressed',S.soundBreathOut?'true':'false');const v=$('soundOutVal');if(v)v.textContent=S.soundBreathOut?'on':'off';}
 }
 function applyTempoFollow(){if(S.tempoFollow){S.tempo=breathCycle();}syncTempoUI();}
-$('tempo').addEventListener('input',e=>{S.tempo=+e.target.value;S.tempoFollow=false;clearPreset();syncTempoUI();});
-$('tempoFollow').onclick=()=>{S.tempoFollow=!S.tempoFollow;clearPreset();applyTempoFollow();};
+$('soundFollowBtn').onclick=()=>{S.tempoFollow=!S.tempoFollow;clearPreset();applyTempoFollow();};
+$('soundInBtn').onclick=()=>{S.soundBreathIn=!S.soundBreathIn;syncSoundSubtabs();};
+$('soundOutBtn').onclick=()=>{S.soundBreathOut=!S.soundBreathOut;syncSoundSubtabs();};
 
 /* breathing rhythm */
 function bindBreath(id,key,num){$(id).addEventListener('input',e=>{S[key]=+e.target.value;$(num).textContent=e.target.value;clearPreset();applyTempoFollow();renderBreathPresets();syncBreathBadges();if(ctrlTab==='tempo'&&breathPhase===key)syncCtrlSlider();});}
@@ -1058,7 +1069,7 @@ function renderTimers(){const w=$('timerChips');if(!w)return;w.innerHTML='';
     b.onclick=()=>setTimer(m);w.appendChild(b);});}
 function setTimer(m){m=Math.max(1,Math.min(60,Math.round(m)));S.timerMin=m;
   const sl=$('timerSlider'); if(sl&&+sl.value!==m)sl.value=m;
-  renderTimers();$('timerVal').textContent=m+' min';
+  renderTimers();
   if(!S.running)$('timerReadout').textContent=fmt(m*60);}
 {const ts=$('timerSlider'); if(ts)ts.addEventListener('input',e=>setTimer(+e.target.value));}
 function fmt(sec){sec=Math.max(0,Math.ceil(sec));const m=Math.floor(sec/60),s=sec%60;return m+':'+String(s).padStart(2,'0');}
@@ -1095,7 +1106,7 @@ function syncControls(){
   if(ctrlTab!=='freq')syncCtrlSlider();
   renderSounds();
   setShowCircle(S.showCircle);
-  renderTimers();$('timerVal').textContent=S.timerMin+' min';
+  renderTimers();
   {const sl=$('timerSlider'); if(sl)sl.value=Math.max(1,Math.min(60,S.timerMin));}
   if(!S.running)$('timerReadout').textContent=fmt(S.timerMin*60);
 }
@@ -1179,9 +1190,15 @@ function playFinal(){const ctx=audio.ctx,t=ctx.currentTime+.05;
 
 /* scheduler */
 let schedTimer=null,nextToneTime=0;
+function soundPhaseAllowed(){
+  const cyc=S.inhale+S.hold+S.exhale,p=breathClock%cyc;
+  if(p<S.inhale)return S.soundBreathIn;
+  if(p<S.inhale+S.hold)return true;
+  return S.soundBreathOut;
+}
 function startScheduler(){nextToneTime=audio.ctx.currentTime+.05;clearInterval(schedTimer);
   schedTimer=setInterval(()=>{if(!S.running)return;const ahead=audio.ctx.currentTime+.2;
-    while(nextToneTime<ahead){playVoice(S.sound,S.freq,nextToneTime);nextToneTime+=S.tempo;}},40);}
+    while(nextToneTime<ahead){if(soundPhaseAllowed())playVoice(S.sound,S.freq,nextToneTime);nextToneTime+=S.tempo;}},40);}
 function stopScheduler(){clearInterval(schedTimer);schedTimer=null;}
 
 /* particles */
