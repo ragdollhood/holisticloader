@@ -194,14 +194,6 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   /* preset active: hide the Breathing / Sound Healing / Nutrition tabs and the line under them */
   body.preset-active #topTabs,
   body.preset-active #topNavLine{display:none}
-
-  /* "How to use" — smaller, transparent, sits right under the gold line on mobile */
-  #howToBtn{top:max(80px,calc(env(safe-area-inset-top) + 68px));font-size:9.5px;padding:5px 10px;
-    background:transparent;border-color:rgba(244,241,234,.22);backdrop-filter:none;-webkit-backdrop-filter:none}
-  #howToBox{top:calc(max(80px,calc(env(safe-area-inset-top) + 68px)) + 34px);max-width:150px;
-    padding:12px 12px 14px;background:rgba(13,15,21,.55);backdrop-filter:none;-webkit-backdrop-filter:none}
-  #howToBox h3{font-size:9px}
-  #howToBox li{font-size:9.5px}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
@@ -517,6 +509,16 @@ body.immersive #howToBtn{opacity:0;pointer-events:none}
   text-transform:uppercase;color:var(--muted)}
 #howToBox li b{color:var(--gold);font-weight:600;flex:0 0 auto}
 body.immersive #howToBox{display:none}
+
+@media(max-width:560px){
+  /* "How to use" — smaller, transparent, sits right under the gold line on mobile */
+  #howToBtn{top:max(80px,calc(env(safe-area-inset-top) + 68px));font-size:9.5px;padding:5px 10px;
+    background:transparent;border-color:rgba(244,241,234,.22);backdrop-filter:none;-webkit-backdrop-filter:none}
+  #howToBox{top:calc(max(80px,calc(env(safe-area-inset-top) + 68px)) + 34px);max-width:150px;
+    padding:12px 12px 14px;background:rgba(13,15,21,.55);backdrop-filter:none;-webkit-backdrop-filter:none}
+  #howToBox h3{font-size:9px}
+  #howToBox li{font-size:9.5px}
+}
 </style>
 </head>
 <body>
@@ -1336,7 +1338,7 @@ function positionOrb(){
   const b=$('brand').getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
   if(!r.height) return;
   const oh=ow.offsetHeight;
-  const mobileOffset=innerWidth<=560?36:0;
+  const mobileOffset=innerWidth<=560?28:0;
   const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38 + mobileOffset);
   ow.style.marginTop=mt+'px';
   updateLensGeom();
