@@ -183,9 +183,6 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   #donateFixed span{display:none}
 
   /* ---- mobile icon rearrangement ---- */
-  /* contact icon: top-left, highest */
-  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47;height:30px;width:38px;padding:0!important;justify-content:center}
-  #contactBtn.open{width:auto;padding:0 11px!important;justify-content:flex-start}
   /* facebook icon: top-right, highest */
   #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
 
@@ -403,7 +400,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .donate:hover{filter:brightness(1.05)}
 .donate:active{transform:scale(.96)}
 .donate .ppmark{flex:0 0 auto;background:#fff;border-radius:5px;padding:2px}
-#donateSecondRow{position:absolute;top:calc(100% + 7px);left:0;display:flex;align-items:center;gap:6px;pointer-events:auto}
+#donateSecondRow{position:absolute;top:calc(100% + 7px);left:0;width:max-content;display:flex;align-items:center;gap:6px;pointer-events:auto}
 .shareIconBtn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:999px;flex-shrink:0;
   box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease;color:#fff}
 .shareIconBtn:hover{transform:translateY(-1px)}
@@ -477,6 +474,13 @@ body.immersive #brand{opacity:0}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:8px}
 #contactBtn .ctext b{color:var(--gold);font-weight:600;letter-spacing:.12em;margin-right:5px}
 #contactBtn.hidden{display:none}
+
+@media(max-width:560px){
+  /* contact icon: top-left, highest — placed after the base rule so it wins the cascade */
+  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));
+    z-index:47;height:30px;width:38px;padding:0;justify-content:center}
+  #contactBtn.open{width:auto;padding:0 11px;justify-content:flex-start}
+}
 
 /* "How to use" button — sits inline between the Facebook and Contact buttons */
 #howToBtn{
@@ -1147,10 +1151,23 @@ function setSound(on){S.soundOn=on;
 {
   const cBtn=$('contactBtn');
   const hide=()=>{ if(cBtn){cBtn.classList.remove('open');cBtn.setAttribute('aria-expanded','false');} };
+  /* The button's CSS max-width assumes it starts near the left edge of the
+     viewport, but on wider screens it now sits to the right of the Facebook
+     and "How to use" buttons in the donate row. Recompute how much room is
+     actually left before the viewport edge so the expanded email address
+     isn't clipped by body's overflow:hidden. */
+  function updateContactMaxWidth(){
+    if(!cBtn||innerWidth<=560)return; // mobile: button is fixed to the left edge, base CSS already correct
+    const rect=cBtn.getBoundingClientRect();
+    const avail=Math.max(120,innerWidth-rect.left-16);
+    cBtn.style.maxWidth=avail+'px';
+  }
   if(cBtn)cBtn.addEventListener('click',e=>{ e.stopPropagation();
+    updateContactMaxWidth();
     const open=cBtn.classList.toggle('open'); cBtn.setAttribute('aria-expanded',open?'true':'false'); });
   document.addEventListener('click',e=>{ if(cBtn&&cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hide(); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
+  addEventListener('resize',()=>{ if(cBtn&&cBtn.classList.contains('open'))updateContactMaxWidth(); });
 }
 
 /* how to use: tap to reveal the "Choose your" steps box, tap again / click outside to close */
