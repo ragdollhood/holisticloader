@@ -934,12 +934,12 @@ body{padding-top:max(150px,calc(env(safe-area-inset-top) + 134px))}
   font-size:clamp(15px,3.4vw,21px);line-height:1;color:var(--tn-ink)}
 #topTabs{display:flex;pointer-events:auto}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
-  padding:9px 20px;color:var(--tn-soft);text-decoration:none;white-space:nowrap;
-  background:rgba(243,239,228,.04);border:1px solid var(--tn-line);border-bottom:none;
+  padding:9px 20px;color:rgba(255,255,255,.7);text-decoration:none;white-space:nowrap;
+  background:rgba(6,4,9,.55);border:1px solid var(--tn-line);border-bottom:none;
   border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
-#topTabs .tab:hover{color:var(--tn-ink)}
-#topTabs .tab.active{color:var(--tn-ink);background:var(--tn-panel);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--tn-gold)}
+#topTabs .tab:hover{color:#fff}
+#topTabs .tab.active{color:#fff;background:rgba(6,4,9,.82);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--tn-gold)}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--tn-gold) 15%,var(--tn-violet) 50%,var(--tn-gold) 85%,transparent);
   opacity:.55}
@@ -984,8 +984,6 @@ body{padding-top:max(150px,calc(env(safe-area-inset-top) + 134px))}
   #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
   /* instagram icon removed on mobile */
   #shareIgTop{display:none}
-  /* the row that used to hold fb/ig/contact is now empty since those are fixed elsewhere */
-  #donateSecondRow{display:none}
 }
 
 </style>
