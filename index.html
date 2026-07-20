@@ -177,10 +177,6 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 @media(max-width:560px){
   #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
   #brand{top:max(96px,calc(env(safe-area-inset-top) + 86px))}
-  #mainButtons{flex-wrap:nowrap;gap:7px;padding:0 10px}
-  .mbtn{min-width:0;flex:1 1 0;max-width:none;padding:9px 6px;font-size:10px;letter-spacing:.04em;gap:6px;border-radius:999px}
-  .mbtn svg{width:20px;height:20px}
-  .mbtn .sub{display:none}
   #topNavLogo{height:28px}
   #topTabs .tab{padding:8px 13px;font-size:11px}
   #donateFixed{padding:8px 10px}
@@ -195,8 +191,9 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
   /* instagram icon removed on mobile */
   #shareIgTop{display:none}
-  /* the row that used to hold fb/ig/contact is now empty since those are fixed elsewhere */
-  #donateSecondRow{display:none}
+
+  /* tighten the tab bar so six icon tabs fit comfortably */
+  .ctrl-tab{padding:9px 3px}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
@@ -244,7 +241,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 #freqLabelFront{margin-top:0}
 .freqfront .v{text-align:center;font-size:12px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em}
 
-/* ===== shared control tab bar (Frequency / Tempo / Resonance) ===== */
+/* ===== shared control tab bar (Frequency / Resonance / Breathing tempo / Sound tempo / Session / Presets) ===== */
 #ctrlTabs{display:flex;justify-content:center;gap:0;max-width:420px;margin:0 auto 8px;padding:0 6px}
 .ctrl-tab{flex:1 1 0;font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   padding:9px 6px;color:var(--muted);text-align:center;white-space:nowrap;
@@ -254,6 +251,9 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .ctrl-tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold);top:0;box-shadow:0 -6px 18px rgba(0,0,0,.25);z-index:2}
 .ctrl-tab:first-child{border-radius:12px 0 0 0}
 .ctrl-tab:last-child{border-radius:0 12px 0 0}
+/* all tabs are icon-only, on every screen size */
+.ctrl-tab-icon{display:flex;align-items:center;justify-content:center}
+.ctrl-tab-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;display:block}
 
 .breath-subtabs{display:flex;justify-content:center;gap:7px;max-width:420px;margin:8px auto 0;padding:0 6px}
 .breath-subtabs.hidden{display:none}
@@ -294,16 +294,6 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .reel-item.space-sub.active .pic{box-shadow:0 0 0 3px rgba(150,170,255,.5),0 8px 24px rgba(0,0,0,.4);border-color:#9fb4ff}
 .reel-item.space-sub.active .cap{color:#aebdf6}
 .reel-item.add:hover .pic{color:var(--ink);border-color:var(--gold)}
-
-#mainButtons{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 14px}
-.mbtn{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;min-width:0;max-width:none;
-  padding:9px 18px;border-radius:999px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;text-align:center;
-  background:var(--glass);border:1px solid var(--line);color:var(--ink);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  box-shadow:0 12px 40px rgba(0,0,0,.35);transition:background .2s ease,transform .12s ease}
-.mbtn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.5}
-.mbtn-ics{display:inline-flex;align-items:center;gap:5px}
-.mbtn:hover{background:rgba(244,241,234,.12)}.mbtn:active{transform:scale(.95)}
-.mbtn .sub{display:none}
 
 #sessionBar{position:absolute;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:7;
   display:flex;gap:10px;padding:10px 12px;border-radius:999px;background:var(--glass);border:1px solid var(--line);
@@ -557,32 +547,39 @@ body.immersive #brand{opacity:0}
     </div>
     <div class="reel-label" id="freqLabelFront"><span class="kw" id="ctrlKw">My frequency</span></div>
     <div id="ctrlTabs" role="tablist" aria-label="Sound &amp; breath controls">
-      <button class="ctrl-tab active" id="ctrlTabFreq" data-ctrl="freq" role="tab" aria-selected="true">Frequency</button>
-      <button class="ctrl-tab" id="ctrlTabTempo" data-ctrl="tempo" role="tab" aria-selected="false">Tempo</button>
-      <button class="ctrl-tab" id="ctrlTabResonance" data-ctrl="resonance" role="tab" aria-selected="false">Resonance</button>
+      <button class="ctrl-tab ctrl-tab-icon active" id="ctrlTabFreq" data-ctrl="freq" role="tab" aria-selected="true" aria-label="Frequency">
+        <svg viewBox="0 0 24 24"><path d="M2 12c1.5-5 3-5 4.5 0s3 5 4.5 0 3-5 4.5 0 3 5 4.5 0"/></svg>
+      </button>
+      <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabResonance" data-ctrl="resonance" role="tab" aria-selected="false" aria-label="Resonance">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.1"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="9.6"/></svg>
+      </button>
+      <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabTempo" data-ctrl="tempo" role="tab" aria-selected="false" aria-label="Breathing tempo">
+        <svg viewBox="0 0 24 24"><path d="M9 3.5h6l3 17H6l3-17Z"/><path d="M12.5 16.5l3-9.5"/><path d="M7 16h10"/></svg>
+      </button>
+      <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabSoundTempo" data-panel="sound" role="tab" aria-selected="false" aria-label="Sound tempo">
+        <svg viewBox="0 0 24 24"><path d="M3 12h3l2-7 4 14 2-10 2 3h5"/></svg>
+      </button>
+      <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabLength" data-ctrl="length" role="tab" aria-selected="false" aria-label="Session length">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13V8.5M12 5V3M9.5 3h5"/></svg>
+      </button>
+      <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabPreset" data-panel="preset" role="tab" aria-selected="false" aria-label="Presets">
+        <svg viewBox="0 0 24 24"><path d="M12 3l1.7 4.6L18.5 9.3 13.9 11 12 15.6 10.1 11 5.5 9.3 10.3 7.6Z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8Z"/></svg>
+      </button>
     </div>
-    <div class="freqfront">
+    <div class="freqfront" id="freqFrontWrap">
       <input type="range" id="ctrlSlider" min="45" max="963" step="1" value="432">
       <span class="v" id="ctrlVal">432 Hz · A4</span>
+    </div>
+    <div class="freqfront hidden" id="lengthFrontWrap">
+      <div class="blk-lbl" style="justify-content:center;gap:10px"><span>Session length</span><span class="v" id="timerVal">10 min</span></div>
+      <div class="chips" id="timerChips" style="justify-content:center"></div>
+      <input type="range" id="timerSlider" min="1" max="60" step="1" value="10">
+      <div class="hintline" style="text-align:center">When the time is up, a soft resonant tone sounds before silence.</div>
     </div>
     <div class="breath-subtabs hidden" id="breathSubTabs" role="tablist" aria-label="Breath phase">
       <button class="breath-subtab active" data-phase="inhale" role="tab" aria-selected="true">Breath in<span class="bs-val" id="bsValInhale">4 sec</span></button>
       <button class="breath-subtab" data-phase="hold" role="tab" aria-selected="false">Hold<span class="bs-val" id="bsValHold">4 sec</span></button>
       <button class="breath-subtab" data-phase="exhale" role="tab" aria-selected="false">Breath out<span class="bs-val" id="bsValExhale">4 sec</span></button>
-    </div>
-    <div id="mainButtons">
-      <button class="mbtn" id="btnSound">
-        <svg viewBox="0 0 24 24"><path d="M9 3.5h6l3 17H6l3-17Z"/><path d="M12.5 16.5l3-9.5"/><path d="M7 16h10"/></svg>
-        <span>Tempo</span>
-      </button>
-      <button class="mbtn" id="btnPreset">
-        <svg viewBox="0 0 24 24"><path d="M12 3l1.7 4.6L18.5 9.3 13.9 11 12 15.6 10.1 11 5.5 9.3 10.3 7.6Z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8Z"/></svg>
-        <span>Preset</span>
-      </button>
-      <button class="mbtn" id="btnLength">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13V8.5M12 5V3M9.5 3h5"/></svg>
-        <span>Session</span><span class="sub" id="lengthSub">10 min</span>
-      </button>
     </div>
   </div>
 
@@ -662,14 +659,6 @@ body.immersive #brand{opacity:0}
         </div>
       </div>
 
-      <div class="tabpane" id="panelength">
-        <div class="block">
-          <div class="blk-lbl"><span>Session length</span><span class="v" id="timerVal">10 min</span></div>
-          <div class="chips" id="timerChips"></div>
-          <input type="range" id="timerSlider" min="1" max="60" step="1" value="10">
-          <div class="hintline">When the time is up, a soft resonant tone sounds before silence.</div>
-        </div>
-      </div>
     </div>
     <div class="panel-foot"><button class="done-btn" id="panelDone">Done</button></div>
   </div>
@@ -950,13 +939,15 @@ function syncCtrlSlider(){
   syncBreathBadges();
 }
 function renderCtrlTabs(){
-  ['freq','tempo','resonance'].forEach(k=>{
+  ['freq','tempo','resonance','length'].forEach(k=>{
     const b=$('ctrlTab'+k.charAt(0).toUpperCase()+k.slice(1));
     if(!b)return;
     const on=(ctrlTab===k);
     b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');
   });
   const sub=$('breathSubTabs'); if(sub)sub.classList.toggle('hidden',ctrlTab!=='tempo');
+  const ff=$('freqFrontWrap'); if(ff)ff.classList.toggle('hidden',ctrlTab==='length');
+  const lf=$('lengthFrontWrap'); if(lf)lf.classList.toggle('hidden',ctrlTab!=='length');
 }
 function renderBreathSubtabs(){
   document.querySelectorAll('.breath-subtab').forEach(b=>{
@@ -964,8 +955,16 @@ function renderBreathSubtabs(){
     b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');
   });
 }
-function setCtrlTab(tab){ctrlTab=tab;renderCtrlTabs();syncCtrlSlider();}
-document.querySelectorAll('.ctrl-tab').forEach(b=>b.addEventListener('click',()=>setCtrlTab(b.dataset.ctrl)));
+function setCtrlTab(tab){ctrlTab=tab;renderCtrlTabs();syncCtrlSlider();
+  if(tab==='length'){renderTimers();$('timerVal').textContent=S.timerMin+' min';}}
+document.querySelectorAll('.ctrl-tab[data-ctrl]').forEach(b=>b.addEventListener('click',()=>setCtrlTab(b.dataset.ctrl)));
+/* Sound tempo & Presets open the bottom panel instead of swapping the inline slider */
+function openPanelFromTab(btn,name){
+  document.querySelectorAll('.ctrl-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  openPanel(name);
+}
+document.querySelectorAll('.ctrl-tab[data-panel]').forEach(b=>b.addEventListener('click',()=>openPanelFromTab(b,b.dataset.panel)));
 document.querySelectorAll('.breath-subtab').forEach(b=>b.addEventListener('click',()=>{breathPhase=b.dataset.phase;renderBreathSubtabs();syncCtrlSlider();}));
 
 function setResonance(v){
@@ -1061,7 +1060,7 @@ function renderTimers(){const w=$('timerChips');if(!w)return;w.innerHTML='';
     b.onclick=()=>setTimer(m);w.appendChild(b);});}
 function setTimer(m){m=Math.max(1,Math.min(60,Math.round(m)));S.timerMin=m;
   const sl=$('timerSlider'); if(sl&&+sl.value!==m)sl.value=m;
-  renderTimers();$('timerVal').textContent=m+' min';$('lengthSub').textContent=m+' min';
+  renderTimers();$('timerVal').textContent=m+' min';
   if(!S.running)$('timerReadout').textContent=fmt(m*60);}
 {const ts=$('timerSlider'); if(ts)ts.addEventListener('input',e=>setTimer(+e.target.value));}
 function fmt(sec){sec=Math.max(0,Math.ceil(sec));const m=Math.floor(sec/60),s=sec%60;return m+':'+String(s).padStart(2,'0');}
@@ -1098,7 +1097,7 @@ function syncControls(){
   if(ctrlTab!=='freq')syncCtrlSlider();
   renderSounds();
   setShowCircle(S.showCircle);
-  renderTimers();$('timerVal').textContent=S.timerMin+' min';$('lengthSub').textContent=S.timerMin+' min';
+  renderTimers();$('timerVal').textContent=S.timerMin+' min';
   {const sl=$('timerSlider'); if(sl)sl.value=Math.max(1,Math.min(60,S.timerMin));}
   if(!S.running)$('timerReadout').textContent=fmt(S.timerMin*60);
 }
@@ -1383,7 +1382,7 @@ function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingM
   $('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
 
 /* panel */
-const TITLES={sound:'My tempo',breath:'Breathing',preset:'Preset',length:'Session length'};
+const TITLES={sound:'My tempo',breath:'Breathing',preset:'Preset'};
 function openPanel(name){document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('show',p.id==='pane'+name));
   $('panelTitle').textContent=TITLES[name];$('panel').classList.add('open');}
 
@@ -1392,10 +1391,7 @@ $('orbStart').onclick =()=>startSession();
 $('reel').addEventListener('scroll',repositionOpen,{passive:true});
 window.addEventListener('resize',repositionOpen);
 $('orbHit').onclick   =()=>endSession();
-$('btnSound').onclick =()=>openPanel('sound');
-$('btnPreset').onclick=()=>openPanel('preset');
-$('btnLength').onclick=()=>openPanel('length');
-$('panelDone').onclick=()=>$('panel').classList.remove('open');
+$('panelDone').onclick=()=>{$('panel').classList.remove('open');renderCtrlTabs();};
 $('btnPause').onclick =()=>{S.running?pauseSession():resumeSession();};
 $('btnEnd').onclick   =()=>endSession();
 let btnsHidden=false;
