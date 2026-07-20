@@ -482,14 +482,15 @@ body.immersive #brand{opacity:0}
 #howToBtn{
   position:fixed;top:max(112px,calc(env(safe-area-inset-top) + 96px));
   left:max(16px,env(safe-area-inset-left));z-index:45;
-  font-family:inherit;font-size:11px;letter-spacing:.06em;color:var(--muted);
+  font-family:inherit;font-size:11px;letter-spacing:.06em;color:var(--ink);
   background:var(--glass);border:1px solid var(--line);border-radius:999px;
   padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   cursor:pointer;transition:background .2s ease,transform .12s ease,opacity .5s ease;
 }
-#howToBtn:hover{background:rgba(244,241,234,.12)}
+@media(hover:hover){#howToBtn:hover{background:rgba(244,241,234,.12)}}
 #howToBtn:active{transform:scale(.97)}
 #howToBtn.hidden{display:none}
+#howToBtn .htu-short{display:none}
 body.immersive #howToBtn{opacity:0;pointer-events:none}
 
 /* info box, hidden until "How to use" is tapped */
@@ -513,7 +514,9 @@ body.immersive #howToBox{display:none}
 @media(max-width:560px){
   /* "How to use" — smaller, transparent, sits right under the gold line on mobile */
   #howToBtn{top:max(80px,calc(env(safe-area-inset-top) + 68px));font-size:9.5px;padding:0 10px;
-    background:rgba(6,7,10,.28);border-color:rgba(244,241,234,.22);backdrop-filter:none;-webkit-backdrop-filter:none}
+    color:var(--ink);background:rgba(6,7,10,.4);border-color:rgba(244,241,234,.22);backdrop-filter:none;-webkit-backdrop-filter:none}
+  #howToBtn .htu-full{display:none}
+  #howToBtn .htu-short{display:inline}
   #howToBox{top:calc(max(80px,calc(env(safe-area-inset-top) + 68px)) + 34px);max-width:150px;
     padding:12px 12px 14px;background:rgba(13,15,21,.55);backdrop-filter:none;-webkit-backdrop-filter:none}
   #howToBox h3{font-size:9px}
@@ -561,7 +564,7 @@ body.immersive #howToBox{display:none}
   <div id="topNavLine"></div>
 </header>
 
-<button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">How to use</button>
+<button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="htu-full">How to use</span><span class="htu-short">How?</span></button>
 <div id="howToBox">
   <h3>Choose your:</h3>
   <ol>
