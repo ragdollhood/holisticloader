@@ -603,11 +603,11 @@ body.immersive #brand{opacity:0}
         <span class="sti-lbl">Sound follows breathing</span>
         <button class="swtoggle on" id="soundFollowBtn" aria-pressed="true" aria-label="Sound follows breathing"><span class="sw-knob"></span></button>
       </div>
-      <div class="sti">
+      <div class="sti" id="stiBreatheIn">
         <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe in</span>
         <button class="swtoggle on" id="soundInBtn" aria-pressed="true" aria-label="Sound on breathe in"><span class="sw-knob"></span></button>
       </div>
-      <div class="sti">
+      <div class="sti" id="stiBreatheOut">
         <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe out</span>
         <button class="swtoggle on" id="soundOutBtn" aria-pressed="true" aria-label="Sound on breathe out"><span class="sw-knob"></span></button>
       </div>
@@ -1043,9 +1043,16 @@ function syncSoundSubtabs(){
   const f=$('soundFollowBtn'); if(f){f.classList.toggle('on',S.tempoFollow);f.setAttribute('aria-pressed',S.tempoFollow?'true':'false');}
   const i=$('soundInBtn'); if(i){i.classList.toggle('on',S.soundBreathIn);i.setAttribute('aria-pressed',S.soundBreathIn?'true':'false');}
   const o=$('soundOutBtn'); if(o){o.classList.toggle('on',S.soundBreathOut);o.setAttribute('aria-pressed',S.soundBreathOut?'true':'false');}
+  /* Breathe in / Breathe out toggles only show while "sound follows breathing" is ON */
+  const stiIn=$('stiBreatheIn'); if(stiIn)stiIn.classList.toggle('hidden',!S.tempoFollow);
+  const stiOut=$('stiBreatheOut'); if(stiOut)stiOut.classList.toggle('hidden',!S.tempoFollow);
+  /* The tempo slider is irrelevant while sound follows the breath, so hide it in that case */
+  const ff=$('freqFrontWrap'); if(ff)ff.classList.toggle('hidden', ctrlTab==='length' || (ctrlTab==='soundtempo' && S.tempoFollow));
 }
 function applyTempoFollow(){if(S.tempoFollow){S.tempo=breathCycle();}syncTempoUI();}
-$('soundFollowBtn').onclick=()=>{S.tempoFollow=!S.tempoFollow;clearPreset();applyTempoFollow();};
+$('soundFollowBtn').onclick=()=>{S.tempoFollow=!S.tempoFollow;clearPreset();
+  if(!S.tempoFollow){S.tempo=S.inhale;}
+  applyTempoFollow();syncSoundSubtabs();};
 $('soundInBtn').onclick=()=>{S.soundBreathIn=!S.soundBreathIn;syncSoundSubtabs();};
 $('soundOutBtn').onclick=()=>{S.soundBreathOut=!S.soundBreathOut;syncSoundSubtabs();};
 
