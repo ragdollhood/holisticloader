@@ -179,12 +179,13 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   #brand{top:max(96px,calc(env(safe-area-inset-top) + 86px))}
   #topNavLogo{height:28px}
   #topTabs .tab{padding:8px 13px;font-size:11px}
-  #donateFixed{height:30px;padding:0 10px}
+  #donateFixed{height:30px;width:38px;padding:0;justify-content:center}
   #donateFixed span{display:none}
 
   /* ---- mobile icon rearrangement ---- */
   /* contact icon: top-left, highest */
-  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47;height:30px;padding:0 10px}
+  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47;height:30px;width:38px;padding:0;justify-content:center}
+  #contactBtn.open{width:auto;padding:0 11px;justify-content:flex-start}
   /* facebook icon: top-right, highest */
   #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
   /* instagram icon removed on mobile */
@@ -336,7 +337,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 
 .block{padding:16px 0;border-top:1px solid var(--line)}
 .block:first-child{border-top:none;padding-top:6px}
-.blk-lbl{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:13px}
+.blk-lbl{display:flex;justify-content:center;align-items:center;text-align:center;font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:13px}
 .blk-lbl .v{color:var(--gold);letter-spacing:.05em;font-size:13px;text-transform:none}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{padding:10px 15px;border-radius:999px;font-size:13.5px;border:1px solid var(--line);background:rgba(244,241,234,.04);color:var(--ink);transition:all .2s ease}
