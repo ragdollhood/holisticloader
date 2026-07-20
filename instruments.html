@@ -220,47 +220,6 @@
   .donate .ppmark{flex:0 0 auto;background:#fff;border-radius:5px;padding:2px}
   .donate:active{transform:scale(.96)}
   .donate-row{text-align:center}
-  /* flytande Silence-knapp */
-  #silence{
-    position:fixed;right:16px;bottom:16px;z-index:50;
-    width:62px;height:62px;border-radius:50%;
-    font-family:inherit;font-size:11px;font-weight:700;letter-spacing:.04em;
-    color:#1a0e2a;background:radial-gradient(circle at 38% 34%, #fff, var(--gold) 55%, #9a6a1a);
-    border:none;box-shadow:0 4px 16px rgba(0,0,0,.45), 0 0 18px rgba(255,217,138,.5);
-    cursor:pointer;
-  }
-  #silence:active{transform:scale(.92)}
-  /* flytande Random mix-knapp */
-  #mixBtn{
-    position:fixed;left:16px;bottom:16px;z-index:50;
-    width:62px;height:62px;border-radius:50%;line-height:1.15;
-    font-family:inherit;font-size:11px;font-weight:700;letter-spacing:.03em;
-    color:#1a0e2a;background:radial-gradient(circle at 38% 34%, #fff, var(--violet) 55%, #4a2f8a);
-    border:none;box-shadow:0 4px 16px rgba(0,0,0,.45), 0 0 18px rgba(201,168,255,.5);
-    cursor:pointer;
-  }
-  #mixBtn:active{transform:scale(.92)}
-  #mixBtn.on{color:#1a0e2a;background:radial-gradient(circle at 38% 34%, #fff, #ff9a9a 55%, #a83a3a);box-shadow:0 4px 16px rgba(0,0,0,.45),0 0 18px rgba(255,120,120,.6)}
-  #mixMenu{
-    position:fixed;left:16px;bottom:88px;z-index:51;
-    display:flex;flex-direction:column;gap:5px;
-    background:rgba(20,14,30,.92);border:1px solid var(--line);border-radius:16px;
-    padding:12px;backdrop-filter:blur(8px);
-    box-shadow:0 8px 28px rgba(0,0,0,.5);
-  }
-  #mixMenu .mix-title{font-size:10px;letter-spacing:.18em;color:var(--soft);text-transform:uppercase;text-align:center;margin-bottom:4px}
-  #mixMenu button{
-    font-family:inherit;font-size:12px;letter-spacing:.06em;color:var(--ink);
-    background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;
-    padding:8px 18px;cursor:pointer;
-  }
-  #mixMenu button:active{color:var(--violet);border-color:var(--violet)}
-  #mixMenu[hidden]{display:none}
-  @supports(padding:max(0px)){
-    #silence{right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom))}
-    #mixBtn{left:max(16px,env(safe-area-inset-left));bottom:max(16px,env(safe-area-inset-bottom))}
-    #mixMenu{left:max(16px,env(safe-area-inset-left));bottom:max(88px,calc(env(safe-area-inset-bottom) + 72px))}
-  }
   /* per-instrument: tempo- och längd-rullistor bredvid REPEAT-knappen */
   .rand-tempo,.rand-dur{
     font-family:inherit;font-size:10.5px;letter-spacing:.04em;color:var(--ink);
@@ -986,19 +945,6 @@
   Human hearing spans, at its best, roughly 20 Hz to 20,000 Hz. Start at a low volume, especially with headphones. And one cosmic truth: in real space nothing can be heard at all – sound needs air. These tones stay safely here with you.
 </p>
 
-<button id="silence" aria-label="Silence all sound">Silence</button>
-<button id="mixBtn" aria-label="Random mix">Random<br>mix</button>
-<div id="mixMenu" hidden>
-  <div class="mix-title">Random mix · length</div>
-  <button data-sec="60">1 min</button>
-  <button data-sec="180">3 min</button>
-  <button data-sec="300">5 min</button>
-  <button data-sec="600">10 min</button>
-  <button data-sec="900">15 min</button>
-  <button data-sec="1800">30 min</button>
-  <button data-sec="3600">60 min</button>
-</div>
-
 <script>
 (function(){
   const FMIN=20, FMAX=20000;
@@ -1387,7 +1333,7 @@
   }
   function scheduleSuspend(){
     clearTimeout(suspendTimer);
-    if(playing||rubbing.size||holds.size||recorder||medTO) return;
+    if(playing||rubbing.size||holds.size||recorder) return;
     // pausa först efter en lång stilla stund — och bara om sidan är dold,
     // så att ett tryck aldrig möter en sovande ljudmotor
     const wait=Math.max(0,(busyUntil-(ac?ac.currentTime:0)))*1000+2500+roomTail*1000;
@@ -2991,102 +2937,6 @@
       startLoop(+(tempoSel?tempoSel.value:80),+(durSel?durSel.value:30));
     });
   });
-
-  // ---- Random sounds · 1 min meditation ----
-  let medTO=null, medTick=null, medEnd=0;
-  function medGlow(wrapId,pal){
-    litWrap(wrapId);
-    const c=wrapCenter(wrapId);
-    if(!reduced) bloom(c[0],c[1],pal==='bowl'?'225,210,255':'255,200,140');
-  }
-  const MED_EVENTS=[
-    [3,function(){strikeBowl();medGlow('bowlWrap','bowl');cosmicBoost(.35,'bowl',true);}],
-    [2,function(){strikeGong(.3+Math.random()*.5);medGlow('gongWrap','gong');cosmicBoost(.4,'gong',true);}],
-    [3,function(){const i=1+Math.floor(Math.random()*8);strikeHand(handF()*HP_FIELDS[i].ratio,true);hpGlowAt(i);litWrap('handWrap');cosmicBoost(.3,'hand',true);}],
-    [3,function(){breeze();litWrap('chimeWrap');}],
-    [2,function(){let n=3+Math.floor(Math.random()*3),s=Math.floor(Math.random()*12);
-      for(let k=0;k<n;k++)(function(k){setTimeout(function(){pluckHarp(harpFreq(s+k*2),true)},k*130)})(k);
-      medGlow('harpWrap','harp');cosmicBoost(.3,'harp',true);}],
-    [3,function(){strikeTongue(tongueF()*TONGUE_R[Math.floor(Math.random()*11)],true);medGlow('tongueWrap','hand');cosmicBoost(.25,'hand',true);}],
-    [3,function(){pluckSans(sansF()*SANS_R[Math.floor(Math.random()*9)],true);medGlow('sansWrap','harp');cosmicBoost(.2,'harp',true);}],
-    [2,function(){pluckMono();medGlow('monoWrap','gong');cosmicBoost(.3,'gong',true);}],
-    [2,function(){panNote(panF()*Math.pow(2,[0,2,4,7,9][Math.floor(Math.random()*5)]/12),true);medGlow('panWrap','harp');cosmicBoost(.2,'harp',true);}],
-    [2,function(){shamanHit(.2,true);setTimeout(function(){if(ac)shamanHit(.25,true)},150);medGlow('shamanWrap','hand');cosmicBoost(.25,'hand',true);}],
-    [2,function(){oceanSplash();medGlow('oceanWrap','bowl');cosmicBoost(.3,'bowl',true);}],
-    [2,function(){strikeTri(true);medGlow('triWrap','harp');cosmicBoost(.2,'harp',true);}],
-    [2,function(){djembeHit(.2,true);setTimeout(function(){if(ac)djembeHit(.9,true)},200);medGlow('djembeWrap','hand');cosmicBoost(.25,'hand',true);}],
-    [2,function(){rainBurst(2.2+Math.random()*1.2);medGlow('rainWrap','bowl');cosmicBoost(.25,'bowl',true);}],
-    [1,function(){thunderBoom();if(!reduced)lightningWrap('thunderWrap');medGlow('thunderWrap','gong');cosmicBoost(.55,'gong',true);}]
-  ];
-  let MED_POOL=[];
-  MED_EVENTS.forEach(function(ev){for(let i=0;i<ev[0];i++)MED_POOL.push(ev[1]);});
-  function medStop(){
-    clearTimeout(medTO); clearInterval(medTick);
-    medTO=null; medTick=null;
-    $('mixBtn').innerHTML='Random<br>mix';
-    $('mixBtn').classList.remove('on');
-    $('mixMenu').hidden=true;
-    scheduleSuspend();
-  }
-  function medNextEvent(){
-    if(silenced){medStop();return;}
-    if(Date.now()>=medEnd){medStop();return;}
-    try{ MED_POOL[Math.floor(Math.random()*MED_POOL.length)](); }catch(err){}
-    medTO=setTimeout(medNextEvent,1100+Math.random()*2400);
-  }
-  async function medStart(sec){
-    await ensureAudio();
-    medEnd=Date.now()+sec*1000;
-    $('mixBtn').classList.add('on');
-    medNextEvent();
-    medTick=setInterval(function(){
-      const s=Math.max(0,Math.ceil((medEnd-Date.now())/1000));
-      $('mixBtn').innerHTML='■<br>'+Math.floor(s/60)+':'+('0'+s%60).slice(-2);
-    },400);
-  }
-  // tryck på Random mix: spelar → stoppa, annars visa/dölj längdmenyn
-  $('mixBtn').addEventListener('click',function(e){
-    e.stopPropagation();
-    if(medTO){ medStop(); return; }
-    $('mixMenu').hidden=!$('mixMenu').hidden;
-  });
-  // välj längd i menyn → starta direkt
-  document.querySelectorAll('#mixMenu button').forEach(function(b){
-    b.addEventListener('click',function(e){
-      e.stopPropagation();
-      $('mixMenu').hidden=true;
-      medStart(+b.dataset.sec);
-    });
-  });
-  // tryck utanför menyn stänger den
-  document.addEventListener('pointerdown',function(e){
-    if($('mixMenu').hidden) return;
-    if(e.target.closest && (e.target.closest('#mixMenu')||e.target.closest('#mixBtn'))) return;
-    $('mixMenu').hidden=true;
-  });
-
-  // ---- flytande Silence: allt ljud tystnar inom en halv sekund ----
-  function silenceAll(){
-    // stoppa alla pågående slumpspel och meditation
-    if(medTO) medStop();
-    Array.from(randLoops.keys()).forEach(stopRandLoop);
-    if(typeof playing!=='undefined') playing=false;
-    silenced=true;                    // hindrar inbokade/loopande toner från att spela vidare
-    if(!ac) return;
-    const t=ac.currentTime, R=0.4;
-    function kill(g){ if(g){ g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+R); } }
-    activeStrikes.forEach(function(s){s.gains.forEach(kill)});
-    activeStrikes=[];
-    [gCluster,bSing,monoG,oceanG,thundG,rainG,nafG,env].forEach(kill);
-    kill(master);                     // slutsteget: torrt ljud, eko OCH rumssvans tystnar
-    if(typeof setUI==='function'){ try{setUI(false)}catch(e){} }
-    else { $('toggle').textContent='▶ PLAY'; $('toggle').classList.remove('on'); }
-    busyUntil=t+R;
-    scheduleSuspend();
-  }
-  // reagera på pointerdown (pålitligast på touch) och spärra så tystnaden inte hävs av samma tryck
-  $('silence').addEventListener('pointerdown',function(e){ e.preventDefault(); e.stopPropagation(); silenceAll(); });
-  $('silence').addEventListener('click',function(e){ e.preventDefault(); silenceAll(); });
 
   updateReadout();
   retune();
