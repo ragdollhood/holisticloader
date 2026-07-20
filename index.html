@@ -194,6 +194,8 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
+  /* session length: show the slider's live value beside the heading on mobile */
+  .reel-label .kw-val.show{display:inline}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
@@ -236,10 +238,14 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 #front.gone{opacity:0;transform:translateY(24px);pointer-events:none}
 .reel-label{text-align:center;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;white-space:nowrap}
 .reel-label .kw{font-size:1.05em;color:var(--gold);font-weight:600;letter-spacing:.1em}
+.reel-label .kw-val{display:none;font-size:1.05em;color:var(--gold);font-weight:600;letter-spacing:.05em;margin-left:8px;font-variant-numeric:tabular-nums;
+  text-shadow:0 0 10px rgba(231,201,162,.75),0 0 22px rgba(231,201,162,.4)}
 #reelLabel,#soundLabelFront{margin-bottom:3px}
 .freqfront{display:flex;flex-direction:column;align-items:stretch;gap:7px;max-width:420px;margin:0 auto 6px;padding:0 6px}
 #freqLabelFront{margin-top:0}
 .freqfront .v{text-align:center;font-size:12px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em}
+.timer-glow{text-align:center;font-size:15px;font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em;
+  text-shadow:0 0 10px rgba(231,201,162,.75),0 0 22px rgba(231,201,162,.4);margin:2px 0 0}
 
 /* ===== shared control tab bar (Frequency / Resonance / Breathing tempo / Sound tempo / Session / Presets) ===== */
 #ctrlTabs{display:flex;justify-content:center;gap:0;max-width:420px;margin:0 auto 8px;padding:0 6px}
@@ -545,7 +551,7 @@ body.immersive #brand{opacity:0}
       <div class="iscroll" id="soundScrollFront"></div>
       <svg class="scrollcue" id="soundCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
     </div>
-    <div class="reel-label" id="freqLabelFront"><span class="kw" id="ctrlKw">My frequency</span></div>
+    <div class="reel-label" id="freqLabelFront"><span class="kw" id="ctrlKw">My frequency</span><span class="kw-val" id="ctrlKwVal"></span></div>
     <div id="ctrlTabs" role="tablist" aria-label="Sound &amp; breath controls">
       <button class="ctrl-tab ctrl-tab-icon active" id="ctrlTabFreq" data-ctrl="freq" role="tab" aria-selected="true" aria-label="Frequency">
         <svg viewBox="0 0 24 24"><path d="M2 12c1.5-5 3-5 4.5 0s3 5 4.5 0 3-5 4.5 0 3 5 4.5 0"/></svg>
@@ -572,6 +578,7 @@ body.immersive #brand{opacity:0}
     </div>
     <div class="freqfront hidden" id="lengthFrontWrap">
       <input type="range" id="timerSlider" min="1" max="60" step="1" value="10">
+      <span class="timer-glow" id="timerLiveVal">10 min</span>
       <div class="chips" id="timerChips" style="justify-content:center"></div>
     </div>
     <div class="breath-subtabs hidden" id="breathSubTabs" role="tablist" aria-label="Breath phase">
@@ -935,6 +942,7 @@ function syncCtrlSlider(){
     kw.textContent='My session length';
   }
   syncBreathBadges();
+  updateLengthHeaderVal();
 }
 function renderCtrlTabs(){
   document.querySelectorAll('.ctrl-tab').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});
@@ -1066,7 +1074,14 @@ function setSound(on){S.soundOn=on;
 const TIMERS=[1,5,10,20];
 function renderTimers(){const w=$('timerChips');if(!w)return;w.innerHTML='';
   TIMERS.forEach(m=>{const b=document.createElement('button');b.className='chip'+(m===S.timerMin?' active':'');b.textContent=m+' min';
-    b.onclick=()=>setTimer(m);w.appendChild(b);});}
+    b.onclick=()=>setTimer(m);w.appendChild(b);});
+  updateTimerGlow();}
+function updateTimerGlow(){const g=$('timerLiveVal'); if(g)g.textContent=S.timerMin+' min'; updateLengthHeaderVal();}
+function updateLengthHeaderVal(){
+  const el=$('ctrlKwVal'); if(!el)return;
+  if(ctrlTab==='length'){el.textContent=S.timerMin+' min';el.classList.add('show');}
+  else{el.classList.remove('show');el.textContent='';}
+}
 function setTimer(m){m=Math.max(1,Math.min(60,Math.round(m)));S.timerMin=m;
   const sl=$('timerSlider'); if(sl&&+sl.value!==m)sl.value=m;
   renderTimers();
