@@ -1022,7 +1022,8 @@ function renderBreathSubtabs(){
   });
 }
 function setCtrlTab(tab){ctrlTab=tab;renderCtrlTabs();syncCtrlSlider();
-  if(tab==='length'){renderTimers();}}
+  if(tab==='length'){renderTimers();}
+  positionOrb();}
 document.querySelectorAll('.ctrl-tab[data-ctrl]').forEach(b=>b.addEventListener('click',()=>setCtrlTab(b.dataset.ctrl)));
 /* Sound tempo & Presets open the bottom panel instead of swapping the inline slider */
 function openPanelFromTab(btn,name){
