@@ -1276,7 +1276,7 @@ function positionOrb(){
   const b=$('brand').getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
   if(!r.height) return;
   const oh=ow.offsetHeight;
-  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2);
+  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38);
   ow.style.marginTop=mt+'px';
   updateLensGeom();
 }
