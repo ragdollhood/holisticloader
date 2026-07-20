@@ -150,7 +150,7 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   pointer-events:none;
   transition:opacity .6s ease;
 }
-#brandLogo{display:inline-block;height:clamp(80px,14vw,180px);width:auto;max-width:80vw;
+#brandLogo{display:inline-block;max-height:clamp(80px,14vw,180px);height:auto;width:auto;max-width:80vw;object-fit:contain;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.5));
   font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
   font-size:clamp(22px,5vw,42px);line-height:1;color:#f4f1ea}
@@ -185,6 +185,18 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   #topTabs .tab{padding:8px 13px;font-size:11px}
   #donateFixed{padding:8px 10px}
   #donateFixed span{display:none}
+
+  /* ---- mobile icon rearrangement ---- */
+  /* contact icon: top-left, highest */
+  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47}
+  /* donate button: left side, just below the contact icon */
+  #donateWrap{top:calc(max(12px,env(safe-area-inset-top)) + 46px)}
+  /* facebook icon: top-right, highest */
+  #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
+  /* instagram icon removed on mobile */
+  #shareIgTop{display:none}
+  /* the row that used to hold fb/ig/contact is now empty since those are fixed elsewhere */
+  #donateSecondRow{display:none}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
