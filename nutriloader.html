@@ -287,7 +287,7 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
 .chip.flash{animation:chipflash 1.4s ease 2}
 
 /* ---------- header ---------- */
-header{position:relative;text-align:center;padding:12px 70px 10px}
+header{position:relative;text-align:center;padding:4px 70px 10px}
 header h1{
   font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;
   font-size:clamp(34px,5.4vw,58px);letter-spacing:.32em;text-indent:.32em;
@@ -319,13 +319,18 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
 .shareIconBtn.shareIg{background:radial-gradient(circle at 30% 107%,#fdf497,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%)}
 #supportRow .shareRow{gap:6px}
 #langBtn{
-  position:absolute;top:4px;right:26px;display:flex;align-items:center;gap:8px;
+  position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 90px);left:max(16px,env(safe-area-inset-left));
+  display:flex;align-items:center;gap:8px;
   border:1px solid var(--line);background:var(--panel);border-radius:999px;
   padding:1px 1px;font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--ink);
   box-shadow:0 3px 10px rgba(85,70,55,.10);transition:transform .15s ease;
-  z-index: 9000;}
+  z-index: 46;}
 #langBtn:hover{transform:translateY(-1px)}
 #langBtn .flag{width:22px;height:15px;border-radius:2px;overflow:hidden;display:block;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+/* below 560px the facebook icon jumps to fixed top-right, so the flag follows it there */
+@media(max-width:560px){
+  #langBtn{top:calc(max(12px,env(safe-area-inset-top)) + 30px);left:auto;right:max(16px,env(safe-area-inset-right));}
+}
 
 /* ---------- layout ---------- */
 .layout{
@@ -669,8 +674,7 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
   #nutriBody{grid-template-columns:1fr}
 }
 @media (max-width:680px){
-  header{padding:58px 20px 6px}
-  #langBtn{top:12px;right:14px}
+  header{padding:42px 20px 6px}
   #resetBtnTop{padding:6px 11px;font-size:11.5px}
   #plateZone{height:480px}
   #bars{grid-template-columns:1fr}
@@ -924,7 +928,7 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
   --tn-gold:#ffd98a;
   --tn-violet:#c9a8ff;
 }
-body{padding-top:max(150px,calc(env(safe-area-inset-top) + 134px))}
+body{padding-top:max(122px,calc(env(safe-area-inset-top) + 106px))}
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,4,9,.85) 0%,rgba(6,4,9,.5) 65%,transparent 100%)}
