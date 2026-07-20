@@ -972,14 +972,14 @@ body{padding-top:max(150px,calc(env(safe-area-inset-top) + 134px))}
   #topNavLogo{height:28px}
   #topNavTitle{font-size:13px}
   #topTabs .tab{padding:8px 13px;font-size:11px}
-  #donateFixed{padding:8px 14px;font-size:11px}
+  #donateFixed{height:30px;padding:0 14px;font-size:11px}
   #donateFixed span{display:none}
 
   /* ---- mobile icon rearrangement ---- */
   /* contact icon: top-left, highest */
-  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47}
-  /* donate button: left side, just below the contact icon */
-  #donateWrap{top:calc(max(12px,env(safe-area-inset-top)) + 46px)}
+  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47;height:30px;padding:0 10px}
+  /* donate button: left side, just below the contact icon — sized to fit above the gold line under the tabs */
+  #donateWrap{top:calc(max(12px,env(safe-area-inset-top)) + 34px)}
   /* facebook icon: top-right, highest */
   #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
   /* instagram icon removed on mobile */
