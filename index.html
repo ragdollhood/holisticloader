@@ -194,8 +194,9 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
-  /* session length: show the slider's live value beside the heading on mobile */
-  .reel-label .kw-val.show{display:inline}
+  /* preset active: hide the Breathing / Sound Healing / Nutrition tabs and the line under them */
+  body.preset-active #topTabs,
+  body.preset-active #topNavLine{display:none}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
@@ -697,7 +698,8 @@ const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'tibetan_bowl', freq:432, tempo:12, tempoFollow:true,
   animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false};
 const userImages = [];
-function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
+function clearPreset(){if(S.preset){S.preset=null;renderPresets();}syncPresetTabsVisibility();}
+function syncPresetTabsVisibility(){document.body.classList.toggle('preset-active',!!S.preset);}
 
 /* backgrounds */
 const bgA=$('bgA'), bgB=$('bgB'); let bgFront=bgA, bgBack=bgB;
@@ -1138,6 +1140,7 @@ function applyPreset(p){
   S.animMode=p.anim;S.timerMin=p.len;S.preset=p.id;
   if(p.bg)setBackground(p.bg);
   syncControls();autoOpenTone();renderPresets();preview();
+  syncPresetTabsVisibility();
 }
 function syncControls(){
   updateFreq();
