@@ -179,14 +179,14 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   #brand{top:max(96px,calc(env(safe-area-inset-top) + 86px))}
   #topNavLogo{height:28px}
   #topTabs .tab{padding:8px 13px;font-size:11px}
-  #donateFixed{padding:8px 10px}
+  #donateFixed{height:30px;padding:0 10px}
   #donateFixed span{display:none}
 
   /* ---- mobile icon rearrangement ---- */
   /* contact icon: top-left, highest */
-  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47}
-  /* donate button: left side, just below the contact icon */
-  #donateWrap{top:calc(max(12px,env(safe-area-inset-top)) + 46px)}
+  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47;height:30px;padding:0 10px}
+  /* donate button: left side, just below the contact icon — sized to fit above the gold line under the tabs */
+  #donateWrap{top:calc(max(12px,env(safe-area-inset-top)) + 34px)}
   /* facebook icon: top-right, highest */
   #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
   /* instagram icon removed on mobile */
@@ -608,7 +608,7 @@ body.immersive #brand{opacity:0}
   <!-- PANEL -->
   <div id="panel">
     <div class="grip"></div>
-    <div id="panelTitle">My tempo</div>
+    <div id="panelTitle">My sound tempo</div>
     <div class="panel-body">
       <div class="tabpane" id="panesound">
         <div class="block">
@@ -619,16 +619,6 @@ body.immersive #brand{opacity:0}
           </button>
           <input type="range" id="tempo" min="1" max="15" step="0.5" value="10">
           <div class="hintline">Each tone lands with one full breath. Drag the slider to set your own pace instead.</div>
-        </div>
-        <div class="block">
-          <div class="blk-lbl"><span>Breathing tempo</span></div>
-          <div class="breath-fields">
-            <div class="bf"><label>Breathe in</label><div class="num"><span id="inNum">4</span>s</div><input type="range" id="inhale" min="2" max="10" step="1" value="4"></div>
-            <div class="bf"><label>Hold</label><div class="num"><span id="holdNum">7</span>s</div><input type="range" id="hold" min="0" max="8" step="1" value="7"></div>
-            <div class="bf"><label>Breathe out</label><div class="num"><span id="outNum">8</span>s</div><input type="range" id="exhale" min="2" max="12" step="1" value="8"></div>
-          </div>
-          <div class="presets" id="breathPresets"></div>
-          <div class="hintline" id="breathInfo"></div>
         </div>
       </div>
 
@@ -651,6 +641,16 @@ body.immersive #brand{opacity:0}
             <div class="frow" id="freqSolf"></div>
             <div class="hintline">These meanings come from sound-healing and spiritual traditions, not medical science.</div>
           </div>
+        </div>
+        <div class="block">
+          <div class="blk-lbl"><span>Breathing tempo</span></div>
+          <div class="breath-fields">
+            <div class="bf"><label>Breathe in</label><div class="num"><span id="inNum">4</span>s</div><input type="range" id="inhale" min="2" max="10" step="1" value="4"></div>
+            <div class="bf"><label>Hold</label><div class="num"><span id="holdNum">7</span>s</div><input type="range" id="hold" min="0" max="8" step="1" value="7"></div>
+            <div class="bf"><label>Breathe out</label><div class="num"><span id="outNum">8</span>s</div><input type="range" id="exhale" min="2" max="12" step="1" value="8"></div>
+          </div>
+          <div class="presets" id="breathPresets"></div>
+          <div class="hintline" id="breathInfo"></div>
         </div>
         <div class="block">
           <div class="blk-lbl"><span>Preset sessions</span></div>
@@ -928,7 +928,7 @@ function syncCtrlSlider(){
     slider.min=45;slider.max=963;slider.step=1;slider.value=Math.round(S.freq);
     val.textContent=`${fmtHz(S.freq)} Hz · ${noteName(S.freq)}`;
   }else if(ctrlTab==='tempo'){
-    kw.textContent='My tempo';
+    kw.textContent='My breathing tempo';
     slider.min=0;slider.max=15;slider.step=1;slider.value=S[breathPhase];
     val.textContent=`${BREATH_LABEL[breathPhase]} · ${S[breathPhase]} s`;
   }else if(ctrlTab==='resonance'){
@@ -939,12 +939,10 @@ function syncCtrlSlider(){
   syncBreathBadges();
 }
 function renderCtrlTabs(){
-  ['freq','tempo','resonance','length'].forEach(k=>{
-    const b=$('ctrlTab'+k.charAt(0).toUpperCase()+k.slice(1));
-    if(!b)return;
-    const on=(ctrlTab===k);
-    b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');
-  });
+  document.querySelectorAll('.ctrl-tab').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});
+  const idMap={freq:'ctrlTabFreq',tempo:'ctrlTabTempo',resonance:'ctrlTabResonance',length:'ctrlTabLength'};
+  const b=$(idMap[ctrlTab]);
+  if(b){b.classList.add('active');b.setAttribute('aria-selected','true');}
   const sub=$('breathSubTabs'); if(sub)sub.classList.toggle('hidden',ctrlTab!=='tempo');
   const ff=$('freqFrontWrap'); if(ff)ff.classList.toggle('hidden',ctrlTab==='length');
   const lf=$('lengthFrontWrap'); if(lf)lf.classList.toggle('hidden',ctrlTab!=='length');
@@ -1382,7 +1380,7 @@ function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingM
   $('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
 
 /* panel */
-const TITLES={sound:'My tempo',breath:'Breathing',preset:'Preset'};
+const TITLES={sound:'My sound tempo',breath:'Breathing',preset:'Preset'};
 function openPanel(name){document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('show',p.id==='pane'+name));
   $('panelTitle').textContent=TITLES[name];$('panel').classList.add('open');}
 
