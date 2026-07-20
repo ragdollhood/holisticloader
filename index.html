@@ -185,8 +185,6 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   /* ---- mobile icon rearrangement ---- */
   /* contact icon: top-left, highest */
   #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47;height:30px;padding:0 10px}
-  /* donate button: left side, just below the contact icon — sized to fit above the gold line under the tabs */
-  #donateWrap{top:calc(max(12px,env(safe-area-inset-top)) + 34px)}
   /* facebook icon: top-right, highest */
   #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
   /* instagram icon removed on mobile */
@@ -398,6 +396,10 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 #donateWrap{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto}
 @supports(padding:max(0px)){
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
+}
+/* donate button: left side, just below the contact icon on mobile — sized to fit above the gold line under the tabs */
+@media(max-width:560px){
+  #donateWrap{top:calc(max(12px,env(safe-area-inset-top)) + 34px)}
 }
 #donateNote{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.25;max-width:210px}
 .donate{display:inline-flex;align-items:center;gap:8px;font-family:'Outfit',system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;
@@ -698,8 +700,7 @@ const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'tibetan_bowl', freq:432, tempo:12, tempoFollow:true,
   animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false};
 const userImages = [];
-function clearPreset(){if(S.preset){S.preset=null;renderPresets();}syncPresetTabsVisibility();}
-function syncPresetTabsVisibility(){document.body.classList.toggle('preset-active',!!S.preset);}
+function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
 
 /* backgrounds */
 const bgA=$('bgA'), bgB=$('bgB'); let bgFront=bgA, bgBack=bgB;
@@ -1140,7 +1141,6 @@ function applyPreset(p){
   S.animMode=p.anim;S.timerMin=p.len;S.preset=p.id;
   if(p.bg)setBackground(p.bg);
   syncControls();autoOpenTone();renderPresets();preview();
-  syncPresetTabsVisibility();
 }
 function syncControls(){
   updateFreq();
@@ -1411,7 +1411,7 @@ function startSession(){
   $('sessToggles').classList.remove('hidden');
   setButtonsHidden(false);
   setSound(S.soundOn); setShowCircle(S.showCircle); setShowCue(S.showCue);
-  $('timerReadout').textContent=fmt(remainingMs/1000);$('panel').classList.remove('open');
+  $('timerReadout').textContent=fmt(remainingMs/1000);$('panel').classList.remove('open');document.body.classList.remove('preset-active');
   $('btnPause').classList.remove('paused');
   startScheduler();
 }
@@ -1445,14 +1445,15 @@ function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingM
 /* panel */
 const TITLES={sound:'My sound tempo',breath:'Breathing',preset:'Preset'};
 function openPanel(name){document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('show',p.id==='pane'+name));
-  $('panelTitle').textContent=TITLES[name];$('panel').classList.add('open');}
+  $('panelTitle').textContent=TITLES[name];$('panel').classList.add('open');
+  if(name==='preset')document.body.classList.add('preset-active');}
 
 /* wire up */
 $('orbStart').onclick =()=>startSession();
 $('reel').addEventListener('scroll',repositionOpen,{passive:true});
 window.addEventListener('resize',repositionOpen);
 $('orbHit').onclick   =()=>endSession();
-$('panelDone').onclick=()=>{$('panel').classList.remove('open');renderCtrlTabs();};
+$('panelDone').onclick=()=>{$('panel').classList.remove('open');document.body.classList.remove('preset-active');renderCtrlTabs();};
 $('btnPause').onclick =()=>{S.running?pauseSession():resumeSession();};
 $('btnEnd').onclick   =()=>endSession();
 let btnsHidden=false;
