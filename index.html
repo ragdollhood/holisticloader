@@ -216,13 +216,10 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 #orb{position:absolute;width:62%;height:62%;border-radius:50%;will-change:transform;
   box-shadow:0 0 44px 8px rgba(0,0,0,.18),0 0 60px 18px rgba(231,201,162,.10)}
 #center.live #orb{box-shadow:0 0 50px 10px rgba(0,0,0,.22),0 0 70px 22px rgba(231,201,162,.14)}
-#orbStart{position:absolute;z-index:5;width:50%;height:50%;border-radius:50%;display:grid;place-items:center;pointer-events:auto;
-  font-size:16px;letter-spacing:.3em;text-transform:uppercase;font-weight:600;color:#fff;text-shadow:0 1px 14px rgba(0,0,0,.85);
-  background:radial-gradient(circle,rgba(8,10,14,.5),transparent 72%);transition:opacity .4s ease,transform .15s ease}
-#orbStart::before{content:"";position:absolute;inset:-12%;border-radius:50%;border:2px solid rgba(255,255,255,.5);pointer-events:none;animation:startRing 2.8s ease-out infinite}
-@keyframes startRing{0%{transform:scale(.9);opacity:.6}70%{opacity:0}100%{transform:scale(1.45);opacity:0}}
+#orbStart{position:absolute;z-index:5;width:56%;height:56%;border-radius:50%;display:grid;place-items:center;pointer-events:auto;
+  background:none;border:none;padding:0;transition:opacity .4s ease,transform .15s ease}
+#orbStart img{width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
 #center.live #orbStart::before{display:none}
-@media(prefers-reduced-motion:reduce){#orbStart::before{animation:none;opacity:.4}}
 #orbStart:hover{transform:scale(1.05)}#orbStart:active{transform:scale(.97)}
 #center.live #orbStart{opacity:0;pointer-events:none}
 #orbHit{position:absolute;z-index:6;width:80%;height:80%;border-radius:50%;background:transparent;border:none;pointer-events:none;cursor:pointer}
@@ -444,6 +441,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .end-card h2{font-family:var(--display);font-weight:300;font-style:italic;font-size:clamp(30px,6vw,46px)}
 .end-card p{color:var(--muted);margin:12px 0 26px;font-weight:300;letter-spacing:.04em}
 body.immersive #brand{opacity:0}
+
 .sess-toggles{position:absolute;top:max(70px,calc(env(safe-area-inset-top) + 64px));left:18px;z-index:7;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-start}
 #sessBtns{display:flex;flex-direction:column;align-items:center;gap:8px}
 .sess-toggles.collapsed #sessBtns{display:none}
@@ -479,6 +477,38 @@ body.immersive #brand{opacity:0}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:8px}
 #contactBtn .ctext b{color:var(--gold);font-weight:600;letter-spacing:.12em;margin-right:5px}
 #contactBtn.hidden{display:none}
+
+/* "How to use" button — sits just under the gold line, top-left */
+#howToBtn{
+  position:fixed;top:max(112px,calc(env(safe-area-inset-top) + 96px));
+  left:max(16px,env(safe-area-inset-left));z-index:45;
+  font-family:inherit;font-size:11px;letter-spacing:.06em;color:var(--muted);
+  background:var(--glass);border:1px solid var(--line);border-radius:999px;
+  padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  cursor:pointer;transition:background .2s ease,transform .12s ease,opacity .5s ease;
+}
+#howToBtn:hover{background:rgba(244,241,234,.12)}
+#howToBtn:active{transform:scale(.97)}
+#howToBtn.hidden{display:none}
+body.immersive #howToBtn{opacity:0;pointer-events:none}
+
+/* info box, hidden until "How to use" is tapped */
+#howToBox{
+  position:fixed;top:calc(max(112px,calc(env(safe-area-inset-top) + 96px)) + 44px);
+  left:max(16px,env(safe-area-inset-left));transform:translateY(-6px) scale(.97);
+  z-index:46;max-width:180px;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:16px;
+  padding:16px 16px 18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
+}
+#howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+#howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+  font-weight:600;margin-bottom:10px;white-space:nowrap}
+#howToBox ol{list-style:none;display:flex;flex-direction:column;gap:8px}
+#howToBox li{display:flex;gap:7px;font-size:10.5px;line-height:1.45;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--muted)}
+#howToBox li b{color:var(--gold);font-weight:600;flex:0 0 auto}
+body.immersive #howToBox{display:none}
 </style>
 </head>
 <body>
@@ -521,6 +551,17 @@ body.immersive #brand{opacity:0}
   <div id="topNavLine"></div>
 </header>
 
+<button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">How to use</button>
+<div id="howToBox">
+  <h3>Choose your:</h3>
+  <ol>
+    <li><b>1.</b> Place.</li>
+    <li><b>2.</b> Sound</li>
+    <li><b>3.</b> Frequency / Breathing tempo / Session length</li>
+    <li><b>4.</b> Press start</li>
+  </ol>
+</div>
+
 <div id="stage">
   <div id="bgDrift"><div id="bgBreath"><div id="bgA"></div><div id="bgB"></div></div></div>
   <div id="shine"></div>
@@ -531,6 +572,7 @@ body.immersive #brand{opacity:0}
   <div id="scrim"></div>
 
   <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
+
   <div id="frontMeta">
   </div>
   <div id="timerCluster" class="hidden">
@@ -545,7 +587,7 @@ body.immersive #brand{opacity:0}
     <div id="orbWrap">
       <div id="orbGlow"></div>
       <div id="orb"></div>
-      <button id="orbStart">Start</button>
+      <button id="orbStart"><img src="images/start.png" alt="Start"></button>
       <button id="orbHit" aria-label="Tap the circle to end and return to start"></button>
       <div id="breathCue"><span id="breathCueTxt"></span></div>
     </div>
@@ -980,7 +1022,8 @@ function renderBreathSubtabs(){
   });
 }
 function setCtrlTab(tab){ctrlTab=tab;renderCtrlTabs();syncCtrlSlider();
-  if(tab==='length'){renderTimers();}}
+  if(tab==='length'){renderTimers();}
+  positionOrb();}
 document.querySelectorAll('.ctrl-tab[data-ctrl]').forEach(b=>b.addEventListener('click',()=>setCtrlTab(b.dataset.ctrl)));
 /* Sound tempo & Presets open the bottom panel instead of swapping the inline slider */
 function openPanelFromTab(btn,name){
@@ -1095,6 +1138,18 @@ function setSound(on){S.soundOn=on;
   document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
 }
 
+/* how to use: tap to reveal the "Choose your" steps box, tap again / click outside to close */
+{
+  const hBtn=$('howToBtn'), hBox=$('howToBox');
+  const hide=()=>{ if(hBox){hBox.classList.remove('show');} if(hBtn)hBtn.setAttribute('aria-expanded','false'); };
+  if(hBtn&&hBox){
+    hBtn.addEventListener('click',e=>{ e.stopPropagation();
+      const open=hBox.classList.toggle('show'); hBtn.setAttribute('aria-expanded',open?'true':'false'); });
+    document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
+  }
+}
+
 
 /* session length */
 const TIMERS=[1,5,10,20];
@@ -1128,7 +1183,7 @@ const PRESETS=[
 ];
 function renderPresets(){const w=$('presetGrid');if(!w)return;w.innerHTML='';
   PRESETS.forEach(p=>{const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'');
-    b.innerHTML=`<div class="picon" style="background-image:url(${PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`;
+    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`;
     b.onclick=()=>applyPreset(p);w.appendChild(b);});}
 function applyPreset(p){
   S.sound=p.sound;S.freq=p.freq;S.tempo=p.tempo;S.tempoFollow=false;
