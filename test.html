@@ -442,21 +442,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .end-card p{color:var(--muted);margin:12px 0 26px;font-weight:300;letter-spacing:.04em}
 body.immersive #brand{opacity:0}
 
-#howToBox{
-  position:fixed;top:50%;left:max(18px,env(safe-area-inset-left));transform:translateY(-50%);
-  z-index:6;max-width:172px;
-  background:var(--glass);border:1px solid var(--line);border-radius:16px;
-  padding:16px 16px 18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  transition:opacity .5s ease;
-}
-#howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
-  font-weight:600;margin-bottom:10px;white-space:nowrap}
-#howToBox ol{list-style:none;display:flex;flex-direction:column;gap:8px}
-#howToBox li{display:flex;gap:7px;font-size:10.5px;line-height:1.45;letter-spacing:.02em;
-  text-transform:uppercase;color:var(--muted)}
-#howToBox li b{color:var(--gold);font-weight:600;flex:0 0 auto}
-body.immersive #howToBox{opacity:0;pointer-events:none}
-@media(max-width:720px){#howToBox{display:none}}
 .sess-toggles{position:absolute;top:max(70px,calc(env(safe-area-inset-top) + 64px));left:18px;z-index:7;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-start}
 #sessBtns{display:flex;flex-direction:column;align-items:center;gap:8px}
 .sess-toggles.collapsed #sessBtns{display:none}
@@ -492,6 +477,38 @@ body.immersive #howToBox{opacity:0;pointer-events:none}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:8px}
 #contactBtn .ctext b{color:var(--gold);font-weight:600;letter-spacing:.12em;margin-right:5px}
 #contactBtn.hidden{display:none}
+
+/* "How to use" button — sits just under the gold line, top-left */
+#howToBtn{
+  position:fixed;top:max(112px,calc(env(safe-area-inset-top) + 96px));
+  left:max(16px,env(safe-area-inset-left));z-index:45;
+  font-family:inherit;font-size:11px;letter-spacing:.06em;color:var(--muted);
+  background:var(--glass);border:1px solid var(--line);border-radius:999px;
+  padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  cursor:pointer;transition:background .2s ease,transform .12s ease,opacity .5s ease;
+}
+#howToBtn:hover{background:rgba(244,241,234,.12)}
+#howToBtn:active{transform:scale(.97)}
+#howToBtn.hidden{display:none}
+body.immersive #howToBtn{opacity:0;pointer-events:none}
+
+/* info box, hidden until "How to use" is tapped */
+#howToBox{
+  position:fixed;top:calc(max(112px,calc(env(safe-area-inset-top) + 96px)) + 44px);
+  left:max(16px,env(safe-area-inset-left));transform:translateY(-6px) scale(.97);
+  z-index:46;max-width:180px;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:16px;
+  padding:16px 16px 18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
+}
+#howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+#howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+  font-weight:600;margin-bottom:10px;white-space:nowrap}
+#howToBox ol{list-style:none;display:flex;flex-direction:column;gap:8px}
+#howToBox li{display:flex;gap:7px;font-size:10.5px;line-height:1.45;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--muted)}
+#howToBox li b{color:var(--gold);font-weight:600;flex:0 0 auto}
+body.immersive #howToBox{display:none}
 </style>
 </head>
 <body>
@@ -534,6 +551,17 @@ body.immersive #howToBox{opacity:0;pointer-events:none}
   <div id="topNavLine"></div>
 </header>
 
+<button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">How to use</button>
+<div id="howToBox">
+  <h3>Choose your:</h3>
+  <ol>
+    <li><b>1.</b> Place.</li>
+    <li><b>2.</b> Sound</li>
+    <li><b>3.</b> Frequency / Breathing tempo / Session length</li>
+    <li><b>4.</b> Press start</li>
+  </ol>
+</div>
+
 <div id="stage">
   <div id="bgDrift"><div id="bgBreath"><div id="bgA"></div><div id="bgB"></div></div></div>
   <div id="shine"></div>
@@ -544,16 +572,6 @@ body.immersive #howToBox{opacity:0;pointer-events:none}
   <div id="scrim"></div>
 
   <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
-
-  <div id="howToBox">
-    <h3>Choose your:</h3>
-    <ol>
-      <li><b>1.</b> Place.</li>
-      <li><b>2.</b> Sound</li>
-      <li><b>3.</b> Frequency / Breathing tempo / Session length</li>
-      <li><b>4.</b> Press start</li>
-    </ol>
-  </div>
 
   <div id="frontMeta">
   </div>
@@ -1117,6 +1135,18 @@ function setSound(on){S.soundOn=on;
     const open=cBtn.classList.toggle('open'); cBtn.setAttribute('aria-expanded',open?'true':'false'); });
   document.addEventListener('click',e=>{ if(cBtn&&cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hide(); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
+}
+
+/* how to use: tap to reveal the "Choose your" steps box, tap again / click outside to close */
+{
+  const hBtn=$('howToBtn'), hBox=$('howToBox');
+  const hide=()=>{ if(hBox){hBox.classList.remove('show');} if(hBtn)hBtn.setAttribute('aria-expanded','false'); };
+  if(hBtn&&hBox){
+    hBtn.addEventListener('click',e=>{ e.stopPropagation();
+      const open=hBox.classList.toggle('show'); hBtn.setAttribute('aria-expanded',open?'true':'false'); });
+    document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
+  }
 }
 
 
