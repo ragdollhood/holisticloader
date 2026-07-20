@@ -263,6 +263,18 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 
 .breath-subtabs{display:flex;justify-content:center;gap:7px;max-width:420px;margin:8px auto 0;padding:0 6px}
 .breath-subtabs.hidden{display:none}
+.sound-toggles{display:flex;justify-content:center;gap:10px;max-width:420px;margin:10px auto 0;padding:0 6px}
+.sound-toggles.hidden{display:none}
+.sti{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:9px}
+.sti-lbl{display:flex;align-items:center;justify-content:center;gap:5px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3}
+.sti-ic{width:14px;height:14px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8}
+.swtoggle{position:relative;width:46px;height:26px;border-radius:999px;flex:0 0 auto;cursor:pointer;
+  background:rgba(244,241,234,.14);border:1px solid var(--line);transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
+.swtoggle .sw-knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#9a9a9a;
+  transition:transform .2s ease,background .2s ease,box-shadow .2s ease}
+.swtoggle.on{background:rgba(110,214,143,.22);border-color:rgba(110,214,143,.6);box-shadow:0 0 12px rgba(110,214,143,.45)}
+.swtoggle.on .sw-knob{transform:translateX(20px);background:#6ed68f;box-shadow:0 0 8px rgba(110,214,143,.85)}
+@media(prefers-reduced-motion:reduce){.swtoggle,.swtoggle .sw-knob{transition:none}}
 .breath-subtab{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;
   font-family:'Outfit',system-ui,sans-serif;font-size:10.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
   padding:7px 4px;border-radius:12px;color:var(--muted);background:rgba(244,241,234,.04);border:1px solid var(--line);
@@ -586,10 +598,19 @@ body.immersive #brand{opacity:0}
       <button class="breath-subtab" data-phase="hold" role="tab" aria-selected="false">Hold<span class="bs-val" id="bsValHold">4 sec</span></button>
       <button class="breath-subtab" data-phase="exhale" role="tab" aria-selected="false">Breath out<span class="bs-val" id="bsValExhale">4 sec</span></button>
     </div>
-    <div class="breath-subtabs hidden" id="soundSubTabs" role="group" aria-label="Sound options">
-      <button class="breath-subtab active" id="soundFollowBtn" aria-pressed="true">Sound follows your breath<span class="bs-val" id="soundFollowVal">on</span></button>
-      <button class="breath-subtab active" id="soundInBtn" aria-pressed="true">Sound breathing in<span class="bs-val" id="soundInVal">on</span></button>
-      <button class="breath-subtab active" id="soundOutBtn" aria-pressed="true">Sound breathing out<span class="bs-val" id="soundOutVal">on</span></button>
+    <div class="sound-toggles hidden" id="soundSubTabs" role="group" aria-label="Sound options">
+      <div class="sti">
+        <span class="sti-lbl">Sound follows breathing</span>
+        <button class="swtoggle on" id="soundFollowBtn" aria-pressed="true" aria-label="Sound follows breathing"><span class="sw-knob"></span></button>
+      </div>
+      <div class="sti">
+        <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe in</span>
+        <button class="swtoggle on" id="soundInBtn" aria-pressed="true" aria-label="Sound on breathe in"><span class="sw-knob"></span></button>
+      </div>
+      <div class="sti">
+        <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe out</span>
+        <button class="swtoggle on" id="soundOutBtn" aria-pressed="true" aria-label="Sound on breathe out"><span class="sw-knob"></span></button>
+      </div>
     </div>
   </div>
 
@@ -1019,9 +1040,9 @@ function syncTempoUI(){
   }
 }
 function syncSoundSubtabs(){
-  const f=$('soundFollowBtn'); if(f){f.classList.toggle('active',S.tempoFollow);f.setAttribute('aria-pressed',S.tempoFollow?'true':'false');const v=$('soundFollowVal');if(v)v.textContent=S.tempoFollow?'on':'off';}
-  const i=$('soundInBtn'); if(i){i.classList.toggle('active',S.soundBreathIn);i.setAttribute('aria-pressed',S.soundBreathIn?'true':'false');const v=$('soundInVal');if(v)v.textContent=S.soundBreathIn?'on':'off';}
-  const o=$('soundOutBtn'); if(o){o.classList.toggle('active',S.soundBreathOut);o.setAttribute('aria-pressed',S.soundBreathOut?'true':'false');const v=$('soundOutVal');if(v)v.textContent=S.soundBreathOut?'on':'off';}
+  const f=$('soundFollowBtn'); if(f){f.classList.toggle('on',S.tempoFollow);f.setAttribute('aria-pressed',S.tempoFollow?'true':'false');}
+  const i=$('soundInBtn'); if(i){i.classList.toggle('on',S.soundBreathIn);i.setAttribute('aria-pressed',S.soundBreathIn?'true':'false');}
+  const o=$('soundOutBtn'); if(o){o.classList.toggle('on',S.soundBreathOut);o.setAttribute('aria-pressed',S.soundBreathOut?'true':'false');}
 }
 function applyTempoFollow(){if(S.tempoFollow){S.tempo=breathCycle();}syncTempoUI();}
 $('soundFollowBtn').onclick=()=>{S.tempoFollow=!S.tempoFollow;clearPreset();applyTempoFollow();};
