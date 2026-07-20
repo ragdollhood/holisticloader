@@ -120,6 +120,12 @@
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   .sub{font-size:12.5px;color:var(--soft);margin-top:6px;text-align:center;letter-spacing:.08em}
+  .h1-desktop{display:none}
+  .h1-mobile{display:inline}
+  @media (min-width:900px){
+    .h1-desktop{display:inline}
+    .h1-mobile{display:none}
+  }
 
   .stage{
     position:relative;
@@ -497,7 +503,7 @@
 <div id="bgdim"></div>
 <canvas id="cosmos"></canvas>
 
-<h1>PLAY ON THE INSTRUMENTS</h1>
+<h1><span class="h1-desktop">PLAY ON THE INSTRUMENTS</span><span class="h1-mobile">TAP · DOUBLE TAP + HOLD and SWEEP</span></h1>
 <div class="donate-row">
 </div>
 
@@ -522,7 +528,7 @@
     <button class="opt-toggle" data-i="gong" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Crystal bowl · tap or circle it</div>
+  <div class="instr-label">Crystal bowl · tap or circle the rim</div>
   <div class="bowl-wrap" id="bowlWrap">
     <img src="images/crystal_bowl.jpg" alt="Transparent crystal singing bowl with sacred geometry and a mallet">
   </div>
