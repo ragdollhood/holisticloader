@@ -1182,7 +1182,7 @@ const PRESETS=[
 ];
 function renderPresets(){const w=$('presetGrid');if(!w)return;w.innerHTML='';
   PRESETS.forEach(p=>{const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'');
-    b.innerHTML=`<div class="picon" style="background-image:url(${PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`;
+    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`;
     b.onclick=()=>applyPreset(p);w.appendChild(b);});}
 function applyPreset(p){
   S.sound=p.sound;S.freq=p.freq;S.tempo=p.tempo;S.tempoFollow=false;
