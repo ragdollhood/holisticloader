@@ -2813,6 +2813,13 @@
 const VISIT_SUPABASE_URL = "https://ibytawdimgthoqwtbtgv.supabase.co";
 const VISIT_SUPABASE_KEY = "sb_publishable_X4l9e5OPXE9Cq4XVc1jm_A_Hb6tbJUO";
 
+/* owner's own visitor IDs — never counted as visits */
+const EXCLUDED_VISITOR_IDS = [
+  "183871a4-aa9b-4eaa-8668-2cd14de446c2",
+  "9fe82a0f-073b-43ac-b5ec-27e3637fc35e",
+  "bb5f4d85-4d84-448d-ad42-60480d8cbc1b"
+];
+
 function getVisitorId() {
   let id = localStorage.getItem("visitor_id");
 
@@ -2839,8 +2846,12 @@ async function registerVisit() {
     return;
   }
 
+  const visitorId = getVisitorId();
+  if (EXCLUDED_VISITOR_IDS.includes(visitorId)) {
+    return;
+  }
+
   try {
-    const visitorId = getVisitorId();
     const country = await getVisitorCountry();
 
     await fetch(`${VISIT_SUPABASE_URL}/rest/v1/visits`, {
