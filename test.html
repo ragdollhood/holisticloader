@@ -142,7 +142,7 @@
       top:max(74px,calc(env(safe-area-inset-top) + 60px));
       margin-top:-22px;
       width:92vw;
-      padding:7px 14px 7px;
+      padding:9px 14px 7px;
       border-radius:0 0 18px 18px;
     }
   }
@@ -737,6 +737,8 @@
     #tsPanel .faders-box .knob .top-spacer{display:none}
     #tsPanel .rooms-box{display:none}
     #tsPanel .rooms-box.mobile-open{display:block;margin-top:0}
+    #tsPanel .rooms-box .rooms-label{margin-top:0}
+    #tsPanel #rooms button{font-size:10px;padding:7px 2px}
     #tsPanel .rec-box{display:none}
     #tsPanel .rec-box.mobile-open{display:block;margin-top:0}
   }
@@ -797,7 +799,7 @@
 <div class="stage" id="stage">
   <canvas id="fx"></canvas>
 
-  <div class="instr-label">Gong · tap or drag your finger</div>
+  <div class="instr-label">Gong</div>
   <div class="gong-wrap" id="gongWrap">
     <img src="images/gong.jpg" alt="Golden gong engraved with celestial symbols">
   </div>
@@ -815,7 +817,7 @@
     <button class="opt-toggle" data-i="gong" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Crystal bowl · tap or circle it</div>
+  <div class="instr-label">Crystal bowl</div>
   <div class="bowl-wrap" id="bowlWrap">
     <img loading="lazy" src="images/crystal_bowl.jpg" alt="Transparent crystal singing bowl with sacred geometry and a mallet">
   </div>
@@ -833,7 +835,7 @@
     <button class="opt-toggle" data-i="bowl" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Handpan · tap the tone fields</div>
+  <div class="instr-label">Handpan</div>
   <div class="hand-wrap" id="handWrap">
     <img loading="lazy" src="images/handpan.jpg" alt="Dark steel handpan engraved with golden celestial patterns, seen from above">
   </div>
@@ -846,7 +848,7 @@
     <button class="opt-toggle" data-i="hand" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Tongue drum · tap the tongues</div>
+  <div class="instr-label">Tongue drum</div>
   <div class="tongue-wrap" id="tongueWrap">
     <img loading="lazy" src="images/tonguedrum.jpg" alt="Black steel tongue drum engraved with golden constellations, seen from above">
   </div>
@@ -860,7 +862,7 @@
   </div>
 
 
-  <div class="instr-label">Wind chimes · tap the tubes, or the wind sail for a breeze</div>
+  <div class="instr-label">Wind chimes</div>
   <div class="chime-wrap" id="chimeWrap">
     <img loading="lazy" src="images/chimes.jpg" alt="Dark bronze wind chimes engraved with golden celestial symbols, hanging in space">
   </div>
@@ -873,7 +875,7 @@
     <button class="opt-toggle" data-i="chime" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Triangle · tap for a shimmering ting</div>
+  <div class="instr-label">Triangle</div>
   <div class="tri-wrap" id="triWrap">
     <img loading="lazy" src="images/triangle.jpg" alt="Golden orchestral triangle with beater, hanging among galaxies">
   </div>
@@ -886,7 +888,7 @@
     <button class="opt-toggle" data-i="tri" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Harp · pluck a string, or sweep for a glissando</div>
+  <div class="instr-label">Harp</div>
   <div class="harp-wrap" id="harpWrap">
     <img loading="lazy" src="images/harpa.jpg" alt="Black and gold celestial harp engraved with stars and moons, standing in space">
   </div>
@@ -899,7 +901,7 @@
     <button class="opt-toggle" data-i="harp" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Sansula · pluck the tines, sweep for a ripple</div>
+  <div class="instr-label">Sansula</div>
   <div class="sans-wrap" id="sansWrap">
     <img loading="lazy" src="images/sansula.jpg" alt="Dark kalimba sansula with golden engraved tines on a starry soundboard">
   </div>
@@ -911,7 +913,7 @@
     <button class="opt-toggle" data-i="sans" data-opt="bpm">BPM</button>
     <button class="opt-toggle" data-i="sans" data-opt="time">TIME</button>
   </div>
-  <div class="instr-label">Monochord · tap to pluck, rub for a drone</div>
+  <div class="instr-label">Monochord</div>
   <div class="mono-wrap" id="monoWrap">
     <img loading="lazy" src="images/monochord.jpg" alt="Long black monochord engraved with moons and stars, floating in space">
   </div>
@@ -923,7 +925,7 @@
     <button class="opt-toggle" data-i="mono" data-opt="bpm">BPM</button>
     <button class="opt-toggle" data-i="mono" data-opt="time">TIME</button>
   </div>
-  <div class="instr-label">Pan flute · tap a pipe, sweep to ripple</div>
+  <div class="instr-label">Pan flute</div>
   <div class="pan-wrap" id="panWrap">
     <img loading="lazy" src="images/panflute.jpg" alt="Black pan flute with golden celestial engravings on its pipes">
   </div>
@@ -935,7 +937,7 @@
     <button class="opt-toggle" data-i="pan" data-opt="bpm">BPM</button>
     <button class="opt-toggle" data-i="pan" data-opt="time">TIME</button>
   </div>
-  <div class="instr-label">Native flute · <span class="hold-desktop">press and hold</span><span class="hold-mobile">DUBBEL TAP AND HOLD</span>, slide to change note</div>
+  <div class="instr-label">Native flute</div>
   <div class="naf-wrap" id="nafWrap">
     <img loading="lazy" src="images/native_american_fluit.jpg" alt="Native American style flute with an eagle head block and hanging feathers">
   </div>
@@ -947,7 +949,7 @@
     <button class="opt-toggle" data-i="naf" data-opt="bpm">BPM</button>
     <button class="opt-toggle" data-i="naf" data-opt="time">TIME</button>
   </div>
-  <div class="instr-label">Shaman drum · tap — center deep, rim sharp</div>
+  <div class="instr-label">Shaman drum</div>
   <div class="shaman-wrap" id="shamanWrap">
     <img loading="lazy" src="images/shaman_drum.jpg" alt="Shamanic frame drum with golden spirit animals and feathers">
   </div>
@@ -959,7 +961,7 @@
     <button class="opt-toggle" data-i="shaman" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Djembe · center bass, middle tone, rim slap</div>
+  <div class="instr-label">Djembe</div>
   <div class="djembe-wrap" id="djembeWrap">
     <img loading="lazy" src="images/djembe.jpg" alt="Carved wooden djembe drum with lotus mandala on its head">
   </div>
@@ -971,7 +973,7 @@
     <button class="opt-toggle" data-i="djembe" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Thunder drum · tap for thunder, rub for rumble</div>
+  <div class="instr-label">Thunder drum</div>
   <div class="thunder-wrap" id="thunderWrap">
     <img loading="lazy" src="images/thunder_drum.jpg" alt="Large dark drum with golden lightning across its head">
   </div>
@@ -983,7 +985,7 @@
     <button class="opt-toggle" data-i="thunder" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Ocean drum · rub to roll the waves, tap for a splash</div>
+  <div class="instr-label">Ocean drum</div>
   <div class="ocean-wrap" id="oceanWrap">
     <img loading="lazy" src="images/ocean_drum.jpg" alt="Ocean drum filled with beads forming a golden sea under moon phases">
   </div>
@@ -995,7 +997,7 @@
     <button class="opt-toggle" data-i="ocean" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Rainstick · tap for a shower, tilt with a drag</div>
+  <div class="instr-label">Rainstick</div>
   <div class="rain-wrap" id="rainWrap">
     <img loading="lazy" src="images/rainstick.jpg" alt="Engraved rainstick with feathers, drifting among galaxies">
   </div>
