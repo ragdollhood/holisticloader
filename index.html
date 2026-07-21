@@ -390,10 +390,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @supports(padding:max(0px)){
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
 }
-/* donate button: left side, just below the contact icon on mobile — sized to fit above the gold line under the tabs */
-@media(max-width:560px){
-  #donateWrap{top:calc(max(12px,env(safe-area-inset-top)) + 34px)}
-}
 #donateNote{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.25;max-width:210px}
 .donate{display:inline-flex;align-items:center;gap:8px;font-family:'Outfit',system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;
   background:linear-gradient(180deg,#f2c87a,#d9a85c);color:#2a1d0c;padding:8px 15px;border-radius:999px;box-shadow:0 8px 24px rgba(231,201,162,.32);transition:transform .12s ease,filter .2s ease}
@@ -476,8 +472,8 @@ body.immersive #brand{opacity:0}
 #contactBtn.hidden{display:none}
 
 @media(max-width:560px){
-  /* contact icon: top-left, highest — placed after the base rule so it wins the cascade */
-  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));
+  /* contact icon: top-left, right next to the donate button — placed after the base rule so it wins the cascade */
+  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:calc(max(16px,env(safe-area-inset-left)) + 46px);
     z-index:47;height:30px;width:38px;padding:0;justify-content:center}
   #contactBtn.open{width:auto;padding:0 11px;justify-content:flex-start}
 }

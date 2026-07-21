@@ -502,11 +502,9 @@
     #donateFixed span{display:none}
 
     /* ---- mobile icon rearrangement ---- */
-    /* contact icon: top-left, highest */
-    #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47;height:30px;padding:0;width:44px;box-sizing:border-box;justify-content:center}
+    /* contact icon: top-left, right next to the donate button */
+    #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:calc(max(16px,env(safe-area-inset-left)) + 52px);z-index:47;height:30px;padding:0;width:44px;box-sizing:border-box;justify-content:center}
     #contactBtn.open{width:auto;padding:0 11px;justify-content:flex-start}
-    /* donate button: left side, just below the contact icon — sized to fit above the gold line under the tabs */
-    #donateWrap{top:calc(max(12px,env(safe-area-inset-top)) + 34px)}
     /* facebook icon: top-right, highest */
     #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
     /* pull the h1 up closer to the gold line under the tabs on mobile */
