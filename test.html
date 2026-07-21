@@ -161,7 +161,7 @@
   .instr{display:flex;flex-direction:column;align-items:center;width:100%}
   /* desktop: sprid ut instrumenten i ett rutnät över skärmen */
   @media (min-width:900px){
-    .stage{width:96vw;max-width:1500px;flex-direction:row;flex-wrap:wrap;
+    .stage{width:96%;max-width:1500px;flex-direction:row;flex-wrap:wrap;
       align-items:flex-start;justify-content:center;gap:18px 28px}
     .instr{width:300px}
   }
@@ -535,14 +535,12 @@
       position:relative;
       width:194px;
       max-width:100%;
+      height:100%;
       max-height:100%;
-      overflow-y:auto;
+      overflow:hidden;
       margin-top:0;
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      grid-template-rows:auto auto auto auto auto;
-      column-gap:8px;
-      row-gap:8px;
+      display:flex;
+      flex-direction:column;
       padding:16px 14px 18px;
       /* samma ramstil som rubrikflikens, men rundad i alla hörn */
       border:1.5px solid var(--gold);
@@ -557,12 +555,6 @@
       background-size:auto,auto,cover;
       background-position:center,center,center;
       background-repeat:no-repeat,no-repeat,no-repeat;
-      grid-template-areas:
-        "title  title  title  title"
-        "info   info   info   info"
-        "vib    echo   reverb vol"
-        "rlabel rlabel rlabel rlabel"
-        "rooms  rooms  rooms  rooms";
     }
     /* stilla guldskimmer bakom faderna, ingen rörelse */
     #tsPanel::before{
@@ -578,21 +570,24 @@
       z-index:0;
     }
     #tsPanel > *{position:relative;z-index:1}
-    #tsPanel > h2{grid-area:title;margin-bottom:2px;font-size:9.5px;letter-spacing:.14em;flex-wrap:wrap;row-gap:4px;
+    #tsPanel > h2{flex:none;margin-bottom:2px;font-size:9.5px;letter-spacing:.14em;flex-wrap:wrap;row-gap:4px;
       background:rgba(6,4,9,.6);border-radius:10px;padding:5px 8px}
-    #tsPanel #tsInfoPanel{grid-area:info}
-    #tsPanel #vibKnob{grid-area:vib}
-    #tsPanel #echoKnob{grid-area:echo}
-    #tsPanel #reverbKnob{grid-area:reverb}
-    #tsPanel #volKnob{grid-area:vol}
-    #tsPanel .rooms-label{grid-area:rlabel;margin-top:0;text-align:center;
-      background:rgba(6,4,9,.55);border-radius:8px;padding:3px 6px;width:max-content;margin-inline:auto}
-    #tsPanel #rooms{grid-area:rooms;grid-template-columns:repeat(2,1fr)}
-    #tsPanel #rooms button{padding:7px 2px;font-size:10px}
+    #tsPanel #tsInfoPanel{flex:none}
 
-    /* varje regel blir en stående fader med fast längd (ca 3x tidigare), gruppen centreras i regelrutan */
+    /* stor, mörk, sammanhållande ruta bakom de fyra reglarna så de alla ser lika stora/jämna ut */
+    #tsPanel .faders-box{
+      flex:1 1 auto;min-height:0;
+      display:flex;align-items:stretch;justify-content:space-between;
+      gap:4px;
+      margin-top:10px;
+      padding:12px 8px 10px;
+      border-radius:16px;
+      background:rgba(6,4,9,.62);
+      border:1px solid rgba(255,217,138,.14);
+      box-shadow:inset 0 2px 8px rgba(0,0,0,.35);
+    }
     #tsPanel .knob{
-      margin-top:0;height:510px;min-height:0;
+      flex:1 1 0;min-width:0;min-height:0;margin-top:0;height:auto;
       display:flex;flex-direction:column;align-items:center;
     }
     #tsPanel .knob .top{
@@ -609,7 +604,7 @@
       -webkit-appearance:slider-vertical;
       width:6px;
       flex:1 1 auto;
-      min-height:60px;
+      min-height:0;
       margin:8px 0 4px;
     }
     #tsPanel .knob input[type="range"]::-webkit-slider-runnable-track{
@@ -621,6 +616,20 @@
     #tsPanel .knob input[type="range"]::-moz-range-track{
       width:6px;background:#241a30;
     }
+
+    /* likadan mörk, sammanhållande ruta runt rumsknapparna längst ner */
+    #tsPanel .rooms-box{
+      flex:none;margin-top:10px;
+      padding:10px 8px 10px;
+      border-radius:16px;
+      background:rgba(6,4,9,.62);
+      border:1px solid rgba(255,217,138,.14);
+      box-shadow:inset 0 2px 8px rgba(0,0,0,.35);
+    }
+    #tsPanel .rooms-label{margin:0 0 8px;text-align:center;
+      background:none;border-radius:0;padding:0;width:auto}
+    #tsPanel #rooms{grid-template-columns:repeat(2,1fr)}
+    #tsPanel #rooms button{padding:7px 2px;font-size:10px}
   }
 </style>
 </head>
@@ -910,28 +919,32 @@
       <dd>Overall loudness of the instruments.</dd>
     </dl>
   </div>
-  <div class="knob" id="vibKnob">
-    <div class="top"><span>Shimmer · beating</span><span id="vibVal">30 %</span></div>
-    <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer">
+  <div class="faders-box">
+    <div class="knob" id="vibKnob">
+      <div class="top"><span>Shimmer · beating</span><span id="vibVal">30 %</span></div>
+      <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer">
+    </div>
+    <div class="knob" id="echoKnob">
+      <div class="top"><span>Space echo</span><span id="echoVal">25 %</span></div>
+      <input type="range" id="echo" min="0" max="100" value="25" aria-label="Echo">
+    </div>
+    <div class="knob" id="reverbKnob">
+      <div class="top"><span>Reverb</span><span id="reverbVal">30 %</span></div>
+      <input type="range" id="reverb" min="0" max="100" value="30" aria-label="Reverb">
+    </div>
+    <div class="knob" id="volKnob">
+      <div class="top"><span>Volume</span><span id="volVal">35 %</span></div>
+      <input type="range" id="vol" min="0" max="100" value="35" aria-label="Volume">
+    </div>
   </div>
-  <div class="knob" id="echoKnob">
-    <div class="top"><span>Space echo</span><span id="echoVal">25 %</span></div>
-    <input type="range" id="echo" min="0" max="100" value="25" aria-label="Echo">
-  </div>
-  <div class="rooms-label">Room acoustics</div>
-  <div class="rooms" id="rooms">
-    <button data-r="dry">Dry</button>
-    <button data-r="temple" class="sel">Temple</button>
-    <button data-r="cathedral">Cathedral</button>
-    <button data-r="cave">Cave</button>
-  </div>
-  <div class="knob" id="reverbKnob">
-    <div class="top"><span>Reverb</span><span id="reverbVal">30 %</span></div>
-    <input type="range" id="reverb" min="0" max="100" value="30" aria-label="Reverb">
-  </div>
-  <div class="knob" id="volKnob">
-    <div class="top"><span>Volume</span><span id="volVal">35 %</span></div>
-    <input type="range" id="vol" min="0" max="100" value="35" aria-label="Volume">
+  <div class="rooms-box">
+    <div class="rooms-label">Room acoustics</div>
+    <div class="rooms" id="rooms">
+      <button data-r="dry">Dry</button>
+      <button data-r="temple" class="sel">Temple</button>
+      <button data-r="cathedral">Cathedral</button>
+      <button data-r="cave">Cave</button>
+    </div>
   </div>
 </div>
 </div>
