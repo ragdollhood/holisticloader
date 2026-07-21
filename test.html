@@ -1252,7 +1252,7 @@
   requestAnimationFrame(cosmosLoop);
 
   /* ================= LJUDMOTOR ================= */
-  let ac=null, master=null, analyser=null, strikeBus=null;
+  let ac=null, master=null, limiter=null, analyser=null, strikeBus=null;
   let mixBus=null, conv=null, revWet=null, mediaDest=null;
   let monoG=null, monoOscs=[], oceanG=null, oceanLP=null;
   let thundG=null, rainG=null;
@@ -1291,11 +1291,17 @@
       revWet=ac.createGain(); revWet.gain.value=0;
       mixBus.connect(master);
       mixBus.connect(conv); conv.connect(revWet).connect(master);
+      // slutlimiter: fångar alla toppar innan högtalarna så ljudet
+      // aldrig kan klippa/spricka, oavsett hur högt volymreglaget står
+      limiter=ac.createDynamicsCompressor();
+      limiter.threshold.value=-6; limiter.knee.value=6;
+      limiter.ratio.value=20; limiter.attack.value=.002; limiter.release.value=.3;
+      master.connect(limiter);
       analyser=ac.createAnalyser(); analyser.fftSize=1024;
-      master.connect(analyser).connect(ac.destination);
+      limiter.connect(analyser).connect(ac.destination);
       // inspelningsutgång
       mediaDest=ac.createMediaStreamDestination();
-      master.connect(mediaDest);
+      limiter.connect(mediaDest);
       setRoom(curRoom);
 
       osc=ac.createOscillator(); osc.type=curWave; osc.frequency.value=curFreq();
@@ -1479,8 +1485,8 @@
       const dec=(V.dec/Math.sqrt(r))*(.8+Math.random()*.4);
       maxDec=Math.max(maxDec,dec);
       const det=(4+sh*16)*(V.wob||1);
-      gains.push(partial(t0,f*r,v*w*.45,dec, det*(Math.random()-.5),V.att));
-      gains.push(partial(t0,f*r,v*w*.45,dec,-det*(Math.random()-.5),V.att));
+      gains.push(partial(t0,f*r,v*w*.22,dec, det*(Math.random()-.5),V.att));
+      gains.push(partial(t0,f*r,v*w*.22,dec,-det*(Math.random()-.5),V.att));
     });
     const nDur=V.crash?.6:.25;
     const nb=ac.createBufferSource();
@@ -1490,7 +1496,7 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=f*(V.noiseF+edge*2.5); bp.Q.value=V.noiseQ;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(V.crash?.6:.45),t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(V.crash?.35:.28),t0);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+nDur);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); gains.push(ng);
