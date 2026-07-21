@@ -1315,7 +1315,7 @@ function playVoice(type,freq,when,mult=1){
   if(cfg.noise){const ndur=cfg.noiseDur||.18,nb=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*ndur)),ctx.sampleRate),nd=nb.getChannelData(0);
     for(let i=0;i<nd.length;i++)nd[i]=(Math.random()*2-1)*Math.pow(1-i/nd.length,3);
     const ns=ctx.createBufferSource();ns.buffer=nb;const nf=ctx.createBiquadFilter();nf.type='bandpass';nf.frequency.value=f0*(cfg.noiseFreq||2.2);nf.Q.value=cfg.noiseQ||.7;
-    const ng=ctx.createGain();ng.gain.value=peak*cfg.noise;ns.connect(nf);nf.connect(ng);ng.connect(vg);ns.start(t);ns.stop(t+ndur+.05);}
+    const ng=ctx.createGain();ng.gain.setValueAtTime(.0001,t);ng.gain.linearRampToValueAtTime(peak*cfg.noise,t+.003);ng.gain.exponentialRampToValueAtTime(.0001,t+ndur);ns.connect(nf);nf.connect(ng);ng.connect(vg);ns.start(t);ns.stop(t+ndur+.05);}
 }
 function playFinal(){const ctx=audio.ctx,t=ctx.currentTime+.05;
   audio.revGain.gain.setValueAtTime(audio.revGain.gain.value,t);audio.revGain.gain.linearRampToValueAtTime(.8,t+.1);
