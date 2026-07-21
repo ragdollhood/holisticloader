@@ -737,7 +737,7 @@ body.immersive #howToBox{display:none}
 </div>
 
 <script>
-const IMAGES = [{"id": "bergen", "label": "Mountain lake", "data": "images/bergen.jpg"}, {"id": "ang", "label": "Wildflower meadow", "data": "images/ang.jpg"}, {"id": "hage", "label": "Misty pasture", "data": "images/hage.jpg"}, {"id": "strand", "label": "Tropical beach", "data": "images/strand.jpg"}, {"id": "sagoskog", "label": "Enchanted forest", "data": "images/sagoskog.jpg"}, {"id": "skog3", "label": "Birch forest", "data": "images/skog3.jpg"}, {"id": "korallrev", "label": "Coral reef", "data": "images/korallrev.jpg"}, {"id": "moln", "label": "Above the clouds", "data": "images/moln.jpg"}, {"id": "norrsken", "label": "Northern lights", "data": "images/norrsken.jpg"}, {"id": "rymden", "label": "Galaxy", "data": "images/rymden.jpg"}, {"id": "fro", "label": "Sprouting seed", "data": "images/fro.jpg"}, {"id": "ljusterapi", "label": "Light therapy room", "data": "images/ljusterapi.jpg"}, {"id": "pals", "label": "Soft fur", "data": "images/pals.jpg"}, {"id": "rymd2", "label": "Milky Way", "data": "images/rymd2.jpg"}, {"id": "universum", "label": "Cosmos", "data": "images/universum.jpg"}, {"id": "skog2", "label": "Sunlit forest", "data": "images/skog2.jpg"}, {"id": "bergen2", "label": "Mountain peak", "data": "images/bergen2.jpg"}, {"id": "bergen3", "label": "Tundra lake", "data": "images/bergen3.jpg"}, {"id": "meadow2", "label": "Golden meadow", "data": "images/meadow2.jpg"}, {"id": "beach2", "label": "Misty shore", "data": "images/beach2.jpg"}, {"id": "fantasy2", "label": "Fairy lake", "data": "images/fantasy2.jpg"}, {"id": "fantasy3", "label": "Fairy village", "data": "images/fantasy3.jpg"}, {"id": "pasture2", "label": "Red barn", "data": "images/pasture2.jpg"}, {"id": "pasture3", "label": "Country road", "data": "images/pasture3.jpg"}, {"id": "coral2", "label": "Reef garden", "data": "images/coral2.jpg"}, {"id": "coral3", "label": "Sunlit shallows", "data": "images/coral3.jpg"}];
+const IMAGES = [{"thumb": "images/thumbs/bergen.jpg", "id": "bergen", "label": "Mountain lake", "data": "images/bergen.jpg"}, {"thumb": "images/thumbs/ang.jpg", "id": "ang", "label": "Wildflower meadow", "data": "images/ang.jpg"}, {"thumb": "images/thumbs/hage.jpg", "id": "hage", "label": "Misty pasture", "data": "images/hage.jpg"}, {"thumb": "images/thumbs/strand.jpg", "id": "strand", "label": "Tropical beach", "data": "images/strand.jpg"}, {"thumb": "images/thumbs/sagoskog.jpg", "id": "sagoskog", "label": "Enchanted forest", "data": "images/sagoskog.jpg"}, {"thumb": "images/thumbs/skog3.jpg", "id": "skog3", "label": "Birch forest", "data": "images/skog3.jpg"}, {"thumb": "images/thumbs/korallrev.jpg", "id": "korallrev", "label": "Coral reef", "data": "images/korallrev.jpg"}, {"thumb": "images/thumbs/moln.jpg", "id": "moln", "label": "Above the clouds", "data": "images/moln.jpg"}, {"thumb": "images/thumbs/norrsken.jpg", "id": "norrsken", "label": "Northern lights", "data": "images/norrsken.jpg"}, {"thumb": "images/thumbs/rymden.jpg", "id": "rymden", "label": "Galaxy", "data": "images/rymden.jpg"}, {"thumb": "images/thumbs/fro.jpg", "id": "fro", "label": "Sprouting seed", "data": "images/fro.jpg"}, {"thumb": "images/thumbs/ljusterapi.jpg", "id": "ljusterapi", "label": "Light therapy room", "data": "images/ljusterapi.jpg"}, {"thumb": "images/thumbs/pals.jpg", "id": "pals", "label": "Soft fur", "data": "images/pals.jpg"}, {"thumb": "images/thumbs/rymd2.jpg", "id": "rymd2", "label": "Milky Way", "data": "images/rymd2.jpg"}, {"thumb": "images/thumbs/universum.jpg", "id": "universum", "label": "Cosmos", "data": "images/universum.jpg"}, {"thumb": "images/thumbs/skog2.jpg", "id": "skog2", "label": "Sunlit forest", "data": "images/skog2.jpg"}, {"thumb": "images/thumbs/bergen2.jpg", "id": "bergen2", "label": "Mountain peak", "data": "images/bergen2.jpg"}, {"thumb": "images/thumbs/bergen3.jpg", "id": "bergen3", "label": "Tundra lake", "data": "images/bergen3.jpg"}, {"thumb": "images/thumbs/meadow2.jpg", "id": "meadow2", "label": "Golden meadow", "data": "images/meadow2.jpg"}, {"thumb": "images/thumbs/beach2.jpg", "id": "beach2", "label": "Misty shore", "data": "images/beach2.jpg"}, {"thumb": "images/thumbs/fantasy2.jpg", "id": "fantasy2", "label": "Fairy lake", "data": "images/fantasy2.jpg"}, {"thumb": "images/thumbs/fantasy3.jpg", "id": "fantasy3", "label": "Fairy village", "data": "images/fantasy3.jpg"}, {"thumb": "images/thumbs/pasture2.jpg", "id": "pasture2", "label": "Red barn", "data": "images/pasture2.jpg"}, {"thumb": "images/thumbs/pasture3.jpg", "id": "pasture3", "label": "Country road", "data": "images/pasture3.jpg"}, {"thumb": "images/thumbs/coral2.jpg", "id": "coral2", "label": "Reef garden", "data": "images/coral2.jpg"}, {"thumb": "images/thumbs/coral3.jpg", "id": "coral3", "label": "Sunlit shallows", "data": "images/coral3.jpg"}];
 const PRESET_ICONS = {"gongbath": "images/gongbath.jpg", "earthom": "images/earthom.jpg", "moonsleep": "images/moonsleep.jpg", "sunrise": "images/sunrise.jpg", "heart": "images/heart.jpg", "crystal": "images/crystal.jpg", "saturn": "images/saturn.jpg", "forest": "images/forest.jpg"};
 const INSTRUMENT_ICONS = {"crystal_bowl": "images/crystal_bowl.jpg", "quartz_bowl": "images/quartz_bowl.jpg", "tibetan_bowl": "images/tibetan_bowl.jpg", "gong": "images/gong.jpg", "tibetansk_gong": "images/tibetansk_gong.jpg", "tam-tam_drum": "images/tam-tam_drum.jpg", "handpan": "images/handpan.jpg", "tonguedrum": "images/tonguedrum.jpg", "sansula": "images/sansula.jpg", "harpa": "images/harpa.jpg", "monochord": "images/monochord.jpg", "panflute": "images/panflute.jpg", "native_american_fluit": "images/native_american_fluit.jpg", "triangel": "images/triangel.jpg", "djembe": "images/djembe.jpg", "shaman_drum": "images/shaman_drum.jpg", "thunder_drum": "images/thunder_drum.jpg", "ocean_drum": "images/ocean_drum.jpg", "rainstick": "images/rainstick.jpg"};
 const $ = id => document.getElementById(id);
@@ -779,7 +779,7 @@ function setBackground(id,instant){
     el.classList.toggle('active',act);
     const showId=act?id:gg.cover, sh=imgById(showId)||imgById(gg.cover);
     const pic=el.querySelector('.pic'), cap=el.querySelector('.cap');
-    if(pic&&sh)pic.style.backgroundImage=`url(${sh.data})`;
+    if(pic&&sh)pic.style.backgroundImage=`url(${sh.thumb||sh.data})`;
     if(cap)cap.textContent=act?((imgById(showId)&&imgById(showId).label)||gg.label):gg.label;
   });
 }
@@ -799,7 +799,7 @@ function renderSub(g){
   ordered.forEach(id=>{const m=imgById(id); if(!m) return;
     const it=document.createElement('button');
     it.className='sub-item'+(id===S.bg?' active':''); it.dataset.bgid=id;
-    it.innerHTML=`<div class="pic" style="background-image:url(${m.data})"></div><div class="cap">${m.label}</div>`;
+    it.innerHTML=`<div class="pic" style="background-image:url(${m.thumb||m.data})"></div><div class="cap">${m.label}</div>`;
     it.onclick=()=>{setBackground(id);closeSub();};
     s.appendChild(it);});
   s.classList.add('show');
@@ -824,13 +824,13 @@ function renderReel(){
       const showLbl=act?((imgById(showId)&&imgById(showId).label)||g.label):g.label;
       const it=document.createElement('button');
       it.className='reel-item group'+(act?' active':''); it.dataset.group=g.id;
-      it.innerHTML=`<div class="pic" style="background-image:url(${shImg.data})"><span class="gbadge"><i></i><i></i><i></i></span></div><div class="cap">${showLbl}</div>`;
+      it.innerHTML=`<div class="pic" style="background-image:url(${shImg.thumb||shImg.data})"><span class="gbadge"><i></i><i></i><i></i></span></div><div class="cap">${showLbl}</div>`;
       it.onclick=()=>onGroupTap(g);
       r.appendChild(it);
     } else {
       const it=document.createElement('button');
       it.className='reel-item'+(img.id===S.bg?' active':''); it.dataset.bgid=img.id;
-      it.innerHTML=`<div class="pic" style="background-image:url(${img.data})"></div><div class="cap">${img.label}</div>`;
+      it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`;
       it.onclick=()=>{closeSub();closeSoundSub();setBackground(img.id);};
       r.appendChild(it);
     }
