@@ -551,13 +551,12 @@
       backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
       background-color:var(--panel);
       background-image:
-        linear-gradient(180deg, rgba(20,14,28,.74) 0%, rgba(14,10,20,.62) 100%),
         radial-gradient(ellipse 170% 60% at 50% 32%, rgba(255,217,138,.30), transparent 62%),
         radial-gradient(ellipse 160% 60% at 50% 80%, rgba(255,217,138,.18), transparent 66%),
         url(images/bg-faders.jpg);
-      background-size:cover,auto,auto,cover;
-      background-position:center,center,center,center;
-      background-repeat:no-repeat,no-repeat,no-repeat,no-repeat;
+      background-size:auto,auto,cover;
+      background-position:center,center,center;
+      background-repeat:no-repeat,no-repeat,no-repeat;
       grid-template-areas:
         "title  title  title  title"
         "info   info   info   info"
@@ -579,13 +578,15 @@
       z-index:0;
     }
     #tsPanel > *{position:relative;z-index:1}
-    #tsPanel > h2{grid-area:title;margin-bottom:2px;font-size:9.5px;letter-spacing:.14em;flex-wrap:wrap;row-gap:4px}
+    #tsPanel > h2{grid-area:title;margin-bottom:2px;font-size:9.5px;letter-spacing:.14em;flex-wrap:wrap;row-gap:4px;
+      background:rgba(6,4,9,.6);border-radius:10px;padding:5px 8px}
     #tsPanel #tsInfoPanel{grid-area:info}
     #tsPanel #vibKnob{grid-area:vib}
     #tsPanel #echoKnob{grid-area:echo}
     #tsPanel #reverbKnob{grid-area:reverb}
     #tsPanel #volKnob{grid-area:vol}
-    #tsPanel .rooms-label{grid-area:rlabel;margin-top:0;text-align:center}
+    #tsPanel .rooms-label{grid-area:rlabel;margin-top:0;text-align:center;
+      background:rgba(6,4,9,.55);border-radius:8px;padding:3px 6px;width:max-content;margin-inline:auto}
     #tsPanel #rooms{grid-area:rooms;grid-template-columns:repeat(2,1fr)}
     #tsPanel #rooms button{padding:7px 2px;font-size:10px}
 
@@ -598,6 +599,7 @@
       display:flex;flex-direction:column;align-items:center;flex:none;
       gap:2px;text-align:center;width:100%;
       font-size:9px;line-height:1.25;
+      background:rgba(6,4,9,.55);border-radius:8px;padding:4px 3px;
     }
     #tsPanel .knob .top span:first-child{max-width:64px}
     #tsPanel .knob .top span:last-child{color:var(--gold);font-size:10px;font-weight:600}
