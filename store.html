@@ -151,6 +151,8 @@
     border:1.5px solid var(--store-gold);
     border-radius:20px;
     padding:12px;
+    cursor:pointer;
+text-decoration:none;
     box-shadow:0 8px 20px rgba(170,125,40,.14), inset 0 1px 4px rgba(255,255,255,.7);
     transition:transform .18s ease, box-shadow .18s ease;
   }
@@ -259,61 +261,65 @@
    Tomma poster visar en ljus platshållarruta tills du fyller i dem.
    ===================================================================== */
 const products = [
-  { url: 'https://amzn.to/4wfTpVf', imageUrl: 'https://m.media-amazon.com/images/I/81gfcTW-sFL._AC_SY355_.jpg', titleEn: 'ASTEMAN Handpan in D Minor,432hz 22inches with 10 notes, comes with a backpack, courses, finger sleeves, stand, cleaning cloth, and two mallets.', subtitle: 'Link to Amazon' }, // 1
-  { url: 'https://amzn.to/3R5llvJ', imageUrl: 'https://m.media-amazon.com/images/I/8170xVHXPDL._AC_SL1500_.jpg', titleEn: 'Plus (Blue) | Steel Tongue Handpan with Music Book, Mallets, Carrying Bag & Finger Picks | 11 inch, 432 Hz | Rain Drum for Inside & Outside | Calming Musical Instrument for Adults & Kids', subtitle: 'Link to Amazon' }, // 2
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 3
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 4
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 5
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 6
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 7
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 8
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 9
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 10
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 11
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 12
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 13
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 14
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 15
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 16
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 17
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 18
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 19
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 20
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 21
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 22
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 23
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 24
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 25
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 26
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 27
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 28
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 29
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 30
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 31
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 32
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 33
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 34
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 35
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 36
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 37
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 38
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }, // 39
-  { url: '', imageUrl: '', titleEn: 'SUPPORT HOLISTIC LOADER!', subtitle: 'Contact ragdollhood@gmail.com for more information' }  // 40
+  { url: 'https://amzn.to/4wfTpVf', imageUrl: 'https://m.media-amazon.com/images/I/81gfcTW-sFL._AC_SY355_.jpg', titleEn: 'ASTEMAN Handpan in D Minor,432hz 22inches with 10 notes, comes with a backpack, courses, finger sleeves, stand, cleaning cloth, and two mallets.', subtitle: 'View current price on Amazon' }, // 1
+  { url: 'https://amzn.to/3R5llvJ', imageUrl: 'https://m.media-amazon.com/images/I/8170xVHXPDL._AC_SL1500_.jpg', titleEn: 'Plus (Blue) | Steel Tongue Handpan with Music Book, Mallets, Carrying Bag & Finger Picks | 11 inch, 432 Hz | Rain Drum for Inside & Outside | Calming Musical Instrument for Adults & Kids', subtitle: 'View current price on Amazon' }, // 2
+  { url: 'https://amzn.to/4yyMaZS', imageUrl: 'https://m.media-amazon.com/images/I/71E0UMRYEDL._AC_SL1000_.jpg', titleEn: '12 Inch 15 Notes Steel Tongue Drum, Rain Drum,Zen Drum,D Major Percussion Instrument with Soft Bag, Mallets & Music Book, Zen Garden Decor for Meditation, Yoga & Sound Healing (Purple)', subtitle: 'View current price on Amazon' }, // 3
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 4
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 5
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 6
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 7
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 8
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 9
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 10
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 11
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 12
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 13
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 14
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 15
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 16
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 17
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 18
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 19
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 20
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 21
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 22
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 23
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 24
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 25
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 26
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 27
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 28
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 29
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 30
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 31
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 32
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 33
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 34
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 35
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 36
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 37
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 38
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 39
+    { url: '', imageUrl: '', titleEn: '', subtitle: 'View current price on Amazon' }, // 40
 ];
 
 (function(){
   const grid = document.getElementById('productGrid');
   products.forEach(function(p, i){
-    const card = document.createElement('div');
-    card.className = 'product-card' + (p.url ? '' : ' no-link');
+const card = document.createElement(p.url ? 'a' : 'div');
 
-    const imgWrap = document.createElement(p.url ? 'a' : 'div');
+card.className = 'product-card' + (p.url ? '' : ' no-link');
+
+if(p.url){
+    card.href = p.url;
+    card.target = '_blank';
+    card.rel = 'noopener sponsored';
+    card.style.textDecoration = 'none';
+}
+
+    const imgWrap = document.createElement('div');
     imgWrap.className = 'product-imgwrap';
-    if(p.url){
-      imgWrap.href = p.url;
-      imgWrap.target = '_blank';
-      imgWrap.rel = 'noopener sponsored';
-    }
+    
     if(p.imageUrl){
       const img = document.createElement('img');
       img.src = p.imageUrl;
