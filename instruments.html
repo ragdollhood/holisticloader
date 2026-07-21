@@ -337,7 +337,26 @@
   .panel h2{
     font-size:11px;letter-spacing:.3em;color:var(--soft);
     text-transform:uppercase;margin-bottom:12px;text-align:center;
+    display:flex;align-items:center;justify-content:center;gap:8px;
   }
+  .info-btn{
+    font-family:inherit;width:18px;height:18px;line-height:16px;border-radius:50%;
+    border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--soft);
+    font-size:11px;letter-spacing:0;text-transform:none;cursor:pointer;padding:0;
+    display:inline-flex;align-items:center;justify-content:center;flex:none;
+  }
+  .info-btn:hover,.info-btn.on{color:var(--gold);border-color:var(--gold)}
+  .info-panel{
+    max-height:0;overflow:hidden;transition:max-height .35s ease;
+  }
+  .info-panel.open{max-height:600px}
+  .info-panel-inner{
+    padding:2px 2px 14px;font-size:12px;line-height:1.55;color:var(--soft);
+    letter-spacing:.01em;text-align:left;
+  }
+  .info-panel-inner dt{color:var(--ink);font-size:12px;letter-spacing:.04em;margin-top:10px}
+  .info-panel-inner dt:first-child{margin-top:0}
+  .info-panel-inner dd{margin:2px 0 0}
   .knob{margin-top:10px}
   .knob .top{display:flex;justify-content:space-between;font-size:12px;color:var(--soft);letter-spacing:.06em}
   .knob input{height:34px;width:100%}
@@ -731,7 +750,19 @@
 <canvas class="scope" id="scope" width="920" height="192"></canvas>
 
 <div class="panel">
-  <h2>Tone &amp; space</h2>
+  <h2>Tone &amp; space <button type="button" class="info-btn" id="tsInfoBtn" aria-expanded="false" aria-controls="tsInfoPanel" title="What do these controls do?">i</button></h2>
+  <div class="info-panel" id="tsInfoPanel">
+    <dl class="info-panel-inner">
+      <dt>Shimmer · beating</dt>
+      <dd>A subtle wavering in the pitch — part gentle vibrato, part two near-identical tones interfering with each other. That's the slow "wow-wow" pulse you hear from real singing bowls and gongs.</dd>
+      <dt>Space echo</dt>
+      <dd>Distinct, repeating echoes — like a tape delay. The sound bounces back at a steady interval and fades, separate from the room reverb below.</dd>
+      <dt>Room acoustics &amp; Reverb</dt>
+      <dd>Simulates the space you're playing in. Dry removes all ambience; Temple, Cathedral and Cave each add their own natural reflections and decay tail, as if the instrument were really in that room. The Reverb slider sets how much of it you hear.</dd>
+      <dt>Volume</dt>
+      <dd>Overall loudness of the instruments.</dd>
+    </dl>
+  </div>
   <div class="knob">
     <div class="top"><span>Shimmer · beating</span><span id="vibVal">30 %</span></div>
     <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer">
@@ -1374,6 +1405,16 @@
   document.querySelectorAll('#rooms button').forEach(function(b){
     b.addEventListener('click',function(){setRoom(b.dataset.r)});
   });
+
+  (function(){
+    const btn=$('tsInfoBtn'), panel=$('tsInfoPanel');
+    if(!btn||!panel) return;
+    btn.addEventListener('click',function(){
+      const open=panel.classList.toggle('open');
+      btn.classList.toggle('on',open);
+      btn.setAttribute('aria-expanded',open?'true':'false');
+    });
+  })();
 
   function pluckHarp(f,soft){
     const t0=ac.currentTime+.005;
