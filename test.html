@@ -665,6 +665,57 @@
     #tsPanel #rooms{grid-template-columns:repeat(2,1fr)}
     #tsPanel #rooms button{padding:7px 2px;font-size:10px}
   }
+
+  /* ===== mobil: Tone & space-reglagen + rumsknapparna som fasta flikar längst ner ===== */
+  #mobileTsTabs{display:none}
+  @media (max-width:899px){
+    body{padding-bottom:calc(48px + 70px + env(safe-area-inset-bottom,0px))}
+
+    #mobileTsTabs{
+      display:flex;
+      position:fixed;
+      left:0;right:0;bottom:0;
+      z-index:50;
+      gap:4px;
+      padding:7px max(8px,env(safe-area-inset-left)) calc(7px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-right));
+      background:rgba(9,6,13,.92);
+      border-top:1px solid var(--line);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      box-shadow:0 -6px 20px rgba(0,0,0,.35);
+    }
+    #mobileTsTabs .mts-tab{
+      flex:1 1 0;min-width:0;
+      font-family:inherit;font-size:9.5px;letter-spacing:.01em;line-height:1.2;
+      color:var(--soft);background:rgba(255,255,255,.05);
+      border:1px solid var(--line);border-radius:12px;
+      padding:8px 2px;text-align:center;white-space:normal;
+    }
+    #mobileTsTabs .mts-tab.open{
+      color:var(--gold);border-color:var(--gold);
+      background:rgba(255,217,138,.1);
+      box-shadow:0 0 14px rgba(255,217,138,.3);
+    }
+
+    /* själva regel-panelen: dold tills en flik öppnas, och flyter då upp ovanför flikraden */
+    #tsPanelGutter{display:contents}
+    #tsPanel{display:none}
+    #tsPanel.mobile-open{
+      display:flex;flex-direction:column;
+      position:fixed;
+      left:12px;right:12px;
+      bottom:calc(64px + env(safe-area-inset-bottom,0px));
+      width:auto;max-width:none;margin:0;
+      max-height:56vh;overflow-y:auto;
+      z-index:49;
+      box-shadow:0 -10px 30px rgba(0,0,0,.5), inset 0 10px 18px rgba(255,217,138,.07);
+    }
+    #tsPanel > h2{display:none}
+    #tsPanel .info-panel{display:none}
+    #tsPanel .faders-box .knob{display:none}
+    #tsPanel .faders-box .knob.mobile-open{display:block;margin-top:0}
+    #tsPanel .rooms-box{display:none}
+    #tsPanel .rooms-box.mobile-open{display:block;margin-top:0}
+  }
 </style>
 </head>
 <body>
@@ -974,7 +1025,7 @@
         <input type="range" id="vol" min="0" max="100" value="35" aria-label="Volume">
       </div>
     </div>
-    <div class="rooms-box">
+    <div class="rooms-box" id="roomsBox">
       <div class="rooms-label">Room acoustics</div>
       <div class="rooms" id="rooms">
         <button data-r="dry">Dry</button>
@@ -985,6 +1036,15 @@
     </div>
   </div>
 </div>
+</div>
+
+<!-- ===== mobile only: Tone & space + Room acoustics as fixed bottom tabs ===== -->
+<div id="mobileTsTabs" role="tablist" aria-label="Tone and space controls">
+  <button type="button" class="mts-tab" data-target="vibKnob" aria-expanded="false">Shimmer</button>
+  <button type="button" class="mts-tab" data-target="echoKnob" aria-expanded="false">Space echo</button>
+  <button type="button" class="mts-tab" data-target="reverbKnob" aria-expanded="false">Reverb</button>
+  <button type="button" class="mts-tab" data-target="volKnob" aria-expanded="false">Volume</button>
+  <button type="button" class="mts-tab" data-target="roomsBox" aria-expanded="false">Room acoustics</button>
 </div>
 
 <div class="panel">
@@ -1252,7 +1312,7 @@
   requestAnimationFrame(cosmosLoop);
 
   /* ================= LJUDMOTOR ================= */
-  let ac=null, master=null, limiter=null, analyser=null, strikeBus=null;
+  let ac=null, master=null, limiter=null, analyser=null, strikeBus=null, bassCut=null, bassShelf=null;
   let mixBus=null, conv=null, revWet=null, mediaDest=null;
   let monoG=null, monoOscs=[], oceanG=null, oceanLP=null;
   let thundG=null, rainG=null;
@@ -1277,7 +1337,7 @@
           ac.resume().catch(function(){});
         }
       };
-      master=ac.createGain(); master.gain.value=1;
+      master=ac.createGain(); master.gain.value=.85;
       delay=ac.createDelay(1.0); delay.delayTime.value=.34;
       fb=ac.createGain(); fb.gain.value=0;
       wet=ac.createGain(); wet.gain.value=0;
@@ -1291,12 +1351,23 @@
       revWet=ac.createGain(); revWet.gain.value=0;
       mixBus.connect(master);
       mixBus.connect(conv); conv.connect(revWet).connect(master);
+      // basfilter: vid låga gong-toner (55-90 Hz) byggs mycket energi upp i basen
+      // från grundton + flera detunade understämmor. Det fick limitern att pumpa
+      // hårdare och fick många högtalare (mobil/dator) att rattla — hörs som skorr.
+      // highpass rensar bort onödigt subbas-rumble, low-shelf tämjer själva bas-
+      // energin en aning så det djupa registret inte överbelastar kedjan.
+      bassCut=ac.createBiquadFilter(); bassCut.type='highpass'; bassCut.frequency.value=38; bassCut.Q.value=.7;
+      bassShelf=ac.createBiquadFilter(); bassShelf.type='lowshelf'; bassShelf.frequency.value=130; bassShelf.gain.value=-4.5;
+      master.connect(bassCut); bassCut.connect(bassShelf);
       // slutlimiter: fångar alla toppar innan högtalarna så ljudet
       // aldrig kan klippa/spricka, oavsett hur högt volymreglaget står
       limiter=ac.createDynamicsCompressor();
-      limiter.threshold.value=-6; limiter.knee.value=6;
-      limiter.ratio.value=20; limiter.attack.value=.002; limiter.release.value=.3;
-      master.connect(limiter);
+      // mjukare inställning än tidigare: den gamla (-6dB tröskel, ratio 20, 2ms attack)
+      // var i praktiken en hård brickwall-klippare som fick gong-slagens många
+      // övertoner + brusknäpp att "skorra" när limitern pumpade hårt på varje topp
+      limiter.threshold.value=-3; limiter.knee.value=12;
+      limiter.ratio.value=6; limiter.attack.value=.006; limiter.release.value=.25;
+      bassShelf.connect(limiter);
       analyser=ac.createAnalyser(); analyser.fftSize=1024;
       limiter.connect(analyser).connect(ac.destination);
       // inspelningsutgång
@@ -1507,7 +1578,8 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=f*(V.noiseF+edge*2.5); bp.Q.value=V.noiseQ;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(V.crash?.3:.24),t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*(V.crash?.3:.24),t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+nDur);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); gains.push(ng);
@@ -1554,7 +1626,8 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=f*2.2; bp.Q.value=1.4;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*.3,t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*.3,t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.05);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); gains.push(ng);
@@ -1648,7 +1721,8 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=Math.min(8000,f*4); bp.Q.value=1;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*.18,t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*.18,t0+.0015);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.02);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); gains.push(ng);
@@ -1678,7 +1752,8 @@
     for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1800; bp.Q.value=1;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*.15,t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*.15,t0+.0015);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.025);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
     registerStrike(gains,t0+2.6);
@@ -1705,7 +1780,8 @@
     for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.5);
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=f; bp.Q.value=7;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*.45,t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*.45,t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.5);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
     registerStrike(gains,t0+.9);
@@ -1759,7 +1835,8 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=280+edge*1300; bp.Q.value=.8;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(.28+edge*.4),t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*(.28+edge*.4),t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.08);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
     gains.push(ng);
@@ -1863,7 +1940,8 @@
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=500+edge*2600; bp.Q.value=.9;
     const ng=ac.createGain();
-    ng.gain.setValueAtTime(v*(edge>.78?.7:.3),t0);
+    ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*(edge>.78?.7:.3),t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+(edge>.78?.09:.06));
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
     gains.push(ng);
@@ -3161,6 +3239,39 @@ registerVisit();
   centerTsPanel();
   window.addEventListener('resize',centerTsPanel);
   window.addEventListener('load',centerTsPanel);
+})();
+
+/* mobil: Tone & space-reglagen + rumsknapparna som fasta flikar längst ner.
+   Klick på en flik visar den regeln (eller rumsknapparna) i en flytande
+   ruta ovanför flikraden; klick på samma flik igen stänger den. */
+(function(){
+  var tabs=document.querySelectorAll('#mobileTsTabs .mts-tab');
+  var panel=document.getElementById('tsPanel');
+  if(!tabs.length||!panel) return;
+  function closeAll(){
+    tabs.forEach(function(b){b.classList.remove('open');b.setAttribute('aria-expanded','false')});
+    panel.querySelectorAll('.knob.mobile-open,.rooms-box.mobile-open').forEach(function(el){
+      el.classList.remove('mobile-open');
+    });
+    panel.classList.remove('mobile-open');
+  }
+  tabs.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var target=document.getElementById(btn.dataset.target);
+      var wasOpen=btn.classList.contains('open');
+      closeAll();
+      if(!wasOpen&&target){
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+        target.classList.add('mobile-open');
+        panel.classList.add('mobile-open');
+      }
+    });
+  });
+  // stäng fliken om skärmen växer förbi mobilbrytpunkten (t.ex. rotation till landskap på surfplatta)
+  window.addEventListener('resize',function(){
+    if(window.innerWidth>=900) closeAll();
+  });
 })();
 </script>
 </body>
