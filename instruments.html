@@ -119,13 +119,16 @@
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   /* ---- rubrikflik: håller CLICK & DRAG-rubriken synlig, som en nedfälld flik under navigationen ---- */
+  /* padding-top/bottom är satta så att luftrummet ovanför texten (padding-top)
+     matchar luftrummet nedanför flikens nedre kant fram till instrumenten
+     (padding-bottom + .stage margin-top), så rubriken hamnar visuellt centrerad */
   .h1-frame{
     position:sticky;
     top:max(104px,calc(env(safe-area-inset-top) + 92px));
     margin:-36px auto 0;
     z-index:30;
     width:min(94vw,820px);
-    padding:8px 24px 10px;
+    padding:9px 24px 9px;
     border:1.5px solid var(--gold);
     border-top:none;
     border-radius:0 0 30px 30px;
@@ -139,7 +142,7 @@
       top:max(74px,calc(env(safe-area-inset-top) + 60px));
       margin-top:-22px;
       width:92vw;
-      padding:6px 14px 8px;
+      padding:9px 14px 7px;
       border-radius:0 0 18px 18px;
     }
   }
@@ -664,6 +667,80 @@
       background:none;border-radius:0;padding:0;width:auto}
     #tsPanel #rooms{grid-template-columns:repeat(2,1fr)}
     #tsPanel #rooms button{padding:7px 2px;font-size:10px}
+
+    /* fristående ruta för inspelning, samma stil som rooms-box, precis under den */
+    #tsPanel .rec-box{
+      flex:none;margin-top:10px;
+      padding:12px 8px 14px;
+      border-radius:16px;
+      background:rgba(6,4,9,.62);
+      border:1px solid rgba(255,217,138,.14);
+      box-shadow:inset 0 2px 8px rgba(0,0,0,.35);
+      display:flex;flex-direction:column;align-items:center;text-align:center;
+    }
+    #tsPanel .rec-box .rooms-label{margin:0 0 8px}
+    #tsPanel .rec-box #rec{
+      width:100%;box-sizing:border-box;
+      font-size:11px;padding:9px 10px;min-width:0;
+    }
+    #tsPanel .rec-box .rec-status{font-size:9.5px;margin-top:8px}
+    #tsPanel .rec-box .rec-dl{font-size:10px;padding:7px 12px;margin-top:8px}
+  }
+
+  /* ===== mobil: Tone & space-reglagen + rumsknapparna som fasta flikar längst ner ===== */
+  #mobileTsTabs{display:none}
+  @media (max-width:899px){
+    body{padding-bottom:calc(48px + 70px + env(safe-area-inset-bottom,0px))}
+
+    #mobileTsTabs{
+      display:flex;
+      position:fixed;
+      left:0;right:0;bottom:0;
+      z-index:50;
+      gap:4px;
+      padding:7px max(8px,env(safe-area-inset-left)) calc(7px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-right));
+      background:rgba(9,6,13,.92);
+      border-top:1px solid var(--line);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      box-shadow:0 -6px 20px rgba(0,0,0,.35);
+    }
+    #mobileTsTabs .mts-tab{
+      flex:1 1 0;min-width:0;
+      font-family:inherit;font-size:9.5px;letter-spacing:.01em;line-height:1.2;
+      color:var(--soft);background:rgba(255,255,255,.05);
+      border:1px solid var(--line);border-radius:12px;
+      padding:8px 2px;text-align:center;white-space:normal;
+    }
+    #mobileTsTabs .mts-tab.open{
+      color:var(--gold);border-color:var(--gold);
+      background:rgba(255,217,138,.1);
+      box-shadow:0 0 14px rgba(255,217,138,.3);
+    }
+
+    /* själva regel-panelen: dold tills en flik öppnas, och flyter då upp ovanför flikraden */
+    #tsPanelGutter{display:contents}
+    #tsPanel{display:none}
+    #tsPanel.mobile-open{
+      display:flex;flex-direction:column;
+      position:fixed;
+      left:12px;right:12px;
+      bottom:calc(64px + env(safe-area-inset-bottom,0px));
+      width:auto;max-width:none;margin:0;
+      max-height:56vh;overflow-y:auto;
+      z-index:49;
+      box-shadow:0 -10px 30px rgba(0,0,0,.5), inset 0 10px 18px rgba(255,217,138,.07);
+    }
+    #tsPanel > h2{display:none}
+    #tsPanel .info-panel{display:none}
+    #tsPanel .faders-box .knob{display:none}
+    #tsPanel .faders-box .knob.mobile-open{display:block;margin-top:0}
+    #tsPanel .faders-box .knob .top-spacer{display:none}
+    #tsPanel .rooms-box{display:none}
+    #tsPanel .rooms-box.mobile-open{display:block;margin-top:0}
+    #tsPanel .rooms-box .rooms-label{margin-top:0}
+    #tsPanel #rooms button{font-size:10px;padding:7px 2px}
+    #tsPanel .rec-box{display:none}
+    #tsPanel .rec-box.mobile-open{display:block;margin-top:0}
   }
 </style>
 </head>
@@ -722,7 +799,7 @@
 <div class="stage" id="stage">
   <canvas id="fx"></canvas>
 
-  <div class="instr-label">Gong · tap or drag your finger</div>
+  <div class="instr-label">Gong</div>
   <div class="gong-wrap" id="gongWrap">
     <img src="images/gong.jpg" alt="Golden gong engraved with celestial symbols">
   </div>
@@ -740,7 +817,7 @@
     <button class="opt-toggle" data-i="gong" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Crystal bowl · tap or circle it</div>
+  <div class="instr-label">Crystal bowl</div>
   <div class="bowl-wrap" id="bowlWrap">
     <img loading="lazy" src="images/crystal_bowl.jpg" alt="Transparent crystal singing bowl with sacred geometry and a mallet">
   </div>
@@ -758,7 +835,7 @@
     <button class="opt-toggle" data-i="bowl" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Handpan · tap the tone fields</div>
+  <div class="instr-label">Handpan</div>
   <div class="hand-wrap" id="handWrap">
     <img loading="lazy" src="images/handpan.jpg" alt="Dark steel handpan engraved with golden celestial patterns, seen from above">
   </div>
@@ -771,7 +848,7 @@
     <button class="opt-toggle" data-i="hand" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Tongue drum · tap the tongues</div>
+  <div class="instr-label">Tongue drum</div>
   <div class="tongue-wrap" id="tongueWrap">
     <img loading="lazy" src="images/tonguedrum.jpg" alt="Black steel tongue drum engraved with golden constellations, seen from above">
   </div>
@@ -785,7 +862,7 @@
   </div>
 
 
-  <div class="instr-label">Wind chimes · tap the tubes, or the wind sail for a breeze</div>
+  <div class="instr-label">Wind chimes</div>
   <div class="chime-wrap" id="chimeWrap">
     <img loading="lazy" src="images/chimes.jpg" alt="Dark bronze wind chimes engraved with golden celestial symbols, hanging in space">
   </div>
@@ -798,7 +875,7 @@
     <button class="opt-toggle" data-i="chime" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Triangle · tap for a shimmering ting</div>
+  <div class="instr-label">Triangle</div>
   <div class="tri-wrap" id="triWrap">
     <img loading="lazy" src="images/triangle.jpg" alt="Golden orchestral triangle with beater, hanging among galaxies">
   </div>
@@ -811,7 +888,7 @@
     <button class="opt-toggle" data-i="tri" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Harp · pluck a string, or sweep for a glissando</div>
+  <div class="instr-label">Harp</div>
   <div class="harp-wrap" id="harpWrap">
     <img loading="lazy" src="images/harpa.jpg" alt="Black and gold celestial harp engraved with stars and moons, standing in space">
   </div>
@@ -824,7 +901,7 @@
     <button class="opt-toggle" data-i="harp" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Sansula · pluck the tines, sweep for a ripple</div>
+  <div class="instr-label">Sansula</div>
   <div class="sans-wrap" id="sansWrap">
     <img loading="lazy" src="images/sansula.jpg" alt="Dark kalimba sansula with golden engraved tines on a starry soundboard">
   </div>
@@ -836,7 +913,7 @@
     <button class="opt-toggle" data-i="sans" data-opt="bpm">BPM</button>
     <button class="opt-toggle" data-i="sans" data-opt="time">TIME</button>
   </div>
-  <div class="instr-label">Monochord · tap to pluck, rub for a drone</div>
+  <div class="instr-label">Monochord</div>
   <div class="mono-wrap" id="monoWrap">
     <img loading="lazy" src="images/monochord.jpg" alt="Long black monochord engraved with moons and stars, floating in space">
   </div>
@@ -848,7 +925,7 @@
     <button class="opt-toggle" data-i="mono" data-opt="bpm">BPM</button>
     <button class="opt-toggle" data-i="mono" data-opt="time">TIME</button>
   </div>
-  <div class="instr-label">Pan flute · tap a pipe, sweep to ripple</div>
+  <div class="instr-label">Pan flute</div>
   <div class="pan-wrap" id="panWrap">
     <img loading="lazy" src="images/panflute.jpg" alt="Black pan flute with golden celestial engravings on its pipes">
   </div>
@@ -860,7 +937,7 @@
     <button class="opt-toggle" data-i="pan" data-opt="bpm">BPM</button>
     <button class="opt-toggle" data-i="pan" data-opt="time">TIME</button>
   </div>
-  <div class="instr-label">Native flute · <span class="hold-desktop">press and hold</span><span class="hold-mobile">DUBBEL TAP AND HOLD</span>, slide to change note</div>
+  <div class="instr-label">Native flute</div>
   <div class="naf-wrap" id="nafWrap">
     <img loading="lazy" src="images/native_american_fluit.jpg" alt="Native American style flute with an eagle head block and hanging feathers">
   </div>
@@ -872,7 +949,7 @@
     <button class="opt-toggle" data-i="naf" data-opt="bpm">BPM</button>
     <button class="opt-toggle" data-i="naf" data-opt="time">TIME</button>
   </div>
-  <div class="instr-label">Shaman drum · tap — center deep, rim sharp</div>
+  <div class="instr-label">Shaman drum</div>
   <div class="shaman-wrap" id="shamanWrap">
     <img loading="lazy" src="images/shaman_drum.jpg" alt="Shamanic frame drum with golden spirit animals and feathers">
   </div>
@@ -884,7 +961,7 @@
     <button class="opt-toggle" data-i="shaman" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Djembe · center bass, middle tone, rim slap</div>
+  <div class="instr-label">Djembe</div>
   <div class="djembe-wrap" id="djembeWrap">
     <img loading="lazy" src="images/djembe.jpg" alt="Carved wooden djembe drum with lotus mandala on its head">
   </div>
@@ -896,7 +973,7 @@
     <button class="opt-toggle" data-i="djembe" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Thunder drum · tap for thunder, rub for rumble</div>
+  <div class="instr-label">Thunder drum</div>
   <div class="thunder-wrap" id="thunderWrap">
     <img loading="lazy" src="images/thunder_drum.jpg" alt="Large dark drum with golden lightning across its head">
   </div>
@@ -908,7 +985,7 @@
     <button class="opt-toggle" data-i="thunder" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Ocean drum · rub to roll the waves, tap for a splash</div>
+  <div class="instr-label">Ocean drum</div>
   <div class="ocean-wrap" id="oceanWrap">
     <img loading="lazy" src="images/ocean_drum.jpg" alt="Ocean drum filled with beads forming a golden sea under moon phases">
   </div>
@@ -920,7 +997,7 @@
     <button class="opt-toggle" data-i="ocean" data-opt="time">TIME</button>
   </div>
 
-  <div class="instr-label">Rainstick · tap for a shower, tilt with a drag</div>
+  <div class="instr-label">Rainstick</div>
   <div class="rain-wrap" id="rainWrap">
     <img loading="lazy" src="images/rainstick.jpg" alt="Engraved rainstick with feathers, drifting among galaxies">
   </div>
@@ -956,8 +1033,8 @@
     </div>
     <div class="faders-box">
       <div class="knob" id="vibKnob">
-        <div class="top"><span>Shimmer/ beating</span><span id="vibVal">30 %</span></div>
-        <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer">
+        <div class="top"><span>Shimmer / Beating</span><span id="vibVal">30 %</span></div>
+        <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer/beating">
       </div>
       <div class="knob" id="echoKnob">
         <div class="top"><span>Space echo</span><span id="echoVal">25 %</span></div>
@@ -974,7 +1051,7 @@
         <input type="range" id="vol" min="0" max="100" value="35" aria-label="Volume">
       </div>
     </div>
-    <div class="rooms-box">
+    <div class="rooms-box" id="roomsBox">
       <div class="rooms-label">Room acoustics</div>
       <div class="rooms" id="rooms">
         <button data-r="dry">Dry</button>
@@ -983,15 +1060,24 @@
         <button data-r="cave">Cave</button>
       </div>
     </div>
+    <div class="rec-box" id="recBox">
+      <div class="rooms-label">Recorder</div>
+      <button id="rec">● RECORD</button>
+      <div class="rec-status" id="recStatus">Capture your playing and download it as an audio file.</div>
+      <a id="recDl" class="rec-dl" hidden download>⬇ Download recording</a>
+    </div>
   </div>
 </div>
 </div>
 
-<div class="panel">
-  <h2>Recorder</h2>
-  <button id="rec">● RECORD</button>
-  <div class="rec-status" id="recStatus">Capture your playing and download it as an audio file.</div>
-  <a id="recDl" class="rec-dl" hidden download>⬇ Download recording</a>
+<!-- ===== mobile only: Tone & space + Room acoustics + Recorder as fixed bottom tabs ===== -->
+<div id="mobileTsTabs" role="tablist" aria-label="Tone and space controls">
+  <button type="button" class="mts-tab" data-target="vibKnob" aria-expanded="false">Shimmer/<br>Beating</button>
+  <button type="button" class="mts-tab" data-target="echoKnob" aria-expanded="false">Space echo</button>
+  <button type="button" class="mts-tab" data-target="reverbKnob" aria-expanded="false">Reverb</button>
+  <button type="button" class="mts-tab" data-target="volKnob" aria-expanded="false">Volume</button>
+  <button type="button" class="mts-tab" data-target="roomsBox" aria-expanded="false">Room acoustics</button>
+  <button type="button" class="mts-tab" data-target="recBox" aria-expanded="false">Recorder</button>
 </div>
 
 <div class="panel">
@@ -1488,11 +1574,6 @@
     const t0=ac.currentTime+.02;
     const f=gongF(), v=masterVol()*.85, sh=shimmer();
     const gains=[]; let maxDec=0;
-    // räkna ut vikterna först och normalisera mot deras summa, så att den
-    // sammanlagda toppnivån blir densamma oavsett hur många övertoner rösten
-    // har — tamtam (10 partialer) och symphonic (8) överbelastade annars
-    // kraftigt jämfört med tibetan (6), vilket var den egentliga orsaken
-    // till att det skorrade/klippte
     const weights=V.ratios.map(function(r,i){
       let w;
       if(V.flat){ w=(i===0?1:.78)*Math.pow(.93,i); }
@@ -1553,12 +1634,10 @@
     const t0=ac.currentTime+.01;
     const v=masterVol()*(soft?.5:.85);
     const gains=[];
-    // varje ton bär sin oktav och duodecima — handpanens signatur
     [[1,.5,5.5],[2,.26,3.6],[3,.16,2.6],[4.2,.04,1.2]].forEach(function(p){
       gains.push(partial(t0,f*p[0],v*p[1],p[2],  2.5,.004));
       gains.push(partial(t0,f*p[0],v*p[1],p[2], -2.5,.004));
     });
-    // mjukt "tok" från handflatan
     const nb=ac.createBufferSource();
     const buf=ac.createBuffer(1,ac.sampleRate*.05,ac.sampleRate);
     const d=buf.getChannelData(0);
@@ -1621,8 +1700,6 @@
     document.querySelectorAll('#rooms button').forEach(function(b){
       b.classList.toggle('sel',b.dataset.r===name);
     });
-    // reflect the room's default reverb amount in the slider itself, so the
-    // control visibly follows the room selection instead of staying put
     $('reverb').value=ROOMS[name].defaultReverb;
     $('reverbVal').textContent=ROOMS[name].defaultReverb+' %';
     if(!ac) return;
@@ -1653,7 +1730,6 @@
     [[1,.5,1],[2,.24,.6],[3,.14,.4],[4,.08,.3],[5,.05,.2],[6,.03,.15]].forEach(function(p){
       gains.push(partial(t0,f*p[0],v*p[1],Math.max(.3,dec*p[2]),(Math.random()-.5)*3,.003));
     });
-    // nageln mot strängen
     const nb=ac.createBufferSource();
     const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.02),ac.sampleRate);
     const d=buf.getChannelData(0);
@@ -1669,7 +1745,6 @@
     registerStrike(gains,t0+dec);
   }
 
-  // tungtrumma: ren klocklik stålklang
   function strikeTongue(f,soft){
     const t0=ac.currentTime+.01, v=masterVol()*(soft?.45:.75);
     const gains=[
@@ -1678,7 +1753,6 @@
     ];
     registerStrike(gains,t0+7);
   }
-  // sansula: kalimbaknäpp med liten surrig attack
   function pluckSans(f,soft){
     const t0=ac.currentTime+.005, v=masterVol()*(soft?.4:.6);
     const gains=[
@@ -1698,7 +1772,6 @@
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
     registerStrike(gains,t0+2.6);
   }
-  // monokord: djup knäppning med hel övertonsserie
   function pluckMono(){
     const t0=ac.currentTime+.01, f=monoF(), v=masterVol()*.8;
     const gains=[];
@@ -1707,7 +1780,6 @@
     }
     registerStrike(gains,t0+9);
   }
-  // panflöjt: ton med luftigt chiff i ansatsen
   function panNote(f,soft){
     const t0=ac.currentTime+.005, v=masterVol()*(soft?.35:.5);
     const gains=[
@@ -1726,13 +1798,11 @@
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
     registerStrike(gains,t0+.9);
   }
-  // schamantrumma: skinnets tonfall + kroppens dova svar
   function shamanHit(edge,soft){
     const t0=ac.currentTime+.005, v=masterVol()*(soft?.55:.95);
-    const f=88-edge*16;              // mitten djup och rund, kanten lite ljusare
-    const ring=1.0-edge*0.42;        // mitten klingar längst
+    const f=88-edge*16;
+    const ring=1.0-edge*0.42;
     const gains=[];
-    // grundton med liten nedåtböjning (skinnet slappnar efter slaget)
     (function(){
       const o=ac.createOscillator(); o.type='sine';
       o.frequency.setValueAtTime(f*1.35,t0);
@@ -1744,7 +1814,6 @@
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+1.0*ring+.05);
       gains.push(g);
     })();
-    // mjuk kroppston för rundhet
     (function(){
       const o=ac.createOscillator(); o.type='sine';
       o.frequency.setValueAtTime(f*2.0,t0);
@@ -1756,7 +1825,6 @@
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.6*ring);
       gains.push(g);
     })();
-    // membranöverton som ger trummans karaktär, klingar snabbt
     (function(){
       const o=ac.createOscillator(); o.type='triangle';
       o.frequency.value=f*2.7;
@@ -1767,7 +1835,6 @@
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.2);
       gains.push(g);
     })();
-    // läderaktigt anslag: kort brusburst, varmt mot mitten, vassare mot kanten
     const nb=ac.createBufferSource();
     const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.08),ac.sampleRate);
     const d=buf.getChannelData(0);
@@ -1782,7 +1849,6 @@
     gains.push(ng);
     registerStrike(gains,t0+1.0*ring+.1);
   }
-  // åsktrumma: dov smäll och mullret som rullar bort
   function thunderBoom(){
     const t0=ac.currentTime+.01, v=masterVol();
     const gains=[partial(t0,52,v*.5,3.5,3,.01),partial(t0,52,v*.5,3.5,-3,.01)];
@@ -1795,7 +1861,6 @@
     const ng=ac.createGain();
     ng.gain.setValueAtTime(.0001,t0);
     ng.gain.linearRampToValueAtTime(v*.7,t0+.05);
-    // mullret rullar: vågor av styrka som dör ut
     for(let k=1;k<=6;k++){
       const tk=t0+.2+k*.5;
       ng.gain.exponentialRampToValueAtTime(v*.7*Math.pow(.55,k)+.0001,tk);
@@ -1806,7 +1871,6 @@
     gains.push(ng);
     registerStrike(gains,t0+4);
   }
-  // havstrumma: en våg som rullar in och drar sig tillbaka
   function oceanSplash(){
     const t=ac.currentTime, v=masterVol();
     oceanLP.frequency.setValueAtTime(350,t);
@@ -1819,7 +1883,6 @@
     busyUntil=Math.max(busyUntil,t+2.6);
     scheduleSuspend();
   }
-  // regnstav: hundratals små korn som rinner
   function rainBurst(dur){
     const t0=ac.currentTime, v=masterVol();
     rainG.gain.cancelScheduledValues(t0);
@@ -1836,7 +1899,6 @@
     scheduleSuspend();
   }
 
-  // triangel: tätt oharmoniskt skimmer, det klassiska "ting"
   function strikeTri(soft){
     const t0=ac.currentTime+.005, f=triF(), v=masterVol()*(soft?.3:.5);
     const gains=[];
@@ -1846,11 +1908,10 @@
     });
     registerStrike(gains,t0+5);
   }
-  // djembe: bas i mitten, ton i mellanringen, smällande slap vid kanten
   function djembeHit(edge,soft){
     const t0=ac.currentTime+.005, v=masterVol()*(soft?.55:.9);
     const gains=[];
-    if(edge<.45){            // bas
+    if(edge<.45){
       const o=ac.createOscillator(); o.type='sine';
       o.frequency.setValueAtTime(95,t0);
       o.frequency.exponentialRampToValueAtTime(62,t0+.1);
@@ -1860,7 +1921,7 @@
       g.gain.exponentialRampToValueAtTime(.0001,t0+.42);
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.45);
       gains.push(g);
-    } else if(edge<.78){     // ton
+    } else if(edge<.78){
       const o=ac.createOscillator(); o.type='sine';
       o.frequency.setValueAtTime(210,t0);
       o.frequency.exponentialRampToValueAtTime(165,t0+.05);
@@ -1871,7 +1932,6 @@
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.25);
       gains.push(g);
     }
-    // hudens attack: ljusare och vassare ju närmare kanten
     const nb=ac.createBufferSource();
     const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.09),ac.sampleRate);
     const d=buf.getChannelData(0);
@@ -1905,16 +1965,13 @@
     busyUntil=t+.6;
     scheduleSuspend();
   }
-  // (DAMPEN ALL borttagen – Silence-knappen sköter all tystnad)
 
   /* ================= STRÅLNING & GNISTOR ================= */
   const stage=$('stage'), fx=$('fx'), fctx=fx.getContext('2d');
-  // gruppera varje instruments delar (etikett, bild, stäm, knapp) i en .instr-cell
-  // så att de kan ligga i en kolumn på mobil men spridas ut i ett rutnät på desktop
   (function(){
     let cell=null;
     Array.prototype.slice.call(stage.children).forEach(function(el){
-      if(el.id==='fx') return;                 // effektlagret ligger kvar som overlay
+      if(el.id==='fx') return;
       if(el.classList.contains('instr-label')){
         cell=document.createElement('div'); cell.className='instr';
         stage.appendChild(cell);
@@ -1931,7 +1988,6 @@
   }
   addEventListener('resize',fxResize);
   requestAnimationFrame(fxResize);
-  // bilderna laddas asynkront: mät om scenen när de är klara
   Array.prototype.forEach.call(document.images,function(im){
     im.addEventListener('load',fxResize);
   });
@@ -1941,10 +1997,9 @@
     return [e.clientX-r.left, e.clientY-r.top];
   }
   function glowOrbs(x,y,rgb,n){
-    glitter(x,y,rgb,Math.min(n,6));   // samma glitter som harpan, överallt
+    glitter(x,y,rgb,Math.min(n,6));
   }
   function glitter(x,y,rgb,n,scale){
-    // alla instrument delar harpans partiklar: samma färg, storlek och styrka
     for(let i=0;i<n;i++){
       const a=Math.random()*6.3, sp=.05+Math.random()*.18;
       sparks.push({x:x+(Math.random()-.5)*10,y:y+(Math.random()-.5)*10,
@@ -1954,7 +2009,6 @@
   }
   let bolts=[];
   function lightning(cx,cy){
-    // korta, kraftigt förgrenade urladdningar i blått och vitt
     function bolt(x,y,dir,segs,branchProb){
       const pts=[[x,y]];
       for(let s=0;s<segs;s++){
@@ -1986,7 +2040,6 @@
     const dt=Math.min(now-(fxLoop.t||now),50); fxLoop.t=now;
     fctx.clearRect(0,0,fx.width,fx.height);
     fctx.globalCompositeOperation='lighter';
-    // mjuk ljusblomning där anslaget träffar
     for(let i=bursts.length-1;i>=0;i--){
       const b=bursts[i];
       b.age+=dt;
@@ -2001,7 +2054,6 @@
       fctx.fillStyle=g;
       fctx.beginPath();fctx.arc(b.x,b.y,R,0,7);fctx.fill();
     }
-    // glödande partiklar som tonar in, svävar och tonar ut
     for(let i=sparks.length-1;i>=0;i--){
       const s=sparks[i];
       s.age+=dt;
@@ -2016,7 +2068,6 @@
       fctx.fillStyle=g;
       fctx.beginPath();fctx.arc(s.x,s.y,s.rad,0,7);fctx.fill();
     }
-    // blixtar: snabba, flimrande urladdningar runt åsktrumman
     for(let i=bolts.length-1;i>=0;i--){
       const b=bolts[i];
       b.life-=.07;
@@ -2113,18 +2164,16 @@
     wrap.addEventListener('pointerup',release);
     wrap.addEventListener('pointercancel',release);
   }
-  // ---- handpanens tonfält: lägen i bilden (andelar av bredd/höjd) ----
-  // dingen överst i mitten, sex tonfält i stigande sicksack precis som på riktiga pannor
   const HP_FIELDS=[
-    {nx:.500,ny:.484,r:.075,ratio:1},        // ding (grundton, D)
-    {nx:.500,ny:.787,r:.080,ratio:1.4983},   // A  – närmast spelaren
-    {nx:.303,ny:.702,r:.080,ratio:1.5874},   // Bb
-    {nx:.718,ny:.702,r:.080,ratio:1.7818},   // C
-    {nx:.215,ny:.479,r:.080,ratio:2},        // D
-    {nx:.793,ny:.473,r:.080,ratio:2.2449},   // E
-    {nx:.306,ny:.277,r:.080,ratio:2.3784},   // F
-    {nx:.702,ny:.271,r:.080,ratio:2.6697},   // G
-    {nx:.500,ny:.197,r:.080,ratio:2.9966}    // A  – längst bort
+    {nx:.500,ny:.484,r:.075,ratio:1},
+    {nx:.500,ny:.787,r:.080,ratio:1.4983},
+    {nx:.303,ny:.702,r:.080,ratio:1.5874},
+    {nx:.718,ny:.702,r:.080,ratio:1.7818},
+    {nx:.215,ny:.479,r:.080,ratio:2},
+    {nx:.793,ny:.473,r:.080,ratio:2.2449},
+    {nx:.306,ny:.277,r:.080,ratio:2.3784},
+    {nx:.702,ny:.271,r:.080,ratio:2.6697},
+    {nx:.500,ny:.197,r:.080,ratio:2.9966}
   ];
   function hpFieldAt(e){
     const r=$('handWrap').getBoundingClientRect();
@@ -2143,7 +2192,7 @@
     const f=HP_FIELDS[i];
     const x=wr.left-sr.left+f.nx*wr.width;
     const y=wr.top-sr.top+f.ny*wr.height;
-    bloom(x,y,'255,170,130');                 // gropen glöder upp och tonar ut
+    bloom(x,y,'255,170,130');
   }
   (function(){
     const wrap=$('handWrap');
@@ -2167,7 +2216,7 @@
       const i=hpFieldAt(e);
       if(i>=0 && i!==lastField.get(e.pointerId)){
         lastField.set(e.pointerId,i);
-        strikeHand(handF()*HP_FIELDS[i].ratio,true);   // glissando över fälten
+        strikeHand(handF()*HP_FIELDS[i].ratio,true);
         hpGlowAt(i);
         const xy=stagePos(e);
         if(!reduced){glowOrbs(xy[0],xy[1],'255,170,130',3);}
@@ -2179,14 +2228,13 @@
     wrap.addEventListener('pointercancel',done);
   })();
 
-  // ---- vindspelet: sex rör + vindfångare, D-durpentatonik ----
   const CHIME_TUBES=[
-    {x:.324,hw:.040,top:.30,bot:.675,ratio:1},      // D
-    {x:.377,hw:.038,top:.30,bot:.755,ratio:1.122},  // E
-    {x:.452,hw:.038,top:.30,bot:.725,ratio:1.26},   // F#
-    {x:.559,hw:.038,top:.30,bot:.72, ratio:1.5},    // A
-    {x:.628,hw:.038,top:.30,bot:.765,ratio:1.682},  // B
-    {x:.686,hw:.040,top:.30,bot:.685,ratio:2}       // D, en oktav upp
+    {x:.324,hw:.040,top:.30,bot:.675,ratio:1},
+    {x:.377,hw:.038,top:.30,bot:.755,ratio:1.122},
+    {x:.452,hw:.038,top:.30,bot:.725,ratio:1.26},
+    {x:.559,hw:.038,top:.30,bot:.72, ratio:1.5},
+    {x:.628,hw:.038,top:.30,bot:.765,ratio:1.682},
+    {x:.686,hw:.040,top:.30,bot:.685,ratio:2}
   ];
   const CHIME_SAIL={x:.503,y:.875,r:.115};
   function chimeHitAt(e){
@@ -2211,7 +2259,6 @@
     },delayMs||0);
   }
   function breeze(){
-    // en vindpust: slumpade rör klingar i en mjuk kaskad
     const n=4+Math.floor(Math.random()*4);
     for(let k=0;k<n;k++){
       const i=Math.floor(Math.random()*CHIME_TUBES.length);
@@ -2245,7 +2292,7 @@
       const i=chimeHitAt(e);
       if(typeof i==='number' && i>=0 && i!==lastTube.get(e.pointerId)){
         lastTube.set(e.pointerId,i);
-        strikeChime(chimeF()*CHIME_TUBES[i].ratio,true,0);   // som vinden genom rören
+        strikeChime(chimeF()*CHIME_TUBES[i].ratio,true,0);
         chimeGlow(i,0);
         const xy=stagePos(e);
         if(!reduced) glitter(xy[0],xy[1],'255,170,130',3);
@@ -2257,7 +2304,6 @@
     wrap.addEventListener('pointercancel',done);
   })();
 
-  // ---- harpan: 22 strängar i D-dur över tre oktaver ----
   const HARP_N=22, HARP_XL=.33, HARP_XR=.73;
   const HARP_DEG=[0,2,4,5,7,9,11];
   function harpFreq(i){
@@ -2295,7 +2341,6 @@
       const prev=lastStr.get(e.pointerId);
       if(i<0||i===prev) return;
       lastStr.set(e.pointerId,i);
-      // glissando: knäpp varje sträng som svepet passerar
       if(prev>=0){
         const step=i>prev?1:-1;
         let d=0;
@@ -2315,7 +2360,6 @@
     wrap.addEventListener('pointercancel',done);
   })();
 
-  // ---- gemensamma hjälpare för de nya instrumenten ----
   function normPos(wrapId,e){
     const r=$(wrapId).getBoundingClientRect();
     return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height,r];
@@ -2330,8 +2374,6 @@
   }
   const PENTA=[1,1.1892,1.3348,1.4983,1.7818];
 
-  // tungtrumma: elva sektorer runt mitten — elva olika toner i mollpentatonik,
-  // lagda i sicksack med den lägsta längst ner och den högsta överst
   const TONGUE_R=[4,2.9966,2.3784,1.7818,1.3348,1,1.1892,1.4983,2,2.6697,3.5636];
   (function(){
     const wrap=$('tongueWrap'); const last=new Map();
@@ -2341,7 +2383,7 @@
       if(d<.06||d>.46) return -1;
       const a=Math.atan2(dy,dx)*180/Math.PI;
       const sec=360/11;
-      return Math.floor((((a+90)%360+360)%360+sec/2)/sec)%11;   // 0 = rakt upp, sedan medurs
+      return Math.floor((((a+90)%360+360)%360+sec/2)/sec)%11;
     }
     wrap.addEventListener('pointerdown',async function(e){
       e.preventDefault(); await ensureAudio();
@@ -2368,7 +2410,6 @@
     wrap.addEventListener('pointerup',done); wrap.addEventListener('pointercancel',done);
   })();
 
-  // sansula: nio tungor efter x-läget
   const SANS_R=[1,1.1892,1.3348,1.4983,1.7818,2,2.3784,2.6697,3];
   (function(){
     const wrap=$('sansWrap'); const last=new Map();
@@ -2403,7 +2444,6 @@
     wrap.addEventListener('pointerup',done); wrap.addEventListener('pointercancel',done);
   })();
 
-  // monokord: knäpp vid tryck, dron vid gnidning
   (function(){
     const wrap=$('monoWrap'); const act=new Map();
     wrap.addEventListener('pointerdown',async function(e){
@@ -2435,7 +2475,6 @@
     wrap.addEventListener('pointerup',done); wrap.addEventListener('pointercancel',done);
   })();
 
-  // panflöjt: fjorton rör i durskala
   (function(){
     const wrap=$('panWrap'); const last=new Map();
     const DEG=[0,2,4,5,7,9,11];
@@ -2470,11 +2509,10 @@
     wrap.addEventListener('pointerup',done); wrap.addEventListener('pointercancel',done);
   })();
 
-  // indianflöjt: håll för ton, glid längs flöjten för att byta ton
   (function(){
     const wrap=$('nafWrap');
     const NAF_R=[1,1.1892,1.3348,1.4983,1.7818,2];
-    const A=[.03,.97],B=[.85,.10];   // fot → munstycke
+    const A=[.03,.97],B=[.85,.10];
     let active=null;
     function noteAt(e){
       const p=normPos('nafWrap',e);
@@ -2523,7 +2561,6 @@
     wrap.addEventListener('pointerup',done); wrap.addEventListener('pointercancel',done);
   })();
 
-  // schamantrumma: mitten djup, kanten vass
   (function(){
     const wrap=$('shamanWrap');
     wrap.addEventListener('pointerdown',async function(e){
@@ -2537,7 +2574,6 @@
     });
   })();
 
-  // åsktrumma: smäll vid tryck, muller vid gnidning
   (function(){
     const wrap=$('thunderWrap'); const act=new Map();
     wrap.addEventListener('pointerdown',async function(e){
@@ -2548,7 +2584,7 @@
       thunderBoom();
       const xy=stagePos(e);
       if(!reduced){
-        lightning(xy[0],xy[1]);              // urladdningen slår ut från träffpunkten
+        lightning(xy[0],xy[1]);
         glitter(xy[0],xy[1],'255,217,138',3,.45);
       }
       cosmicBoost(.6,'gong',true); litWrap('thunderWrap');
@@ -2569,7 +2605,6 @@
     wrap.addEventListener('pointerup',done); wrap.addEventListener('pointercancel',done);
   })();
 
-  // havstrumma: kulorna rullar dit fingret går
   (function(){
     const wrap=$('oceanWrap'); const act=new Map();
     wrap.addEventListener('pointerdown',async function(e){
@@ -2603,7 +2638,6 @@
     wrap.addEventListener('pointerup',done); wrap.addEventListener('pointercancel',done);
   })();
 
-  // regnstav: skur vid tryck, rinnande korn när du lutar med ett drag
   (function(){
     const wrap=$('rainWrap'); const act=new Map();
     wrap.addEventListener('pointerdown',async function(e){
@@ -2637,7 +2671,6 @@
     wrap.addEventListener('pointerup',done); wrap.addEventListener('pointercancel',done);
   })();
 
-  // vakthund för de gnidna rösterna: stilla finger = tystnad
   setInterval(function(){
     if(!ac) return;
     const now=performance.now(), t=ac.currentTime;
@@ -2648,7 +2681,6 @@
     });
   },130);
 
-  // triangel: ett ting var du än träffar
   (function(){
     const wrap=$('triWrap');
     wrap.addEventListener('pointerdown',async function(e){
@@ -2662,7 +2694,6 @@
     });
   })();
 
-  // djembe: slagzon = skinnet högst upp
   (function(){
     const wrap=$('djembeWrap');
     const HEAD={x:.5,y:.16,rx:.30,ry:.13};
@@ -2784,14 +2815,11 @@
   document.addEventListener('visibilitychange',function(){
     if(!document.hidden&&ac&&ac.state!=='running'&&ac.state!=='closed') ac.resume().catch(function(){});
   });
-  // vakthund: om motorn mot förmodan somnat medan sidan är framme, väck den
   setInterval(function(){
     if(ac&&!document.hidden&&ac.state!=='running'&&ac.state!=='closed') ac.resume().catch(function(){});
   },1000);
-  // varje tryck var som helst på sidan får också väcka ljudet (mest pålitliga sättet)
   document.addEventListener('pointerdown',function(e){
     if(ac&&ac.state!=='running'&&ac.state!=='closed') ac.resume().catch(function(){});
-    // ett nytt tryck (utom på Silence-knappen själv) häver tystnaden
     const onSilence = e.target && e.target.closest && e.target.closest('#silence');
     if(silenced && !onSilence){
       silenced=false;
@@ -2855,7 +2883,6 @@
   }
   draw();
 
-  // klangval för gong och skål — bilden följer vald klang
   const gongImgEl=document.querySelector('#gongWrap img');
   const bowlImgEl=document.querySelector('#bowlWrap img');
   const GONG_IMGS={
@@ -2886,7 +2913,6 @@
     });
   });
 
-  // ---- inspelning: fånga allt som spelas och ladda ner ----
   let recorder=null, recChunks=[], recTick=null;
   function recMime(){
     const c=['audio/webm;codecs=opus','audio/webm','audio/mp4'];
@@ -2927,7 +2953,7 @@
       scheduleSuspend();
     };
     recorder.start();
-    clearTimeout(suspendTimer);              // håll ljudmotorn vaken under inspelning
+    clearTimeout(suspendTimer);
     const t0=Date.now();
     $('rec').textContent='■ STOP 0:00';
     $('rec').classList.add('on');
@@ -2939,7 +2965,6 @@
     },500);
   });
 
-  // ---- Random sound-knappar: instrumentets egna toner i slumpordning ----
   function shuffled(n){
     const a=[]; for(let i=0;i<n;i++)a.push(i);
     for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}
@@ -2980,7 +3005,7 @@
   const RAND_WRAP={gong:'gongWrap',bowl:'bowlWrap',hand:'handWrap',tongue:'tongueWrap',chime:'chimeWrap',
     harp:'harpWrap',sans:'sansWrap',mono:'monoWrap',pan:'panWrap',naf:'nafWrap',
     shaman:'shamanWrap',thunder:'thunderWrap',ocean:'oceanWrap',rain:'rainWrap',tri:'triWrap',djembe:'djembeWrap'};
-  const randLoops=new Map();   // instrument -> {timer, btn, label}
+  const randLoops=new Map();
   function stopRandLoop(k){
     const L=randLoops.get(k);
     if(!L) return;
@@ -3005,7 +3030,6 @@
     '<path d="M18.5 6.5 a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'+
     '</svg>';
   document.querySelectorAll('.rand').forEach(function(b){
-    // högtalarikon till vänster om texten
     b.innerHTML=SPEAKER_SVG+'<span>REPEAT</span>';
     b.classList.add('hasicon');
     const lbl=b.querySelector('span');
@@ -3032,7 +3056,6 @@
       randLoops.set(k,{timer:null,tick:tick,btn:b,lbl:lbl,tempoSel:tempoSel,durSel:durSel});
       step();
     }
-    // tryck på REPEAT: spelar → stoppa, annars starta med valt tempo och vald längd
     b.addEventListener('click',async function(e){
       e.stopPropagation();
       if(randLoops.has(k)){ stopRandLoop(k); return; }
@@ -3041,7 +3064,6 @@
     });
   });
 
-  // BPM / TIME knappar: visar/döljer reglaget precis under TUNE
   document.querySelectorAll('.opt-toggle').forEach(function(btn){
     btn.addEventListener('click', function(e){
       e.stopPropagation();
@@ -3096,7 +3118,6 @@
 const VISIT_SUPABASE_URL = "https://ibytawdimgthoqwtbtgv.supabase.co";
 const VISIT_SUPABASE_KEY = "sb_publishable_X4l9e5OPXE9Cq4XVc1jm_A_Hb6tbJUO";
 
-/* owner's own visitor IDs — never counted as visits */
 const EXCLUDED_VISITOR_IDS = [
   "183871a4-aa9b-4eaa-8668-2cd14de446c2",
   "9fe82a0f-073b-43ac-b5ec-27e3637fc35e",
@@ -3162,15 +3183,11 @@ async function registerVisit() {
 
 registerVisit();
 
-/* flytta regel-rutan (Tone & space) så den centreras i det utrymme som
-   faktiskt finns mellan vänsterkanten och första instrumentet, istället
-   för att bara centreras i den fasta 220px-zonen — så den kan glida
-   längre åt höger när skärmen är bred nog för det */
 (function(){
   var gutter=document.getElementById('tsPanelGutter');
   var stage=document.querySelector('.stage');
   if(!gutter||!stage) return;
-  var minW=220; // matchar den fasta bredden i CSS/body-paddingen
+  var minW=220;
   function centerTsPanel(){
     if(window.innerWidth<900){ gutter.style.width=''; return; }
     var gap=stage.getBoundingClientRect().left;
@@ -3179,6 +3196,35 @@ registerVisit();
   centerTsPanel();
   window.addEventListener('resize',centerTsPanel);
   window.addEventListener('load',centerTsPanel);
+})();
+
+(function(){
+  var tabs=document.querySelectorAll('#mobileTsTabs .mts-tab');
+  var panel=document.getElementById('tsPanel');
+  if(!tabs.length||!panel) return;
+  function closeAll(){
+    tabs.forEach(function(b){b.classList.remove('open');b.setAttribute('aria-expanded','false')});
+    panel.querySelectorAll('.knob.mobile-open,.rooms-box.mobile-open,.rec-box.mobile-open').forEach(function(el){
+      el.classList.remove('mobile-open');
+    });
+    panel.classList.remove('mobile-open');
+  }
+  tabs.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var target=document.getElementById(btn.dataset.target);
+      var wasOpen=btn.classList.contains('open');
+      closeAll();
+      if(!wasOpen&&target){
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+        target.classList.add('mobile-open');
+        panel.classList.add('mobile-open');
+      }
+    });
+  });
+  window.addEventListener('resize',function(){
+    if(window.innerWidth>=900) closeAll();
+  });
 })();
 </script>
 </body>
