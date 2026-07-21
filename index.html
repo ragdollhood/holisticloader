@@ -79,12 +79,12 @@
   var base=loc.replace(/[^/]*$/,'');
   var img=base+'images/preview-holistic.jpg';
   var set=function(id,prop,val){var el=document.getElementById(id);if(!el)return;if(prop==='href')el.href=val;else el.content=val;};
-  set('canonicalLink','href',loc);
-  set('ogUrl','content',loc);
+  // canonical and og:url are intentionally left as the static https://holisticloader.com/
+  // declared in <head> — they must always point to the one true URL, not whatever
+  // address the page happened to be loaded from (query strings, alternate domains, etc.),
+  // or search engines lose the signal for which copy is canonical.
   set('ogImage','content',img);
   set('twImage','content',img);
-  var ld=document.getElementById('ldjson');
-  if(ld){try{var d=JSON.parse(ld.textContent);d.url=loc;ld.textContent=JSON.stringify(d);}catch(e){}}
 }catch(e){}})();
 </script>
 
