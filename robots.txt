@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
 
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: facebot
+Allow: /
+
+User-agent: facebookcatalog
+Allow: /
+
 Sitemap: https://holisticloader.com/sitemap.xml
