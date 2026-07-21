@@ -1327,10 +1327,10 @@
 
   // ---- rumsakustik: genererade impulssvar för olika rum ----
   const ROOMS={
-    dry:{tail:0},
-    temple:{sec:2.2,pow:2.8,lp:3500,tail:2.2,g:1},
-    cathedral:{sec:5,pow:2.2,lp:6500,tail:5,g:.9},
-    cave:{sec:3,pow:3.2,lp:1600,tail:3,g:1.1,early:true}
+    dry:{tail:0,defaultReverb:0},
+    temple:{sec:2.2,pow:2.8,lp:3500,tail:2.2,g:1,defaultReverb:30},
+    cathedral:{sec:5,pow:2.2,lp:6500,tail:5,g:.9,defaultReverb:45},
+    cave:{sec:3,pow:3.2,lp:1600,tail:3,g:1.1,early:true,defaultReverb:55}
   };
   let curRoom='temple', roomTail=2.2;
   const irCache={};
@@ -1361,6 +1361,10 @@
     document.querySelectorAll('#rooms button').forEach(function(b){
       b.classList.toggle('sel',b.dataset.r===name);
     });
+    // reflect the room's default reverb amount in the slider itself, so the
+    // control visibly follows the room selection instead of staying put
+    $('reverb').value=ROOMS[name].defaultReverb;
+    $('reverbVal').textContent=ROOMS[name].defaultReverb+' %';
     if(!ac) return;
     if(name==='dry'){ revWet.gain.setTargetAtTime(0,ac.currentTime,.1); return; }
     if(!irCache[name]) irCache[name]=makeIR(ROOMS[name]);
