@@ -572,7 +572,35 @@
     #tsPanel > *{position:relative;z-index:1}
     #tsPanel > h2{flex:none;margin-bottom:2px;font-size:9.5px;letter-spacing:.14em;flex-wrap:wrap;row-gap:4px;
       background:rgba(6,4,9,.6);border-radius:10px;padding:5px 8px}
-    #tsPanel #tsInfoPanel{flex:none}
+
+    /* wrapper runt faders/rooms som infopanelen kan fällas ut ÖVER, istället för att knuffa ner dem */
+    #tsPanel .ts-controls{
+      position:relative;
+      flex:1 1 auto;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+    }
+    #tsPanel #tsInfoPanel{
+      flex:none;
+      position:absolute;
+      inset:0;
+      z-index:5;
+      max-height:none;
+      overflow-y:auto;
+      opacity:0;
+      visibility:hidden;
+      transition:opacity .28s ease;
+      border-radius:16px;
+      background:rgba(6,4,9,.94);
+      border:1px solid rgba(255,217,138,.16);
+      box-shadow:0 14px 30px rgba(0,0,0,.55);
+    }
+    #tsPanel #tsInfoPanel.open{
+      opacity:1;
+      visibility:visible;
+    }
+    #tsPanel .info-panel-inner{padding:12px}
 
     /* stor, mörk, sammanhållande ruta bakom de fyra reglarna så de alla ser lika stora/jämna ut */
     #tsPanel .faders-box{
@@ -913,45 +941,47 @@
 <div id="tsPanelGutter">
 <div class="panel" id="tsPanel">
   <h2>Tone &amp; space <button type="button" class="info-btn" id="tsInfoBtn" aria-expanded="false" aria-controls="tsInfoPanel" title="What do these controls do?">i</button></h2>
-  <div class="info-panel" id="tsInfoPanel">
-    <dl class="info-panel-inner">
-      <dt>Shimmer · beating</dt>
-      <dd>A subtle wavering in the pitch — part gentle vibrato, part two near-identical tones interfering with each other. That's the slow "wow-wow" pulse you hear from real singing bowls and gongs.</dd>
-      <dt>Space echo</dt>
-      <dd>Distinct, repeating echoes — like a tape delay. The sound bounces back at a steady interval and fades, separate from the room reverb below.</dd>
-      <dt>Room acoustics &amp; Reverb</dt>
-      <dd>Simulates the space you're playing in. Dry removes all ambience; Temple, Cathedral and Cave each add their own natural reflections and decay tail, as if the instrument were really in that room. The Reverb slider sets how much of it you hear.</dd>
-      <dt>Volume</dt>
-      <dd>Overall loudness of the instruments.</dd>
-    </dl>
-  </div>
-  <div class="faders-box">
-    <div class="knob" id="vibKnob">
-      <div class="top"><span>Shimmer/ beating</span><span id="vibVal">30 %</span></div>
-      <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer">
+  <div class="ts-controls">
+    <div class="info-panel" id="tsInfoPanel">
+      <dl class="info-panel-inner">
+        <dt>Shimmer · beating</dt>
+        <dd>A subtle wavering in the pitch — part gentle vibrato, part two near-identical tones interfering with each other. That's the slow "wow-wow" pulse you hear from real singing bowls and gongs.</dd>
+        <dt>Space echo</dt>
+        <dd>Distinct, repeating echoes — like a tape delay. The sound bounces back at a steady interval and fades, separate from the room reverb below.</dd>
+        <dt>Room acoustics &amp; Reverb</dt>
+        <dd>Simulates the space you're playing in. Dry removes all ambience; Temple, Cathedral and Cave each add their own natural reflections and decay tail, as if the instrument were really in that room. The Reverb slider sets how much of it you hear.</dd>
+        <dt>Volume</dt>
+        <dd>Overall loudness of the instruments.</dd>
+      </dl>
     </div>
-    <div class="knob" id="echoKnob">
-      <div class="top"><span>Space echo</span><span id="echoVal">25 %</span></div>
-      <input type="range" id="echo" min="0" max="100" value="25" aria-label="Echo">
+    <div class="faders-box">
+      <div class="knob" id="vibKnob">
+        <div class="top"><span>Shimmer/ beating</span><span id="vibVal">30 %</span></div>
+        <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer">
+      </div>
+      <div class="knob" id="echoKnob">
+        <div class="top"><span>Space echo</span><span id="echoVal">25 %</span></div>
+        <input type="range" id="echo" min="0" max="100" value="25" aria-label="Echo">
+      </div>
+      <div class="knob" id="reverbKnob">
+        <div class="top top-spacer" aria-hidden="true" style="visibility:hidden">&nbsp;</div>
+        <div class="top"><span>Reverb</span><span id="reverbVal">30 %</span></div>
+        <input type="range" id="reverb" min="0" max="100" value="30" aria-label="Reverb">
+      </div>
+      <div class="knob" id="volKnob">
+        <div class="top top-spacer" aria-hidden="true" style="visibility:hidden">&nbsp;</div>
+        <div class="top"><span>Volume</span><span id="volVal">35 %</span></div>
+        <input type="range" id="vol" min="0" max="100" value="35" aria-label="Volume">
+      </div>
     </div>
-    <div class="knob" id="reverbKnob">
-      <div class="top top-spacer" aria-hidden="true" style="visibility:hidden">&nbsp;</div>
-      <div class="top"><span>Reverb</span><span id="reverbVal">30 %</span></div>
-      <input type="range" id="reverb" min="0" max="100" value="30" aria-label="Reverb">
-    </div>
-    <div class="knob" id="volKnob">
-      <div class="top top-spacer" aria-hidden="true" style="visibility:hidden">&nbsp;</div>
-      <div class="top"><span>Volume</span><span id="volVal">35 %</span></div>
-      <input type="range" id="vol" min="0" max="100" value="35" aria-label="Volume">
-    </div>
-  </div>
-  <div class="rooms-box">
-    <div class="rooms-label">Room acoustics</div>
-    <div class="rooms" id="rooms">
-      <button data-r="dry">Dry</button>
-      <button data-r="temple" class="sel">Temple</button>
-      <button data-r="cathedral">Cathedral</button>
-      <button data-r="cave">Cave</button>
+    <div class="rooms-box">
+      <div class="rooms-label">Room acoustics</div>
+      <div class="rooms" id="rooms">
+        <button data-r="dry">Dry</button>
+        <button data-r="temple" class="sel">Temple</button>
+        <button data-r="cathedral">Cathedral</button>
+        <button data-r="cave">Cave</button>
+      </div>
     </div>
   </div>
 </div>
