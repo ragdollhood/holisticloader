@@ -118,6 +118,31 @@
     background:linear-gradient(90deg,var(--gold),var(--violet));
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
+  /* ---- rubrikflik: håller CLICK & DRAG-rubriken synlig, som en nedfälld flik under navigationen ---- */
+  .h1-frame{
+    position:sticky;
+    top:max(104px,calc(env(safe-area-inset-top) + 92px));
+    margin:-36px auto 0;
+    z-index:30;
+    width:min(94vw,820px);
+    padding:8px 24px 10px;
+    border:1.5px solid var(--gold);
+    border-top:none;
+    border-radius:0 0 30px 30px;
+    background:linear-gradient(180deg, rgba(20,14,28,.74) 0%, rgba(14,10,20,.62) 100%);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
+  }
+  .h1-frame h1{max-width:none;margin:0}
+  @media (max-width:560px){
+    .h1-frame{
+      top:max(74px,calc(env(safe-area-inset-top) + 60px));
+      margin-top:-22px;
+      width:92vw;
+      padding:6px 14px 8px;
+      border-radius:0 0 18px 18px;
+    }
+  }
   .sub{font-size:12.5px;color:var(--soft);margin-top:6px;text-align:center;letter-spacing:.08em}
   .h1-desktop{display:none}
   .h1-mobile{display:inline}
@@ -136,7 +161,7 @@
   .instr{display:flex;flex-direction:column;align-items:center;width:100%}
   /* desktop: sprid ut instrumenten i ett rutnät över skärmen */
   @media (min-width:900px){
-    .stage{width:96vw;max-width:1500px;flex-direction:row;flex-wrap:wrap;
+    .stage{width:96%;max-width:1500px;flex-direction:row;flex-wrap:wrap;
       align-items:flex-start;justify-content:center;gap:18px 28px}
     .instr{width:300px}
   }
@@ -421,7 +446,7 @@
   /* ===== shared top logo + tab navigation (same system as index.html) ===== */
   #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
     padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
-    background:linear-gradient(to bottom,rgba(6,4,9,.85) 0%,rgba(6,4,9,.5) 65%,transparent 100%)}
+    background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
   #topNavBrand{display:flex;align-items:center;gap:10px;pointer-events:auto;text-decoration:none;margin-bottom:10px}
   #topNavLogo{height:50px;width:auto;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
   #topNavTitle{font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
@@ -478,6 +503,168 @@
     /* pull the h1 up closer to the gold line under the tabs on mobile */
     body{padding-top:max(96px,calc(env(safe-area-inset-top) + 80px))}
   }
+
+  /* ===== laptop/desktop: Tone & space blir ett fast mixerbord till vänster ===== */
+  @media (min-width:900px){
+    body{padding-left:220px}
+
+    /* navigationen är centrerad över hela viewporten (ignorerar sidopanelens padding),
+       så flytta tillbaka rubrikfliken lika mycket som paddingen skiftar innehållet,
+       för att den ska hamna centrerad mot Sound Healing-fliken igen */
+    .h1-frame{transform:translateX(calc((220px - 16px) / -2))}
+
+    /* gutter: osynlig zon mellan vänsterkanten och instrumenten — centrerar regelrutan i den lediga ytan */
+    #tsPanelGutter{
+      position:fixed;
+      left:0;
+      top:0;
+      bottom:0;
+      width:220px;
+      height:100vh;
+      height:100dvh;
+      z-index:12;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:max(150px,calc(env(safe-area-inset-top) + 132px)) 10px calc(env(safe-area-inset-bottom,0px) + 18px);
+      pointer-events:none;
+    }
+    #tsPanelGutter #tsPanel{pointer-events:auto}
+
+    #tsPanel{
+      position:relative;
+      width:194px;
+      max-width:100%;
+      height:100%;
+      max-height:100%;
+      overflow:hidden;
+      margin-top:0;
+      display:flex;
+      flex-direction:column;
+      padding:16px 14px 18px;
+      /* samma ramstil som rubrikflikens, men rundad i alla hörn */
+      border:1.5px solid var(--gold);
+      border-radius:30px;
+      box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      background-color:var(--panel);
+      background-image:
+        radial-gradient(ellipse 170% 60% at 50% 32%, rgba(255,217,138,.30), transparent 62%),
+        radial-gradient(ellipse 160% 60% at 50% 80%, rgba(255,217,138,.18), transparent 66%),
+        url(images/bg-faders.jpg);
+      background-size:auto,auto,cover;
+      background-position:center,center,center;
+      background-repeat:no-repeat,no-repeat,no-repeat;
+    }
+    /* stilla guldskimmer bakom faderna, ingen rörelse */
+    #tsPanel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(165deg,
+        rgba(255,217,138,.16) 0%,
+        transparent 42%,
+        transparent 62%,
+        rgba(255,217,138,.12) 100%);
+      pointer-events:none;
+      z-index:0;
+    }
+    #tsPanel > *{position:relative;z-index:1}
+    #tsPanel > h2{flex:none;margin-bottom:2px;font-size:9.5px;letter-spacing:.14em;flex-wrap:wrap;row-gap:4px;
+      background:rgba(6,4,9,.6);border-radius:10px;padding:5px 8px}
+
+    /* wrapper runt faders/rooms som infopanelen kan fällas ut ÖVER, istället för att knuffa ner dem */
+    #tsPanel .ts-controls{
+      position:relative;
+      flex:1 1 auto;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+    }
+    #tsPanel #tsInfoPanel{
+      flex:none;
+      position:absolute;
+      inset:0;
+      z-index:5;
+      max-height:none;
+      overflow-y:auto;
+      opacity:0;
+      visibility:hidden;
+      transition:opacity .28s ease;
+      border-radius:16px;
+      background:rgba(6,4,9,.94);
+      border:1px solid rgba(255,217,138,.16);
+      box-shadow:0 14px 30px rgba(0,0,0,.55);
+    }
+    #tsPanel #tsInfoPanel.open{
+      opacity:1;
+      visibility:visible;
+    }
+    #tsPanel .info-panel-inner{padding:12px}
+
+    /* stor, mörk, sammanhållande ruta bakom de fyra reglarna så de alla ser lika stora/jämna ut */
+    #tsPanel .faders-box{
+      flex:1 1 auto;min-height:0;
+      display:flex;align-items:stretch;justify-content:space-between;
+      gap:4px;
+      margin-top:10px;
+      padding:12px 8px 10px;
+      border-radius:16px;
+      background:rgba(6,4,9,.62);
+      border:1px solid rgba(255,217,138,.14);
+      box-shadow:inset 0 2px 8px rgba(0,0,0,.35);
+    }
+    #tsPanel .knob{
+      flex:1 1 0;min-width:0;min-height:0;margin-top:0;height:auto;
+      display:flex;flex-direction:column;align-items:center;
+    }
+    #tsPanel .knob .top{
+      display:flex;flex-direction:column;align-items:center;justify-content:flex-start;flex:none;
+      gap:2px;text-align:center;width:100%;
+      height:48px;
+      font-size:9px;line-height:1.25;
+      background:rgba(6,4,9,.55);border-radius:8px;padding:4px 3px;
+    }
+    #tsPanel .knob .top span:first-child{
+      max-width:64px;
+      min-height:2.5em;
+      display:flex;align-items:center;justify-content:center;
+    }
+    #tsPanel .knob .top span:last-child{color:var(--gold);font-size:10px;font-weight:600}
+    #tsPanel .knob .top-spacer{display:none}
+    #tsPanel .knob input[type="range"]{
+      writing-mode:vertical-lr;
+      direction:rtl;
+      -webkit-appearance:slider-vertical;
+      width:6px;
+      flex:1 1 auto;
+      min-height:0;
+      margin:8px 0 4px;
+    }
+    #tsPanel .knob input[type="range"]::-webkit-slider-runnable-track{
+      width:6px;height:100%;border-radius:3px;background:#241a30;
+    }
+    #tsPanel .knob input[type="range"]::-webkit-slider-thumb{
+      margin-top:0;margin-left:-8px;
+    }
+    #tsPanel .knob input[type="range"]::-moz-range-track{
+      width:6px;background:#241a30;
+    }
+
+    /* likadan mörk, sammanhållande ruta runt rumsknapparna längst ner */
+    #tsPanel .rooms-box{
+      flex:none;margin-top:10px;
+      padding:10px 8px 10px;
+      border-radius:16px;
+      background:rgba(6,4,9,.62);
+      border:1px solid rgba(255,217,138,.14);
+      box-shadow:inset 0 2px 8px rgba(0,0,0,.35);
+    }
+    #tsPanel .rooms-label{margin:0 0 8px;text-align:center;
+      background:none;border-radius:0;padding:0;width:auto}
+    #tsPanel #rooms{grid-template-columns:repeat(2,1fr)}
+    #tsPanel #rooms button{padding:7px 2px;font-size:10px}
+  }
 </style>
 </head>
 <body>
@@ -526,7 +713,9 @@
 <div id="bgdim"></div>
 <canvas id="cosmos"></canvas>
 
-<h1><span class="h1-desktop">CLICK · CLICK & DRAG THE INSTRUMENTS</span><span class="h1-mobile">TAP · DOUBLE TAP & SWEEP</span></h1>
+<div class="h1-frame">
+  <h1><span class="h1-desktop">CLICK · CLICK & DRAG THE INSTRUMENTS</span><span class="h1-mobile">TAP · DOUBLE TAP & SWEEP</span></h1>
+</div>
 <div class="donate-row">
 </div>
 
@@ -749,43 +938,53 @@
 
 <canvas class="scope" id="scope" width="920" height="192"></canvas>
 
-<div class="panel">
+<div id="tsPanelGutter">
+<div class="panel" id="tsPanel">
   <h2>Tone &amp; space <button type="button" class="info-btn" id="tsInfoBtn" aria-expanded="false" aria-controls="tsInfoPanel" title="What do these controls do?">i</button></h2>
-  <div class="info-panel" id="tsInfoPanel">
-    <dl class="info-panel-inner">
-      <dt>Shimmer · beating</dt>
-      <dd>A subtle wavering in the pitch — part gentle vibrato, part two near-identical tones interfering with each other. That's the slow "wow-wow" pulse you hear from real singing bowls and gongs.</dd>
-      <dt>Space echo</dt>
-      <dd>Distinct, repeating echoes — like a tape delay. The sound bounces back at a steady interval and fades, separate from the room reverb below.</dd>
-      <dt>Room acoustics &amp; Reverb</dt>
-      <dd>Simulates the space you're playing in. Dry removes all ambience; Temple, Cathedral and Cave each add their own natural reflections and decay tail, as if the instrument were really in that room. The Reverb slider sets how much of it you hear.</dd>
-      <dt>Volume</dt>
-      <dd>Overall loudness of the instruments.</dd>
-    </dl>
+  <div class="ts-controls">
+    <div class="info-panel" id="tsInfoPanel">
+      <dl class="info-panel-inner">
+        <dt>Shimmer · beating</dt>
+        <dd>A subtle wavering in the pitch — part gentle vibrato, part two near-identical tones interfering with each other. That's the slow "wow-wow" pulse you hear from real singing bowls and gongs.</dd>
+        <dt>Space echo</dt>
+        <dd>Distinct, repeating echoes — like a tape delay. The sound bounces back at a steady interval and fades, separate from the room reverb below.</dd>
+        <dt>Room acoustics &amp; Reverb</dt>
+        <dd>Simulates the space you're playing in. Dry removes all ambience; Temple, Cathedral and Cave each add their own natural reflections and decay tail, as if the instrument were really in that room. The Reverb slider sets how much of it you hear.</dd>
+        <dt>Volume</dt>
+        <dd>Overall loudness of the instruments.</dd>
+      </dl>
+    </div>
+    <div class="faders-box">
+      <div class="knob" id="vibKnob">
+        <div class="top"><span>Shimmer/ beating</span><span id="vibVal">30 %</span></div>
+        <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer">
+      </div>
+      <div class="knob" id="echoKnob">
+        <div class="top"><span>Space echo</span><span id="echoVal">25 %</span></div>
+        <input type="range" id="echo" min="0" max="100" value="25" aria-label="Echo">
+      </div>
+      <div class="knob" id="reverbKnob">
+        <div class="top top-spacer" aria-hidden="true" style="visibility:hidden">&nbsp;</div>
+        <div class="top"><span>Reverb</span><span id="reverbVal">30 %</span></div>
+        <input type="range" id="reverb" min="0" max="100" value="30" aria-label="Reverb">
+      </div>
+      <div class="knob" id="volKnob">
+        <div class="top top-spacer" aria-hidden="true" style="visibility:hidden">&nbsp;</div>
+        <div class="top"><span>Volume</span><span id="volVal">35 %</span></div>
+        <input type="range" id="vol" min="0" max="100" value="35" aria-label="Volume">
+      </div>
+    </div>
+    <div class="rooms-box">
+      <div class="rooms-label">Room acoustics</div>
+      <div class="rooms" id="rooms">
+        <button data-r="dry">Dry</button>
+        <button data-r="temple" class="sel">Temple</button>
+        <button data-r="cathedral">Cathedral</button>
+        <button data-r="cave">Cave</button>
+      </div>
+    </div>
   </div>
-  <div class="knob">
-    <div class="top"><span>Shimmer · beating</span><span id="vibVal">30 %</span></div>
-    <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer">
-  </div>
-  <div class="knob">
-    <div class="top"><span>Space echo</span><span id="echoVal">25 %</span></div>
-    <input type="range" id="echo" min="0" max="100" value="25" aria-label="Echo">
-  </div>
-  <div class="rooms-label">Room acoustics</div>
-  <div class="rooms" id="rooms">
-    <button data-r="dry">Dry</button>
-    <button data-r="temple" class="sel">Temple</button>
-    <button data-r="cathedral">Cathedral</button>
-    <button data-r="cave">Cave</button>
-  </div>
-  <div class="knob">
-    <div class="top"><span>Reverb</span><span id="reverbVal">30 %</span></div>
-    <input type="range" id="reverb" min="0" max="100" value="30" aria-label="Reverb">
-  </div>
-  <div class="knob">
-    <div class="top"><span>Volume</span><span id="volVal">35 %</span></div>
-    <input type="range" id="vol" min="0" max="100" value="35" aria-label="Volume">
-  </div>
+</div>
 </div>
 
 <div class="panel">
@@ -1053,7 +1252,7 @@
   requestAnimationFrame(cosmosLoop);
 
   /* ================= LJUDMOTOR ================= */
-  let ac=null, master=null, analyser=null, strikeBus=null;
+  let ac=null, master=null, limiter=null, analyser=null, strikeBus=null;
   let mixBus=null, conv=null, revWet=null, mediaDest=null;
   let monoG=null, monoOscs=[], oceanG=null, oceanLP=null;
   let thundG=null, rainG=null;
@@ -1092,11 +1291,17 @@
       revWet=ac.createGain(); revWet.gain.value=0;
       mixBus.connect(master);
       mixBus.connect(conv); conv.connect(revWet).connect(master);
+      // slutlimiter: fångar alla toppar innan högtalarna så ljudet
+      // aldrig kan klippa/spricka, oavsett hur högt volymreglaget står
+      limiter=ac.createDynamicsCompressor();
+      limiter.threshold.value=-6; limiter.knee.value=6;
+      limiter.ratio.value=20; limiter.attack.value=.002; limiter.release.value=.3;
+      master.connect(limiter);
       analyser=ac.createAnalyser(); analyser.fftSize=1024;
-      master.connect(analyser).connect(ac.destination);
+      limiter.connect(analyser).connect(ac.destination);
       // inspelningsutgång
       mediaDest=ac.createMediaStreamDestination();
-      master.connect(mediaDest);
+      limiter.connect(mediaDest);
       setRoom(curRoom);
 
       osc=ac.createOscillator(); osc.type=curWave; osc.frequency.value=curFreq();
@@ -1272,16 +1477,27 @@
     const t0=ac.currentTime+.02;
     const f=gongF(), v=masterVol()*.85, sh=shimmer();
     const gains=[]; let maxDec=0;
-    V.ratios.forEach(function(r,i){
+    // räkna ut vikterna först och normalisera mot deras summa, så att den
+    // sammanlagda toppnivån blir densamma oavsett hur många övertoner rösten
+    // har — tamtam (10 partialer) och symphonic (8) överbelastade annars
+    // kraftigt jämfört med tibetan (6), vilket var den egentliga orsaken
+    // till att det skorrade/klippte
+    const weights=V.ratios.map(function(r,i){
       let w;
       if(V.flat){ w=(i===0?1:.78)*Math.pow(.93,i); }
       else { w=(1-edge)*Math.pow(.62,i)+edge*Math.pow(.85,i)*(i<2?.5:1); }
       if(V.fund&&i===0) w*=V.fund;
+      return w;
+    });
+    const sumW=weights.reduce(function(a,b){return a+b},0);
+    const partGain=.5/(2*sumW);
+    V.ratios.forEach(function(r,i){
+      const w=weights[i];
       const dec=(V.dec/Math.sqrt(r))*(.8+Math.random()*.4);
       maxDec=Math.max(maxDec,dec);
       const det=(4+sh*16)*(V.wob||1);
-      gains.push(partial(t0,f*r,v*w*.45,dec, det*(Math.random()-.5),V.att));
-      gains.push(partial(t0,f*r,v*w*.45,dec,-det*(Math.random()-.5),V.att));
+      gains.push(partial(t0,f*r,v*w*partGain,dec, det*(Math.random()-.5),V.att));
+      gains.push(partial(t0,f*r,v*w*partGain,dec,-det*(Math.random()-.5),V.att));
     });
     const nDur=V.crash?.6:.25;
     const nb=ac.createBufferSource();
@@ -1291,7 +1507,7 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=f*(V.noiseF+edge*2.5); bp.Q.value=V.noiseQ;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(V.crash?.6:.45),t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(V.crash?.3:.24),t0);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+nDur);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); gains.push(ng);
@@ -2927,6 +3143,25 @@ async function registerVisit() {
 }
 
 registerVisit();
+
+/* flytta regel-rutan (Tone & space) så den centreras i det utrymme som
+   faktiskt finns mellan vänsterkanten och första instrumentet, istället
+   för att bara centreras i den fasta 220px-zonen — så den kan glida
+   längre åt höger när skärmen är bred nog för det */
+(function(){
+  var gutter=document.getElementById('tsPanelGutter');
+  var stage=document.querySelector('.stage');
+  if(!gutter||!stage) return;
+  var minW=220; // matchar den fasta bredden i CSS/body-paddingen
+  function centerTsPanel(){
+    if(window.innerWidth<900){ gutter.style.width=''; return; }
+    var gap=stage.getBoundingClientRect().left;
+    gutter.style.width=(gap>minW?gap:minW)+'px';
+  }
+  centerTsPanel();
+  window.addEventListener('resize',centerTsPanel);
+  window.addEventListener('load',centerTsPanel);
+})();
 </script>
 </body>
 </html>
