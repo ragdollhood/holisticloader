@@ -65,18 +65,17 @@
 </script>
 <!-- ========== /SEO ========== -->
 <script>
-(function(){try{
-  var loc=location.href.split('#')[0];
-  var set=function(id,prop,val){var el=document.getElementById(id);if(!el)return;if(prop==='href')el.href=val;else el.content=val;};
-  set('canonicalLink','href',loc);
-  set('ogUrl','content',loc);
-}catch(e){}})();
+// canonical and og:url are intentionally left as the static values declared in
+// <head> — https://holisticloader.com/instruments.html — so search engines
+// always get pointed at the one true URL, not whatever address the page was
+// actually loaded from.
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
   :root{
     --ink:#f3efe4;
@@ -464,6 +463,11 @@
 </head>
 <body>
 
+<div class="sr-only">
+  <h2>Play sound healing instruments online, free</h2>
+  <p>Holistic Loader's sound healing room lets you play and tune a gong, crystal and Tibetan singing bowls, handpan, tongue drum, wind chimes, harp, sansula, monochord and pan flute — each adjustable to its own Hz frequency for relaxation, meditation or focus. Click or tap the instruments to play them, no app or sign-up required.</p>
+</div>
+
 <div id="donateWrap">
   <a id="donateFixed" class="donate" target="_blank" rel="noopener"
      href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ragdollhood%40gmail.com&item_name=Holistic%20Loader&currency_code=SEK&no_shipping=1">
@@ -530,7 +534,7 @@
 
   <div class="instr-label">Crystal bowl · tap or circle it</div>
   <div class="bowl-wrap" id="bowlWrap">
-    <img src="images/crystal_bowl.jpg" alt="Transparent crystal singing bowl with sacred geometry and a mallet">
+    <img loading="lazy" src="images/crystal_bowl.jpg" alt="Transparent crystal singing bowl with sacred geometry and a mallet">
   </div>
   <div class="voice-row" id="bowlVoices">
     <button data-v="crystal" class="sel">Crystal</button>
@@ -548,7 +552,7 @@
 
   <div class="instr-label">Handpan · tap the tone fields</div>
   <div class="hand-wrap" id="handWrap">
-    <img src="images/handpan.jpg" alt="Dark steel handpan engraved with golden celestial patterns, seen from above">
+    <img loading="lazy" src="images/handpan.jpg" alt="Dark steel handpan engraved with golden celestial patterns, seen from above">
   </div>
   <div class="tune h"><span>TUNE</span><input type="range" id="handTune" min="110" max="220" value="147" aria-label="Tune the handpan"><span id="handHz">147 Hz</span></div>
   <div class="opt-slider bpm-slider" id="handBpmRow" hidden><span>BPM</span><input type="range" id="handBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for hand"><span id="handBpmVal">every 2 sec (30 bpm)</span></div>
@@ -561,7 +565,7 @@
 
   <div class="instr-label">Tongue drum · tap the tongues</div>
   <div class="tongue-wrap" id="tongueWrap">
-    <img src="images/tonguedrum.jpg" alt="Black steel tongue drum engraved with golden constellations, seen from above">
+    <img loading="lazy" src="images/tonguedrum.jpg" alt="Black steel tongue drum engraved with golden constellations, seen from above">
   </div>
   <div class="tune h"><span>TUNE</span><input type="range" id="tongueTune" min="220" max="440" value="294" aria-label="Tune the tongue drum"><span id="tongueHz">294 Hz</span></div>
   <div class="opt-slider bpm-slider" id="tongueBpmRow" hidden><span>BPM</span><input type="range" id="tongueBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for tongue"><span id="tongueBpmVal">every 2 sec (30 bpm)</span></div>
@@ -575,7 +579,7 @@
 
   <div class="instr-label">Wind chimes · tap the tubes, or the wind sail for a breeze</div>
   <div class="chime-wrap" id="chimeWrap">
-    <img src="images/chimes.jpg" alt="Dark bronze wind chimes engraved with golden celestial symbols, hanging in space">
+    <img loading="lazy" src="images/chimes.jpg" alt="Dark bronze wind chimes engraved with golden celestial symbols, hanging in space">
   </div>
   <div class="tune c"><span>TUNE</span><input type="range" id="chimeTune" min="440" max="880" value="587" aria-label="Tune the wind chimes"><span id="chimeHz">587 Hz</span></div>
   <div class="opt-slider bpm-slider" id="chimeBpmRow" hidden><span>BPM</span><input type="range" id="chimeBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for chime"><span id="chimeBpmVal">every 2 sec (30 bpm)</span></div>
@@ -588,7 +592,7 @@
 
   <div class="instr-label">Triangle · tap for a shimmering ting</div>
   <div class="tri-wrap" id="triWrap">
-    <img src="images/triangle.jpg" alt="Golden orchestral triangle with beater, hanging among galaxies">
+    <img loading="lazy" src="images/triangle.jpg" alt="Golden orchestral triangle with beater, hanging among galaxies">
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="triTune" min="1800" max="4200" value="2900" aria-label="Tune the triangle"><span id="triHz">2900 Hz</span></div>
   <div class="opt-slider bpm-slider" id="triBpmRow" hidden><span>BPM</span><input type="range" id="triBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for tri"><span id="triBpmVal">every 2 sec (30 bpm)</span></div>
@@ -601,7 +605,7 @@
 
   <div class="instr-label">Harp · pluck a string, or sweep for a glissando</div>
   <div class="harp-wrap" id="harpWrap">
-    <img src="images/harpa.jpg" alt="Black and gold celestial harp engraved with stars and moons, standing in space">
+    <img loading="lazy" src="images/harpa.jpg" alt="Black and gold celestial harp engraved with stars and moons, standing in space">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="harpTune" min="110" max="294" value="147" aria-label="Tune the harp"><span id="harpHz">147 Hz</span></div>
   <div class="opt-slider bpm-slider" id="harpBpmRow" hidden><span>BPM</span><input type="range" id="harpBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for harp"><span id="harpBpmVal">every 2 sec (30 bpm)</span></div>
@@ -614,7 +618,7 @@
 
   <div class="instr-label">Sansula · pluck the tines, sweep for a ripple</div>
   <div class="sans-wrap" id="sansWrap">
-    <img src="images/sansula.jpg" alt="Dark kalimba sansula with golden engraved tines on a starry soundboard">
+    <img loading="lazy" src="images/sansula.jpg" alt="Dark kalimba sansula with golden engraved tines on a starry soundboard">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="sansTune" min="196" max="392" value="220" aria-label="Tune the sansula"><span id="sansHz">220 Hz</span></div>
   <div class="opt-slider bpm-slider" id="sansBpmRow" hidden><span>BPM</span><input type="range" id="sansBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for sans"><span id="sansBpmVal">every 2 sec (30 bpm)</span></div>
@@ -626,7 +630,7 @@
   </div>
   <div class="instr-label">Monochord · tap to pluck, rub for a drone</div>
   <div class="mono-wrap" id="monoWrap">
-    <img src="images/monochord.jpg" alt="Long black monochord engraved with moons and stars, floating in space">
+    <img loading="lazy" src="images/monochord.jpg" alt="Long black monochord engraved with moons and stars, floating in space">
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="monoTune" min="49" max="110" value="65" aria-label="Tune the monochord"><span id="monoHz">65 Hz</span></div>
   <div class="opt-slider bpm-slider" id="monoBpmRow" hidden><span>BPM</span><input type="range" id="monoBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for mono"><span id="monoBpmVal">every 2 sec (30 bpm)</span></div>
@@ -638,7 +642,7 @@
   </div>
   <div class="instr-label">Pan flute · tap a pipe, sweep to ripple</div>
   <div class="pan-wrap" id="panWrap">
-    <img src="images/panflute.jpg" alt="Black pan flute with golden celestial engravings on its pipes">
+    <img loading="lazy" src="images/panflute.jpg" alt="Black pan flute with golden celestial engravings on its pipes">
   </div>
   <div class="tune c"><span>TUNE</span><input type="range" id="panTune" min="294" max="587" value="392" aria-label="Tune the pan flute"><span id="panHz">392 Hz</span></div>
   <div class="opt-slider bpm-slider" id="panBpmRow" hidden><span>BPM</span><input type="range" id="panBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for pan"><span id="panBpmVal">every 2 sec (30 bpm)</span></div>
@@ -650,7 +654,7 @@
   </div>
   <div class="instr-label">Native flute · <span class="hold-desktop">press and hold</span><span class="hold-mobile">DUBBEL TAP AND HOLD</span>, slide to change note</div>
   <div class="naf-wrap" id="nafWrap">
-    <img src="images/native_american_fluit.jpg" alt="Native American style flute with an eagle head block and hanging feathers">
+    <img loading="lazy" src="images/native_american_fluit.jpg" alt="Native American style flute with an eagle head block and hanging feathers">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="nafTune" min="220" max="440" value="294" aria-label="Tune the native flute"><span id="nafHz">294 Hz</span></div>
   <div class="opt-slider bpm-slider" id="nafBpmRow" hidden><span>BPM</span><input type="range" id="nafBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for naf"><span id="nafBpmVal">every 2 sec (30 bpm)</span></div>
@@ -662,7 +666,7 @@
   </div>
   <div class="instr-label">Shaman drum · tap — center deep, rim sharp</div>
   <div class="shaman-wrap" id="shamanWrap">
-    <img src="images/shaman_drum.jpg" alt="Shamanic frame drum with golden spirit animals and feathers">
+    <img loading="lazy" src="images/shaman_drum.jpg" alt="Shamanic frame drum with golden spirit animals and feathers">
   </div>
   <div class="opt-slider bpm-slider" id="shamanBpmRow" hidden><span>BPM</span><input type="range" id="shamanBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for shaman"><span id="shamanBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="shamanTimeRow" hidden><span>TIME</span><input type="range" id="shamanTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for shaman"><span id="shamanTimeVal">30 sec</span></div>
@@ -674,7 +678,7 @@
 
   <div class="instr-label">Djembe · center bass, middle tone, rim slap</div>
   <div class="djembe-wrap" id="djembeWrap">
-    <img src="images/djembe.jpg" alt="Carved wooden djembe drum with lotus mandala on its head">
+    <img loading="lazy" src="images/djembe.jpg" alt="Carved wooden djembe drum with lotus mandala on its head">
   </div>
   <div class="opt-slider bpm-slider" id="djembeBpmRow" hidden><span>BPM</span><input type="range" id="djembeBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for djembe"><span id="djembeBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="djembeTimeRow" hidden><span>TIME</span><input type="range" id="djembeTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for djembe"><span id="djembeTimeVal">30 sec</span></div>
@@ -686,7 +690,7 @@
 
   <div class="instr-label">Thunder drum · tap for thunder, rub for rumble</div>
   <div class="thunder-wrap" id="thunderWrap">
-    <img src="images/thunder_drum.jpg" alt="Large dark drum with golden lightning across its head">
+    <img loading="lazy" src="images/thunder_drum.jpg" alt="Large dark drum with golden lightning across its head">
   </div>
   <div class="opt-slider bpm-slider" id="thunderBpmRow" hidden><span>BPM</span><input type="range" id="thunderBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for thunder"><span id="thunderBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="thunderTimeRow" hidden><span>TIME</span><input type="range" id="thunderTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for thunder"><span id="thunderTimeVal">30 sec</span></div>
@@ -698,7 +702,7 @@
 
   <div class="instr-label">Ocean drum · rub to roll the waves, tap for a splash</div>
   <div class="ocean-wrap" id="oceanWrap">
-    <img src="images/ocean_drum.jpg" alt="Ocean drum filled with beads forming a golden sea under moon phases">
+    <img loading="lazy" src="images/ocean_drum.jpg" alt="Ocean drum filled with beads forming a golden sea under moon phases">
   </div>
   <div class="opt-slider bpm-slider" id="oceanBpmRow" hidden><span>BPM</span><input type="range" id="oceanBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for ocean"><span id="oceanBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="oceanTimeRow" hidden><span>TIME</span><input type="range" id="oceanTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for ocean"><span id="oceanTimeVal">30 sec</span></div>
@@ -710,7 +714,7 @@
 
   <div class="instr-label">Rainstick · tap for a shower, tilt with a drag</div>
   <div class="rain-wrap" id="rainWrap">
-    <img src="images/rainstick.jpg" alt="Engraved rainstick with feathers, drifting among galaxies">
+    <img loading="lazy" src="images/rainstick.jpg" alt="Engraved rainstick with feathers, drifting among galaxies">
   </div>
   <div class="opt-slider bpm-slider" id="rainBpmRow" hidden><span>BPM</span><input type="range" id="rainBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for rain"><span id="rainBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="rainTimeRow" hidden><span>TIME</span><input type="range" id="rainTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for rain"><span id="rainTimeVal">30 sec</span></div>
