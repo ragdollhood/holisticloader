@@ -128,7 +128,7 @@
     margin:-36px auto 0;
     z-index:30;
     width:min(94vw,820px);
-    padding:23px 24px 9px;
+    padding:9px 24px 9px;
     border:1.5px solid var(--gold);
     border-top:none;
     border-radius:0 0 30px 30px;
@@ -142,7 +142,7 @@
       top:max(74px,calc(env(safe-area-inset-top) + 60px));
       margin-top:-22px;
       width:92vw;
-      padding:21px 14px 7px;
+      padding:7px 14px 7px;
       border-radius:0 0 18px 18px;
     }
   }
@@ -1031,7 +1031,7 @@
     </div>
     <div class="faders-box">
       <div class="knob" id="vibKnob">
-        <div class="top"><span>Shimmer/beating</span><span id="vibVal">30 %</span></div>
+        <div class="top"><span>Shimmer/<br>Beating</span><span id="vibVal">30 %</span></div>
         <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer/beating">
       </div>
       <div class="knob" id="echoKnob">
@@ -1070,7 +1070,7 @@
 
 <!-- ===== mobile only: Tone & space + Room acoustics + Recorder as fixed bottom tabs ===== -->
 <div id="mobileTsTabs" role="tablist" aria-label="Tone and space controls">
-  <button type="button" class="mts-tab" data-target="vibKnob" aria-expanded="false">Shimmer/beating</button>
+  <button type="button" class="mts-tab" data-target="vibKnob" aria-expanded="false">Shimmer/<br>Beating</button>
   <button type="button" class="mts-tab" data-target="echoKnob" aria-expanded="false">Space echo</button>
   <button type="button" class="mts-tab" data-target="reverbKnob" aria-expanded="false">Reverb</button>
   <button type="button" class="mts-tab" data-target="volKnob" aria-expanded="false">Volume</button>
