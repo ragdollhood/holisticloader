@@ -142,7 +142,7 @@
       top:max(74px,calc(env(safe-area-inset-top) + 60px));
       margin-top:-22px;
       width:92vw;
-      padding:11px 14px 5px;
+      padding:9px 14px 7px;
       border-radius:0 0 18px 18px;
     }
   }
@@ -3224,6 +3224,12 @@ registerVisit();
   });
   window.addEventListener('resize',function(){
     if(window.innerWidth>=900) closeAll();
+  });
+  document.addEventListener('click',function(e){
+    if(window.innerWidth>=900) return;
+    if(!panel.classList.contains('mobile-open')) return;
+    if(e.target.closest('#tsPanel')||e.target.closest('#mobileTsTabs')) return;
+    closeAll();
   });
 })();
 </script>
