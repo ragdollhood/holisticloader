@@ -3126,6 +3126,25 @@ async function registerVisit() {
 }
 
 registerVisit();
+
+/* flytta regel-rutan (Tone & space) så den centreras i det utrymme som
+   faktiskt finns mellan vänsterkanten och första instrumentet, istället
+   för att bara centreras i den fasta 220px-zonen — så den kan glida
+   längre åt höger när skärmen är bred nog för det */
+(function(){
+  var gutter=document.getElementById('tsPanelGutter');
+  var stage=document.querySelector('.stage');
+  if(!gutter||!stage) return;
+  var minW=220; // matchar den fasta bredden i CSS/body-paddingen
+  function centerTsPanel(){
+    if(window.innerWidth<900){ gutter.style.width=''; return; }
+    var gap=stage.getBoundingClientRect().left;
+    gutter.style.width=(gap>minW?gap:minW)+'px';
+  }
+  centerTsPanel();
+  window.addEventListener('resize',centerTsPanel);
+  window.addEventListener('load',centerTsPanel);
+})();
 </script>
 </body>
 </html>
