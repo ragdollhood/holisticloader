@@ -125,7 +125,7 @@
     margin:-36px auto 0;
     z-index:30;
     width:min(94vw,820px);
-    padding:8px 24px 10px;
+    padding:9px 24px;
     border:1.5px solid var(--gold);
     border-top:none;
     border-radius:0 0 30px 30px;
@@ -139,7 +139,7 @@
       top:max(74px,calc(env(safe-area-inset-top) + 60px));
       margin-top:-22px;
       width:92vw;
-      padding:6px 14px 8px;
+      padding:7px 14px;
       border-radius:0 0 18px 18px;
     }
   }
@@ -713,6 +713,7 @@
     #tsPanel .info-panel{display:none}
     #tsPanel .faders-box .knob{display:none}
     #tsPanel .faders-box .knob.mobile-open{display:block;margin-top:0}
+    #tsPanel .faders-box .knob .top-spacer{display:none}
     #tsPanel .rooms-box{display:none}
     #tsPanel .rooms-box.mobile-open{display:block;margin-top:0}
   }
@@ -1007,8 +1008,8 @@
     </div>
     <div class="faders-box">
       <div class="knob" id="vibKnob">
-        <div class="top"><span>Shimmer/ beating</span><span id="vibVal">30 %</span></div>
-        <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer">
+        <div class="top"><span>Shimmer/beating</span><span id="vibVal">30 %</span></div>
+        <input type="range" id="vib" min="0" max="100" value="30" aria-label="Shimmer/beating">
       </div>
       <div class="knob" id="echoKnob">
         <div class="top"><span>Space echo</span><span id="echoVal">25 %</span></div>
@@ -1040,7 +1041,7 @@
 
 <!-- ===== mobile only: Tone & space + Room acoustics as fixed bottom tabs ===== -->
 <div id="mobileTsTabs" role="tablist" aria-label="Tone and space controls">
-  <button type="button" class="mts-tab" data-target="vibKnob" aria-expanded="false">Shimmer</button>
+  <button type="button" class="mts-tab" data-target="vibKnob" aria-expanded="false">Shimmer/beating</button>
   <button type="button" class="mts-tab" data-target="echoKnob" aria-expanded="false">Space echo</button>
   <button type="button" class="mts-tab" data-target="reverbKnob" aria-expanded="false">Reverb</button>
   <button type="button" class="mts-tab" data-target="volKnob" aria-expanded="false">Volume</button>
