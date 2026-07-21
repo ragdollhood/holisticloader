@@ -1277,7 +1277,7 @@
           ac.resume().catch(function(){});
         }
       };
-      master=ac.createGain(); master.gain.value=1;
+      master=ac.createGain(); master.gain.value=.85;
       delay=ac.createDelay(1.0); delay.delayTime.value=.34;
       fb=ac.createGain(); fb.gain.value=0;
       wet=ac.createGain(); wet.gain.value=0;
@@ -1294,8 +1294,11 @@
       // slutlimiter: fångar alla toppar innan högtalarna så ljudet
       // aldrig kan klippa/spricka, oavsett hur högt volymreglaget står
       limiter=ac.createDynamicsCompressor();
-      limiter.threshold.value=-6; limiter.knee.value=6;
-      limiter.ratio.value=20; limiter.attack.value=.002; limiter.release.value=.3;
+      // mjukare inställning än tidigare: den gamla (-6dB tröskel, ratio 20, 2ms attack)
+      // var i praktiken en hård brickwall-klippare som fick gong-slagens många
+      // övertoner + brusknäpp att "skorra" när limitern pumpade hårt på varje topp
+      limiter.threshold.value=-3; limiter.knee.value=12;
+      limiter.ratio.value=6; limiter.attack.value=.006; limiter.release.value=.25;
       master.connect(limiter);
       analyser=ac.createAnalyser(); analyser.fftSize=1024;
       limiter.connect(analyser).connect(ac.destination);
