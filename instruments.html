@@ -1252,7 +1252,7 @@
   requestAnimationFrame(cosmosLoop);
 
   /* ================= LJUDMOTOR ================= */
-  let ac=null, master=null, limiter=null, analyser=null, strikeBus=null;
+  let ac=null, master=null, limiter=null, analyser=null, strikeBus=null, bassCut=null, bassShelf=null;
   let mixBus=null, conv=null, revWet=null, mediaDest=null;
   let monoG=null, monoOscs=[], oceanG=null, oceanLP=null;
   let thundG=null, rainG=null;
@@ -1291,6 +1291,14 @@
       revWet=ac.createGain(); revWet.gain.value=0;
       mixBus.connect(master);
       mixBus.connect(conv); conv.connect(revWet).connect(master);
+      // basfilter: vid låga gong-toner (55-90 Hz) byggs mycket energi upp i basen
+      // från grundton + flera detunade understämmor. Det fick limitern att pumpa
+      // hårdare och fick många högtalare (mobil/dator) att rattla — hörs som skorr.
+      // highpass rensar bort onödigt subbas-rumble, low-shelf tämjer själva bas-
+      // energin en aning så det djupa registret inte överbelastar kedjan.
+      bassCut=ac.createBiquadFilter(); bassCut.type='highpass'; bassCut.frequency.value=38; bassCut.Q.value=.7;
+      bassShelf=ac.createBiquadFilter(); bassShelf.type='lowshelf'; bassShelf.frequency.value=130; bassShelf.gain.value=-4.5;
+      master.connect(bassCut); bassCut.connect(bassShelf);
       // slutlimiter: fångar alla toppar innan högtalarna så ljudet
       // aldrig kan klippa/spricka, oavsett hur högt volymreglaget står
       limiter=ac.createDynamicsCompressor();
@@ -1299,7 +1307,7 @@
       // övertoner + brusknäpp att "skorra" när limitern pumpade hårt på varje topp
       limiter.threshold.value=-3; limiter.knee.value=12;
       limiter.ratio.value=6; limiter.attack.value=.006; limiter.release.value=.25;
-      master.connect(limiter);
+      bassShelf.connect(limiter);
       analyser=ac.createAnalyser(); analyser.fftSize=1024;
       limiter.connect(analyser).connect(ac.destination);
       // inspelningsutgång
