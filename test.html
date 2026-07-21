@@ -446,7 +446,7 @@
   /* ===== shared top logo + tab navigation (same system as index.html) ===== */
   #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
     padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
-    background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.8) 65%,transparent 100%)}
+    background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
   #topNavBrand{display:flex;align-items:center;gap:10px;pointer-events:auto;text-decoration:none;margin-bottom:10px}
   #topNavLogo{height:50px;width:auto;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
   #topNavTitle{font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
@@ -1477,16 +1477,27 @@
     const t0=ac.currentTime+.02;
     const f=gongF(), v=masterVol()*.85, sh=shimmer();
     const gains=[]; let maxDec=0;
-    V.ratios.forEach(function(r,i){
+    // räkna ut vikterna först och normalisera mot deras summa, så att den
+    // sammanlagda toppnivån blir densamma oavsett hur många övertoner rösten
+    // har — tamtam (10 partialer) och symphonic (8) överbelastade annars
+    // kraftigt jämfört med tibetan (6), vilket var den egentliga orsaken
+    // till att det skorrade/klippte
+    const weights=V.ratios.map(function(r,i){
       let w;
       if(V.flat){ w=(i===0?1:.78)*Math.pow(.93,i); }
       else { w=(1-edge)*Math.pow(.62,i)+edge*Math.pow(.85,i)*(i<2?.5:1); }
       if(V.fund&&i===0) w*=V.fund;
+      return w;
+    });
+    const sumW=weights.reduce(function(a,b){return a+b},0);
+    const partGain=.5/(2*sumW);
+    V.ratios.forEach(function(r,i){
+      const w=weights[i];
       const dec=(V.dec/Math.sqrt(r))*(.8+Math.random()*.4);
       maxDec=Math.max(maxDec,dec);
       const det=(4+sh*16)*(V.wob||1);
-      gains.push(partial(t0,f*r,v*w*.22,dec, det*(Math.random()-.5),V.att));
-      gains.push(partial(t0,f*r,v*w*.22,dec,-det*(Math.random()-.5),V.att));
+      gains.push(partial(t0,f*r,v*w*partGain,dec, det*(Math.random()-.5),V.att));
+      gains.push(partial(t0,f*r,v*w*partGain,dec,-det*(Math.random()-.5),V.att));
     });
     const nDur=V.crash?.6:.25;
     const nb=ac.createBufferSource();
@@ -1496,7 +1507,7 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=f*(V.noiseF+edge*2.5); bp.Q.value=V.noiseQ;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(V.crash?.35:.28),t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(V.crash?.3:.24),t0);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+nDur);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); gains.push(ng);
