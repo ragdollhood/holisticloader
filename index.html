@@ -1281,10 +1281,11 @@ function initAudio(){if(audio.ctx)return;
   const ctx=new (window.AudioContext||window.webkitAudioContext)();
   const master=ctx.createGain();master.gain.value=MASTER;
   const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;comp.knee.value=24;comp.ratio.value=3;comp.attack.value=.01;comp.release.value=.3;
+  const limiter=ctx.createDynamicsCompressor();limiter.threshold.value=-1;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.002;limiter.release.value=.1;
   const dry=ctx.createGain();dry.gain.value=.85;
   const rev=ctx.createConvolver();rev.buffer=makeImpulse(ctx,2.8,2.4);
   const revGain=ctx.createGain();revGain.gain.value=S.resonance/100;
-  dry.connect(master);rev.connect(revGain);revGain.connect(master);master.connect(comp);comp.connect(ctx.destination);
+  dry.connect(master);rev.connect(revGain);revGain.connect(master);master.connect(comp);comp.connect(limiter);limiter.connect(ctx.destination);
   Object.assign(audio,{ctx,master,dry,rev,revGain});}
 function makeImpulse(ctx,sec,decay){const rate=ctx.sampleRate,len=Math.floor(rate*sec),buf=ctx.createBuffer(2,len,rate);
   for(let ch=0;ch<2;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}return buf;}
