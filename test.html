@@ -481,22 +481,27 @@
 
   /* ===== laptop/desktop: Tone & space blir ett fast mixerbord till vänster ===== */
   @media (min-width:900px){
-    body{padding-left:214px}
+    body{padding-left:220px}
 
     #tsPanel{
       position:fixed;
-      left:18px;
-      top:50%;
-      transform:translateY(-50%);
-      width:186px;
-      max-height:min(720px,88vh);
-      overflow-y:auto;
+      left:0;
+      top:0;
+      bottom:0;
+      width:200px;
+      height:100vh;
+      height:100dvh;
+      overflow:hidden;
       margin-top:0;
       z-index:12;
       display:grid;
       grid-template-columns:repeat(4,1fr);
+      grid-template-rows:auto auto 1fr auto auto;
       column-gap:8px;
-      row-gap:10px;
+      row-gap:8px;
+      padding:max(150px,calc(env(safe-area-inset-top) + 132px)) 14px calc(env(safe-area-inset-bottom,0px) + 18px);
+      border-radius:0;
+      border-width:0 1px 0 0;
       grid-template-areas:
         "title  title  title  title"
         "info   info   info   info"
@@ -514,13 +519,13 @@
     #tsPanel #rooms{grid-area:rooms;grid-template-columns:repeat(2,1fr)}
     #tsPanel #rooms button{padding:7px 2px;font-size:10px}
 
-    /* varje regel blir en stående fader i mixerbordet */
+    /* varje regel blir en stående fader som fyller hela mixerbordets höjd */
     #tsPanel .knob{
-      margin-top:0;
+      margin-top:0;height:100%;min-height:0;
       display:flex;flex-direction:column;align-items:center;
     }
     #tsPanel .knob .top{
-      display:flex;flex-direction:column;align-items:center;
+      display:flex;flex-direction:column;align-items:center;flex:none;
       gap:2px;text-align:center;width:100%;
       font-size:9px;line-height:1.25;
     }
@@ -530,7 +535,9 @@
       writing-mode:vertical-lr;
       direction:rtl;
       -webkit-appearance:slider-vertical;
-      width:6px;height:132px;
+      width:6px;
+      flex:1 1 auto;
+      min-height:60px;
       margin:8px 0 4px;
     }
     #tsPanel .knob input[type="range"]::-webkit-slider-runnable-track{
