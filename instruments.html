@@ -1518,7 +1518,8 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=f*(V.noiseF+edge*2.5); bp.Q.value=V.noiseQ;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(V.crash?.3:.24),t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*(V.crash?.3:.24),t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+nDur);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); gains.push(ng);
@@ -1565,7 +1566,8 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=f*2.2; bp.Q.value=1.4;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*.3,t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*.3,t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.05);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); gains.push(ng);
@@ -1659,7 +1661,8 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=Math.min(8000,f*4); bp.Q.value=1;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*.18,t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*.18,t0+.0015);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.02);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); gains.push(ng);
@@ -1689,7 +1692,8 @@
     for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1800; bp.Q.value=1;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*.15,t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*.15,t0+.0015);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.025);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
     registerStrike(gains,t0+2.6);
@@ -1716,7 +1720,8 @@
     for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.5);
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=f; bp.Q.value=7;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*.45,t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*.45,t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.5);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
     registerStrike(gains,t0+.9);
@@ -1770,7 +1775,8 @@
     nb.buffer=buf;
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=280+edge*1300; bp.Q.value=.8;
-    const ng=ac.createGain(); ng.gain.setValueAtTime(v*(.28+edge*.4),t0);
+    const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*(.28+edge*.4),t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.08);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
     gains.push(ng);
@@ -1874,7 +1880,8 @@
     const bp=ac.createBiquadFilter(); bp.type='bandpass';
     bp.frequency.value=500+edge*2600; bp.Q.value=.9;
     const ng=ac.createGain();
-    ng.gain.setValueAtTime(v*(edge>.78?.7:.3),t0);
+    ng.gain.setValueAtTime(.0001,t0);
+    ng.gain.linearRampToValueAtTime(v*(edge>.78?.7:.3),t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+(edge>.78?.09:.06));
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
     gains.push(ng);
