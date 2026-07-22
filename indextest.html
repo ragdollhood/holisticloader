@@ -176,8 +176,8 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
   /* logo moved up a bit and enlarged — the Start button follows automatically
      since positionOrb() places it relative to #brand's live bounding box */
-  #brand{top:max(76px,calc(env(safe-area-inset-top) + 66px))}
-  #brandLogo{max-height:clamp(100px,20vw,180px)}
+  #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px))}
+  #brandLogo{max-height:clamp(120px,24vw,216px)}
   #topTabs .tab{padding:8px 13px;font-size:11px}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
@@ -249,7 +249,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 
 .breath-subtabs{display:flex;justify-content:center;gap:7px;max-width:420px;margin:8px auto 0;padding:0 6px}
 .breath-subtabs.hidden{display:none}
-.sound-toggles{display:flex;flex-direction:column;max-width:420px;margin:8px auto 0;padding:0 6px}
+.sound-toggles{display:flex;flex-direction:column;max-width:420px;margin:9px auto 0;padding:0 6px}
 .sound-toggles.hidden{display:none}
 .sst-desc{font-size:11.5px;line-height:1.5;color:var(--muted);text-align:center;margin:0 0 4px}
 .sti-row{display:flex;justify-content:center;gap:10px}
@@ -452,7 +452,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
 }
 @media(max-width:560px){
-  #donateWrap{left:6px}
+  #donateWrap{left:6px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
   @supports(padding:max(0px)){
     #donateWrap{left:max(6px,env(safe-area-inset-left))}
   }
@@ -1549,7 +1549,7 @@ function positionOrb(){
   const b=$('brand').getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
   if(!r.height) return;
   const oh=ow.offsetHeight;
-  const mobileOffset=innerWidth<=560?28:0;
+  const mobileOffset=innerWidth<=560?21:0;
   const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38 + mobileOffset);
   ow.style.marginTop=mt+'px';
   updateLensGeom();
