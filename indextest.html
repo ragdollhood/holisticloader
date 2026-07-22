@@ -246,6 +246,9 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 /* all tabs are icon-only, on every screen size */
 .ctrl-tab-icon{display:flex;align-items:center;justify-content:center}
 .ctrl-tab-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;display:block}
+/* fine vertical alignment: Sound tempo icon sits fractionally higher than
+   Breathing tempo by default — nudge it down 1px to match */
+#ctrlTabSoundTempo svg{transform:translateY(1px)}
 
 .breath-subtabs{display:flex;justify-content:center;gap:7px;max-width:420px;margin:8px auto 0;padding:0 6px}
 .breath-subtabs.hidden{display:none}
@@ -452,10 +455,15 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
 }
 @media(max-width:560px){
-  #donateWrap{left:6px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
+  #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
   @supports(padding:max(0px)){
-    #donateWrap{left:max(6px,env(safe-area-inset-left))}
+    #donateWrap{left:max(4px,env(safe-area-inset-left))}
   }
+  /* fine vertical alignment between the icon-only ctrl tabs: on narrow screens
+     Sound tempo sits lower than Breathing tempo, and Session length sits lower
+     than both — nudge them back up so all tabs line up */
+  #ctrlTabSoundTempo svg{transform:translateY(-1px)}
+  #ctrlTabLength svg{transform:translateY(-1px)}
 }
 #donateNote{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.25;max-width:210px}
 .donate{display:inline-flex;align-items:center;gap:8px;font-family:'Outfit',system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;
