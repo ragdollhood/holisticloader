@@ -249,16 +249,6 @@
   .rand-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   .rand-row .rand,.rand-row .randdur,.rand-row .opt-toggle{margin-top:0;margin-bottom:0}
   .rand-row{margin:-2px 0 10px}
-  .donate{
-    display:inline-flex;align-items:center;gap:8px;margin-top:12px;
-    font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.08em;
-    color:#241604;background:linear-gradient(135deg,var(--gold),#ffb86b);
-    border-radius:999px;padding:10px 22px;text-decoration:none;
-    box-shadow:0 0 18px rgba(255,217,138,.4);
-  }
-  .donate .ppmark{flex:0 0 auto;background:#fff;border-radius:5px;padding:2px}
-  .donate:active{transform:scale(.96)}
-  .donate-row{text-align:center}
   /* per-instrument: tempo- och längd-rullistor bredvid REPEAT-knappen */
   .rand-tempo,.rand-dur{
     font-family:inherit;font-size:10.5px;letter-spacing:.04em;color:var(--ink);
@@ -475,9 +465,8 @@
   @supports(padding:max(0px)){
     #donateWrap{left:max(16px,env(safe-area-inset-left))}
   }
-  #donateFixed{position:static;margin:0}
-  /* facebook / instagram share + contact row — sits right under the donate button */
-  #donateSecondRow{position:absolute;top:calc(100% + 7px);left:0;display:flex;align-items:center;gap:6px}
+  /* facebook + contact row — now the only content of donateWrap, top-left */
+  #donateSecondRow{display:flex;align-items:center;gap:6px}
   .shareIconBtn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:999px;flex-shrink:0;
     box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease;color:#fff}
   .shareIconBtn:hover{transform:translateY(-1px)}
@@ -498,12 +487,10 @@
     #topNavLogo{height:28px}
     #topNavTitle{font-size:13px}
     #topTabs .tab{padding:8px 13px;font-size:11px}
-    #donateFixed{height:30px;padding:0;width:44px;box-sizing:border-box;justify-content:center}
-    #donateFixed span{display:none}
 
     /* ---- mobile icon rearrangement ---- */
-    /* contact icon: top-left, right next to the donate button */
-    #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:calc(max(16px,env(safe-area-inset-left)) + 52px);z-index:47;height:30px;padding:0;width:44px;box-sizing:border-box;justify-content:center}
+    /* contact icon: top-left, highest */
+    #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47;height:30px;padding:0;width:44px;box-sizing:border-box;justify-content:center}
     #contactBtn.open{width:auto;padding:0 11px;justify-content:flex-start}
     /* facebook icon: top-right, highest */
     #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
@@ -772,6 +759,9 @@
   .locked-ctrl{opacity:.32!important;cursor:not-allowed!important}
   .rec-box{position:relative}
   .rec-box.rec-locked .rooms-label,.rec-box.rec-locked .rec-status,.rec-box.rec-locked .rec-dl{opacity:.4}
+  .panel.panel-locked{position:relative}
+  .panel.panel-locked>*:not(.premLock){opacity:.45;filter:grayscale(.45);pointer-events:none}
+  .panel.panel-locked .premLock{position:absolute;inset:0;z-index:8}
   #premToast{
     position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(10px);
     z-index:90;display:flex;align-items:center;gap:9px;max-width:calc(100vw - 32px);
@@ -793,14 +783,6 @@
 </div>
 
 <div id="donateWrap">
-  <a id="donateFixed" class="donate" target="_blank" rel="noopener"
-     href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ragdollhood%40gmail.com&item_name=Holistic%20Loader&currency_code=SEK&no_shipping=1">
-    <svg class="ppmark" viewBox="0 0 24 28" width="16" height="18" aria-hidden="true">
-      <path d="M7.4 27 l.9-5.6 H6 L8.6 4.3 h7.3 c3.7 0 6 1.9 5.4 5.8 -.6 4.2 -3.7 6.2 -7.8 6.2 H10 l-.9 5.7 -.2 1.4 Z" fill="#003087"/>
-      <path d="M9.1 22.8 l.9-5.6 h2.9 c4.6 0 8-2.2 8.7-7 .1-.5.1-1 .1-1.4 1.6 .9 2.3 2.6 1.8 5.3 -.8 4.7 -4.1 6.9 -8.7 6.9 h-1.6 l-.9 5.6 -.2 1.4 H9 Z" fill="#0070e0"/>
-    </svg>
-    <span>Thank you!</span>
-  </a>
   <div id="donateSecondRow">
     <a class="shareIconBtn shareFb" id="shareFbTop" href="#" target="_blank" rel="noopener" aria-label="Share on Facebook" title="Share on Facebook">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.16 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.78 8.44-4.94 8.44-9.94Z"/></svg>
@@ -1120,7 +1102,7 @@
   <button type="button" class="mts-tab" data-target="recBox" aria-expanded="false">Recorder</button>
 </div>
 
-<div class="panel">
+<div class="panel" id="sigGenPanel">
   <h2>Signal generator</h2>
   <canvas class="scope" id="scope" width="920" height="192"></canvas>
   <div class="freq-readout">
@@ -3323,6 +3305,23 @@ registerVisit();
     recBox.appendChild(recOverlay);
     var recBtn=document.getElementById('rec');
     if(recBtn){recBtn.disabled=true;recBtn.classList.add('locked-ctrl');recBtn.title='Premium — coming soon';}
+  }
+
+  var sigPanel=document.getElementById('sigGenPanel');
+  if(sigPanel){
+    sigPanel.classList.add('panel-locked');
+    var sigOverlay=document.createElement('div');
+    sigOverlay.className='premLock';
+    sigOverlay.setAttribute('role','button');
+    sigOverlay.setAttribute('aria-label','Premium feature, locked');
+    sigOverlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
+    ['pointerdown','click'].forEach(function(ev){
+      sigOverlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();showPremiumToast();});
+    });
+    sigPanel.appendChild(sigOverlay);
+    var sigToggle=document.getElementById('toggle'), sigSlider=document.getElementById('slider');
+    if(sigToggle){sigToggle.disabled=true;sigToggle.title='Premium — coming soon';}
+    if(sigSlider){sigSlider.disabled=true;sigSlider.title='Premium — coming soon';}
   }
 })();
 </script>
