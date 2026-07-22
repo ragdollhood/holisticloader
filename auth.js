@@ -154,6 +154,52 @@ async function logoutUser() {
 }
 
 /* -----------------------------------------------------------------------
+   6b. MANAGE SUBSCRIPTION (Stripe Billing Portal)
+   Called when a logged-in premium user clicks "Manage Subscription".
+   Invokes the create-portal-session Edge Function (supabase/functions/
+   create-portal-session/index.ts). That function verifies the caller
+   from their own session token, looks up their stripe_customer_id
+   server-side, and returns a one-time Stripe Billing Portal URL.
+
+   sb.functions.invoke() automatically attaches the current user's
+   access token as the Authorization header, so nothing sensitive
+   (user id, customer id) is ever sent from the client.
+
+   Cancellations/updates the customer makes inside the Stripe-hosted
+   portal still flow through your existing stripe-webhook function,
+   which remains the only thing that flips profiles.premium.
+----------------------------------------------------------------------- */
+async function openBillingPortal(triggerBtn) {
+  if (!currentUser) return;
+
+  if (triggerBtn) {
+    triggerBtn.disabled = true;
+    triggerBtn.textContent = "Loading...";
+  }
+
+  try {
+    const { data, error } = await sb.functions.invoke("create-portal-session", {
+      body: { return_url: window.location.href },
+    });
+
+    if (error) throw error;
+    if (!data || !data.url) throw new Error("No portal URL returned");
+
+    // Full redirect — Stripe hosts the entire billing portal experience.
+    window.location.href = data.url;
+  } catch (err) {
+    console.error("openBillingPortal() error:", err);
+    alert(
+      "Couldn't open the billing portal right now. Please try again in a moment."
+    );
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      triggerBtn.textContent = "Manage Subscription";
+    }
+  }
+}
+
+/* -----------------------------------------------------------------------
    7. AUTH STATE LISTENER
    Fires on: initial load, sign in, sign out, token refresh.
    This is what keeps the user "logged in after refresh" and keeps
@@ -184,6 +230,7 @@ function _buildAuthDom() {
       <button id="registerBtn" type="button">Get Premium</button>
       <span id="authStatus" style="display:none">
         <span id="authEmailLabel"></span>
+        <button id="manageSubBtn" type="button" style="display:none">Manage Subscription</button>
         <button id="logoutBtn" type="button">Logout</button>
       </span>
     </div>
@@ -217,6 +264,7 @@ function _wireAuthDom() {
   const loginBtn = document.getElementById("loginBtn");
   const registerBtn = document.getElementById("registerBtn");
   const logoutBtn = document.getElementById("logoutBtn");
+  const manageSubBtn = document.getElementById("manageSubBtn");
   const modal = document.getElementById("authModal");
   const closeBtn = document.getElementById("authModalClose");
   const form = document.getElementById("authForm");
@@ -256,6 +304,10 @@ function _wireAuthDom() {
     }
   };
 
+  manageSubBtn.onclick = async () => {
+    await openBillingPortal(manageSubBtn);
+  };
+
   form.onsubmit = async (e) => {
     e.preventDefault();
     errorEl.textContent = "";
@@ -292,6 +344,7 @@ function renderAuthUI() {
   const registerBtn = document.getElementById("registerBtn");
   const authStatus = document.getElementById("authStatus");
   const emailLabel = document.getElementById("authEmailLabel");
+  const manageSubBtn = document.getElementById("manageSubBtn");
   if (!loginBtn) return; // DOM not built yet
 
   if (currentUser) {
@@ -299,11 +352,14 @@ function renderAuthUI() {
     registerBtn.style.display = "none";
     authStatus.style.display = "inline-flex";
     emailLabel.textContent = "Logged in as: " + currentUser.email;
+    // Only premium users have a Stripe subscription to manage.
+    manageSubBtn.style.display = isPremium ? "" : "none";
   } else {
     loginBtn.style.display = "";
     registerBtn.style.display = "";
     authStatus.style.display = "none";
     emailLabel.textContent = "";
+    manageSubBtn.style.display = "none";
   }
 }
 
@@ -384,4 +440,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
    See PATCH-NOTES.md for the exact line-by-line changes for
    indextest.html and instrumentstest.html.
+----------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------
+   12. MANAGE SUBSCRIPTION — REQUIRED SETUP
+
+   The "Manage Subscription" button (visible only to logged-in premium
+   users) calls the create-portal-session Edge Function, which must
+   already be deployed:
+
+     supabase functions deploy create-portal-session
+
+   That function needs "Verify JWT" ON (the default) since it identifies
+   the caller from their own Supabase session token — see the comment
+   block at the top of supabase/functions/create-portal-session/index.ts
+   for the full explanation and required env vars (STRIPE_SECRET_KEY,
+   SITE_ORIGIN).
+
+   Nothing else to wire up on the client: sb.functions.invoke() already
+   attaches the logged-in user's access token automatically, and
+   openBillingPortal() (section 6b above) handles the loading state,
+   the redirect to Stripe, and any errors.
 ----------------------------------------------------------------------- */

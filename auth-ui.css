@@ -46,9 +46,18 @@
 }
 #authEmailLabel{ white-space:nowrap; max-width:38vw; overflow:hidden; text-overflow:ellipsis; }
 
+#manageSubBtn{
+  font-family:var(--ui,inherit); font-size:11.5px; letter-spacing:.03em;
+  color:var(--ink); background:transparent; border:1px solid var(--line);
+  border-radius:999px; padding:6px 12px; cursor:pointer; white-space:nowrap;
+  transition:background .2s ease, border-color .2s ease;
+}
+#manageSubBtn:hover{ background:var(--glass-strong); border-color:var(--gold); }
+#manageSubBtn:disabled{ opacity:.6; cursor:not-allowed; }
+
 @media (max-width:640px){
   #authRoot{ top:8px; right:8px; }
-  #loginBtn, #registerBtn, #logoutBtn{ padding:7px 12px; font-size:11px; }
+  #loginBtn, #registerBtn, #logoutBtn, #manageSubBtn{ padding:7px 12px; font-size:11px; }
   #authEmailLabel{ max-width:32vw; }
 }
 
