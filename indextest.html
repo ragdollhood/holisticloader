@@ -391,20 +391,20 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .itile.itile-locked .iimg,.reel-item.reel-locked .pic{filter:grayscale(.72) brightness(.55)}
 .itile.itile-locked .ilbl,.reel-item.reel-locked .cap{opacity:.55}
 .lockBadge{
-  display:inline-flex;align-items:center;justify-content:center;
-  border-radius:50%;
-  background:linear-gradient(135deg,#ffe3a3,var(--gold-soft));
-  color:#2a1c05;
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--ui);font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,var(--gold-soft));
+  border-radius:999px;white-space:nowrap;
   animation:premGlow 2.4s ease-in-out infinite;
 }
 .lockBadge svg{display:block;flex:0 0 auto}
-.pcard .lockBadge{position:absolute;top:8px;right:8px;width:26px;height:26px}
-.pcard .lockBadge svg{width:12px;height:12px}
-.itile .lockBadge,.reel-item .lockBadge{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:24px;height:24px}
-.itile .lockBadge svg,.reel-item .lockBadge svg{width:11px;height:11px}
+.pcard .lockBadge{position:absolute;top:8px;right:8px;font-size:8.5px;padding:4px 9px}
+.pcard .lockBadge svg{width:10px;height:10px}
+.itile .lockBadge,.reel-item .lockBadge{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:7.5px;padding:3px 8px}
+.itile .lockBadge svg,.reel-item .lockBadge svg{width:9px;height:9px}
 @keyframes premGlow{
   0%,100%{box-shadow:0 0 0 0 rgba(255,217,138,.6),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
-  50%{box-shadow:0 0 0 7px rgba(255,217,138,0),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
+  50%{box-shadow:0 0 0 6px rgba(255,217,138,0),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
 }
 #premToast{
   position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(10px);
@@ -908,7 +908,7 @@ let openSGroup=null;
 const FREE_SOUND_GROUPS=['bowl','gong'];
 const FREE_SOUND_IDS=new Set(SGROUPS.filter(g=>FREE_SOUND_GROUPS.includes(g.id)).flatMap(g=>g.members));
 function isSoundLocked(id){return !FREE_SOUND_IDS.has(id);}
-const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>';
+const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
 
 function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);}
 function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scrollLeft;w.innerHTML='';let activeEl=null;const done={};
