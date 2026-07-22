@@ -870,9 +870,9 @@ function renderReel(){
       r.appendChild(it);
     }
   });
-  const add=document.createElement('button'); add.className='reel-item add';
-  add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>';
-  add.onclick=()=>{closeSub();$('fileInput').click();};
+  const add=document.createElement('button'); add.className='reel-item add reel-locked';
+  add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>'+lockBadgeHTML;
+  add.onclick=()=>showPremiumToast('Premium feature — full access coming soon');
   r.appendChild(add);
 }
 $('fileInput').addEventListener('change',e=>{
