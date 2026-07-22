@@ -22,7 +22,11 @@
    WHAT THIS FILE DOES:
      1. Creates one shared Supabase client (using your existing project).
      2. Exposes register / login / logout functions using email+password
-        (NO magic links, NO OTP).
+        (NO magic links, NO OTP). There is no self-serve "Register" UI —
+        accounts are only created on thank-you.html after a successful
+        Stripe purchase, which calls registerUser() itself. The header
+        only shows "Login" (for returning customers) and "Get Premium"
+        (which opens the premium popup that starts Stripe Checkout).
      3. Restores the session automatically on page refresh
         (Supabase JS keeps the session in localStorage — this is just the
         auth token, NOT the premium flag, so it satisfies "premium must
@@ -32,8 +36,22 @@
         from Supabase (source of truth).
      6. Maintains a global `isPremium` boolean and a global `currentUser`
         object that the rest of your site can read.
-     7. Renders the header UI (Login / Register / Logout buttons,
-        "Logged in as: ..." text) and the login/register modal.
+     7. Renders the header UI (Login / Get Premium / Logout buttons,
+        "Logged in as: ..." text) and the login modal.
+
+     PURCHASE FLOW (Get Premium -> paying customer):
+       Click "Get Premium" (header or locked content)
+         -> premium popup opens
+         -> click "Get Premium for $4.99/month" inside the popup
+         -> Stripe Checkout
+         -> payment succeeds
+         -> redirected to thank-you.html
+         -> thank-you.html has the user create their account
+            (calls registerUser() from this file)
+         -> the Postgres trigger (see section 10 below) creates their
+            profiles row; thank-you.html (or your Stripe webhook) should
+            then set profiles.premium = true for that account
+         -> premium is active everywhere isPremiumUser()/isPremium is used
    ======================================================================= */
 
 /* -----------------------------------------------------------------------
@@ -163,7 +181,7 @@ function _buildAuthDom() {
   root.innerHTML = `
     <div id="authButtons">
       <button id="loginBtn" type="button">Login</button>
-      <button id="registerBtn" type="button">Register</button>
+      <button id="registerBtn" type="button">Get Premium</button>
       <span id="authStatus" style="display:none">
         <span id="authEmailLabel"></span>
         <button id="logoutBtn" type="button">Logout</button>
@@ -184,10 +202,6 @@ function _buildAuthDom() {
           <p id="authError" role="alert"></p>
           <button id="authSubmit" type="submit">Log in</button>
         </form>
-        <p id="authSwitchWrap">
-          <span id="authSwitchText">Don't have an account?</span>
-          <button id="authSwitchBtn" type="button">Register</button>
-        </p>
       </div>
     </div>
   `;
@@ -195,8 +209,10 @@ function _buildAuthDom() {
   _wireAuthDom();
 }
 
-let _authMode = "login"; // "login" | "register"
-
+/* There is no self-serve registration anymore: accounts are only created
+   after a successful Stripe purchase, on thank-you.html (which calls
+   registerUser() itself once payment is confirmed). This modal is
+   login-only for existing customers. */
 function _wireAuthDom() {
   const loginBtn = document.getElementById("loginBtn");
   const registerBtn = document.getElementById("registerBtn");
@@ -204,14 +220,11 @@ function _wireAuthDom() {
   const modal = document.getElementById("authModal");
   const closeBtn = document.getElementById("authModalClose");
   const form = document.getElementById("authForm");
-  const switchBtn = document.getElementById("authSwitchBtn");
   const errorEl = document.getElementById("authError");
 
-  function openModal(mode) {
-    _authMode = mode;
+  function openModal() {
     errorEl.textContent = "";
     form.reset();
-    _renderAuthModalMode();
     modal.classList.add("show");
     document.getElementById("authEmail").focus();
   }
@@ -219,16 +232,18 @@ function _wireAuthDom() {
     modal.classList.remove("show");
   }
 
-  loginBtn.onclick = () => openModal("login");
-  registerBtn.onclick = () => openModal("register");
+  loginBtn.onclick = () => openModal();
+  registerBtn.onclick = () => {
+    // Opens the same "premium locked content" popup used elsewhere on the
+    // page (defined per-page as window.openPremiumModal). That popup now
+    // contains the real "Get Premium" button that starts Stripe Checkout.
+    if (typeof window.openPremiumModal === "function") {
+      window.openPremiumModal();
+    }
+  };
   closeBtn.onclick = closeModal;
   modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
-
-  switchBtn.onclick = () => {
-    _authMode = _authMode === "login" ? "register" : "login";
-    _renderAuthModalMode();
-  };
 
   logoutBtn.onclick = async () => {
     logoutBtn.disabled = true;
@@ -250,11 +265,7 @@ function _wireAuthDom() {
     submitBtn.disabled = true;
 
     try {
-      if (_authMode === "register") {
-        await registerUser(email, password);
-      } else {
-        await loginUser(email, password);
-      }
+      await loginUser(email, password);
       closeModal();
     } catch (err) {
       // Always log the full error object to the console so it can be
@@ -273,28 +284,6 @@ function _wireAuthDom() {
       submitBtn.disabled = false;
     }
   };
-}
-
-function _renderAuthModalMode() {
-  const title = document.getElementById("authModalTitle");
-  const submit = document.getElementById("authSubmit");
-  const switchText = document.getElementById("authSwitchText");
-  const switchBtn = document.getElementById("authSwitchBtn");
-  const pwField = document.getElementById("authPassword");
-
-  if (_authMode === "register") {
-    title.textContent = "Create your account";
-    submit.textContent = "Create account";
-    switchText.textContent = "Already have an account?";
-    switchBtn.textContent = "Log in";
-    pwField.setAttribute("autocomplete", "new-password");
-  } else {
-    title.textContent = "Log in";
-    submit.textContent = "Log in";
-    switchText.textContent = "Don't have an account?";
-    switchBtn.textContent = "Register";
-    pwField.setAttribute("autocomplete", "current-password");
-  }
 }
 
 /* Shows/hides the right buttons and the "Logged in as" label. */

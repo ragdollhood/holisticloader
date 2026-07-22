@@ -24,31 +24,26 @@
        3. On submit, this page calls registerUser() from auth.js, which
           signs them up with Supabase and (via your existing Postgres
           trigger) creates their profiles row.
-       4. If Supabase returns a live session immediately (i.e. "Confirm
-          email" is OFF in your Supabase Auth settings, which is the
-          normal setup for this kind of flow), this page then updates
-          profiles.premium = true for that user right away, so premium
-          is active before they even leave the page.
-       5. If "Confirm email" is ON, there's no session yet, so the
-          activation update can't run client-side — the page shows a
-          "check your inbox" message instead. In that setup you'd want a
-          Stripe webhook to flip profiles.premium = true server-side
-          instead of relying on this page. For a solo/no-backend setup,
-          simplest is to keep "Confirm email" OFF in Supabase and let this
-          page handle activation, which is what it's built for.
+       4. THIS PAGE NEVER SETS premium = true ITSELF. Activation happens
+          server-side: Stripe calls a webhook (a Supabase Edge Function)
+          the moment payment completes, and that function flips
+          profiles.premium = true directly in the database. This page
+          just creates the account and then briefly checks whether
+          premium has come through yet, so it can show the right message.
+       5. Because the Stripe webhook usually fires within a second or two
+          of payment — often before this form has even been submitted —
+          premium is frequently already active by the time registration
+          finishes. If it hasn't landed yet (e.g. webhook delay, or
+          "Confirm email" is ON so there's no session), the page shows
+          an "almost there" message instead of an error; premium will be
+          applied automatically once the webhook (or, if the account
+          didn't exist yet at payment time, the registration trigger)
+          processes it. No further action is needed from the customer.
 
-     ONE-TIME SUPABASE SETUP NEEDED (in addition to what auth.js already
-     asks you to run):
-       The existing policy only lets a user SELECT their own profile row.
-       To let this page set premium = true, add an UPDATE policy too —
-       run this once in Supabase → SQL Editor:
-
-         create policy "Users can update their own premium flag"
-         on public.profiles
-         for update
-         to authenticated
-         using (auth.uid() = user_id)
-         with check (auth.uid() = user_id);
+     NO CLIENT-SIDE SUPABASE POLICY IS NEEDED FOR THIS PAGE ANYMORE.
+     The old "Users can update their own premium flag" UPDATE policy has
+     been removed for security — see migration.sql. Only the Stripe
+     webhook (using the service role key) may set premium now.
 
      STRIPE SETUP:
        Set your Stripe Checkout "success_url" (or the redirect URL on
@@ -269,7 +264,7 @@ footer.note a{ color:var(--gold); text-decoration:underline; }
     <div id="pendingView">
       <div id="checkWrap"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
       <h2>Almost there</h2>
-      <p>We've sent a confirmation link to your email. Click it, then log in on Holistic Loader — Premium will already be waiting on your account.</p>
+      <p>Your account is ready. Premium is being activated by Stripe now — this is usually instant but can take a minute. Log in on Holistic Loader in a moment and it'll be waiting for you (if you have email confirmation turned on, click the link we sent you first).</p>
       <a class="ctaBtn" href="index.html">Go to Holistic Loader</a>
     </div>
   </div>
@@ -313,12 +308,23 @@ footer.note a{ color:var(--gold); text-decoration:underline; }
            'Something went wrong. Please try again.';
   }
 
-  async function activatePremiumForCurrentSession(){
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) return { activated:false };
-    const { error } = await sb.from('profiles').update({ premium:true }).eq('user_id', session.user.id);
-    if (error) throw error;
-    return { activated:true };
+  /* Premium is now activated ONLY by the Stripe webhook (server-side).
+     This page never writes to profiles.premium. Because the webhook
+     usually fires within a second or two of payment — often before this
+     form is even submitted — premium has frequently already landed by
+     now. This just checks a few times, in case it's still in flight. */
+  async function pollForPremium(userId, { attempts = 6, intervalMs = 1200 } = {}){
+    for (let i = 0; i < attempts; i++){
+      const { data, error } = await sb
+        .from('profiles')
+        .select('premium')
+        .eq('user_id', userId)
+        .maybeSingle();
+      if (error) { console.error('pollForPremium error:', error.message); }
+      if (data && data.premium) return true;
+      await new Promise(r => setTimeout(r, intervalMs));
+    }
+    return false;
   }
 
   function showSuccess(){
@@ -357,16 +363,20 @@ footer.note a{ color:var(--gold); text-decoration:underline; }
     submitBtn.textContent = 'Creating your account…';
 
     try {
-      await registerUser(email, password);
+      const { user } = await registerUser(email, password);
 
-      // give the auth listener / Postgres trigger a beat to settle
-      await new Promise(r => setTimeout(r, 700));
+      // The registration trigger (see migration.sql) applies any pending
+      // Stripe payment for this email immediately. If the webhook fired
+      // first instead, premium may already be set. Either way, check
+      // briefly before deciding which view to show.
+      const activated = user ? await pollForPremium(user.id) : false;
 
-      const result = await activatePremiumForCurrentSession();
-      if (result.activated){
+      if (activated){
         showSuccess();
       } else {
-        // No live session yet -> "Confirm email" is likely ON in Supabase.
+        // Not confirmed yet — could be webhook latency, or "Confirm
+        // email" is ON so there's no session. Either way, premium will
+        // apply automatically without further action from the customer.
         showPending();
       }
     } catch (err) {
