@@ -25,40 +25,65 @@
 }
 #authButtons{ display:flex; align-items:center; gap:8px; }
 
-#loginBtn, #registerBtn, #logoutBtn{
+#loginBtn, #registerBtn{
   font-family:var(--ui,inherit); font-size:12px; letter-spacing:.04em;
   color:var(--ink); background:var(--glass); border:1px solid var(--line);
   border-radius:999px; padding:8px 16px; cursor:pointer; white-space:nowrap;
   backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
   transition:background .2s ease, border-color .2s ease, transform .12s ease;
 }
-#loginBtn:hover, #registerBtn:hover, #logoutBtn:hover{
+#loginBtn:hover, #registerBtn:hover{
   background:var(--glass-strong); border-color:var(--gold);
 }
 #registerBtn{ color:var(--bg); background:var(--gold); border-color:var(--gold); font-weight:600; }
 #registerBtn:hover{ background:var(--gold-soft,var(--gold)); }
 
-#authStatus{
-  display:inline-flex; align-items:center; gap:10px;
-  font-size:12px; color:var(--muted); background:var(--glass);
-  border:1px solid var(--line); border-radius:999px; padding:6px 8px 6px 14px;
-  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-}
-#authEmailLabel{ white-space:nowrap; max-width:38vw; overflow:hidden; text-overflow:ellipsis; }
+/* ---------- Account icon + dropdown (replaces the old inline email/logout row) ---------- */
+#accountRoot{ position:relative; display:inline-flex; }
 
-#manageSubBtn{
-  font-family:var(--ui,inherit); font-size:11.5px; letter-spacing:.03em;
-  color:var(--ink); background:transparent; border:1px solid var(--line);
-  border-radius:999px; padding:6px 12px; cursor:pointer; white-space:nowrap;
+#accountBtn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:34px; height:34px; padding:0; cursor:pointer;
+  color:var(--ink); background:var(--glass); border:1px solid var(--line);
+  border-radius:50%; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
   transition:background .2s ease, border-color .2s ease;
 }
-#manageSubBtn:hover{ background:var(--glass-strong); border-color:var(--gold); }
-#manageSubBtn:disabled{ opacity:.6; cursor:not-allowed; }
+#accountBtn:hover, #accountBtn[aria-expanded="true"]{
+  background:var(--glass-strong); border-color:var(--gold);
+}
+#accountBtn svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+
+#accountMenu{
+  position:absolute; top:calc(100% + 8px); right:0; z-index:42;
+  display:flex; flex-direction:column; min-width:220px;
+  background:var(--glass-strong); border:1px solid var(--line); border-radius:14px;
+  padding:8px; box-shadow:0 14px 40px rgba(0,0,0,.4);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  opacity:0; transform:translateY(6px) scale(.98); pointer-events:none;
+  transition:opacity .18s ease, transform .18s ease;
+}
+#accountMenu.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+
+#accountEmailLabel{
+  font-size:11.5px; color:var(--muted); white-space:nowrap; overflow:hidden;
+  text-overflow:ellipsis; padding:8px 10px 10px; border-bottom:1px solid var(--line);
+  margin-bottom:4px;
+}
+
+#accountMenu button{
+  font-family:var(--ui,inherit); font-size:13px; text-align:left;
+  color:var(--ink); background:transparent; border:none; border-radius:8px;
+  padding:9px 10px; cursor:pointer; white-space:nowrap;
+  transition:background .15s ease;
+}
+#accountMenu button:hover{ background:rgba(244,241,234,.1); }
+#accountMenu button:disabled{ opacity:.6; cursor:not-allowed; }
+#logoutBtn{ color:#e79a9a; }
 
 @media (max-width:640px){
   #authRoot{ top:8px; right:8px; }
-  #loginBtn, #registerBtn, #logoutBtn, #manageSubBtn{ padding:7px 12px; font-size:11px; }
-  #authEmailLabel{ max-width:32vw; }
+  #loginBtn, #registerBtn{ padding:7px 12px; font-size:11px; }
+  #accountMenu{ min-width:200px; }
 }
 
 /* ---------- Login / Register modal (same pattern as #premiumModal) ---------- */

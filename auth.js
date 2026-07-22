@@ -228,11 +228,16 @@ function _buildAuthDom() {
     <div id="authButtons">
       <button id="loginBtn" type="button">Login</button>
       <button id="registerBtn" type="button">Get Premium</button>
-      <span id="authStatus" style="display:none">
-        <span id="authEmailLabel"></span>
-        <button id="manageSubBtn" type="button" style="display:none">Manage Subscription</button>
-        <button id="logoutBtn" type="button">Logout</button>
-      </span>
+      <div id="accountRoot" style="display:none">
+        <button id="accountBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+          <svg viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>
+        </button>
+        <div id="accountMenu" role="menu">
+          <div id="accountEmailLabel"></div>
+          <button id="manageSubBtn" type="button" role="menuitem" style="display:none">Manage Subscription</button>
+          <button id="logoutBtn" type="button" role="menuitem">Logout</button>
+        </div>
+      </div>
     </div>
 
     <div id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
@@ -265,6 +270,9 @@ function _wireAuthDom() {
   const registerBtn = document.getElementById("registerBtn");
   const logoutBtn = document.getElementById("logoutBtn");
   const manageSubBtn = document.getElementById("manageSubBtn");
+  const accountBtn = document.getElementById("accountBtn");
+  const accountRoot = document.getElementById("accountRoot");
+  const accountMenu = document.getElementById("accountMenu");
   const modal = document.getElementById("authModal");
   const closeBtn = document.getElementById("authModalClose");
   const form = document.getElementById("authForm");
@@ -279,6 +287,30 @@ function _wireAuthDom() {
   function closeModal() {
     modal.classList.remove("show");
   }
+
+  function openAccountMenu() {
+    accountMenu.classList.add("show");
+    accountBtn.setAttribute("aria-expanded", "true");
+  }
+  function closeAccountMenu() {
+    accountMenu.classList.remove("show");
+    accountBtn.setAttribute("aria-expanded", "false");
+  }
+  function toggleAccountMenu() {
+    if (accountMenu.classList.contains("show")) closeAccountMenu();
+    else openAccountMenu();
+  }
+
+  accountBtn.onclick = (e) => {
+    e.stopPropagation();
+    toggleAccountMenu();
+  };
+  document.addEventListener("click", (e) => {
+    if (!accountRoot.contains(e.target)) closeAccountMenu();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAccountMenu();
+  });
 
   loginBtn.onclick = () => openModal();
   registerBtn.onclick = () => {
@@ -297,6 +329,7 @@ function _wireAuthDom() {
     logoutBtn.disabled = true;
     try {
       await logoutUser();
+      closeAccountMenu();
     } catch (e) {
       console.error(e);
     } finally {
@@ -305,6 +338,7 @@ function _wireAuthDom() {
   };
 
   manageSubBtn.onclick = async () => {
+    closeAccountMenu();
     await openBillingPortal(manageSubBtn);
   };
 
@@ -342,24 +376,29 @@ function _wireAuthDom() {
 function renderAuthUI() {
   const loginBtn = document.getElementById("loginBtn");
   const registerBtn = document.getElementById("registerBtn");
-  const authStatus = document.getElementById("authStatus");
-  const emailLabel = document.getElementById("authEmailLabel");
+  const accountRoot = document.getElementById("accountRoot");
+  const accountMenu = document.getElementById("accountMenu");
+  const accountBtn = document.getElementById("accountBtn");
+  const emailLabel = document.getElementById("accountEmailLabel");
   const manageSubBtn = document.getElementById("manageSubBtn");
   if (!loginBtn) return; // DOM not built yet
 
   if (currentUser) {
     loginBtn.style.display = "none";
     registerBtn.style.display = "none";
-    authStatus.style.display = "inline-flex";
+    accountRoot.style.display = "inline-flex";
     emailLabel.textContent = "Logged in as: " + currentUser.email;
     // Only premium users have a Stripe subscription to manage.
     manageSubBtn.style.display = isPremium ? "" : "none";
   } else {
     loginBtn.style.display = "";
     registerBtn.style.display = "";
-    authStatus.style.display = "none";
+    accountRoot.style.display = "none";
     emailLabel.textContent = "";
     manageSubBtn.style.display = "none";
+    // Logged out (or logging out) — always collapse the menu.
+    accountMenu.classList.remove("show");
+    accountBtn.setAttribute("aria-expanded", "false");
   }
 }
 
