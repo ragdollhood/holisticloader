@@ -465,7 +465,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 #menuBtn.open .menu-bar:nth-child(2){opacity:0}
 #menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 #menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;
-  display:flex;flex-direction:column;align-items:stretch;gap:8px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:8px;
   opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
 #menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 .toggle-row{display:flex;gap:8px}.toggle-row .chip{flex:1;text-align:center}
@@ -529,8 +529,9 @@ body.immersive #brand{opacity:0}
 #contactBtn{display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
   border-radius:999px;padding:8px 11px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
-#contactBtn:hover{background:rgba(244,241,234,.12)}#contactBtn:active{transform:scale(.97)}
+#contactBtn:hover{transform:scale(1.04)}#contactBtn:active{transform:scale(.97)}
 #contactBtn .env{flex:0 0 auto;width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#contactBtn .clabel{font-size:12px;letter-spacing:.06em;margin-left:8px;white-space:nowrap}
 #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:8px}
 #contactBtn .ctext b{color:var(--gold);font-weight:600;letter-spacing:.12em;margin-right:5px}
@@ -538,13 +539,14 @@ body.immersive #brand{opacity:0}
 
 /* "How to use" button — sits at the top of the menu panel, above Contact */
 #howToBtn{
-  display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto;
+  display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto;gap:8px;
   font-family:inherit;font-size:12px;letter-spacing:.06em;color:var(--ink);
   background:var(--glass);border:1px solid var(--line);border-radius:999px;
   padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  cursor:pointer;transition:background .2s ease,transform .12s ease,opacity .5s ease;
+  cursor:pointer;transition:transform .12s ease,opacity .5s ease;
 }
-@media(hover:hover){#howToBtn:hover{background:rgba(244,241,234,.12)}}
+#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+@media(hover:hover){#howToBtn:hover{transform:scale(1.04)}}
 #howToBtn:active{transform:scale(.97)}
 #howToBtn.hidden{display:none}
 body.immersive #howToBtn{opacity:0;pointer-events:none}
@@ -580,9 +582,12 @@ body.immersive #howToBox{display:none}
     <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
   </button>
   <div id="menuPanel" role="menu">
-    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">How to use</button>
+    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
+      <svg class="htu-ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>How to use
+    </button>
     <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
       <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
+      <span class="clabel">Contact</span>
       <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
     </button>
   </div>
