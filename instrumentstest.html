@@ -3519,8 +3519,8 @@ registerVisit();
       });
       sigPanel.appendChild(sigOverlay);
       var sigToggle=document.getElementById('toggle'), sigSlider=document.getElementById('slider');
-      if(sigToggle){sigToggle.disabled=true;sigToggle.title='Premium — coming soon';}
-      if(sigSlider){sigSlider.disabled=true;sigSlider.title='Premium — coming soon';}
+      if(sigToggle){sigToggle.disabled=true;sigToggle.classList.add('locked-ctrl');sigToggle.title='Premium — coming soon';}
+      if(sigSlider){sigSlider.disabled=true;sigSlider.classList.add('locked-ctrl');sigSlider.title='Premium — coming soon';}
     }
   }
 
