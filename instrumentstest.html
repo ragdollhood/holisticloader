@@ -801,8 +801,11 @@
   .premCta:hover{filter:brightness(1.05)}
   .premCta:active{transform:scale(.97)}
 </style>
+<link rel="stylesheet" href="auth-ui.css">
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
 
 <div class="sr-only">
   <h2>Play sound healing instruments online, free</h2>
@@ -851,6 +854,7 @@
     <a href="nutriloader.html" class="tab">Nutrition</a>
     <a href="store.html" class="tab">Store</a>
   </nav>
+  <div id="authRoot"></div>
   <div id="topNavLine"></div>
 </header>
 
@@ -3346,58 +3350,81 @@ registerVisit();
 <script>
 (function(){
   var LOCKED=['chime','tri','harp','sans','mono','pan','naf','shaman','djembe','thunder','ocean','rain'];
-  LOCKED.forEach(function(key){
-    var wrap=document.getElementById(key+'Wrap');
-    if(!wrap) return;
-    wrap.classList.add('locked-instr');
-    var overlay=document.createElement('div');
-    overlay.className='premLock';
-    overlay.setAttribute('role','button');
-    overlay.setAttribute('aria-label','Premium instrument, locked');
-    overlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
-    ['pointerdown','click'].forEach(function(ev){
-      overlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();openPremiumModal();});
-    });
-    wrap.appendChild(overlay);
 
-    document.querySelectorAll('[data-i="'+key+'"]').forEach(function(el){
-      el.disabled=true;el.classList.add('locked-ctrl');el.title='Premium — coming soon';
+  /* Undo any lock overlays/disabled-states from a previous run, so this
+     function can be called again after login/logout without stacking
+     duplicate overlays or leaving stale disabled controls behind. */
+  function clearInstrumentLocks(){
+    document.querySelectorAll('.premLock').forEach(function(el){ el.remove(); });
+    document.querySelectorAll('.locked-instr').forEach(function(el){ el.classList.remove('locked-instr','rec-locked'); });
+    document.querySelectorAll('.panel-locked').forEach(function(el){ el.classList.remove('panel-locked'); });
+    document.querySelectorAll('.locked-ctrl').forEach(function(el){
+      el.classList.remove('locked-ctrl'); el.disabled=false; el.title='';
     });
-    var tune=document.getElementById(key+'Tune');
-    if(tune){tune.disabled=true;tune.classList.add('locked-ctrl');tune.title='Premium — coming soon';}
-  });
-
-  var recBox=document.getElementById('recBox');
-  if(recBox){
-    recBox.classList.add('locked-instr','rec-locked');
-    var recOverlay=document.createElement('div');
-    recOverlay.className='premLock';
-    recOverlay.setAttribute('role','button');
-    recOverlay.setAttribute('aria-label','Premium feature, locked');
-    recOverlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
-    ['pointerdown','click'].forEach(function(ev){
-      recOverlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();openPremiumModal();});
-    });
-    recBox.appendChild(recOverlay);
-    var recBtn=document.getElementById('rec');
-    if(recBtn){recBtn.disabled=true;recBtn.classList.add('locked-ctrl');recBtn.title='Premium — coming soon';}
   }
 
-  var sigPanel=document.getElementById('sigGenPanel');
-  if(sigPanel){
-    sigPanel.classList.add('panel-locked');
-    var sigOverlay=document.createElement('div');
-    sigOverlay.className='premLock';
-    sigOverlay.setAttribute('role','button');
-    sigOverlay.setAttribute('aria-label','Premium feature, locked');
-    sigOverlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
-    ['pointerdown','click'].forEach(function(ev){
-      sigOverlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();openPremiumModal();});
+  function applyInstrumentLocks(){
+    clearInstrumentLocks();
+    if(typeof isPremium!=='undefined' && isPremium) return; // premium users: nothing locked
+
+    LOCKED.forEach(function(key){
+      var wrap=document.getElementById(key+'Wrap');
+      if(!wrap) return;
+      wrap.classList.add('locked-instr');
+      var overlay=document.createElement('div');
+      overlay.className='premLock';
+      overlay.setAttribute('role','button');
+      overlay.setAttribute('aria-label','Premium instrument, locked');
+      overlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
+      ['pointerdown','click'].forEach(function(ev){
+        overlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();openPremiumModal();});
+      });
+      wrap.appendChild(overlay);
+
+      document.querySelectorAll('[data-i="'+key+'"]').forEach(function(el){
+        el.disabled=true;el.classList.add('locked-ctrl');el.title='Premium — coming soon';
+      });
+      var tune=document.getElementById(key+'Tune');
+      if(tune){tune.disabled=true;tune.classList.add('locked-ctrl');tune.title='Premium — coming soon';}
     });
-    sigPanel.appendChild(sigOverlay);
-    var sigToggle=document.getElementById('toggle'), sigSlider=document.getElementById('slider');
-    if(sigToggle){sigToggle.disabled=true;sigToggle.title='Premium — coming soon';}
-    if(sigSlider){sigSlider.disabled=true;sigSlider.title='Premium — coming soon';}
+
+    var recBox=document.getElementById('recBox');
+    if(recBox){
+      recBox.classList.add('locked-instr','rec-locked');
+      var recOverlay=document.createElement('div');
+      recOverlay.className='premLock';
+      recOverlay.setAttribute('role','button');
+      recOverlay.setAttribute('aria-label','Premium feature, locked');
+      recOverlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
+      ['pointerdown','click'].forEach(function(ev){
+        recOverlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();openPremiumModal();});
+      });
+      recBox.appendChild(recOverlay);
+      var recBtn=document.getElementById('rec');
+      if(recBtn){recBtn.disabled=true;recBtn.classList.add('locked-ctrl');recBtn.title='Premium — coming soon';}
+    }
+
+    var sigPanel=document.getElementById('sigGenPanel');
+    if(sigPanel){
+      sigPanel.classList.add('panel-locked');
+      var sigOverlay=document.createElement('div');
+      sigOverlay.className='premLock';
+      sigOverlay.setAttribute('role','button');
+      sigOverlay.setAttribute('aria-label','Premium feature, locked');
+      sigOverlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
+      ['pointerdown','click'].forEach(function(ev){
+        sigOverlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();openPremiumModal();});
+      });
+      sigPanel.appendChild(sigOverlay);
+      var sigToggle=document.getElementById('toggle'), sigSlider=document.getElementById('slider');
+      if(sigToggle){sigToggle.disabled=true;sigToggle.title='Premium — coming soon';}
+      if(sigSlider){sigSlider.disabled=true;sigSlider.title='Premium — coming soon';}
+    }
+  }
+
+  applyInstrumentLocks();
+  if(typeof onPremiumStatusChange==='function'){
+    onPremiumStatusChange(applyInstrumentLocks);
   }
 })();
 </script>

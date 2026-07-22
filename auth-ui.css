@@ -1,0 +1,112 @@
+/* =======================================================================
+   HOLISTIC LOADER — AUTH UI STYLES
+   File: auth-ui.css
+   -----------------------------------------------------------------------
+   WHERE TO PUT THIS FILE:
+     Save as auth-ui.css next to your other HTML files.
+
+   WHERE TO LOAD IT:
+     Add this in <head>, after your existing <style> block/stylesheet,
+     on every page:
+
+     <link rel="stylesheet" href="auth-ui.css">
+
+   This file reuses the CSS variables already defined in your pages'
+   :root (--ink, --muted, --gold, --glass, --glass-strong, --line, --bg).
+   It assumes those variables exist on the page — they already do in
+   both indextest.html and instrumentstest.html.
+   ======================================================================= */
+
+/* ---------- Header buttons (#authRoot lives inside #topNav) ---------- */
+#authRoot{
+  position:absolute; top:14px; right:16px; z-index:41;
+  display:flex; align-items:center; gap:8px;
+}
+#authButtons{ display:flex; align-items:center; gap:8px; }
+
+#loginBtn, #registerBtn, #logoutBtn{
+  font-family:var(--ui,inherit); font-size:12px; letter-spacing:.04em;
+  color:var(--ink); background:var(--glass); border:1px solid var(--line);
+  border-radius:999px; padding:8px 16px; cursor:pointer;
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  transition:background .2s ease, border-color .2s ease, transform .12s ease;
+}
+#loginBtn:hover, #registerBtn:hover, #logoutBtn:hover{
+  background:var(--glass-strong); border-color:var(--gold);
+}
+#registerBtn{ color:var(--bg); background:var(--gold); border-color:var(--gold); font-weight:600; }
+#registerBtn:hover{ background:var(--gold-soft,var(--gold)); }
+
+#authStatus{
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:12px; color:var(--muted); background:var(--glass);
+  border:1px solid var(--line); border-radius:999px; padding:6px 8px 6px 14px;
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+}
+#authEmailLabel{ white-space:nowrap; max-width:38vw; overflow:hidden; text-overflow:ellipsis; }
+
+@media (max-width:640px){
+  #authRoot{ top:8px; right:8px; }
+  #loginBtn, #registerBtn, #logoutBtn{ padding:7px 12px; font-size:11px; }
+  #authEmailLabel{ max-width:32vw; }
+}
+
+/* ---------- Login / Register modal (same pattern as #premiumModal) ---------- */
+#authModal{
+  position:fixed; inset:0; z-index:220; display:flex; align-items:center;
+  justify-content:center; padding:20px;
+  background:rgba(8,9,13,.6); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  opacity:0; pointer-events:none; transition:opacity .25s ease;
+}
+#authModal.show{ opacity:1; pointer-events:auto; }
+
+#authModalCard{
+  position:relative; width:min(380px,100%); max-height:86vh; overflow-y:auto;
+  scrollbar-width:thin; background:var(--glass-strong); border:1px solid var(--line);
+  border-radius:20px; padding:32px 26px 26px; box-shadow:0 20px 60px rgba(0,0,0,.5);
+  transform:translateY(10px) scale(.98); transition:transform .25s ease;
+}
+#authModal.show #authModalCard{ transform:translateY(0) scale(1); }
+
+#authModalClose{
+  position:absolute; top:16px; right:16px; width:30px; height:30px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  color:var(--muted); background:transparent; border:none; cursor:pointer;
+}
+#authModalClose:hover{ background:rgba(244,241,234,.14); color:var(--ink); }
+#authModalClose svg{ width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; }
+
+#authModalTitle{
+  font-family:var(--display,Georgia,serif); font-weight:400; font-style:italic;
+  font-size:clamp(21px,5vw,26px); color:var(--ink); margin:0 0 20px;
+}
+
+#authForm{ display:flex; flex-direction:column; gap:6px; }
+#authForm label{ font-size:11.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-top:10px; }
+#authForm input{
+  font-size:14px; color:var(--ink); background:rgba(244,241,234,.06);
+  border:1px solid var(--line); border-radius:10px; padding:11px 13px;
+  outline:none; transition:border-color .2s ease;
+}
+#authForm input:focus{ border-color:var(--gold); }
+
+#authError{
+  min-height:16px; font-size:12px; color:#e79a9a; margin:10px 0 0; line-height:1.4;
+}
+
+#authSubmit{
+  margin-top:16px; width:100%; font-size:13px; font-weight:600; letter-spacing:.04em;
+  color:var(--bg); background:var(--gold); border:none; border-radius:999px;
+  padding:12px; cursor:pointer; transition:background .2s ease;
+}
+#authSubmit:hover{ background:var(--gold-soft,var(--gold)); }
+#authSubmit:disabled{ opacity:.6; cursor:not-allowed; }
+
+#authSwitchWrap{
+  margin:16px 0 0; text-align:center; font-size:12px; color:var(--muted);
+}
+#authSwitchBtn{
+  background:none; border:none; color:var(--gold); font-size:12px; font-weight:600;
+  cursor:pointer; margin-left:4px; padding:0;
+}
+#authSwitchBtn:hover{ text-decoration:underline; }

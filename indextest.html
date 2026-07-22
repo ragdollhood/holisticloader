@@ -574,6 +574,7 @@ body.immersive #howToBox{display:none}
   #howToBtn .htu-short{display:inline}
 }
 </style>
+<link rel="stylesheet" href="auth-ui.css">
 </head>
 <body>
 <noscript><div id="noscriptMsg"><div><strong>Holistic Loader</strong><br>A free online space to breathe, meditate and relax to healing sound frequencies and calming nature scenes.<br>Please enable JavaScript to use the breathing circle and sounds.</div></div></noscript>
@@ -605,6 +606,7 @@ body.immersive #howToBox{display:none}
     <a href="nutriloader.html" class="tab">Nutrition</a>
     <a href="store.html" class="tab">Store</a>
   </nav>
+  <div id="authRoot"></div>
   <div id="topNavLine"></div>
 </header>
 
@@ -801,6 +803,9 @@ body.immersive #howToBox{display:none}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+
 <script>
 const IMAGES = [{"thumb": "images/thumbs/bergen.jpg", "id": "bergen", "label": "Mountain lake", "data": "images/bergen.jpg"}, {"thumb": "images/thumbs/ang.jpg", "id": "ang", "label": "Wildflower meadow", "data": "images/ang.jpg"}, {"thumb": "images/thumbs/hage.jpg", "id": "hage", "label": "Misty pasture", "data": "images/hage.jpg"}, {"thumb": "images/thumbs/strand.jpg", "id": "strand", "label": "Tropical beach", "data": "images/strand.jpg"}, {"thumb": "images/thumbs/sagoskog.jpg", "id": "sagoskog", "label": "Enchanted forest", "data": "images/sagoskog.jpg"}, {"thumb": "images/thumbs/skog3.jpg", "id": "skog3", "label": "Birch forest", "data": "images/skog3.jpg"}, {"thumb": "images/thumbs/korallrev.jpg", "id": "korallrev", "label": "Coral reef", "data": "images/korallrev.jpg"}, {"thumb": "images/thumbs/moln.jpg", "id": "moln", "label": "Above the clouds", "data": "images/moln.jpg"}, {"thumb": "images/thumbs/norrsken.jpg", "id": "norrsken", "label": "Northern lights", "data": "images/norrsken.jpg"}, {"thumb": "images/thumbs/rymden.jpg", "id": "rymden", "label": "Galaxy", "data": "images/rymden.jpg"}, {"thumb": "images/thumbs/fro.jpg", "id": "fro", "label": "Sprouting seed", "data": "images/fro.jpg"}, {"thumb": "images/thumbs/ljusterapi.jpg", "id": "ljusterapi", "label": "Light therapy room", "data": "images/ljusterapi.jpg"}, {"thumb": "images/thumbs/pals.jpg", "id": "pals", "label": "Soft fur", "data": "images/pals.jpg"}, {"thumb": "images/thumbs/rymd2.jpg", "id": "rymd2", "label": "Milky Way", "data": "images/rymd2.jpg"}, {"thumb": "images/thumbs/universum.jpg", "id": "universum", "label": "Cosmos", "data": "images/universum.jpg"}, {"thumb": "images/thumbs/skog2.jpg", "id": "skog2", "label": "Sunlit forest", "data": "images/skog2.jpg"}, {"thumb": "images/thumbs/bergen2.jpg", "id": "bergen2", "label": "Mountain peak", "data": "images/bergen2.jpg"}, {"thumb": "images/thumbs/bergen3.jpg", "id": "bergen3", "label": "Tundra lake", "data": "images/bergen3.jpg"}, {"thumb": "images/thumbs/meadow2.jpg", "id": "meadow2", "label": "Golden meadow", "data": "images/meadow2.jpg"}, {"thumb": "images/thumbs/beach2.jpg", "id": "beach2", "label": "Misty shore", "data": "images/beach2.jpg"}, {"thumb": "images/thumbs/fantasy2.jpg", "id": "fantasy2", "label": "Fairy lake", "data": "images/fantasy2.jpg"}, {"thumb": "images/thumbs/fantasy3.jpg", "id": "fantasy3", "label": "Fairy village", "data": "images/fantasy3.jpg"}, {"thumb": "images/thumbs/pasture2.jpg", "id": "pasture2", "label": "Red barn", "data": "images/pasture2.jpg"}, {"thumb": "images/thumbs/pasture3.jpg", "id": "pasture3", "label": "Country road", "data": "images/pasture3.jpg"}, {"thumb": "images/thumbs/coral2.jpg", "id": "coral2", "label": "Reef garden", "data": "images/coral2.jpg"}, {"thumb": "images/thumbs/coral3.jpg", "id": "coral3", "label": "Sunlit shallows", "data": "images/coral3.jpg"}];
 const PRESET_ICONS = {"gongbath": "images/gongbath.jpg", "earthom": "images/earthom.jpg", "moonsleep": "images/moonsleep.jpg", "sunrise": "images/sunrise.jpg", "heart": "images/heart.jpg", "crystal": "images/crystal.jpg", "saturn": "images/saturn.jpg", "forest": "images/forest.jpg"};
@@ -831,7 +836,7 @@ function groupOf(id){return MEMBER2GROUP[id]||null;}
 let openGroup=null;
 const FREE_BG_GROUPS=['mountain','meadow'];
 const FREE_BG_IDS=new Set(GROUPS.filter(g=>FREE_BG_GROUPS.includes(g.id)).flatMap(g=>g.members));
-function isBgLocked(id){return !FREE_BG_IDS.has(id);}
+function isBgLocked(id){return !isPremium && !FREE_BG_IDS.has(id);}
 
 function setBackground(id,instant){
   const img=imgById(id); if(!img) return; S.bg=id;
@@ -887,7 +892,7 @@ function renderReel(){
     const g=groupOf(img.id);
     if(g){
       if(done[g.id]) return; done[g.id]=true;
-      const locked=!FREE_BG_GROUPS.includes(g.id);
+      const locked=!isPremium && !FREE_BG_GROUPS.includes(g.id);
       const act=g.members.includes(S.bg);
       const showId=act?S.bg:g.cover, shImg=imgById(showId)||imgById(g.cover)||img;
       const showLbl=act?((imgById(showId)&&imgById(showId).label)||g.label):g.label;
@@ -897,7 +902,7 @@ function renderReel(){
       it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>onGroupTap(g));
       r.appendChild(it);
     } else {
-      const locked=IMAGES.some(i=>i.id===img.id)&&isBgLocked(img.id);
+      const locked=!isPremium && IMAGES.some(i=>i.id===img.id)&&isBgLocked(img.id);
       const it=document.createElement('button');
       it.className='reel-item'+(img.id===S.bg?' active':'')+(locked?' reel-locked':''); it.dataset.bgid=img.id;
       it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`+(locked?lockBadgeHTML:'');
@@ -943,7 +948,7 @@ const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
 const FREE_SOUND_GROUPS=['bowl','gong'];
 const FREE_SOUND_IDS=new Set(SGROUPS.filter(g=>FREE_SOUND_GROUPS.includes(g.id)).flatMap(g=>g.members));
-function isSoundLocked(id){return !FREE_SOUND_IDS.has(id);}
+function isSoundLocked(id){return !isPremium && !FREE_SOUND_IDS.has(id);}
 const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
 
 function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);}
@@ -952,7 +957,7 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
     const g=sgroupOf(s.id);
     if(g){
       if(done[g.id])return; done[g.id]=true;
-      const locked=!FREE_SOUND_GROUPS.includes(g.id);
+      const locked=!isPremium && !FREE_SOUND_GROUPS.includes(g.id);
       const act=g.members.includes(S.sound);
       const showId=act?S.sound:g.cover, showLbl=act?sndLabel(S.sound):g.label;
       const b=document.createElement('button');b.className='itile group'+(act?' active':'')+(locked?' itile-locked':'');b.dataset.sgroup=g.id;
@@ -1350,9 +1355,10 @@ function closePremiumModal(){ const m=$('premiumModal'); if(m)m.classList.remove
   document.addEventListener('keydown',e=>{ if(e.key==='Escape')closePremiumModal(); });
 }
 function renderPresets(){const w=$('presetGrid');if(!w)return;w.innerHTML='';
-  PRESETS.forEach(p=>{const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'')+(p.locked?' pcard-locked':'');
-    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`+(p.locked?lockBadgeHTML:'');
-    b.onclick=p.locked?(()=>openPremiumModal('breathing')):(()=>applyPreset(p));w.appendChild(b);});}
+  PRESETS.forEach(p=>{const locked=p.locked&&!isPremium;
+    const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'')+(locked?' pcard-locked':'');
+    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`+(locked?lockBadgeHTML:'');
+    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>applyPreset(p));w.appendChild(b);});}
 function applyPreset(p){
   S.sound=p.sound;S.freq=p.freq;S.tempo=p.tempo;S.tempoFollow=false;
   S.inhale=p.br[0];S.hold=p.br[1];S.exhale=p.br[2];
@@ -1709,6 +1715,14 @@ positionOrb();
 requestAnimationFrame(()=>{positionBrand();positionOrb();updateCues();});
 setTimeout(()=>{positionBrand();positionOrb();},400);
 setTimeout(positionOrb,1200);
+
+/* Re-render locked content live the instant premium status changes
+   (login, logout, or a fresh isPremium check on page load) */
+onPremiumStatusChange(()=>{
+  renderReel();
+  renderSounds();
+  renderPresets();
+});
 </script>
 
 <script>
