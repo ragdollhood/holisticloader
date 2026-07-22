@@ -891,13 +891,24 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
   if(center&&activeEl){requestAnimationFrame(()=>{w.scrollLeft=activeEl.offsetLeft-w.clientWidth/2+activeEl.offsetWidth/2;});}
   else{w.scrollLeft=sx;}
 }
+function updateSoundActiveStates(){
+  document.querySelectorAll('.itile[data-sndid]').forEach(el=>el.classList.toggle('active',el.dataset.sndid===S.sound));
+  document.querySelectorAll('.itile.group[data-sgroup]').forEach(el=>{
+    const gg=SGROUPS.find(x=>x.id===el.dataset.sgroup); if(!gg)return;
+    const act=gg.members.includes(S.sound);
+    el.classList.toggle('active',act);
+    const showId=act?S.sound:gg.cover;
+    const img=el.querySelector('.iimg'), lbl=el.querySelector('.ilbl');
+    if(img)img.style.backgroundImage=`url(${INSTRUMENT_ICONS[showId]||''})`;
+    if(lbl)lbl.textContent=act?sndLabel(S.sound):gg.label;
+  });
+}
 function onSoundGroupTap(g,tileEl){
   closeSub();
   if(openSGroup===g.id){closeSoundSub();return;}
-  if(!g.members.includes(S.sound)){S.sound=g.cover;clearPreset();renderSounds();preview();}
   openSGroup=g.id;
-  const tile=document.querySelector('#soundScrollFront .itile.group[data-sgroup="'+g.id+'"]')||tileEl;
-  renderSoundSub(g,tile);
+  if(!g.members.includes(S.sound)){S.sound=g.cover;clearPreset();updateSoundActiveStates();preview();}
+  renderSoundSub(g,tileEl);
 }
 function renderSoundSub(g,tileEl){
   const s=$('subSound'); if(!s)return; s.innerHTML='';
