@@ -381,9 +381,11 @@ function renderAuthUI() {
   const accountBtn = document.getElementById("accountBtn");
   const emailLabel = document.getElementById("accountEmailLabel");
   const manageSubBtn = document.getElementById("manageSubBtn");
-  // Optional: the "Login" entry in the hamburger menu (indextest.html /
-  // instrumentstest.html). Not every page has it, so guard for null.
+  // Optional: the "Login" / "Get Premium" entries in the hamburger menu
+  // (indextest.html / instrumentstest.html). Not every page has them,
+  // so guard for null.
   const loginMenuBtn = document.getElementById("loginMenuBtn");
+  const getPremiumMenuBtn = document.getElementById("getPremiumMenuBtn");
   if (!loginBtn) return; // DOM not built yet
 
   if (currentUser) {
@@ -394,6 +396,7 @@ function renderAuthUI() {
     // Only premium users have a Stripe subscription to manage.
     manageSubBtn.style.display = isPremium ? "" : "none";
     if (loginMenuBtn) loginMenuBtn.style.display = "none";
+    if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "none";
   } else {
     loginBtn.style.display = "";
     registerBtn.style.display = "";
@@ -404,6 +407,7 @@ function renderAuthUI() {
     accountMenu.classList.remove("show");
     accountBtn.setAttribute("aria-expanded", "false");
     if (loginMenuBtn) loginMenuBtn.style.display = "";
+    if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "";
   }
 }
 

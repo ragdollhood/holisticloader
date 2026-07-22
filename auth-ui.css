@@ -86,6 +86,13 @@
   #accountMenu{ min-width:200px; }
 }
 
+/* On phones, Login and Get Premium live only in the hamburger menu
+   (#loginMenuBtn / #getPremiumMenuBtn in indextest.html), not in the
+   header — there isn't room for both, and the menu already covers it. */
+@media (max-width:560px){
+  #loginBtn, #registerBtn{ display:none !important; }
+}
+
 /* ---------- Login / Register modal (same pattern as #premiumModal) ---------- */
 #authModal{
   position:fixed; inset:0; z-index:220; display:flex; align-items:center;

@@ -174,7 +174,10 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 
 @media(max-width:560px){
   #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
-  #brand{top:max(96px,calc(env(safe-area-inset-top) + 86px))}
+  /* logo moved up a bit and enlarged — the Start button follows automatically
+     since positionOrb() places it relative to #brand's live bounding box */
+  #brand{top:max(76px,calc(env(safe-area-inset-top) + 66px))}
+  #brandLogo{max-height:clamp(100px,20vw,180px)}
   #topTabs .tab{padding:8px 13px;font-size:11px}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
@@ -448,6 +451,12 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @supports(padding:max(0px)){
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
 }
+@media(max-width:560px){
+  #donateWrap{left:6px}
+  @supports(padding:max(0px)){
+    #donateWrap{left:max(6px,env(safe-area-inset-left))}
+  }
+}
 #donateNote{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.25;max-width:210px}
 .donate{display:inline-flex;align-items:center;gap:8px;font-family:'Outfit',system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;
   background:linear-gradient(180deg,#f2c87a,#d9a85c);color:#2a1d0c;padding:8px 15px;border-radius:999px;box-shadow:0 8px 24px rgba(231,201,162,.32);transition:transform .12s ease,filter .2s ease}
@@ -536,20 +545,23 @@ body.immersive #brand{opacity:0}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
 #contactBtn.hidden{display:none}
 
-/* "Login", "How to use" and "Contact" all share the same left padding (14px)
-   and 16x16 icon size so every icon sits the same distance from the left edge. */
-#loginMenuBtn,#howToBtn{
+/* "Login", "Get Premium", "How to use" and "Contact" all share the same
+   left padding (14px) and 16x16 icon size so every icon sits the same
+   distance from the left edge. */
+#loginMenuBtn,#getPremiumMenuBtn,#howToBtn{
   display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto;gap:8px;
   font-family:inherit;font-size:12px;letter-spacing:.06em;color:var(--ink);
   background:var(--glass);border:1px solid var(--line);border-radius:999px;
   padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   cursor:pointer;transition:transform .12s ease,opacity .5s ease;
 }
-#loginMenuBtn .lgn-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-@media(hover:hover){#loginMenuBtn:hover,#howToBtn:hover{transform:scale(1.04)}}
-#loginMenuBtn:active,#howToBtn:active{transform:scale(.97)}
-#loginMenuBtn.hidden,#howToBtn.hidden{display:none}
-body.immersive #loginMenuBtn,body.immersive #howToBtn{opacity:0;pointer-events:none}
+#loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#getPremiumMenuBtn{color:var(--bg);background:var(--gold);border-color:var(--gold);font-weight:600}
+#getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
+@media(hover:hover){#loginMenuBtn:hover,#howToBtn:hover{transform:scale(1.04)}#getPremiumMenuBtn:hover{transform:scale(1.04);background:var(--gold-soft,var(--gold))}}
+#loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active{transform:scale(.97)}
+#loginMenuBtn.hidden,#getPremiumMenuBtn.hidden,#howToBtn.hidden{display:none}
+body.immersive #loginMenuBtn,body.immersive #getPremiumMenuBtn,body.immersive #howToBtn{opacity:0;pointer-events:none}
 
 /* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button */
 #howToBox{
@@ -584,6 +596,9 @@ body.immersive #howToBox{display:none}
   <div id="menuPanel" role="menu">
     <button id="loginMenuBtn" type="button">
       <svg class="lgn-ic" viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>Login
+    </button>
+    <button id="getPremiumMenuBtn" type="button">
+      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
     </button>
     <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
       <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
@@ -1251,13 +1266,20 @@ function setSound(on){S.soundOn=on;
     document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
   }
-  /* "Login" in the menu just opens the same login modal as the header
-     Login button (built by auth.js) and closes this menu. */
+  /* "Login" and "Get Premium" in the menu just trigger the same header
+     buttons (built by auth.js) and close this menu. */
   const loginMenuBtn=$('loginMenuBtn');
   if(loginMenuBtn){
     loginMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
       closeMenu();
       const headerLoginBtn=$('loginBtn'); if(headerLoginBtn)headerLoginBtn.click();
+    });
+  }
+  const getPremiumMenuBtn=$('getPremiumMenuBtn');
+  if(getPremiumMenuBtn){
+    getPremiumMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
+      closeMenu();
+      const headerRegisterBtn=$('registerBtn'); if(headerRegisterBtn)headerRegisterBtn.click();
     });
   }
 }
