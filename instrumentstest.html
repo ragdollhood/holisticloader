@@ -84,6 +84,12 @@
     --panel:rgba(22,16,32,.55);
     --gold:#ffd98a;
     --violet:#c9a8ff;
+    --bg:#0c0e13;
+    --muted:rgba(243,239,228,.62);
+    --faint:rgba(243,239,228,.34);
+    --glass:rgba(22,16,32,.5);
+    --glass-strong:rgba(18,12,26,.78);
+    --gold-soft:#e6c179;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{min-height:100%}
@@ -91,7 +97,7 @@
     color:var(--ink);
     font-family:-apple-system,system-ui,'Segoe UI',sans-serif;
     display:flex;flex-direction:column;align-items:center;
-    padding:max(140px,calc(env(safe-area-inset-top) + 124px)) 16px 48px;
+    padding:max(92px,calc(env(safe-area-inset-top) + 76px)) 16px 48px;
     background:
       radial-gradient(ellipse 110% 55% at 85% -8%, rgba(120,60,30,.32), transparent 60%),
       radial-gradient(ellipse 100% 55% at 8% 108%, rgba(90,50,140,.3), transparent 60%),
@@ -124,7 +130,7 @@
      (padding-bottom + .stage margin-top), så rubriken hamnar visuellt centrerad */
   .h1-frame{
     position:sticky;
-    top:max(104px,calc(env(safe-area-inset-top) + 92px));
+    top:max(56px,calc(env(safe-area-inset-top) + 44px));
     margin:-36px auto 0;
     z-index:30;
     width:min(94vw,820px);
@@ -139,7 +145,7 @@
   .h1-frame h1{max-width:none;margin:0}
   @media (max-width:560px){
     .h1-frame{
-      top:max(74px,calc(env(safe-area-inset-top) + 60px));
+      top:max(52px,calc(env(safe-area-inset-top) + 38px));
       margin-top:-22px;
       width:92vw;
       padding:11px 14px 5px;
@@ -442,14 +448,10 @@
     margin-top:26px;max-width:420px;line-height:1.6;letter-spacing:.02em;
   }
 
-  /* ===== shared top logo + tab navigation (same system as index.html) ===== */
+  /* ===== shared tab navigation (same system as index.html) ===== */
   #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
     padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
     background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
-  #topNavBrand{display:flex;align-items:center;gap:10px;pointer-events:auto;text-decoration:none;margin-bottom:10px}
-  #topNavLogo{height:50px;width:auto;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
-  #topNavTitle{font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-    font-size:clamp(15px,3.4vw,21px);line-height:1;color:var(--ink)}
   #topTabs{display:flex;pointer-events:auto}
   #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
     padding:9px 20px;color:var(--soft);text-decoration:none;white-space:nowrap;
@@ -457,7 +459,7 @@
     border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
   #topTabs .tab:hover{color:var(--ink)}
-  #topTabs .tab.active{color:var(--ink);background:var(--panel);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
+  #topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
   #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
     background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
     opacity:.55}
@@ -465,37 +467,71 @@
   @supports(padding:max(0px)){
     #donateWrap{left:max(16px,env(safe-area-inset-left))}
   }
-  /* facebook + contact row — now the only content of donateWrap, top-left */
-  #donateSecondRow{display:flex;align-items:center;gap:6px}
-  .shareIconBtn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:999px;flex-shrink:0;
-    box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease;color:#fff}
-  .shareIconBtn:hover{transform:translateY(-1px)}
-  .shareIconBtn:active{transform:scale(.92)}
-  .shareIconBtn svg{width:14px;height:14px;display:block}
-  .shareIconBtn.shareFb{background:#1877F2}
-  /* contact / email — one button that expands to the right */
-  #contactBtn{display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
-    border-radius:999px;padding:8px 11px;background:var(--panel);border:1px solid var(--line);color:var(--ink);cursor:pointer;
+  /* hamburger menu (same system as index.html) */
+  #menuBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:34px;height:34px;padding:0;
+    border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
-  #contactBtn:hover{background:rgba(243,239,228,.12)}
+  #menuBtn:hover{background:rgba(243,239,228,.12)}
+  #menuBtn:active{transform:scale(.95)}
+  #menuBtn .menu-bar{width:16px;height:2px;border-radius:2px;background:currentColor;transition:transform .22s ease,opacity .18s ease}
+  #menuBtn.open .menu-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
+  #menuBtn.open .menu-bar:nth-child(2){opacity:0}
+  #menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+  #menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;
+    display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+    opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
+  #menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+  /* contact — one row in the menu panel that expands to reveal the email */
+  #contactBtn{display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
+    border-radius:999px;padding:8px 14px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
+  #contactBtn:hover{transform:scale(1.04)}
   #contactBtn:active{transform:scale(.97)}
-  #contactBtn .env{flex:0 0 auto;width:18px;height:18px;display:block}
-  #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
-  #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:8px}
-  #contactBtn .ctext b{color:var(--gold);font-weight:600;letter-spacing:.12em;margin-right:5px}
+  #contactBtn .env{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+  #contactBtn .clabel{font-size:12px;letter-spacing:.06em;margin-left:8px;white-space:nowrap}
+  #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
+  #contactBtn .ctext:hover{text-decoration:underline}
+  #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
+  #contactBtn.hidden{display:none}
+  /* "Login", "Get Premium" and "How to use" share the same left padding (14px)
+     and 16x16 icon size so every icon sits the same distance from the left edge. */
+  #loginMenuBtn,#getPremiumMenuBtn,#howToBtn{
+    display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto;gap:8px;
+    font-family:inherit;font-size:12px;letter-spacing:.06em;color:var(--ink);
+    background:var(--glass);border:1px solid var(--line);border-radius:999px;
+    padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    cursor:pointer;transition:transform .12s ease,opacity .5s ease;
+  }
+  #loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+  #getPremiumMenuBtn{color:var(--bg);background:var(--gold);border-color:var(--gold);font-weight:600}
+  #getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
+  @media(hover:hover){#loginMenuBtn:hover,#howToBtn:hover{transform:scale(1.04)}#getPremiumMenuBtn:hover{transform:scale(1.04);background:var(--gold-soft,var(--gold))}}
+  #loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active{transform:scale(.97)}
+  /* info box, hidden until "How to use" is tapped — position set by JS to track the button */
+  #howToBox{
+    position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
+    z-index:46;max-width:180px;
+    background:var(--glass-strong);border:1px solid var(--line);border-radius:16px;
+    padding:16px 16px 18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
+  }
+  #howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+  #howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+    font-weight:600;margin-bottom:10px;white-space:nowrap}
+  #howToBox ol{list-style:none;display:flex;flex-direction:column;gap:8px}
+  #howToBox li{display:flex;gap:7px;font-size:10.5px;line-height:1.45;letter-spacing:.02em;
+    text-transform:uppercase;color:var(--muted)}
+  #howToBox li b{color:var(--gold);font-weight:600;flex:0 0 auto}
   @media(max-width:560px){
-    #topNavLogo{height:28px}
-    #topNavTitle{font-size:13px}
     #topTabs .tab{padding:8px 13px;font-size:11px}
-
-    /* ---- mobile icon rearrangement ---- */
-    /* contact icon: top-left, highest */
-    #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));z-index:47;height:30px;padding:0;width:44px;box-sizing:border-box;justify-content:center}
-    #contactBtn.open{width:auto;padding:0 11px;justify-content:flex-start}
-    /* facebook icon: top-right, highest */
-    #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
+    #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
+    @supports(padding:max(0px)){
+      #donateWrap{left:max(4px,env(safe-area-inset-left))}
+    }
+    /* menuBtn should never stand taller than the tabs beside it */
+    #menuBtn{width:30px;height:30px}
     /* pull the h1 up closer to the gold line under the tabs on mobile */
-    body{padding-top:max(96px,calc(env(safe-area-inset-top) + 80px))}
+    body{padding-top:max(74px,calc(env(safe-area-inset-top) + 58px))}
   }
 
   /* ===== laptop/desktop: Tone & space blir ett fast mixerbord till vänster ===== */
@@ -835,24 +871,28 @@
 </div>
 
 <div id="donateWrap">
-  <div id="donateSecondRow">
-    <a class="shareIconBtn shareFb" id="shareFbTop" href="#" target="_blank" rel="noopener" aria-label="Share on Facebook" title="Share on Facebook">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.16 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.78 8.44-4.94 8.44-9.94Z"/></svg>
-    </a>
-    <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
-      <svg class="env" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-        <rect x="2.5" y="5" width="19" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
-        <path d="M3 6.5 L12 13 L21 6.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
+  <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+    <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
+  </button>
+  <div id="menuPanel" role="menu">
+    <button id="loginMenuBtn" type="button">
+      <svg class="lgn-ic" viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>Login
     </button>
+    <button id="getPremiumMenuBtn" type="button">
+      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
+    </button>
+    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
+      <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
+    </button>
+    <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
+      <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
+      <span class="clabel">Contact</span>
+      <a class="ctext" id="contactEmail" href="mailto:ragdollhood@gmail.com">ragdollhood@gmail.com</a>
+    </div>
   </div>
 </div>
 
 <header id="topNav">
-  <a href="index.html" id="topNavBrand" aria-label="Holistic Loader — home">
-    <img src="images/logga-holistictitel.png" alt="Holistic Loader logo" id="topNavLogo">
-  </a>
   <nav id="topTabs" aria-label="Main sections">
     <a href="index.html" class="tab">Breathing</a>
     <a href="instruments.html" class="tab active" aria-current="page">Sound Healing</a>
@@ -863,12 +903,23 @@
   <div id="topNavLine"></div>
 </header>
 
+<div id="howToBox">
+  <h3>Choose your:</h3>
+  <ol>
+    <li><b>1.</b> Place.</li>
+    <li><b>2.</b> Sound</li>
+    <li><b>3.</b> Frequency / Breathing tempo / Session length</li>
+    <li><b>4.</b> Press start</li>
+  </ol>
+</div>
+
+
 <div id="bg" style="background-image:url(images/bg.jpg)"></div>
 <div id="bgdim"></div>
 <canvas id="cosmos"></canvas>
 
 <div class="h1-frame">
-  <h1><span class="h1-desktop">CLICK · CLICK & DRAG THE INSTRUMENTS</span><span class="h1-mobile">TAP · DOUBLE TAP & SWEEP</span></h1>
+  <h1><span class="h1-desktop">CLICK · DOUBLE CLICK & DRAG THE INSTRUMENTS</span><span class="h1-mobile">TAP · DOUBLE TAP & SWEEP</span></h1>
 </div>
 <div class="donate-row">
 </div>
@@ -1179,27 +1230,73 @@
   const $=id=>document.getElementById(id);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* facebook delningsknapp */
+  /* hamburger menu: toggles the panel holding Login + Get Premium + How to use + Contact */
   (function(){
-    const pageUrl = window.location.href;
-    const fbLink = $('shareFbTop');
-    if(fbLink) fbLink.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(pageUrl);
+    const mBtn=$('menuBtn'), mPanel=$('menuPanel');
+    const closeMenu=function(){ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
+    if(mBtn&&mPanel){
+      mBtn.addEventListener('click',function(e){ e.stopPropagation();
+        const open=mPanel.classList.toggle('show'); mBtn.classList.toggle('open',open); mBtn.setAttribute('aria-expanded',open?'true':'false');
+        if(!open){ const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
+      document.addEventListener('click',function(e){ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
+      document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeMenu(); });
+    }
+    /* "Login" and "Get Premium" in the menu just trigger the same header
+       buttons (built by auth.js) and close this menu. */
+    const loginMenuBtn=$('loginMenuBtn');
+    if(loginMenuBtn){
+      loginMenuBtn.addEventListener('click',function(e){ e.stopPropagation();
+        closeMenu();
+        const headerLoginBtn=$('loginBtn'); if(headerLoginBtn)headerLoginBtn.click();
+      });
+    }
+    const getPremiumMenuBtn=$('getPremiumMenuBtn');
+    if(getPremiumMenuBtn){
+      getPremiumMenuBtn.addEventListener('click',function(e){ e.stopPropagation();
+        closeMenu();
+        const headerRegisterBtn=$('registerBtn'); if(headerRegisterBtn)headerRegisterBtn.click();
+      });
+    }
   })();
 
-  /* kontaktknapp: tryck på kuvertet för att fälla ut och visa mejladressen */
+  /* contact: tap the envelope to expand it and reveal the email */
   (function(){
     const cBtn=$('contactBtn');
     if(!cBtn) return;
     const hide=function(){ cBtn.classList.remove('open'); cBtn.setAttribute('aria-expanded','false'); };
-    cBtn.addEventListener('click',function(e){
-      e.stopPropagation();
-      const open=cBtn.classList.toggle('open');
-      cBtn.setAttribute('aria-expanded',open?'true':'false');
-    });
-    document.addEventListener('click',function(e){
-      if(cBtn.classList.contains('open') && !cBtn.contains(e.target)) hide();
-    });
-    document.addEventListener('keydown',function(e){ if(e.key==='Escape') hide(); });
+    function updateContactMaxWidth(){
+      if(innerWidth<=560)return;
+      const rect=cBtn.getBoundingClientRect();
+      const avail=Math.max(120,innerWidth-rect.left-16);
+      cBtn.style.maxWidth=avail+'px';
+    }
+    cBtn.addEventListener('click',function(e){ e.stopPropagation();
+      updateContactMaxWidth();
+      const open=cBtn.classList.toggle('open'); cBtn.setAttribute('aria-expanded',open?'true':'false'); });
+    cBtn.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cBtn.click(); } });
+    (function(){const cEmail=$('contactEmail'); if(cEmail)cEmail.addEventListener('click',function(e){e.stopPropagation();});})();
+    document.addEventListener('click',function(e){ if(cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hide(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape')hide(); });
+    addEventListener('resize',function(){ if(cBtn.classList.contains('open'))updateContactMaxWidth(); });
+  })();
+
+  /* how to use: tap to reveal the "Choose your" steps box, tap again / click outside to close */
+  (function(){
+    const hBtn=$('howToBtn'), hBox=$('howToBox');
+    if(!hBtn||!hBox)return;
+    const hide=function(){ hBox.classList.remove('show'); hBtn.setAttribute('aria-expanded','false'); };
+    function positionHowToBox(){
+      if(innerWidth<=560)return;
+      const r=hBtn.getBoundingClientRect();
+      hBox.style.left=r.left+'px';
+      hBox.style.top=(r.bottom+7)+'px';
+    }
+    hBtn.addEventListener('click',function(e){ e.stopPropagation();
+      positionHowToBox();
+      const open=hBox.classList.toggle('show'); hBtn.setAttribute('aria-expanded',open?'true':'false'); });
+    document.addEventListener('click',function(e){ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape')hide(); });
+    addEventListener('resize',function(){ if(hBox.classList.contains('show'))positionHowToBox(); });
   })();
 
   /* ============ KOSMOS: galaxer som roterar, norrsken, supernovor ============
