@@ -404,17 +404,37 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   0%,100%{box-shadow:0 0 0 0 rgba(255,217,138,.6),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
   50%{box-shadow:0 0 0 6px rgba(255,217,138,0),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
 }
-#premToast{
-  position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(10px);
-  z-index:90;display:flex;align-items:center;gap:9px;max-width:calc(100vw - 32px);
-  font-family:var(--ui);font-size:12.5px;font-weight:500;letter-spacing:.02em;color:var(--ink);
-  background:linear-gradient(180deg,rgba(20,16,10,.96),rgba(13,10,6,.96));
-  border:1px solid var(--gold);padding:11px 18px;border-radius:999px;
-  box-shadow:0 14px 32px rgba(0,0,0,.5);
-  opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
-}
-#premToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#premToast svg{flex:0 0 auto;color:var(--gold)}
+/* ===== Premium features modal ===== */
+#premiumModal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(6,7,10,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;transition:opacity .3s ease}
+#premiumModal.show{opacity:1;pointer-events:auto}
+#premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;overflow-y:auto;scrollbar-width:thin;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:24px;padding:36px 28px 28px;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(231,201,162,.08) inset;
+  transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1);text-align:center}
+#premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
+#premiumModalCard::-webkit-scrollbar{width:7px}#premiumModalCard::-webkit-scrollbar-thumb{background:rgba(244,241,234,.2);border-radius:7px}
+#premiumModalClose{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--muted);background:rgba(244,241,234,.06);transition:background .2s ease,color .2s ease}
+#premiumModalClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
+#premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.premBadge{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,var(--gold-soft));padding:6px 14px;border-radius:999px;margin-bottom:20px;
+  box-shadow:0 4px 14px rgba(231,201,162,.3)}
+.premBadge svg{width:11px;height:11px;flex:0 0 auto}
+#premiumModalCard h2{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(23px,5vw,29px);letter-spacing:.01em;color:var(--ink);margin-bottom:9px}
+#premiumModalCard .premSub{font-size:12.5px;color:var(--muted);letter-spacing:.02em;line-height:1.55;margin-bottom:26px;padding:0 4px}
+.premList{display:flex;flex-direction:column;gap:15px;text-align:left;margin-bottom:26px}
+.premList li{display:flex;align-items:flex-start;gap:12px;font-size:13px;line-height:1.48;letter-spacing:.01em;color:var(--ink)}
+.premList .premCheck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-top:1px;
+  background:rgba(231,201,162,.14);border:1px solid rgba(231,201,162,.4)}
+.premList .premCheck svg{width:11px;height:11px;stroke:var(--gold);fill:none;stroke-width:2.6}
+.premFoot{font-size:10.5px;color:var(--faint);letter-spacing:.04em;line-height:1.5;margin-bottom:20px}
+.premCta{width:100%;padding:14px;border-radius:999px;background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#241c12;font-weight:600;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+  box-shadow:0 10px 30px rgba(231,201,162,.28);transition:transform .12s ease,filter .2s ease}
+.premCta:hover{filter:brightness(1.05)}
+.premCta:active{transform:scale(.97)}
 #frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
 #donateWrap{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto}
 @supports(padding:max(0px)){
@@ -588,6 +608,23 @@ body.immersive #howToBox{display:none}
     <li><b>3.</b> Frequency / Breathing tempo / Session length</li>
     <li><b>4.</b> Press start</li>
   </ol>
+</div>
+
+<div id="premiumModal" role="dialog" aria-modal="true" aria-labelledby="premiumModalTitle">
+  <div id="premiumModalCard">
+    <button id="premiumModalClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <span class="premBadge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      Premium
+    </span>
+    <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
+    <p class="premSub">Everything Holistic Loader has to offer, for a richer and more personal practice.</p>
+    <ul class="premList" id="premiumModalList"></ul>
+    <p class="premFoot">Premium is launching soon — thank you for being here early.</p>
+    <button class="premCta" id="premiumModalCta" type="button">Got it</button>
+  </div>
 </div>
 
 <div id="stage">
@@ -849,20 +886,20 @@ function renderReel(){
       const it=document.createElement('button');
       it.className='reel-item group'+(act?' active':'')+(locked?' reel-locked':''); it.dataset.group=g.id;
       it.innerHTML=`<div class="pic" style="background-image:url(${shImg.thumb||shImg.data})"><span class="gbadge"><i></i><i></i><i></i></span></div><div class="cap">${showLbl}</div>`+(locked?lockBadgeHTML:'');
-      it.onclick=locked?(()=>showPremiumToast('Premium scene — full access coming soon')):(()=>onGroupTap(g));
+      it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>onGroupTap(g));
       r.appendChild(it);
     } else {
       const locked=IMAGES.some(i=>i.id===img.id)&&isBgLocked(img.id);
       const it=document.createElement('button');
       it.className='reel-item'+(img.id===S.bg?' active':'')+(locked?' reel-locked':''); it.dataset.bgid=img.id;
       it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`+(locked?lockBadgeHTML:'');
-      it.onclick=locked?(()=>showPremiumToast('Premium scene — full access coming soon')):(()=>{closeSub();closeSoundSub();setBackground(img.id);});
+      it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();setBackground(img.id);});
       r.appendChild(it);
     }
   });
   const add=document.createElement('button'); add.className='reel-item add reel-locked';
   add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>'+lockBadgeHTML;
-  add.onclick=()=>showPremiumToast('Premium feature — full access coming soon');
+  add.onclick=()=>openPremiumModal('breathing');
   r.appendChild(add);
 }
 $('fileInput').addEventListener('change',e=>{
@@ -912,13 +949,13 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
       const showId=act?S.sound:g.cover, showLbl=act?sndLabel(S.sound):g.label;
       const b=document.createElement('button');b.className='itile group'+(act?' active':'')+(locked?' itile-locked':'');b.dataset.sgroup=g.id;
       b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[showId]||''})"><span class="gbadge"><i></i><i></i><i></i></span></span><span class="ilbl">${showLbl}</span>`+(locked?lockBadgeHTML:'');
-      b.onclick=locked?(()=>showPremiumToast('Premium sound — full access coming soon')):(()=>onSoundGroupTap(g,b));
+      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>onSoundGroupTap(g,b));
       if(act)activeEl=b;w.appendChild(b);
     } else {
       const locked=isSoundLocked(s.id);
       const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.sndid=s.id;
       b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`+(locked?lockBadgeHTML:'');
-      b.onclick=locked?(()=>showPremiumToast('Premium sound — full access coming soon')):(()=>{closeSub();closeSoundSub();S.sound=s.id;clearPreset();renderSounds();preview();});
+      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();S.sound=s.id;clearPreset();renderSounds();preview();});
       if(s.id===S.sound)activeEl=b;w.appendChild(b);
     }
   });
@@ -1252,19 +1289,40 @@ const PRESETS=[
   {id:'saturn',   name:'Singing Bowl Journey', theme:'148 Hz Saturn bowls', sound:'tibetan_bowl', freq:147.85, tempo:9, br:[4,0,7], anim:'breath', len:15, bg:'sagoskog', locked:true},
   {id:'forest',   name:'Forest Calm', theme:'Gentle 432 Hz soft tones', sound:'handpan', freq:432, tempo:8, br:[4,0,6], anim:'breath', len:10, bg:'skog3', locked:true},
 ];
-let premToastTimer=null;
-function showPremiumToast(msg){
-  const t=document.getElementById('premToast');
-  if(!t) return;
-  const m=t.querySelector('span'); if(m) m.textContent=msg||'Premium content — full access coming soon';
-  t.classList.add('show');
-  clearTimeout(premToastTimer);
-  premToastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+const PREMIUM_FEATURES={
+  breathing:[
+    '21 additional background scenes — 26 in total',
+    'Upload your own photo and breathe against a place that means something to you',
+    '13 additional instruments — 19 in total — to layer and personalize your sound',
+    '6 additional guided presets — 8 complete journeys, ready to press play'
+  ],
+  sound:[
+    '12 additional instruments — 16 in total',
+    'Full access to the signal generator',
+    'Record and save your own custom-designed sounds'
+  ]
+};
+function openPremiumModal(context){
+  const list=$('premiumModalList'), modal=$('premiumModal');
+  if(!list||!modal) return;
+  const feats=PREMIUM_FEATURES[context]||PREMIUM_FEATURES.breathing;
+  list.innerHTML=feats.map(f=>
+    `<li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span>${f}</span></li>`
+  ).join('');
+  modal.classList.add('show');
+}
+function closePremiumModal(){ const m=$('premiumModal'); if(m)m.classList.remove('show'); }
+{
+  const pm=$('premiumModal'), pClose=$('premiumModalClose'), pCta=$('premiumModalCta');
+  if(pClose)pClose.onclick=closePremiumModal;
+  if(pCta)pCta.onclick=closePremiumModal;
+  if(pm)pm.addEventListener('click',e=>{ if(e.target===pm)closePremiumModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape')closePremiumModal(); });
 }
 function renderPresets(){const w=$('presetGrid');if(!w)return;w.innerHTML='';
   PRESETS.forEach(p=>{const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'')+(p.locked?' pcard-locked':'');
     b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`+(p.locked?lockBadgeHTML:'');
-    b.onclick=p.locked?(()=>showPremiumToast('Premium preset — full access coming soon')):(()=>applyPreset(p));w.appendChild(b);});}
+    b.onclick=p.locked?(()=>openPremiumModal('breathing')):(()=>applyPreset(p));w.appendChild(b);});}
 function applyPreset(p){
   S.sound=p.sound;S.freq=p.freq;S.tempo=p.tempo;S.tempoFollow=false;
   S.inhale=p.br[0];S.hold=p.br[1];S.exhale=p.br[2];
@@ -1700,9 +1758,5 @@ registerVisit();
   if(fbLink) fbLink.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(pageUrl);
 })();
 </script>
-<div id="premToast" role="status" aria-live="polite">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-  <span>Premium preset — full access coming soon</span>
-</div>
 </body>
 </html>
