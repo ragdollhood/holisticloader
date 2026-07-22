@@ -252,7 +252,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .sound-toggles{display:flex;justify-content:center;gap:10px;max-width:420px;margin:10px auto 0;padding:0 6px}
 .sound-toggles.hidden{display:none}
 .sti{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:9px}
-.sti-lbl{display:flex;align-items:center;justify-content:center;gap:5px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;min-height:2.6em}
+.sti-lbl{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;min-height:2.6em}
 .sti-ic{width:14px;height:14px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8}
 .swtoggle{position:relative;width:46px;height:26px;border-radius:999px;flex:0 0 auto;cursor:pointer;
   background:rgba(244,241,234,.14);border:1px solid var(--line);transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
@@ -455,7 +455,19 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .donate:hover{filter:brightness(1.05)}
 .donate:active{transform:scale(.96)}
 .donate .ppmark{flex:0 0 auto;background:#fff;border-radius:5px;padding:2px}
-#donateSecondRow{position:absolute;top:calc(100% + 7px);left:0;width:max-content;display:flex;align-items:center;gap:6px;pointer-events:auto}
+#menuBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:36px;height:36px;padding:0;
+  border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
+#menuBtn:hover{background:rgba(244,241,234,.12)}
+#menuBtn:active{transform:scale(.95)}
+#menuBtn .menu-bar{width:16px;height:2px;border-radius:2px;background:currentColor;transition:transform .22s ease,opacity .18s ease}
+#menuBtn.open .menu-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
+#menuBtn.open .menu-bar:nth-child(2){opacity:0}
+#menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+#menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;
+  display:flex;flex-direction:column;align-items:stretch;gap:8px;
+  opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
+#menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 .toggle-row{display:flex;gap:8px}.toggle-row .chip{flex:1;text-align:center}
 .switch{display:inline-flex;align-items:center;gap:11px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(244,241,234,.04);color:var(--ink);font-size:13.5px;cursor:pointer;transition:background .2s ease}
 .switch:hover{background:rgba(244,241,234,.09)}
@@ -524,17 +536,10 @@ body.immersive #brand{opacity:0}
 #contactBtn .ctext b{color:var(--gold);font-weight:600;letter-spacing:.12em;margin-right:5px}
 #contactBtn.hidden{display:none}
 
-@media(max-width:560px){
-  /* contact icon: top-left, right next to the donate button — placed after the base rule so it wins the cascade */
-  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:calc(max(16px,env(safe-area-inset-left)) + 46px);
-    z-index:47;height:30px;width:38px;padding:0;justify-content:center}
-  #contactBtn.open{width:auto;padding:0 11px;justify-content:flex-start}
-}
-
-/* "How to use" button — sits inline next to the Contact button */
+/* "How to use" button — sits at the top of the menu panel, above Contact */
 #howToBtn{
-  display:inline-flex;align-items:center;flex:0 0 auto;
-  font-family:inherit;font-size:11px;letter-spacing:.06em;color:var(--ink);
+  display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto;
+  font-family:inherit;font-size:12px;letter-spacing:.06em;color:var(--ink);
   background:var(--glass);border:1px solid var(--line);border-radius:999px;
   padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   cursor:pointer;transition:background .2s ease,transform .12s ease,opacity .5s ease;
@@ -542,7 +547,6 @@ body.immersive #brand{opacity:0}
 @media(hover:hover){#howToBtn:hover{background:rgba(244,241,234,.12)}}
 #howToBtn:active{transform:scale(.97)}
 #howToBtn.hidden{display:none}
-#howToBtn .htu-short{display:none}
 body.immersive #howToBtn{opacity:0;pointer-events:none}
 
 /* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button */
@@ -562,12 +566,6 @@ body.immersive #howToBtn{opacity:0;pointer-events:none}
 #howToBox li b{color:var(--gold);font-weight:600;flex:0 0 auto}
 body.immersive #howToBox{display:none}
 
-@media(max-width:560px){
-  /* "How to use" — compact icon-style pill on mobile, sits where the donate button used to be */
-  #howToBtn{height:30px;padding:0 12px}
-  #howToBtn .htu-full{display:none}
-  #howToBtn .htu-short{display:inline}
-}
 </style>
 <link rel="stylesheet" href="auth-ui.css">
 </head>
@@ -578,9 +576,11 @@ body.immersive #howToBox{display:none}
   <p>Holistic Loader is a calming meditation web app. Follow the guided breathing circle, choose healing sound frequencies such as 528&nbsp;Hz and other Solfeggio tones, planetary tones and singing-bowl gongs, and relax with serene nature scenes — beach, forest, meadow, mountains and the cosmos. Set a session timer and unwind. It is free to use, with no sign-up and no app to install.</p>
 </div>
 <div id="donateWrap">
-
-  <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="htu-full">How to use</span><span class="htu-short">How?</span></button>
-  <div id="donateSecondRow">
+  <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+    <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
+  </button>
+  <div id="menuPanel" role="menu">
+    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">How to use</button>
     <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
       <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
       <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
@@ -1231,6 +1231,19 @@ function setSound(on){S.soundOn=on;
   const st=$('soundState'); if(st)st.textContent=on?'On':'Off';
   if(audio.ctx)audio.master.gain.setTargetAtTime(on?MASTER:.0001,audio.ctx.currentTime,.12);}
 {const at=$('assistToggle'); if(at)at.addEventListener('click',()=>setShowCircle(!S.showCircle));}
+
+/* hamburger menu: toggles the panel holding How to use + Contact */
+{
+  const mBtn=$('menuBtn'), mPanel=$('menuPanel');
+  const closeMenu=()=>{ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
+  if(mBtn&&mPanel){
+    mBtn.addEventListener('click',e=>{ e.stopPropagation();
+      const open=mPanel.classList.toggle('show'); mBtn.classList.toggle('open',open); mBtn.setAttribute('aria-expanded',open?'true':'false');
+      if(!open){ const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
+    document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
+  }
+}
 
 /* contact: tap the envelope to expand it and reveal the email */
 {
