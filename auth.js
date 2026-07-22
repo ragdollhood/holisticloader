@@ -1,3 +1,46 @@
+/* =======================================================================
+   HOLISTIC LOADER — SUPABASE AUTH MODULE
+   File: auth.js
+   -----------------------------------------------------------------------
+   WHERE TO PUT THIS FILE:
+     Save as auth.js in the same folder as your other .html files
+     (same place as index.html, instruments.html, nutriloader.html, store.html).
+
+   WHERE TO LOAD IT:
+     Add these TWO script tags near the end of <body>, BEFORE your page's
+     own <script> block that renders backgrounds/sounds/presets, on EVERY
+     page that has premium-locked content or needs the login/logout UI:
+
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+     <script src="auth.js"></script>
+
+     auth.js must load BEFORE the page-specific script that calls
+     renderReel(), renderSounds(), renderPresets(), etc., because this
+     file registers a callback that re-runs those render functions
+     whenever premium status changes.
+
+   WHAT THIS FILE DOES:
+     1. Creates one shared Supabase client (using your existing project).
+     2. Exposes register / login / logout functions using email+password
+        (NO magic links, NO OTP).
+     3. Restores the session automatically on page refresh
+        (Supabase JS keeps the session in localStorage — this is just the
+        auth token, NOT the premium flag, so it satisfies "premium must
+        come from Supabase" — see isPremiumUser() below).
+     4. On register, creates a matching row in the `profiles` table.
+     5. Exposes isPremiumUser() which reads profiles.premium fresh
+        from Supabase (source of truth).
+     6. Maintains a global `isPremium` boolean and a global `currentUser`
+        object that the rest of your site can read.
+     7. Renders the header UI (Login / Register / Logout buttons,
+        "Logged in as: ..." text) and the login/register modal.
+   ======================================================================= */
+
+/* -----------------------------------------------------------------------
+   1. SUPABASE CLIENT
+   These are the same project credentials you already use for the
+   `visits` table tracking further down in your existing pages.
+----------------------------------------------------------------------- */
 const SUPABASE_URL = "https://ibytawdimgthoqwtbtgv.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_X4l9e5OPXE9Cq4XVc1jm_A_Hb6tbJUO";
 
@@ -64,22 +107,13 @@ async function registerUser(email, password) {
   const { data, error } = await sb.auth.signUp({ email, password });
   if (error) throw error;
 
-  // If email confirmations are OFF in your Supabase Auth settings,
-  // data.session will already be set and the user is logged in now.
-  // If confirmations are ON, data.user exists but there's no session yet
-  // until they confirm — the profile row is still created either way.
-  if (data.user) {
-    const { error: profileError } = await sb.from("profiles").insert({
-      user_id: data.user.id,
-      email: data.user.email,
-      premium: false
-    });
-    // Ignore "duplicate row" errors (e.g. if a trigger already created it,
-    // or the user re-submits) but surface anything else.
-    if (profileError && profileError.code !== "23505") {
-      console.error("Profile creation error:", profileError.message);
-    }
-  }
+  // NOTE: the profiles row is now created automatically by a Postgres
+  // trigger (on_auth_user_created -> handle_new_user()) that runs on
+  // the database side the moment a new row appears in auth.users.
+  // This works reliably even when email confirmations are ON (i.e.
+  // before the user has a session), which a client-side insert here
+  // could not guarantee. See the SQL in the setup notes at the bottom
+  // of this file if that trigger hasn't been created yet.
 
   return data;
 }
@@ -223,7 +257,18 @@ function _wireAuthDom() {
       }
       closeModal();
     } catch (err) {
-      errorEl.textContent = err.message || "Something went wrong. Please try again.";
+      // Always log the full error object to the console so it can be
+      // inspected (status code, error code, etc.) even when .message
+      // is empty or missing.
+      console.error("Auth error (full object):", err);
+
+      const readable =
+        (err && typeof err.message === "string" && err.message.trim()) ? err.message :
+        (err && typeof err.error_description === "string" && err.error_description.trim()) ? err.error_description :
+        (err && err.status) ? `Request failed (status ${err.status}). Check the console for details.` :
+        "Something went wrong. Please try again.";
+
+      errorEl.textContent = readable;
     } finally {
       submitBtn.disabled = false;
     }
@@ -286,7 +331,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 /* -----------------------------------------------------------------------
-   10. EXAMPLE — how your existing premium-locked code should use this.
+   10. REQUIRED ONE-TIME SUPABASE SETUP (run once in the SQL Editor)
+
+   The profiles row is created by a database trigger, not by this file,
+   because that's the only approach that works reliably regardless of
+   whether "confirm email" is on or off in your Auth settings.
+
+   Run this once in Supabase -> SQL Editor:
+
+     create or replace function public.handle_new_user()
+     returns trigger
+     language plpgsql
+     security definer set search_path = public
+     as $$
+     begin
+       insert into public.profiles (user_id, email, premium)
+       values (new.id, new.email, false)
+       on conflict (user_id) do nothing;
+       return new;
+     end;
+     $$;
+
+     create trigger on_auth_user_created
+       after insert on auth.users
+       for each row execute function public.handle_new_user();
+
+     alter table public.profiles enable row level security;
+
+     create policy "Users can view their own profile"
+     on public.profiles
+     for select
+     to authenticated
+     using (auth.uid() = user_id);
+
+----------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------
+   11. EXAMPLE — how your existing premium-locked code should use this.
 
    Anywhere you currently do:
 
