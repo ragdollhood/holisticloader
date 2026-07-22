@@ -464,6 +464,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
      than both — nudge them back up so all tabs line up */
   #ctrlTabSoundTempo svg{transform:translateY(-1px)}
   #ctrlTabLength svg{transform:translateY(-1px)}
+  /* menuBtn should never stand taller than the tabs beside it */
+  #menuBtn{width:30px;height:30px}
 }
 #donateNote{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.25;max-width:210px}
 .donate{display:inline-flex;align-items:center;gap:8px;font-family:'Outfit',system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;
@@ -471,7 +473,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .donate:hover{filter:brightness(1.05)}
 .donate:active{transform:scale(.96)}
 .donate .ppmark{flex:0 0 auto;background:#fff;border-radius:5px;padding:2px}
-#menuBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:36px;height:36px;padding:0;
+#menuBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:34px;height:34px;padding:0;
   border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
 #menuBtn:hover{background:rgba(244,241,234,.12)}
