@@ -388,15 +388,20 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .pcard.pcard-locked{position:relative;cursor:pointer}
 .pcard.pcard-locked .picon{filter:grayscale(.7) brightness(.6)}
 .pcard.pcard-locked .pn,.pcard.pcard-locked .pt{opacity:.55}
-.pcard .premBadge{
-  position:absolute;top:8px;right:8px;
+.lockBadge{
   display:inline-flex;align-items:center;gap:4px;
-  font-family:var(--ui);font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  font-family:var(--ui);font-weight:700;letter-spacing:.14em;text-transform:uppercase;
   color:#2a1c05;background:linear-gradient(135deg,#f2d9ae,var(--gold-soft));
-  padding:4px 9px;border-radius:999px;white-space:nowrap;
+  border-radius:999px;white-space:nowrap;
   box-shadow:0 3px 10px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.25) inset;
 }
-.pcard .premBadge svg{width:9px;height:9px;display:block;flex:0 0 auto}
+.lockBadge svg{display:block;flex:0 0 auto}
+.pcard .lockBadge{position:absolute;top:8px;right:8px;font-size:8.5px;padding:4px 9px}
+.pcard .lockBadge svg{width:9px;height:9px}
+.itile.itile-locked .iimg,.reel-item.reel-locked .pic{filter:grayscale(.72) brightness(.55)}
+.itile.itile-locked .ilbl,.reel-item.reel-locked .cap{opacity:.55}
+.itile .lockBadge,.reel-item .lockBadge{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:7.5px;padding:3px 7px}
+.itile .lockBadge svg,.reel-item .lockBadge svg{width:8px;height:8px}
 #premToast{
   position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(10px);
   z-index:90;display:flex;align-items:center;gap:9px;max-width:calc(100vw - 32px);
@@ -784,6 +789,9 @@ const GROUPS=[
 const MEMBER2GROUP={}; GROUPS.forEach(g=>g.members.forEach(id=>MEMBER2GROUP[id]=g));
 function groupOf(id){return MEMBER2GROUP[id]||null;}
 let openGroup=null;
+const FREE_BG_GROUPS=['mountain','meadow'];
+const FREE_BG_IDS=new Set(GROUPS.filter(g=>FREE_BG_GROUPS.includes(g.id)).flatMap(g=>g.members));
+function isBgLocked(id){return !FREE_BG_IDS.has(id);}
 
 function setBackground(id,instant){
   const img=imgById(id); if(!img) return; S.bg=id;
@@ -839,19 +847,21 @@ function renderReel(){
     const g=groupOf(img.id);
     if(g){
       if(done[g.id]) return; done[g.id]=true;
+      const locked=!FREE_BG_GROUPS.includes(g.id);
       const act=g.members.includes(S.bg);
       const showId=act?S.bg:g.cover, shImg=imgById(showId)||imgById(g.cover)||img;
       const showLbl=act?((imgById(showId)&&imgById(showId).label)||g.label):g.label;
       const it=document.createElement('button');
-      it.className='reel-item group'+(act?' active':''); it.dataset.group=g.id;
-      it.innerHTML=`<div class="pic" style="background-image:url(${shImg.thumb||shImg.data})"><span class="gbadge"><i></i><i></i><i></i></span></div><div class="cap">${showLbl}</div>`;
-      it.onclick=()=>onGroupTap(g);
+      it.className='reel-item group'+(act?' active':'')+(locked?' reel-locked':''); it.dataset.group=g.id;
+      it.innerHTML=`<div class="pic" style="background-image:url(${shImg.thumb||shImg.data})"><span class="gbadge"><i></i><i></i><i></i></span></div><div class="cap">${showLbl}</div>`+(locked?lockBadgeHTML:'');
+      it.onclick=locked?(()=>showPremiumToast('Premium scene — full access coming soon')):(()=>onGroupTap(g));
       r.appendChild(it);
     } else {
+      const locked=IMAGES.some(i=>i.id===img.id)&&isBgLocked(img.id);
       const it=document.createElement('button');
-      it.className='reel-item'+(img.id===S.bg?' active':''); it.dataset.bgid=img.id;
-      it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`;
-      it.onclick=()=>{closeSub();closeSoundSub();setBackground(img.id);};
+      it.className='reel-item'+(img.id===S.bg?' active':'')+(locked?' reel-locked':''); it.dataset.bgid=img.id;
+      it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`+(locked?lockBadgeHTML:'');
+      it.onclick=locked?(()=>showPremiumToast('Premium scene — full access coming soon')):(()=>{closeSub();closeSoundSub();setBackground(img.id);});
       r.appendChild(it);
     }
   });
@@ -891,6 +901,10 @@ const SMEMBER2GROUP={}; SGROUPS.forEach(g=>g.members.forEach(id=>SMEMBER2GROUP[i
 function sgroupOf(id){return SMEMBER2GROUP[id]||null;}
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
+const FREE_SOUND_GROUPS=['bowl','gong'];
+const FREE_SOUND_IDS=new Set(SGROUPS.filter(g=>FREE_SOUND_GROUPS.includes(g.id)).flatMap(g=>g.members));
+function isSoundLocked(id){return !FREE_SOUND_IDS.has(id);}
+const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
 
 function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);}
 function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scrollLeft;w.innerHTML='';let activeEl=null;const done={};
@@ -898,16 +912,18 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
     const g=sgroupOf(s.id);
     if(g){
       if(done[g.id])return; done[g.id]=true;
+      const locked=!FREE_SOUND_GROUPS.includes(g.id);
       const act=g.members.includes(S.sound);
       const showId=act?S.sound:g.cover, showLbl=act?sndLabel(S.sound):g.label;
-      const b=document.createElement('button');b.className='itile group'+(act?' active':'');b.dataset.sgroup=g.id;
-      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[showId]||''})"><span class="gbadge"><i></i><i></i><i></i></span></span><span class="ilbl">${showLbl}</span>`;
-      b.onclick=()=>onSoundGroupTap(g,b);
+      const b=document.createElement('button');b.className='itile group'+(act?' active':'')+(locked?' itile-locked':'');b.dataset.sgroup=g.id;
+      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[showId]||''})"><span class="gbadge"><i></i><i></i><i></i></span></span><span class="ilbl">${showLbl}</span>`+(locked?lockBadgeHTML:'');
+      b.onclick=locked?(()=>showPremiumToast('Premium sound — full access coming soon')):(()=>onSoundGroupTap(g,b));
       if(act)activeEl=b;w.appendChild(b);
     } else {
-      const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'');b.dataset.sndid=s.id;
-      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`;
-      b.onclick=()=>{closeSub();closeSoundSub();S.sound=s.id;clearPreset();renderSounds();preview();};
+      const locked=isSoundLocked(s.id);
+      const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.sndid=s.id;
+      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`+(locked?lockBadgeHTML:'');
+      b.onclick=locked?(()=>showPremiumToast('Premium sound — full access coming soon')):(()=>{closeSub();closeSoundSub();S.sound=s.id;clearPreset();renderSounds();preview();});
       if(s.id===S.sound)activeEl=b;w.appendChild(b);
     }
   });
@@ -1239,20 +1255,21 @@ const PRESETS=[
   {id:'heart',    name:'Venus · Heart', theme:'639 Hz heart opening', sound:'harpa', freq:639, tempo:7, br:[5,2,7], anim:'breath', len:10, bg:'ang', locked:true},
   {id:'crystal',  name:'Crystal Healing', theme:'528 Hz crystal bowls', sound:'crystal_bowl', freq:528, tempo:8, br:[4,2,6], anim:'breath', len:15, bg:'korallrev', locked:true},
   {id:'saturn',   name:'Singing Bowl Journey', theme:'148 Hz Saturn bowls', sound:'tibetan_bowl', freq:147.85, tempo:9, br:[4,0,7], anim:'breath', len:15, bg:'sagoskog', locked:true},
-  {id:'forest',   name:'Forest Calm', theme:'Gentle 432 Hz soft tones', sound:'handpan', freq:432, tempo:8, br:[4,0,6], anim:'breath', len:10, bg:'skog3'},
+  {id:'forest',   name:'Forest Calm', theme:'Gentle 432 Hz soft tones', sound:'handpan', freq:432, tempo:8, br:[4,0,6], anim:'breath', len:10, bg:'skog3', locked:true},
 ];
 let premToastTimer=null;
-function showPremiumToast(){
+function showPremiumToast(msg){
   const t=document.getElementById('premToast');
   if(!t) return;
+  const m=t.querySelector('span'); if(m) m.textContent=msg||'Premium content — full access coming soon';
   t.classList.add('show');
   clearTimeout(premToastTimer);
   premToastTimer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 function renderPresets(){const w=$('presetGrid');if(!w)return;w.innerHTML='';
   PRESETS.forEach(p=>{const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'')+(p.locked?' pcard-locked':'');
-    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`+(p.locked?'<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>':'');
-    b.onclick=p.locked?(()=>showPremiumToast()):(()=>applyPreset(p));w.appendChild(b);});}
+    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`+(p.locked?lockBadgeHTML:'');
+    b.onclick=p.locked?(()=>showPremiumToast('Premium preset — full access coming soon')):(()=>applyPreset(p));w.appendChild(b);});}
 function applyPreset(p){
   S.sound=p.sound;S.freq=p.freq;S.tempo=p.tempo;S.tempoFollow=false;
   S.inhale=p.br[0];S.hold=p.br[1];S.exhale=p.br[2];
