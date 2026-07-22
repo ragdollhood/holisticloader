@@ -180,9 +180,6 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   #topNavLogo{height:28px}
   #topTabs .tab{padding:8px 13px;font-size:11px}
   /* ---- mobile icon rearrangement ---- */
-  /* facebook icon: top-right, highest */
-  #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
-
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
   /* preset active: hide the Breathing / Sound Healing / Nutrition tabs and the line under them */
@@ -255,7 +252,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .sound-toggles{display:flex;justify-content:center;gap:10px;max-width:420px;margin:10px auto 0;padding:0 6px}
 .sound-toggles.hidden{display:none}
 .sti{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:9px}
-.sti-lbl{display:flex;align-items:center;justify-content:center;gap:5px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3}
+.sti-lbl{display:flex;align-items:center;justify-content:center;gap:5px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;min-height:2.6em}
 .sti-ic{width:14px;height:14px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8}
 .swtoggle{position:relative;width:46px;height:26px;border-radius:999px;flex:0 0 auto;cursor:pointer;
   background:rgba(244,241,234,.14);border:1px solid var(--line);transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
@@ -459,12 +456,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .donate:active{transform:scale(.96)}
 .donate .ppmark{flex:0 0 auto;background:#fff;border-radius:5px;padding:2px}
 #donateSecondRow{position:absolute;top:calc(100% + 7px);left:0;width:max-content;display:flex;align-items:center;gap:6px;pointer-events:auto}
-.shareIconBtn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:999px;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease;color:#fff}
-.shareIconBtn:hover{transform:translateY(-1px)}
-.shareIconBtn:active{transform:scale(.92)}
-.shareIconBtn svg{width:14px;height:14px;display:block}
-.shareIconBtn.shareFb{background:#1877F2}
 .toggle-row{display:flex;gap:8px}.toggle-row .chip{flex:1;text-align:center}
 .switch{display:inline-flex;align-items:center;gap:11px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(244,241,234,.04);color:var(--ink);font-size:13.5px;cursor:pointer;transition:background .2s ease}
 .switch:hover{background:rgba(244,241,234,.09)}
@@ -540,7 +531,7 @@ body.immersive #brand{opacity:0}
   #contactBtn.open{width:auto;padding:0 11px;justify-content:flex-start}
 }
 
-/* "How to use" button — sits inline between the Facebook and Contact buttons */
+/* "How to use" button — sits inline next to the Contact button */
 #howToBtn{
   display:inline-flex;align-items:center;flex:0 0 auto;
   font-family:inherit;font-size:11px;letter-spacing:.06em;color:var(--ink);
@@ -590,9 +581,6 @@ body.immersive #howToBox{display:none}
 
   <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="htu-full">How to use</span><span class="htu-short">How?</span></button>
   <div id="donateSecondRow">
-    <a class="shareIconBtn shareFb" id="shareFbTop" href="#" target="_blank" rel="noopener" aria-label="Share on Facebook" title="Share on Facebook">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.16 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.78 8.44-4.94 8.44-9.94Z"/></svg>
-    </a>
     <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
       <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
       <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
@@ -720,7 +708,7 @@ body.immersive #howToBox{display:none}
     </div>
     <div class="sound-toggles hidden" id="soundSubTabs" role="group" aria-label="Sound options">
       <div class="sti">
-        <span class="sti-lbl">Sound follows breathing</span>
+        <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Follows breathing</span>
         <button class="swtoggle on" id="soundFollowBtn" aria-pressed="true" aria-label="Sound follows breathing"><span class="sw-knob"></span></button>
       </div>
       <div class="sti" id="stiBreatheIn">
@@ -1249,8 +1237,8 @@ function setSound(on){S.soundOn=on;
   const cBtn=$('contactBtn');
   const hide=()=>{ if(cBtn){cBtn.classList.remove('open');cBtn.setAttribute('aria-expanded','false');} };
   /* The button's CSS max-width assumes it starts near the left edge of the
-     viewport, but on wider screens it now sits to the right of the Facebook
-     and "How to use" buttons in the donate row. Recompute how much room is
+     viewport, but on wider screens it now sits to the right of the
+     "How to use" button in the donate row. Recompute how much room is
      actually left before the viewport edge so the expanded email address
      isn't clipped by body's overflow:hidden. */
   function updateContactMaxWidth(){
@@ -1799,13 +1787,6 @@ async function registerVisit() {
 }
 
 registerVisit();
-</script>
-<script>
-(function(){
-  const pageUrl = window.location.href;
-  const fbLink = document.getElementById('shareFbTop');
-  if(fbLink) fbLink.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(pageUrl);
-})();
 </script>
 </body>
 </html>
