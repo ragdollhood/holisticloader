@@ -249,8 +249,10 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 
 .breath-subtabs{display:flex;justify-content:center;gap:7px;max-width:420px;margin:8px auto 0;padding:0 6px}
 .breath-subtabs.hidden{display:none}
-.sound-toggles{display:flex;justify-content:center;gap:10px;max-width:420px;margin:10px auto 0;padding:0 6px}
+.sound-toggles{display:flex;flex-direction:column;max-width:420px;margin:8px auto 0;padding:0 6px}
 .sound-toggles.hidden{display:none}
+.sst-desc{font-size:11.5px;line-height:1.5;color:var(--muted);text-align:center;margin:0 0 14px}
+.sti-row{display:flex;justify-content:center;gap:10px}
 .sti{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:9px}
 .sti-lbl{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;min-height:2.6em}
 .sti-ic{width:14px;height:14px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8}
@@ -532,9 +534,9 @@ body.immersive #brand{opacity:0}
 #contactBtn:hover{transform:scale(1.04)}#contactBtn:active{transform:scale(.97)}
 #contactBtn .env{flex:0 0 auto;width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
 #contactBtn .clabel{font-size:12px;letter-spacing:.06em;margin-left:8px;white-space:nowrap}
-#contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
-#contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:8px}
-#contactBtn .ctext b{color:var(--gold);font-weight:600;letter-spacing:.12em;margin-right:5px}
+#contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
+#contactBtn .ctext:hover{text-decoration:underline}
+#contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
 #contactBtn.hidden{display:none}
 
 /* "How to use" button — sits at the top of the menu panel, above Contact */
@@ -583,13 +585,13 @@ body.immersive #howToBox{display:none}
   </button>
   <div id="menuPanel" role="menu">
     <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
-      <svg class="htu-ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>How to use
+      <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
     </button>
-    <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
+    <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
       <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
-      <span class="clabel">Contact</span>
-      <span class="ctext"><b>CONTACT ME:</b> ragdollhood@gmail.com</span>
-    </button>
+      <span class="clabel">CONTACT:</span>
+      <a class="ctext" id="contactEmail" href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a>
+    </div>
   </div>
 </div>
 
@@ -712,17 +714,20 @@ body.immersive #howToBox{display:none}
       <button class="breath-subtab" data-phase="exhale" role="tab" aria-selected="false">Breath out<span class="bs-val" id="bsValExhale">4 sec</span></button>
     </div>
     <div class="sound-toggles hidden" id="soundSubTabs" role="group" aria-label="Sound options">
-      <div class="sti">
-        <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Follows breathing</span>
-        <button class="swtoggle on" id="soundFollowBtn" aria-pressed="true" aria-label="Sound follows breathing"><span class="sw-knob"></span></button>
-      </div>
-      <div class="sti" id="stiBreatheIn">
-        <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe in</span>
-        <button class="swtoggle on" id="soundInBtn" aria-pressed="true" aria-label="Sound on breathe in"><span class="sw-knob"></span></button>
-      </div>
-      <div class="sti" id="stiBreatheOut">
-        <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe out</span>
-        <button class="swtoggle on" id="soundOutBtn" aria-pressed="true" aria-label="Sound on breathe out"><span class="sw-knob"></span></button>
+      <p class="sst-desc">Let the sound rise and fall with your breath, or choose exactly when it plays.</p>
+      <div class="sti-row">
+        <div class="sti">
+          <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Follows breathing</span>
+          <button class="swtoggle on" id="soundFollowBtn" aria-pressed="true" aria-label="Sound follows breathing"><span class="sw-knob"></span></button>
+        </div>
+        <div class="sti" id="stiBreatheIn">
+          <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe in</span>
+          <button class="swtoggle on" id="soundInBtn" aria-pressed="true" aria-label="Sound on breathe in"><span class="sw-knob"></span></button>
+        </div>
+        <div class="sti" id="stiBreatheOut">
+          <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe out</span>
+          <button class="swtoggle on" id="soundOutBtn" aria-pressed="true" aria-label="Sound on breathe out"><span class="sw-knob"></span></button>
+        </div>
       </div>
     </div>
   </div>
@@ -1268,6 +1273,8 @@ function setSound(on){S.soundOn=on;
   if(cBtn)cBtn.addEventListener('click',e=>{ e.stopPropagation();
     updateContactMaxWidth();
     const open=cBtn.classList.toggle('open'); cBtn.setAttribute('aria-expanded',open?'true':'false'); });
+  if(cBtn)cBtn.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cBtn.click(); } });
+  {const cEmail=$('contactEmail'); if(cEmail)cEmail.addEventListener('click',e=>e.stopPropagation());}
   document.addEventListener('click',e=>{ if(cBtn&&cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hide(); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
   addEventListener('resize',()=>{ if(cBtn&&cBtn.classList.contains('open'))updateContactMaxWidth(); });
