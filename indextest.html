@@ -455,7 +455,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
 }
 @media(max-width:560px){
-  #donateWrap{left:4px;top:max(0px,calc(env(safe-area-inset-top) - 12px))}
+  #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
   @supports(padding:max(0px)){
     #donateWrap{left:max(4px,env(safe-area-inset-left))}
   }
@@ -611,6 +611,7 @@ body.immersive #howToBox{display:none}
    the line after this, that stylesheet's own top/margin value needs the
    same small adjustment. */
 #authRoot{transform:translateY(-6px)}
+@media(max-width:560px){ #authRoot{transform:none} }
 </style>
 </head>
 <body>
