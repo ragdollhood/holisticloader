@@ -407,16 +407,34 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 }
 /* ===== Premium features modal ===== */
 #premiumModal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:rgba(6,7,10,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  background:rgba(6,7,10,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   opacity:0;pointer-events:none;transition:opacity .3s ease}
 #premiumModal.show{opacity:1;pointer-events:auto}
-#premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;overflow-y:auto;scrollbar-width:thin;
-  background:var(--glass-strong);border:1px solid var(--line);border-radius:24px;padding:36px 28px 28px;
+#premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:24px;padding:0;
   box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(231,201,162,.08) inset;
-  transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1);text-align:center}
+  transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1),width .2s ease;text-align:center;
+  -webkit-user-select:text;user-select:text}
 #premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
-#premiumModalCard::-webkit-scrollbar{width:7px}#premiumModalCard::-webkit-scrollbar-thumb{background:rgba(244,241,234,.2);border-radius:7px}
-#premiumModalClose{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+@media(min-width:861px){
+  #premiumModalCard{width:min(760px,92vw)}
+  #premiumModalCard .premSub{max-width:520px;margin-left:auto;margin-right:auto}
+  #premiumModalSections{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;text-align:left}
+  .premSection{margin-bottom:0}
+  .premSection:last-child{margin-bottom:0}
+}
+#premiumModalScroll{position:relative;overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
+#premiumModalScroll::-webkit-scrollbar{width:7px}#premiumModalScroll::-webkit-scrollbar-thumb{background:rgba(244,241,234,.2);border-radius:7px}
+#premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(13,15,21,0),var(--glass-strong) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
+#premiumScrollHint{display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);pointer-events:none;
+  align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  background:rgba(231,201,162,.14);border:1px solid rgba(231,201,162,.35);
+  opacity:1;transition:opacity .25s ease;animation:premScrollBounce 1.6s ease-in-out infinite}
+#premiumScrollHint svg{width:13px;height:13px;stroke:var(--gold);fill:none;stroke-width:2.4}
+#premiumScrollHint.hide{opacity:0}
+@media(max-width:560px){ #premiumScrollHint{display:flex} }
+@keyframes premScrollBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
+#premiumModalClose{position:absolute;top:16px;right:16px;z-index:2;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
   color:var(--muted);background:rgba(244,241,234,.06);transition:background .2s ease,color .2s ease}
 #premiumModalClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
 #premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
@@ -723,16 +741,23 @@ body.immersive #howToBox{display:none}
     <button id="premiumModalClose" type="button" aria-label="Close">
       <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
-    <span class="premBadge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-      Premium
-    </span>
-    <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
-    <p class="premSub">Everything Holistic Loader has to offer — for your breathing practice, your sound healing sessions and your nutrition tracking.</p>
-    <div id="premiumModalSections"></div>
-    <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
-    <p class="premCancelNote">Cancel anytime!</p>
-    <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+    <div id="premiumModalScroll">
+      <span class="premBadge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Premium
+      </span>
+      <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
+      <p class="premSub">Everything Holistic Loader has to offer — for your breathing practice, your sound healing sessions and your nutrition tracking.</p>
+      <div id="premiumModalSections"></div>
+      <div id="premiumScrollHint" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+    <div id="premiumModalFooter">
+      <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
+      <p class="premCancelNote">Cancel anytime!</p>
+      <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+    </div>
   </div>
 </div>
 
@@ -1483,6 +1508,13 @@ const PREMIUM_SECTIONS=[
     ]
   }
 ];
+const premScrollBox=$('premiumModalScroll'), premScrollHint=$('premiumScrollHint');
+function updatePremiumScrollHint(){
+  if(!premScrollBox||!premScrollHint) return;
+  const overflows=premScrollBox.scrollHeight>premScrollBox.clientHeight+4;
+  const atBottom=premScrollBox.scrollTop+premScrollBox.clientHeight>=premScrollBox.scrollHeight-4;
+  premScrollHint.classList.toggle('hide',!overflows||atBottom);
+}
 function openPremiumModal(context){
   const modal=$('premiumModal'), wrap=$('premiumModalSections');
   if(!modal||!wrap) return;
@@ -1494,7 +1526,11 @@ function openPremiumModal(context){
       </ul>
     </div>`).join('');
   modal.classList.add('show');
+  if(premScrollBox) premScrollBox.scrollTop=0;
+  setTimeout(updatePremiumScrollHint,50);
 }
+if(premScrollBox) premScrollBox.addEventListener('scroll',updatePremiumScrollHint);
+window.addEventListener('resize',updatePremiumScrollHint);
 function closePremiumModal(){ const m=$('premiumModal'); if(m)m.classList.remove('show'); }
 {
   const pm=$('premiumModal'), pClose=$('premiumModalClose'), pCta=$('premiumModalCta');
