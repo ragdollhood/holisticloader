@@ -322,6 +322,7 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
     padding:7px 14px;
     border-radius:0 0 18px 18px;
   }
+  .body-col{top:calc(max(42px,calc(env(safe-area-inset-top) + 28px)) + 44px);}
 }
 header{position:relative;text-align:center;padding:10px 70px 8px}
 header h1{
@@ -361,7 +362,7 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
 .layout{
   display:grid;grid-template-columns:1.15fr 1fr;gap:22px;
   max-width:1280px;margin:26px auto 0;padding:0 22px;align-items:start}
-.body-col{position:sticky;top:22px;}
+.body-col{position:sticky;top:calc(max(46px,calc(env(safe-area-inset-top) + 34px)) + 50px);}
 .leftcol{display:flex;flex-direction:column;gap:22px;min-width:0}
 #nutriSection{max-width:1280px;margin:22px auto 0;padding:0 22px;position:relative;z-index:1}
 #nutriWide{width:100%}
