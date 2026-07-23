@@ -965,28 +965,42 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   header{padding-top:0}
 }
 
-/* ===================== PREMIUM LOCK (log book) ===================== */
-.logbook-locked{position:relative;filter:grayscale(.5) brightness(.75)}
-.premLock{
-  position:absolute;inset:0;z-index:8;border-radius:inherit;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
+/* ===================== PREMIUM SYNC BADGE (log book) =====================
+   The log book itself is free — this is just a small, non-blocking corner
+   badge inviting non-Premium users to upgrade for cross-device sync. It does
+   not sit on top of the button, so it never blocks the click to open the log. */
+.premSyncBadge{
+  position:absolute;top:-6px;right:-6px;z-index:8;
+  display:inline-flex;align-items:center;gap:3px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:8px;font-weight:700;letter-spacing:.1em;
+  color:#2a1c05;text-transform:uppercase;
+  background:linear-gradient(135deg,#ffe3a3,#d9a441);
+  padding:3px 6px;border-radius:999px;white-space:nowrap;
+  box-shadow:0 4px 12px rgba(0,0,0,.35),0 0 0 2px var(--panel,#fff);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s ease;
 }
+.premSyncBadge:hover,.premSyncBadge:active{transform:scale(1.08)}
+.premSyncBadge svg{width:8px;height:8px;display:block;flex:0 0 auto}
+/* small non-blocking banner inside the log modal, only for non-Premium users */
+#logSyncBanner{
+  display:none;align-items:center;gap:10px;flex-wrap:wrap;
+  margin:0 0 14px;padding:9px 13px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(255,227,163,.35),rgba(217,164,65,.18));
+  border:1px solid rgba(217,164,65,.35);font-size:12px;color:var(--ink-soft)}
+#logSyncBanner.show{display:flex}
+#logSyncBanner b{color:var(--ink)}
+#logSyncBannerBtn{
+  border:none;background:linear-gradient(135deg,#ffe3a3,#d9a441);color:#2a1c05;
+  font-weight:700;font-size:11px;letter-spacing:.03em;border-radius:999px;
+  padding:6px 13px;cursor:pointer;white-space:nowrap}
 .premBadge{
   display:inline-flex;align-items:center;gap:5px;
   font-family:'Outfit',system-ui,sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.16em;
   color:#2a1c05;text-transform:uppercase;
   background:linear-gradient(135deg,#ffe3a3,#d9a441);
   padding:6px 12px;border-radius:999px;white-space:nowrap;
-  animation:premGlow 2.4s ease-in-out infinite;
-  transition:transform .15s ease;
 }
-.premLock:active .premBadge{transform:scale(.94)}
 .premBadge svg{width:10px;height:10px;display:block;flex:0 0 auto}
-@keyframes premGlow{
-  0%,100%{box-shadow:0 0 0 0 rgba(255,217,138,.6),0 4px 14px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.28) inset;}
-  50%{box-shadow:0 0 0 8px rgba(255,217,138,0),0 4px 14px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.28) inset;}
-}
 /* ===================== PREMIUM MODAL ===================== */
 #premiumModal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;
   background:rgba(5,3,9,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
@@ -1138,16 +1152,14 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   <button id="resetBtnTop" style="background:none;border:none;padding:0;cursor:pointer;width:23%;min-width:80px">
     <img id="resetBtnTopImg" src="images/clean-eng.png" alt="Clean plates" style="width:100%;display:block;filter:drop-shadow(0 6px 18px rgba(60,40,20,.3))">
   </button>
-  <div id="logBtnWrap" class="logbook-lock-wrap" style="position:relative;width:23%;min-width:80px">
+  <div id="logBtnWrap" style="position:relative;width:23%;min-width:80px">
     <button id="logBtn" title="Food log">
       <img src="images/logbook.png" alt="Food log"> <span id="logBtnLbl" style="display:none">Log</span>
     </button>
-    <div class="premLock" id="logBtnLock" style="display:none">
-      <span class="premBadge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        Premium
-      </span>
-    </div>
+    <button type="button" class="premSyncBadge" id="logBtnSyncBadge" title="Get Premium to sync your log across devices" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+      Sync
+    </button>
   </div>
 </div>
 
@@ -1169,16 +1181,14 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
       <div id="alcoholBox"></div>
       <div id="cigBox"></div>
     </div>
-    <div id="logBtnHabitsWrap" class="logbook-lock-wrap" style="position:relative;width:23%;min-width:80px;margin:10px auto 0">
+    <div id="logBtnHabitsWrap" style="position:relative;width:23%;min-width:80px;margin:10px auto 0">
       <button id="logBtnHabits" title="Bad habits log" style="width:100%;margin:0">
         <img src="images/logbook.png" alt="Bad habits log">
       </button>
-      <div class="premLock" id="logBtnHabitsLock" style="display:none">
-        <span class="premBadge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-          Premium
-        </span>
-      </div>
+      <button type="button" class="premSyncBadge" id="logBtnHabitsSyncBadge" title="Get Premium to sync your log across devices" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+        Sync
+      </button>
     </div>
     <div class="pantry-base"><div class="baseB"></div><div class="floorB"></div></div>
   </div>
@@ -1268,6 +1278,10 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
     <button id="logClose" aria-label="Close">✕</button>
     <h2>📋 <span id="logModalTitle">Food Log</span></h2>
     <p class="log-header-meta" id="logModalMeta">A record of everything logged with Clean Plates.</p>
+    <div id="logSyncBanner">
+      <span><b>Sync across devices</b> with Premium — right now this log is only saved on this device.</span>
+      <button id="logSyncBannerBtn" type="button">Get Premium</button>
+    </div>
     <div id="logTableWrap" style="position:relative">
       <div id="logSideBar">
         <button id="modeNutritionBtn" class="log-mode-btn">NUTRITION GRAPH</button>
@@ -2577,7 +2591,7 @@ function loadLog(){
 }
 function saveLog(entries){
   try{ localStorage.setItem(LOG_KEY, JSON.stringify(entries)); }catch(e){}
-  if(currentUser && typeof isPremium!=='undefined' && isPremium) pushLogToCloud(entries);
+  pushLogToCloud(entries);
 }
 
 function saveLogSnapshot(){
@@ -2666,21 +2680,14 @@ function saveLogSnapshot(){
   saveLog(log);
 }
 
-function isLogLocked(){
-  return !(typeof isPremium!=='undefined' && isPremium);
-}
-
 function openLog(mode){
-  if(isLogLocked()){
-    if(typeof openPremiumModal==='function') openPremiumModal();
-    return;
-  }
   const modal = document.getElementById('logModal');
   modal.classList.add('open');
   selectedLogDay = dateStrOfToday();
   selectedLogMeal = null;
   if(mode){ logViewMode = mode; openLogInfoPopup = null; }
   renderLog();
+  updateLogSyncUI();
 }
 function closeLog(){
   document.getElementById('logModal').classList.remove('open');
@@ -2699,33 +2706,49 @@ document.getElementById('logModal').addEventListener('pointerdown', e=>{
   if(e.target===document.getElementById('logModal')) closeLog();
 });
 
-/* ================= LOG BOOK — PREMIUM LOCK + CLOUD SYNC =================
-   The food log is a Premium feature. Access is gated by the shared
-   header login (auth.js): logBtn / logBtnHabits open the log only when
-   isPremium is true — otherwise they open the Premium modal instead.
-   Premium members' logs are synced to Supabase, keyed by their account. */
-const LOG_SYNCED_MSG = {en:'Your saved log was synced from the cloud.', sv:'Din sparade logg synkades fr\\u00e5n molnet.'};
+/* ================= LOG BOOK — FREE LOCAL LOGGING + PREMIUM SYNC =================
+   The food log itself is free for everyone and always saves locally on this
+   device. Cross-device cloud sync (via Supabase) is a Premium perk: logged-in
+   Premium members get their log pushed/pulled automatically. Non-Premium
+   visitors see a small, non-blocking "Sync with Premium" hint instead. */
+const LOG_STR = {
+  syncedDown:{en:'Your saved log was synced from the cloud.', sv:'Din sparade logg synkades fr\u00e5n molnet.'},
+  bannerText:{en:'<b>Sync across devices</b> with Premium — right now this log is only saved on this device.',
+              sv:'<b>Synka mellan enheter</b> med Premium — just nu sparas den h\u00e4r loggen bara p\u00e5 den h\u00e4r enheten.'},
+  bannerBtn:{en:'Get Premium', sv:'Skaffa Premium'},
+  syncBadgeTitle:{en:'Get Premium to sync your log across devices', sv:'Skaffa Premium f\u00f6r att synka loggen mellan enheter'}
+};
 
-function applyLogBookLock(){
-  const locked = isLogLocked();
-  ['logBtnWrap','logBtnHabitsWrap'].forEach(wrapId=>{
-    const wrap = document.getElementById(wrapId);
-    if(!wrap) return;
-    wrap.classList.toggle('logbook-locked', locked);
-  });
-  const lockA = document.getElementById('logBtnLock'), lockB = document.getElementById('logBtnHabitsLock');
-  if(lockA) lockA.style.display = locked ? 'flex' : 'none';
-  if(lockB) lockB.style.display = locked ? 'flex' : 'none';
-  if(locked && document.getElementById('logModal').classList.contains('open')) closeLog();
+function isSyncActive(){
+  return !!(typeof isPremium!=='undefined' && isPremium && currentUser);
 }
-[document.getElementById('logBtnLock'), document.getElementById('logBtnHabitsLock')].forEach(el=>{
+
+// Small, non-blocking "sync with Premium" hints — never block opening the log itself.
+function updateLogSyncUI(){
+  const active = isSyncActive();
+  const lang2 = typeof lang!=='undefined'?lang:'en';
+  ['logBtnSyncBadge','logBtnHabitsSyncBadge'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.style.display = active ? 'none' : 'inline-flex';
+    el.title = LOG_STR.syncBadgeTitle[lang2];
+  });
+  const banner = document.getElementById('logSyncBanner');
+  if(banner){
+    banner.classList.toggle('show', !active);
+    const txt = banner.querySelector('span'); if(txt) txt.innerHTML = LOG_STR.bannerText[lang2];
+    const btn = document.getElementById('logSyncBannerBtn'); if(btn) btn.textContent = LOG_STR.bannerBtn[lang2];
+  }
+}
+[document.getElementById('logBtnSyncBadge'), document.getElementById('logBtnHabitsSyncBadge'), document.getElementById('logSyncBannerBtn')].forEach(el=>{
   if(!el) return;
   el.addEventListener('click', e=>{ e.stopPropagation(); if(typeof openPremiumModal==='function') openPremiumModal(); });
 });
+updateLogSyncUI();
 
 // Push the whole local log up to the cloud (small dataset, simplest reliable approach)
 async function pushLogToCloud(log){
-  if(!sb || !currentUser || !log.length) return;
+  if(!isSyncActive() || !sb || !log.length) return;
   const rows = log.map(e=>({ user_id: currentUser.id, date: e.date, entry: e }));
   try{ await sb.from('log_entries').upsert(rows, { onConflict:'user_id,date' }); }catch(e){}
 }
@@ -2733,7 +2756,7 @@ async function pushLogToCloud(log){
 // On login: merge cloud + local per day (keep whichever copy is newer), save merged
 // copy locally, then push it back up so the cloud also has any local-only days.
 async function pullAndMergeCloudLog(){
-  if(!sb || !currentUser) return;
+  if(!isSyncActive() || !sb) return;
   try{
     const { data, error } = await sb.from('log_entries').select('entry').eq('user_id', currentUser.id);
     if(error || !data) return;
@@ -2751,15 +2774,14 @@ async function pullAndMergeCloudLog(){
     try{ localStorage.setItem(LOG_KEY, JSON.stringify(merged)); }catch(e){}
     pushLogToCloud(merged);
     const lang2 = typeof lang!=='undefined'?lang:'en';
-    if(changed) toast(LOG_SYNCED_MSG[lang2]);
+    if(changed) toast(LOG_STR.syncedDown[lang2]);
     if(document.getElementById('logModal').classList.contains('open')) renderLog();
   }catch(e){}
 }
 
-applyLogBookLock();
 if(typeof onPremiumStatusChange==='function'){
   onPremiumStatusChange(function(isPrem){
-    applyLogBookLock();
+    updateLogSyncUI();
     if(isPrem) pullAndMergeCloudLog();
   });
 }
