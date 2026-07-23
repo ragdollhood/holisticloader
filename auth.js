@@ -150,7 +150,25 @@ async function loginUser(email, password) {
   if (error) throw error;
   return data;
 }
+/* -----------------------------------------------------------------------
+   5b. WELCOME EMAIL
+----------------------------------------------------------------------- */
+async function sendWelcomeEmail() {
+  try {
+    const { data, error } = await sb.functions.invoke(
+      "send-welcome-email",
+      { body: {} }
+    );
 
+    if (error) throw error;
+
+    console.log("Welcome email sent", data);
+    return true;
+  } catch (err) {
+    console.error("sendWelcomeEmail error:", err);
+    return false;
+  }
+}
 /* -----------------------------------------------------------------------
    6. LOGOUT
 ----------------------------------------------------------------------- */
