@@ -941,6 +941,28 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
   --glass-strong:rgba(18,12,26,.78);
   --gold-soft:#e6c179;
 }
+/* auth.js appends #authModal (the login/register popup) straight to <body>,
+   outside #hlTopBar — see the comment in auth.js about position:fixed modals
+   needing to sit outside any transform/backdrop-filter container. That means
+   it never inherits #hlTopBar's dark palette above and instead falls back to
+   this page's light :root variables (and --glass/--muted/--faint aren't
+   defined at :root at all), which is why it looked washed out. Alias the
+   same dark palette directly on #authModal so it renders like on
+   instrumentstest.html regardless of where in the DOM it lives. */
+#authModal{
+  --ink:#f3efe4;
+  --soft:#b3a98f;
+  --line:rgba(220,190,130,.16);
+  --panel:rgba(22,16,32,.55);
+  --gold:#ffd98a;
+  --violet:#c9a8ff;
+  --bg:#0c0e13;
+  --muted:rgba(243,239,228,.62);
+  --faint:rgba(243,239,228,.34);
+  --glass:rgba(22,16,32,.5);
+  --glass-strong:rgba(18,12,26,.78);
+  --gold-soft:#e6c179;
+}
 body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
