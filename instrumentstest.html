@@ -521,13 +521,13 @@
     opacity:0;pointer-events:none;transition:opacity .25s ease;
   }
   #howToBox.show{opacity:1;pointer-events:auto}
-  /* position:fixed (not absolute) and no transform anywhere on #howToBox above, so this
-     button's containing block is the real viewport, not the scrollable box — it stays
-     pinned on screen no matter how far the guide content is scrolled. Its exact top/left
-     are set by JS (positionHowToBox) on desktop to track the box; on mobile a fixed
-     top/right below is enough since the box always fills the screen. */
-  #howToClose{position:fixed;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
-    display:inline-flex;align-items:center;justify-content:center;color:var(--muted);z-index:47;
+  /* position:absolute, anchored to #howToBox (which is itself position:fixed on the
+     viewport). An absolutely-positioned child is anchored to its ancestor's box, not to
+     the scroll position of its content, so this stays pinned to the box's top-right
+     corner no matter how far the guide content is scrolled — on both desktop and mobile,
+     with no JS tracking needed. */
+  #howToClose{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;color:var(--muted);z-index:2;
     background:rgba(20,14,26,.7);transition:background .2s ease,color .2s ease}
   #howToClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
   #howToClose svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
@@ -573,6 +573,7 @@
       max-width:none;max-height:none;border-radius:0;
       padding:max(28px,calc(env(safe-area-inset-top) + 16px)) 18px max(72px,calc(env(safe-area-inset-bottom) + 56px));
     }
+    /* still position:absolute (inherited), just nudged down for the notch/status bar */
     #howToClose{top:max(14px,env(safe-area-inset-top));right:14px}
   }
 
@@ -1370,24 +1371,16 @@
     if(!hBtn||!hBox)return;
     const hide=function(){ hBox.classList.remove('show'); hBtn.setAttribute('aria-expanded','false'); };
     function positionHowToBox(){
-      if(innerWidth<=560){
-        if(hClose){ hClose.style.top=''; hClose.style.left=''; hClose.style.right=''; }
-        return;
-      }
+      if(innerWidth<=560)return;
       const r=hBtn.getBoundingClientRect();
       const maxLeft=innerWidth-hBox.offsetWidth-12;
       const boxLeft=Math.max(12,Math.min(r.left,maxLeft));
       const boxTop=r.bottom+7;
       hBox.style.left=boxLeft+'px';
       hBox.style.top=boxTop+'px';
-      /* #howToClose is position:fixed against the real viewport (see CSS), so on desktop
-         we track it to the box's current top-right corner here; on mobile the box always
-         fills the screen so the plain CSS top/right values are enough and this is skipped. */
-      if(hClose){
-        hClose.style.top=(boxTop+14)+'px';
-        hClose.style.left=(boxLeft+hBox.offsetWidth-14-28)+'px';
-        hClose.style.right='auto';
-      }
+      /* #howToClose is position:absolute inside #howToBox now (see CSS), so it
+         automatically stays pinned to the box's top-right corner — no need to
+         track it separately here. */
     }
     hBtn.addEventListener('click',function(e){ e.stopPropagation();
       positionHowToBox();

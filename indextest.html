@@ -624,7 +624,10 @@ body.immersive #howToBox{display:none}
     max-width:none;max-height:none;border-radius:0;
     padding:max(28px,calc(env(safe-area-inset-top) + 16px)) 18px max(28px,env(safe-area-inset-bottom));
   }
-  #howToClose{position:fixed;top:max(14px,env(safe-area-inset-top));right:14px}
+  /* still position:absolute (inherited from the desktop rule above) — on mobile
+     #howToBox fills the whole screen, so this still sits at the true top-right
+     corner; just nudged down for the notch/status bar. */
+  #howToClose{top:max(14px,env(safe-area-inset-top));right:14px}
 }
 
 </style>
