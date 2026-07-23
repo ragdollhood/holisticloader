@@ -964,46 +964,36 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 #menuBtn.open .menu-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
 #menuBtn.open .menu-bar:nth-child(2){opacity:0}
 #menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-#menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;
-  display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+#menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;min-width:190px;
+  display:flex;flex-direction:column;
+  background:var(--glass-strong);border:1px solid var(--tn-line);border-radius:14px;
+  padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.4);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
 #menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
-/* contact — one row in the menu panel that expands to reveal the email */
-#contactBtn{display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
-  border-radius:999px;padding:8px 14px;background:var(--tn-panel);border:1px solid var(--tn-line);color:var(--tn-ink);cursor:pointer;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
-#contactBtn:hover{transform:scale(1.04)}
-#contactBtn:active{transform:scale(.97)}
+/* "Login", "Get Premium", "How to use" and "Contact" are plain rows sharing
+   the #menuPanel background (no individual pill/border per item). */
+#contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
+  border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--tn-ink);cursor:pointer;
+  transition:background .15s ease}
+#contactBtn:hover{background:rgba(243,239,228,.1)}
 #contactBtn .env{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#contactBtn .clabel{font-size:12px;letter-spacing:.06em;margin-left:8px;white-space:nowrap}
+#contactBtn .clabel{font-size:12px;letter-spacing:.04em;margin-left:8px;white-space:nowrap}
 #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--tn-gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
 #contactBtn .ctext:hover{text-decoration:underline}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
-/* "Login" and "Get Premium" share the same left padding (14px) and 16x16 icon size */
-#loginMenuBtn,#getPremiumMenuBtn{
-  display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto;gap:8px;
-  font-family:inherit;font-size:12px;letter-spacing:.06em;color:var(--tn-ink);
-  background:var(--tn-panel);border:1px solid var(--tn-line);border-radius:999px;
-  padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  cursor:pointer;transition:transform .12s ease,opacity .5s ease;
+#loginMenuBtn,#getPremiumMenuBtn,#howToBtn{
+  display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
+  width:100%;box-sizing:border-box;
+  font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--tn-ink);
+  background:transparent;border:none;border-radius:8px;
+  padding:9px 10px;cursor:pointer;transition:background .15s ease;
 }
-#loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#getPremiumMenuBtn{color:#241604;background:var(--tn-gold);border-color:var(--tn-gold);font-weight:600}
+#loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#getPremiumMenuBtn{color:var(--tn-gold);font-weight:600}
 #getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
-@media(hover:hover){#loginMenuBtn:hover{transform:scale(1.04)}#getPremiumMenuBtn:hover{transform:scale(1.04)}}
-#loginMenuBtn:active,#getPremiumMenuBtn:active{transform:scale(.97)}
-
-/* "How to use" — same button treatment as Login / Get Premium */
-#howToBtn{
-  display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto;gap:8px;
-  font-family:inherit;font-size:12px;letter-spacing:.06em;color:var(--tn-ink);
-  background:var(--tn-panel);border:1px solid var(--tn-line);border-radius:999px;
-  padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  cursor:pointer;transition:transform .12s ease,opacity .5s ease;
-}
-#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-@media(hover:hover){#howToBtn:hover{transform:scale(1.04)}}
-#howToBtn:active{transform:scale(.97)}
+#loginMenuBtn:hover,#getPremiumMenuBtn:hover,#howToBtn:hover{background:rgba(243,239,228,.1)}
+#loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active{background:rgba(243,239,228,.16)}
 
 /* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button.
    Desktop: wide enough that everything fits without a scrollbar. Mobile: fills the screen and scrolls (see media query below). */
@@ -1110,14 +1100,31 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   background:rgba(5,3,9,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   opacity:0;pointer-events:none;transition:opacity .3s ease}
 #premiumModal.show{opacity:1;pointer-events:auto}
-#premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;overflow-y:auto;scrollbar-width:thin;
-  background:linear-gradient(180deg,rgba(24,17,32,.94),rgba(14,10,20,.96));border:1px solid var(--tn-line);border-radius:24px;padding:36px 28px 28px;
+#premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(180deg,rgba(24,17,32,.94),rgba(14,10,20,.96));border:1px solid var(--tn-line);border-radius:24px;padding:0;
   box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,217,138,.08) inset;
-  transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1);text-align:center;
+  transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1),width .2s ease;text-align:center;
   -webkit-user-select:text;user-select:text}
 #premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
-#premiumModalCard::-webkit-scrollbar{width:7px}#premiumModalCard::-webkit-scrollbar-thumb{background:rgba(243,239,228,.2);border-radius:7px}
-#premiumModalClose{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+@media(min-width:861px){
+  #premiumModalCard{width:min(760px,92vw)}
+  #premiumModalCard .premSub{max-width:520px;margin-left:auto;margin-right:auto}
+  #premiumModalSections{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;text-align:left}
+  .premSection{margin-bottom:0}
+  .premSection:last-child{margin-bottom:0}
+}
+#premiumModalScroll{position:relative;overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
+#premiumModalScroll::-webkit-scrollbar{width:7px}#premiumModalScroll::-webkit-scrollbar-thumb{background:rgba(243,239,228,.2);border-radius:7px}
+#premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(14,10,20,0),rgba(14,10,20,.96) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
+#premiumScrollHint{display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);pointer-events:none;
+  align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.35);
+  opacity:1;transition:opacity .25s ease;animation:premScrollBounce 1.6s ease-in-out infinite}
+#premiumScrollHint svg{width:13px;height:13px;stroke:var(--tn-gold);fill:none;stroke-width:2.4}
+#premiumScrollHint.hide{opacity:0}
+@media(max-width:560px){ #premiumScrollHint{display:flex} }
+@keyframes premScrollBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
+#premiumModalClose{position:absolute;top:16px;right:16px;z-index:2;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
   color:var(--tn-soft);background:rgba(243,239,228,.06);border:none;cursor:pointer;transition:background .2s ease,color .2s ease}
 #premiumModalClose:hover{background:rgba(243,239,228,.14);color:var(--tn-ink)}
 #premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
@@ -1188,16 +1195,23 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
         <button id="premiumModalClose" type="button" aria-label="Close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
-        <span class="premBadge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-          Premium
-        </span>
-        <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
-        <p class="premSub">Everything Holistic Loader has to offer — including your synced, always-on food log.</p>
-        <div id="premiumModalSections"></div>
-        <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
-        <p class="premCancelNote">Cancel anytime!</p>
-        <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+        <div id="premiumModalScroll">
+          <span class="premBadge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            Premium
+          </span>
+          <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
+          <p class="premSub">Everything Holistic Loader has to offer — including your synced, always-on food log.</p>
+          <div id="premiumModalSections"></div>
+          <div id="premiumScrollHint" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div id="premiumModalFooter">
+          <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
+          <p class="premCancelNote">Cancel anytime!</p>
+          <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+        </div>
       </div>
     </div>
 
@@ -1234,8 +1248,8 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
       <h3>Quick guide</h3>
       <p class="htu-sub">Choose your:</p>
       <ol>
-        <li><b>1.</b> Plate, by adding what you picked</li>
-        <li><b>2.</b> Food, from the Pantry</li>
+        <li><b>1.</b> Food, from the Pantry</li>
+        <li><b>2.</b> Plate, by adding what you picked</li>
         <li><b>3.</b> Body part, to see what it's given</li>
         <li><b>4.</b> Log, to save the day and track habits</li>
       </ol>
@@ -3730,6 +3744,13 @@ registerVisit();
     }
   ];
   var modal=document.getElementById('premiumModal'), sections=document.getElementById('premiumModalSections');
+  var premScrollBox=document.getElementById('premiumModalScroll'), premScrollHint=document.getElementById('premiumScrollHint');
+  function updatePremiumScrollHint(){
+    if(!premScrollBox||!premScrollHint) return;
+    var overflows=premScrollBox.scrollHeight>premScrollBox.clientHeight+4;
+    var atBottom=premScrollBox.scrollTop+premScrollBox.clientHeight>=premScrollBox.scrollHeight-4;
+    premScrollHint.classList.toggle('hide',!overflows||atBottom);
+  }
   function openPremiumModal(){
     if(!modal||!sections) return;
     sections.innerHTML=PREMIUM_SECTIONS.map(function(sec){
@@ -3739,7 +3760,11 @@ registerVisit();
       return '<div class="premSection"><div class="premSectionTitle">'+sec.label+'</div><ul class="premList">'+items+'</ul></div>';
     }).join('');
     modal.classList.add('show');
+    if(premScrollBox) premScrollBox.scrollTop=0;
+    setTimeout(updatePremiumScrollHint,50);
   }
+  if(premScrollBox) premScrollBox.addEventListener('scroll',updatePremiumScrollHint);
+  window.addEventListener('resize',updatePremiumScrollHint);
   function closePremiumModal(){ if(modal) modal.classList.remove('show'); }
   var pClose=document.getElementById('premiumModalClose'), pCta=document.getElementById('premiumModalCta');
   if(pClose) pClose.onclick=closePremiumModal;
