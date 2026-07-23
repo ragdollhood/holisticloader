@@ -102,7 +102,7 @@
   #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
     background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
     opacity:.55}
-  #donateWrap{position:fixed;left:16px;top:max(8px,env(safe-area-inset-top));z-index:45;pointer-events:auto}
+  #donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
   @supports(padding:max(0px)){
     #donateWrap{left:max(16px,env(safe-area-inset-left))}
   }
@@ -148,6 +148,10 @@
     #topTabs .tab{padding:8px 13px;font-size:11px}
     #menuBtn{width:30px;height:30px}
     body{padding-top:max(74px,calc(env(safe-area-inset-top) + 58px))}
+    #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
+    @supports(padding:max(0px)){
+      #donateWrap{left:max(4px,env(safe-area-inset-left))}
+    }
   }
 
   /* ===================== BUTIKEN: ljus & glad produktgrid ===================== */
@@ -239,7 +243,13 @@ text-decoration:none;
   .premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--ink);border-color:rgba(243,239,228,.4)}
 </style>
 <link rel="stylesheet" href="auth-ui.css">
-<style>#topNav #authRoot{top:9px}@media(max-width:640px){#topNav #authRoot{top:5px}}</style>
+<style>
+/* Nudge the login/account icon that auth.js renders into #authRoot up a
+   few pixels on desktop so it clears the gold #topNavLine under the header
+   tabs. Left untouched on mobile, where the default position is already fine. */
+#authRoot{transform:translateY(-6px)}
+@media(max-width:560px){ #authRoot{transform:none} }
+</style>
 </head>
 <body>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
