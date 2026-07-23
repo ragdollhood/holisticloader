@@ -361,7 +361,7 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
 .layout{
   display:grid;grid-template-columns:1.15fr 1fr;gap:22px;
   max-width:1280px;margin:26px auto 0;padding:0 22px;align-items:start}
-.body-col{position:sticky;top:22px;}
+.body-col{position:sticky;top:var(--bodyStickyTop,92px);}
 .leftcol{display:flex;flex-direction:column;gap:22px;min-width:0}
 #nutriSection{max-width:1280px;margin:22px auto 0;padding:0 22px;position:relative;z-index:1}
 #nutriWide{width:100%}
@@ -3448,6 +3448,22 @@ function updateLogBtnLabel(){
 document.getElementById('langBtn').addEventListener('click', ()=>{ setTimeout(updateLogBtnLabel,0); });
 updateLogBtnLabel();
 
+
+/* Keep the sticky body/organ-bars column from scrolling up underneath the
+   dark header title flap: measure how far down that flap's stuck position
+   ends and use that as the column's sticky "top" offset (plus a small gap). */
+function updateBodyStickyTop(){
+  const frame = document.querySelector('.h1-frame');
+  if(!frame) return;
+  const topVal = parseFloat(getComputedStyle(frame).top) || 0;
+  const gap = window.matchMedia('(max-width:680px)').matches ? 10 : 16;
+  const total = Math.ceil(topVal + frame.offsetHeight + gap);
+  document.documentElement.style.setProperty('--bodyStickyTop', total+'px');
+}
+window.addEventListener('resize',updateBodyStickyTop);
+window.addEventListener('load',updateBodyStickyTop);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(updateBodyStickyTop).catch(()=>{});
+updateBodyStickyTop();
 
 window.addEventListener('resize',()=>renderPlate());
 buildBody(); buildOrganBars(); buildMicrowave(); buildSugarBox(); buildAlcoholBox(); buildCigBox(); renderStatic(); renderPantry(); renderScene(); render();
