@@ -261,20 +261,16 @@ function _buildAuthDom() {
   // always relative to the real viewport.
   root.innerHTML = `
     <div id="authButtons">
-      <div id="accountRoot">
+      <button id="loginBtn" type="button">Login</button>
+      <button id="registerBtn" type="button">Get Premium</button>
+      <div id="accountRoot" style="display:none">
         <button id="accountBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
           <svg viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>
         </button>
         <div id="accountMenu" role="menu">
-          <div id="loggedOutMenu">
-            <button id="loginBtn" type="button" role="menuitem">Login</button>
-            <button id="registerBtn" type="button" role="menuitem">Get Premium</button>
-          </div>
-          <div id="loggedInMenu" style="display:none">
-            <div id="accountEmailLabel"></div>
-            <button id="manageSubBtn" type="button" role="menuitem" style="display:none">Manage Subscription</button>
-            <button id="logoutBtn" type="button" role="menuitem">Logout</button>
-          </div>
+          <div id="accountEmailLabel"></div>
+          <button id="manageSubBtn" type="button" role="menuitem" style="display:none">Manage Subscription</button>
+          <button id="logoutBtn" type="button" role="menuitem">Logout</button>
         </div>
       </div>
     </div>
@@ -370,12 +366,8 @@ function _wireAuthDom() {
     if (e.key === "Escape") closeAccountMenu();
   });
 
-  loginBtn.onclick = () => {
-    closeAccountMenu();
-    openModal();
-  };
+  loginBtn.onclick = () => openModal();
   registerBtn.onclick = () => {
-    closeAccountMenu();
     // Opens the same "premium locked content" popup used elsewhere on the
     // page (defined per-page as window.openPremiumModal). That popup now
     // contains the real "Get Premium" button that starts Stripe Checkout.
@@ -467,14 +459,14 @@ function _wireAuthDom() {
   };
 }
 
-/* Shows/hides the right menu section (logged out vs. logged in) inside
-   the single account-icon dropdown, and the "Logged in as" label. */
+/* Shows/hides the account icon and the "Logged in as" label.
+   Login/Get Premium are never shown as header buttons — they only live
+   in the hamburger menu (#loginMenuBtn / #getPremiumMenuBtn), which
+   forwards its clicks to the hidden #loginBtn / #registerBtn below. */
 function renderAuthUI() {
   const accountRoot = document.getElementById("accountRoot");
   const accountMenu = document.getElementById("accountMenu");
   const accountBtn = document.getElementById("accountBtn");
-  const loggedOutMenu = document.getElementById("loggedOutMenu");
-  const loggedInMenu = document.getElementById("loggedInMenu");
   const emailLabel = document.getElementById("accountEmailLabel");
   const manageSubBtn = document.getElementById("manageSubBtn");
   // Optional: the "Login" / "Get Premium" entries in the hamburger menu
@@ -485,16 +477,14 @@ function renderAuthUI() {
   if (!accountRoot) return; // DOM not built yet
 
   if (currentUser) {
-    loggedOutMenu.style.display = "none";
-    loggedInMenu.style.display = "";
+    accountRoot.style.display = "inline-flex";
     emailLabel.textContent = "Logged in as: " + currentUser.email;
     // Only premium users have a Stripe subscription to manage.
     manageSubBtn.style.display = isPremium ? "" : "none";
     if (loginMenuBtn) loginMenuBtn.style.display = "none";
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "none";
   } else {
-    loggedOutMenu.style.display = "";
-    loggedInMenu.style.display = "none";
+    accountRoot.style.display = "none";
     emailLabel.textContent = "";
     manageSubBtn.style.display = "none";
     // Logged out (or logging out) — always collapse the menu.
