@@ -160,6 +160,8 @@
   --rose:#c2766e;
   --rose-soft:#e6cbc5;
   --rose-deep:#a64f47;
+  --gold:#ffd98a;
+  --violet:#c9a8ff;
   --vein:#5d7390;
   --bone:#e3d6c2;
   --good:#7d8f6c;
@@ -3620,6 +3622,23 @@ registerVisit();
   if(modal) modal.addEventListener('click',function(e){ if(e.target===modal) closePremiumModal(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closePremiumModal(); });
   window.openPremiumModal=openPremiumModal;
+})();
+</script>
+<script>
+/* ---- rubrikflikens bredd = flikraden ovanför + 30px ---- */
+(function(){
+  function syncH1FrameWidth(){
+    var tabs=document.getElementById('topTabs');
+    var frame=document.querySelector('.h1-frame');
+    if(!tabs||!frame) return;
+    var w=tabs.getBoundingClientRect().width+30;
+    var maxW=window.innerWidth*0.96;
+    frame.style.width=Math.min(w,maxW)+'px';
+  }
+  window.addEventListener('load',syncH1FrameWidth);
+  window.addEventListener('resize',syncH1FrameWidth);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(syncH1FrameWidth);
+  document.addEventListener('DOMContentLoaded',syncH1FrameWidth);
 })();
 </script>
 </body>
