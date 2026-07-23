@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <!-- ============ SEO ============ -->
-<title>Holistic Loader — Free Online Breathing, Meditation &amp; Sound Healing</title>
-<meta name="description" content="Holistic Loader is a free online wellness space. Follow a guided breathing circle, play interactive sound healing instruments and relax to healing frequencies (Solfeggio, planetary &amp; singing-bowl tones) with calming nature scenes — beach, forest, mountains, meadows and the cosmos. No app, no sign-up.">
+<title>Holistic Loader — Breathing, Meditation &amp; Sound Healing</title>
+<meta name="description" content="Holistic Loader is an online wellness space. Follow a guided breathing circle, play interactive sound healing instruments and relax to healing frequencies (Solfeggio, planetary &amp; singing-bowl tones) with calming nature scenes — beach, forest, mountains, meadows and the cosmos. No app needed.">
 <meta name="keywords" content="holistic loader, meditation, online meditation, breathing exercise, guided breathing, box breathing, 4-7-8 breathing, calm breathing, sound healing, solfeggio frequencies, 528 Hz, 432 Hz, singing bowl, gong bath, binaural relaxation, mindfulness, stress relief, anxiety relief, relaxation, sleep, focus, nature scenes, peaceful place">
 <meta name="author" content="Holistic Loader">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -29,7 +29,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Holistic Loader">
 <meta property="og:title" content="Holistic Loader — Breathe, Relax &amp; Heal">
-<meta property="og:description" content="A free online space to breathe, meditate, play sound healing instruments and relax to healing frequencies and calming nature scenes. No app, no sign-up.">
+<meta property="og:description" content="An online space to breathe, meditate, play sound healing instruments and relax to healing frequencies and calming nature scenes. No app needed.">
 <meta property="og:image" id="ogImage" content="https://holisticloader.com/images/preview-holistic.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -40,7 +40,7 @@
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Holistic Loader — Breathe, Relax &amp; Heal">
-<meta name="twitter:description" content="A free online space to breathe, meditate, play sound healing instruments and relax to healing frequencies and calming nature scenes.">
+<meta name="twitter:description" content="An online space to breathe, meditate, play sound healing instruments and relax to healing frequencies and calming nature scenes.">
 <meta name="twitter:image" id="twImage" content="https://holisticloader.com/images/preview-holistic.jpg">
 <meta name="twitter:image:alt" content="Holistic Loader preview">
 
@@ -51,14 +51,13 @@
   "@type": "WebApplication",
   "name": "Holistic Loader",
   "url": "https://holisticloader.com/",
-  "description": "A free online wellness space with a guided breathing circle, interactive sound healing instruments, healing sound frequencies (Solfeggio, planetary and singing-bowl tones) and calming nature scenes for relaxation, focus and sleep.",
+  "description": "An online wellness space with a guided breathing circle, interactive sound healing instruments, healing sound frequencies (Solfeggio, planetary and singing-bowl tones) and calming nature scenes for relaxation, focus and sleep.",
   "applicationCategory": "HealthApplication",
   "operatingSystem": "Any (web browser)",
   "browserRequirements": "Requires JavaScript",
   "inLanguage": "en",
-  "isAccessibleForFree": true,
+  "isAccessibleForFree": false,
   "image": "https://holisticloader.com/images/icon-holistic.png",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "featureList": [
     "Guided breathing circle (Calm, Box, 4-7-8, Deep)",
     "Healing sound frequencies and Solfeggio tones",
@@ -644,10 +643,10 @@ body.immersive #howToBox{display:none}
 </style>
 </head>
 <body>
-<noscript><div id="noscriptMsg"><div><strong>Holistic Loader</strong><br>A free online space to breathe, meditate and relax to healing sound frequencies and calming nature scenes.<br>Please enable JavaScript to use the breathing circle and sounds.</div></div></noscript>
+<noscript><div id="noscriptMsg"><div><strong>Holistic Loader</strong><br>An online space to breathe, meditate and relax to healing sound frequencies and calming nature scenes.<br>Please enable JavaScript to use the breathing circle and sounds.</div></div></noscript>
 <div class="sr-only">
-  <h2>A free online place to breathe, relax and heal</h2>
-  <p>Holistic Loader is a calming meditation web app. Follow the guided breathing circle, choose healing sound frequencies such as 528&nbsp;Hz and other Solfeggio tones, planetary tones and singing-bowl gongs, and relax with serene nature scenes — beach, forest, meadow, mountains and the cosmos. Set a session timer and unwind. It is free to use, with no sign-up and no app to install.</p>
+  <h2>An online place to breathe, relax and heal</h2>
+  <p>Holistic Loader is a calming meditation web app. Follow the guided breathing circle, choose healing sound frequencies such as 528&nbsp;Hz and other Solfeggio tones, planetary tones and singing-bowl gongs, and relax with serene nature scenes — beach, forest, meadow, mountains and the cosmos. Set a session timer and unwind — no app to install.</p>
 </div>
 <div id="donateWrap">
   <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
@@ -1420,7 +1419,7 @@ function setSound(on){S.soundOn=on;
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
     addEventListener('resize',()=>{ if(hBox.classList.contains('show'))positionHowToBox(); });
     const hClose=$('howToClose');
-    if(hClose)hClose.addEventListener('click',e=>{ e.stopPropagation(); hide(); });
+    if(hClose)hClose.addEventListener('click',e=>{ e.stopPropagation(); hide(); if(typeof window.closeHamburgerMenu==='function')window.closeHamburgerMenu(); });
   }
 }
 
