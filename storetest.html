@@ -10,7 +10,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
@@ -27,6 +27,7 @@
     --glass:rgba(22,16,32,.5);
     --glass-strong:rgba(18,12,26,.78);
     --gold-soft:#e6c179;
+    --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
 
     /* ---- ljust & glatt tema för själva butiken ---- */
     --store-ink:#4a3414;
@@ -199,52 +200,63 @@ text-decoration:none;
 
   /* ===================== PREMIUM MODAL ===================== */
   #premiumModal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;
-    background:rgba(5,3,9,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    background:rgba(6,7,10,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     opacity:0;pointer-events:none;transition:opacity .3s ease}
   #premiumModal.show{opacity:1;pointer-events:auto}
-  #premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;overflow-y:auto;scrollbar-width:thin;
-    background:linear-gradient(180deg,rgba(24,17,32,.94),rgba(14,10,20,.96));border:1px solid var(--line);border-radius:24px;padding:36px 28px 28px;
-    box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,217,138,.08) inset;
-    transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1);text-align:center;
+  #premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
+    background:var(--glass-strong);border:1px solid var(--line);border-radius:24px;padding:0;
+    box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,217,138,.08) inset;
+    transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1),width .2s ease;text-align:center;
     -webkit-user-select:text;user-select:text}
   #premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
-  #premiumModalCard::-webkit-scrollbar{width:7px}#premiumModalCard::-webkit-scrollbar-thumb{background:rgba(243,239,228,.2);border-radius:7px}
-  #premiumModalClose{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  @media(min-width:861px){
+    #premiumModalCard{width:min(760px,92vw)}
+    #premiumModalCard .premSub{max-width:520px;margin-left:auto;margin-right:auto}
+    #premiumModalSections{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;text-align:left}
+    .premSection{margin-bottom:0}
+    .premSection:last-child{margin-bottom:0}
+  }
+  #premiumModalScroll{position:relative;overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
+  #premiumModalScroll::-webkit-scrollbar{width:7px}#premiumModalScroll::-webkit-scrollbar-thumb{background:rgba(243,239,228,.2);border-radius:7px}
+  #premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(13,15,21,0),var(--glass-strong) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
+  #premiumScrollHint{display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);pointer-events:none;
+    align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+    background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.35);
+    opacity:1;transition:opacity .25s ease;animation:premScrollBounce 1.6s ease-in-out infinite}
+  #premiumScrollHint svg{width:13px;height:13px;stroke:var(--gold);fill:none;stroke-width:2.4}
+  #premiumScrollHint.hide{opacity:0}
+  @media(max-width:560px){ #premiumScrollHint{display:flex} }
+  @keyframes premScrollBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
+  #premiumModalClose{position:absolute;top:16px;right:16px;z-index:2;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
     color:var(--soft);background:rgba(243,239,228,.06);border:none;cursor:pointer;transition:background .2s ease,color .2s ease}
   #premiumModalClose:hover{background:rgba(243,239,228,.14);color:var(--ink)}
   #premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-  #premiumModalCard .premBadge{margin-bottom:20px}
-  #premiumModalCard h2{font-family:Georgia,serif;font-weight:600;font-size:clamp(21px,5vw,26px);letter-spacing:.02em;margin-bottom:9px;
-    background:linear-gradient(90deg,var(--gold),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
-  #premiumModalCard .premSub{font-family:'Outfit',system-ui,sans-serif;font-size:12.5px;color:var(--soft);letter-spacing:.02em;line-height:1.55;margin-bottom:28px;padding:0 4px}
+  .premBadge{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,var(--gold-soft));padding:6px 14px;border-radius:999px;margin-bottom:20px;
+    box-shadow:0 4px 14px rgba(255,217,138,.3)}
+  .premBadge svg{width:11px;height:11px;flex:0 0 auto}
+  #premiumModalCard h2{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(23px,5vw,29px);letter-spacing:.01em;color:var(--ink);margin-bottom:9px}
+  #premiumModalCard .premSub{font-family:var(--ui);font-size:12.5px;color:var(--soft);letter-spacing:.02em;line-height:1.55;margin-bottom:28px;padding:0 4px}
   #premiumModalSections{margin-bottom:8px}
   .premSection{margin-bottom:26px}
   .premSection:last-child{margin-bottom:22px}
-  .premSectionTitle{display:flex;align-items:center;gap:10px;font-family:'Outfit',system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:15px;text-align:left}
+  .premSectionTitle{display:flex;align-items:center;gap:10px;font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:15px;text-align:left}
   .premSectionTitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,217,138,.5),transparent)}
   .premList{display:flex;flex-direction:column;gap:16px;text-align:left}
   .premList li{display:flex;align-items:flex-start;gap:12px}
   .premList .premCheck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-top:1px;
     background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.4)}
   .premList .premCheck svg{width:11px;height:11px;stroke:var(--gold);fill:none;stroke-width:2.6}
-  .premTxt{display:flex;flex-direction:column;gap:4px;min-width:0;font-family:'Outfit',system-ui,sans-serif}
+  .premTxt{display:flex;flex-direction:column;gap:4px;min-width:0;font-family:var(--ui)}
   .premHead{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);line-height:1.3}
   .premDetail{font-size:12px;color:var(--soft);line-height:1.5;letter-spacing:.01em}
-  .premBadge{
-    display:inline-flex;align-items:center;gap:5px;
-    font-family:'Outfit',system-ui,sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.16em;
-    color:#2a1c05;text-transform:uppercase;
-    background:linear-gradient(135deg,#ffe3a3,#d9a441);
-    padding:6px 12px;border-radius:999px;white-space:nowrap;
-  }
-  .premBadge svg{width:10px;height:10px;display:block;flex:0 0 auto}
-  .premCta{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border-radius:999px;border:none;cursor:pointer;text-decoration:none;box-sizing:border-box;background:linear-gradient(180deg,var(--gold),#d9a441);color:#241c12;font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
-    box-shadow:0 10px 30px rgba(255,217,138,.28);transition:transform .12s ease,filter .2s ease}
+  .premCta{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border-radius:999px;background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#241c12;font-family:var(--ui);font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+    text-decoration:none;box-sizing:border-box;box-shadow:0 10px 30px rgba(255,217,138,.28);transition:transform .12s ease,filter .2s ease}
   .premCta:hover{filter:brightness(1.05)}
   .premCta:active{transform:scale(.97)}
-  .premCancelNote{font-family:'Outfit',system-ui,sans-serif;font-size:11px;color:var(--soft);opacity:.85;letter-spacing:.02em;text-align:center;margin:11px 0 18px}
+  .premCancelNote{font-family:var(--ui);font-size:11px;color:var(--soft);opacity:.85;letter-spacing:.02em;text-align:center;margin:11px 0 18px}
   .premCtaGhost{width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(243,239,228,.25);color:var(--soft);
-    font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+    font-family:var(--ui);font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
   .premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--ink);border-color:rgba(243,239,228,.4)}
 </style>
 <link rel="stylesheet" href="auth-ui.css">
@@ -270,16 +282,23 @@ text-decoration:none;
     <button id="premiumModalClose" type="button" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
-    <span class="premBadge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-      Premium
-    </span>
-    <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
-    <p class="premSub">Everything Holistic Loader has to offer — for your breathing practice and your sound healing sessions.</p>
-    <div id="premiumModalSections"></div>
-    <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
-    <p class="premCancelNote">Cancel anytime!</p>
-    <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+    <div id="premiumModalScroll">
+      <span class="premBadge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Premium
+      </span>
+      <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
+      <p class="premSub">Everything Holistic Loader has to offer — for your breathing practice and your sound healing sessions.</p>
+      <div id="premiumModalSections"></div>
+      <div id="premiumScrollHint" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+    <div id="premiumModalFooter">
+      <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
+      <p class="premCancelNote">Cancel anytime!</p>
+      <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+    </div>
   </div>
 </div>
 
@@ -404,6 +423,13 @@ text-decoration:none;
     }
   ];
   var modal=document.getElementById('premiumModal'), sections=document.getElementById('premiumModalSections');
+  var premScrollBox=document.getElementById('premiumModalScroll'), premScrollHint=document.getElementById('premiumScrollHint');
+  function updatePremiumScrollHint(){
+    if(!premScrollBox||!premScrollHint) return;
+    var overflows=premScrollBox.scrollHeight>premScrollBox.clientHeight+4;
+    var atBottom=premScrollBox.scrollTop+premScrollBox.clientHeight>=premScrollBox.scrollHeight-4;
+    premScrollHint.classList.toggle('hide',!overflows||atBottom);
+  }
   function openPremiumModal(){
     if(!modal||!sections) return;
     sections.innerHTML=PREMIUM_SECTIONS.map(function(sec){
@@ -413,7 +439,11 @@ text-decoration:none;
       return '<div class="premSection"><div class="premSectionTitle">'+sec.label+'</div><ul class="premList">'+items+'</ul></div>';
     }).join('');
     modal.classList.add('show');
+    if(premScrollBox) premScrollBox.scrollTop=0;
+    setTimeout(updatePremiumScrollHint,50);
   }
+  if(premScrollBox) premScrollBox.addEventListener('scroll',updatePremiumScrollHint);
+  window.addEventListener('resize',updatePremiumScrollHint);
   function closePremiumModal(){ if(modal) modal.classList.remove('show'); }
   var pClose=document.getElementById('premiumModalClose'), pCta=document.getElementById('premiumModalCta');
   if(pClose) pClose.onclick=closePremiumModal;
