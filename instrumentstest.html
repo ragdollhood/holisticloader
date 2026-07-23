@@ -507,21 +507,43 @@
   #getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
   @media(hover:hover){#loginMenuBtn:hover,#howToBtn:hover{transform:scale(1.04)}#getPremiumMenuBtn:hover{transform:scale(1.04);background:var(--gold-soft,var(--gold))}}
   #loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active{transform:scale(.97)}
-  /* info box, hidden until "How to use" is tapped — position set by JS to track the button */
+  /* info box, hidden until "How to use" is tapped — position set by JS to track the button.
+     Desktop: wide enough that everything fits without a scrollbar. Mobile: fills the screen and scrolls (see media query below). */
   #howToBox{
     position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
-    z-index:46;max-width:180px;
+    z-index:46;width:min(680px,90vw);
     background:var(--glass-strong);border:1px solid var(--line);border-radius:16px;
-    padding:16px 16px 18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    padding:22px 26px 26px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
   }
   #howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+  #howToClose{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;color:var(--muted);
+    background:rgba(244,241,234,.06);transition:background .2s ease,color .2s ease}
+  #howToClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
+  #howToClose svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
   #howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
-    font-weight:600;margin-bottom:10px;white-space:nowrap}
+    font-weight:600;margin-bottom:10px}
+  .htu-sub{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
   #howToBox ol{list-style:none;display:flex;flex-direction:column;gap:8px}
   #howToBox li{display:flex;gap:7px;font-size:10.5px;line-height:1.45;letter-spacing:.02em;
     text-transform:uppercase;color:var(--muted)}
   #howToBox li b{color:var(--gold);font-weight:600;flex:0 0 auto}
+  .htu-detail{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+  .htu-detail h3{margin-top:0}
+  .htu-detail h4{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
+    font-weight:600;margin:16px 0 10px}
+  .htu-lead{font-size:12.5px;line-height:1.6;letter-spacing:.01em;color:var(--muted);text-transform:none;margin-bottom:8px}
+  .htu-lead b{color:var(--ink);font-weight:600}
+  .htu-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .htu-list li{font-size:12px;line-height:1.55;letter-spacing:.01em;color:var(--muted);text-transform:none}
+  .htu-list li b{color:var(--gold);font-weight:600}
+  .htu-list li i{color:var(--ink);font-style:normal;font-weight:500}
+  .htu-foot{margin-top:16px;font-size:11.5px;line-height:1.6;letter-spacing:.01em;color:var(--faint);text-transform:none}
+  /* on wide screens, lay the tab/control explanations out in two columns so the box stays short */
+  @media(min-width:700px){
+    .htu-list.htu-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px 26px}
+  }
   @media(max-width:560px){
     #topTabs .tab{padding:8px 13px;font-size:11px}
     #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
@@ -532,6 +554,14 @@
     #menuBtn{width:30px;height:30px}
     /* pull the h1 up closer to the gold line under the tabs on mobile */
     body{padding-top:max(74px,calc(env(safe-area-inset-top) + 58px))}
+    /* how-to-use fills the whole screen on mobile and scrolls, instead of a small anchored box */
+    #howToBox{
+      position:fixed;inset:0;top:0;left:0;right:0;bottom:0;width:100%;height:100%;
+      max-width:none;border-radius:0;
+      padding:max(28px,calc(env(safe-area-inset-top) + 16px)) 22px max(28px,env(safe-area-inset-bottom));
+      overflow-y:auto;-webkit-overflow-scrolling:touch;
+    }
+    .htu-list.htu-cols{display:flex;flex-direction:column}
   }
 
   /* ===== laptop/desktop: Tone & space blir ett fast mixerbord till vänster ===== */
@@ -904,13 +934,42 @@
 </header>
 
 <div id="howToBox">
-  <h3>Choose your:</h3>
+  <button id="howToClose" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <h3>Quick guide</h3>
+  <p class="htu-sub">Play &amp; shape your sound:</p>
   <ol>
-    <li><b>1.</b> Place.</li>
-    <li><b>2.</b> Sound</li>
-    <li><b>3.</b> Frequency / Breathing tempo / Session length</li>
-    <li><b>4.</b> Press start</li>
+    <li><b>1.</b> Pick an instrument.</li>
+    <li><b>2.</b> Tap, hold or drag to play it.</li>
+    <li><b>3.</b> Shape it with Tune, Room &amp; effects.</li>
+    <li><b>4.</b> Record it, if you like.</li>
   </ol>
+  <div class="htu-detail">
+    <h3>Detailed guide</h3>
+    <p class="htu-lead">Tap or click an instrument to strike it. Press and hold the wind instruments (pan flute, native flute) to sustain the note for as long as you hold. Drag or swipe across the bowls and the gong to make them sing continuously, like rubbing the rim of a real singing bowl.</p>
+    <h4>Each instrument</h4>
+    <ul class="htu-list htu-cols">
+      <li><b>Voice</b> — the gong and the bowl each have a few voices (Symphonic / Tibetan / Tam-tam, and Crystal / Tibetan / Quartz). Tap one to switch its timbre before you play.</li>
+      <li><b>Tune</b> — drag the slider under an instrument to set its pitch in Hz.</li>
+      <li><b>Random sound</b> — picks a new random pitch, a shortcut if you don't want to drag the slider yourself.</li>
+      <li><b>BPM</b> — turns the instrument into a steady auto-playing loop; the slider sets how many beats per minute it plays.</li>
+      <li><b>TIME</b> — turns the instrument into a timed loop that plays for a set duration (30 sec–30 min) instead of forever.</li>
+    </ul>
+    <h4>Tone &amp; space</h4>
+    <ul class="htu-list htu-cols">
+      <li><b>Shimmer/Beating</b> — adds a subtle wavering "wow-wow" pulse to the sound, like the natural beating of real bowls and gongs.</li>
+      <li><b>Space echo</b> — distinct, repeating echoes, like a tape delay, separate from the room reverb.</li>
+      <li><b>Room acoustics &amp; Reverb</b> — choose Dry, Temple, Cathedral or Cave to place the instruments in a different space, then use the Reverb slider for how much of it you hear.</li>
+      <li><b>Volume</b> — the overall loudness of everything you play.</li>
+    </ul>
+    <p class="htu-foot">On desktop these live in the fixed panel on the left; on mobile, tap the tabs along the bottom edge to open them.</p>
+    <h4>Recorder</h4>
+    <p class="htu-lead">Press <b>RECORD</b> to capture your playing, then download it as an audio file once you stop.</p>
+    <h4>Signal generator</h4>
+    <p class="htu-lead">A separate tone generator further down the page. Drag the slider anywhere from 20 Hz to 20,000 Hz, pick a waveform and press <b>PLAY</b> — the scope above shows the waveform live. Handy for exploring one exact frequency on its own.</p>
+    <p class="htu-foot">Four instruments — Gong, the singing bowl, Handpan and Tongue drum — are free to play. The rest, along with the full signal generator and the ability to record &amp; save, unlock with Premium.</p>
+  </div>
 </div>
 
 
@@ -1293,7 +1352,8 @@
     function positionHowToBox(){
       if(innerWidth<=560)return;
       const r=hBtn.getBoundingClientRect();
-      hBox.style.left=r.left+'px';
+      const maxLeft=innerWidth-hBox.offsetWidth-12;
+      hBox.style.left=Math.max(12,Math.min(r.left,maxLeft))+'px';
       hBox.style.top=(r.bottom+7)+'px';
     }
     hBtn.addEventListener('click',function(e){ e.stopPropagation();
@@ -1302,6 +1362,8 @@
     document.addEventListener('click',function(e){ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape')hide(); });
     addEventListener('resize',function(){ if(hBox.classList.contains('show'))positionHowToBox(); });
+    const hClose=$('howToClose');
+    if(hClose)hClose.addEventListener('click',function(e){ e.stopPropagation(); hide(); });
   })();
 
   /* ============ KOSMOS: galaxer som roterar, norrsken, supernovor ============
