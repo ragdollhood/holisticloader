@@ -849,12 +849,27 @@
   #premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
     background:linear-gradient(180deg,rgba(24,17,32,.94),rgba(14,10,20,.96));border:1px solid var(--line);border-radius:24px;padding:0;
     box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,217,138,.08) inset;
-    transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1);text-align:center;
+    transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1),width .2s ease;text-align:center;
     -webkit-user-select:text;user-select:text}
   #premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
-  #premiumModalScroll{overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
+  @media(min-width:861px){
+    #premiumModalCard{width:min(760px,92vw)}
+    #premiumModalCard .premSub{max-width:520px;margin-left:auto;margin-right:auto}
+    #premiumModalSections{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;text-align:left}
+    .premSection{margin-bottom:0}
+    .premSection:last-child{margin-bottom:0}
+  }
+  #premiumModalScroll{position:relative;overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
   #premiumModalScroll::-webkit-scrollbar{width:7px}#premiumModalScroll::-webkit-scrollbar-thumb{background:rgba(243,239,228,.2);border-radius:7px}
   #premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(14,10,20,0),rgba(14,10,20,.96) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
+  #premiumScrollHint{display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);pointer-events:none;
+    align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+    background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.35);
+    opacity:1;transition:opacity .25s ease;animation:premScrollBounce 1.6s ease-in-out infinite}
+  #premiumScrollHint svg{width:13px;height:13px;stroke:var(--gold);fill:none;stroke-width:2.4}
+  #premiumScrollHint.hide{opacity:0}
+  @media(max-width:560px){ #premiumScrollHint{display:flex} }
+  @keyframes premScrollBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
   #premiumModalClose{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
     color:var(--soft);background:rgba(243,239,228,.06);border:none;cursor:pointer;transition:background .2s ease,color .2s ease}
   #premiumModalClose:hover{background:rgba(243,239,228,.14);color:var(--ink)}
@@ -877,12 +892,12 @@
   .premHead{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);line-height:1.3}
   .premDetail{font-size:12px;color:var(--soft);line-height:1.5;letter-spacing:.01em}
   .premFoot{font-family:'Outfit',system-ui,sans-serif;font-size:10.5px;color:var(--soft);opacity:.75;letter-spacing:.04em;line-height:1.5;margin-bottom:20px}
-  .premCta{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border-radius:999px;border:none;cursor:pointer;text-decoration:none;box-sizing:border-box;background:linear-gradient(180deg,var(--gold),#d9a441);color:#241c12;font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+  .premCta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;padding:12px 14px 11px;border-radius:20px;border:none;cursor:pointer;text-decoration:none;box-sizing:border-box;background:linear-gradient(180deg,var(--gold),#d9a441);color:#241c12;font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
     box-shadow:0 10px 30px rgba(255,217,138,.28);transition:transform .12s ease,filter .2s ease}
   .premCta:hover{filter:brightness(1.05)}
   .premCta:active{transform:scale(.97)}
-  .premCancelNote{font-family:'Outfit',system-ui,sans-serif;font-size:11px;color:var(--soft);opacity:.85;letter-spacing:.02em;text-align:center;margin:11px 0 18px}
-  .premCtaGhost{width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(243,239,228,.25);color:var(--soft);
+  .premCta .premCancelNote{font-weight:500;font-size:9.5px;letter-spacing:.03em;text-transform:none;opacity:.7;color:#241c12}
+  .premCtaGhost{width:100%;margin-top:12px;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(243,239,228,.25);color:var(--soft);
     font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
   .premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--ink);border-color:rgba(243,239,228,.4)}
 </style>
@@ -917,10 +932,15 @@
       <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
       <p class="premSub">Everything Holistic Loader has to offer — for your breathing practice, your sound healing sessions and your nutrition tracking.</p>
       <div id="premiumModalSections"></div>
+      <div id="premiumScrollHint" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
     </div>
     <div id="premiumModalFooter">
-      <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
-      <p class="premCancelNote">Cancel anytime!</p>
+      <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">
+        <span>Get Premium for $4.99/month</span>
+        <span class="premCancelNote">Cancel anytime!</span>
+      </a>
       <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
     </div>
   </div>
@@ -3536,6 +3556,13 @@ registerVisit();
     }
   ];
   var modal=document.getElementById('premiumModal'), sections=document.getElementById('premiumModalSections');
+  var scrollBox=document.getElementById('premiumModalScroll'), scrollHint=document.getElementById('premiumScrollHint');
+  function updateScrollHint(){
+    if(!scrollBox||!scrollHint) return;
+    var overflows=scrollBox.scrollHeight>scrollBox.clientHeight+4;
+    var atBottom=scrollBox.scrollTop+scrollBox.clientHeight>=scrollBox.scrollHeight-4;
+    scrollHint.classList.toggle('hide',!overflows||atBottom);
+  }
   function openPremiumModal(){
     if(!modal||!sections) return;
     sections.innerHTML=PREMIUM_SECTIONS.map(function(sec){
@@ -3545,7 +3572,11 @@ registerVisit();
       return '<div class="premSection"><div class="premSectionTitle">'+sec.label+'</div><ul class="premList">'+items+'</ul></div>';
     }).join('');
     modal.classList.add('show');
+    if(scrollBox) scrollBox.scrollTop=0;
+    setTimeout(updateScrollHint,50);
   }
+  if(scrollBox) scrollBox.addEventListener('scroll',updateScrollHint);
+  window.addEventListener('resize',updateScrollHint);
   function closePremiumModal(){ if(modal) modal.classList.remove('show'); }
   var pClose=document.getElementById('premiumModalClose'), pCta=document.getElementById('premiumModalCta');
   if(pClose) pClose.onclick=closePremiumModal;
