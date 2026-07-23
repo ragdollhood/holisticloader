@@ -846,13 +846,15 @@
     background:rgba(5,3,9,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     opacity:0;pointer-events:none;transition:opacity .3s ease}
   #premiumModal.show{opacity:1;pointer-events:auto}
-  #premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;overflow-y:auto;scrollbar-width:thin;
-    background:linear-gradient(180deg,rgba(24,17,32,.94),rgba(14,10,20,.96));border:1px solid var(--line);border-radius:24px;padding:36px 28px 28px;
+  #premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
+    background:linear-gradient(180deg,rgba(24,17,32,.94),rgba(14,10,20,.96));border:1px solid var(--line);border-radius:24px;padding:0;
     box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,217,138,.08) inset;
     transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1);text-align:center;
     -webkit-user-select:text;user-select:text}
   #premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
-  #premiumModalCard::-webkit-scrollbar{width:7px}#premiumModalCard::-webkit-scrollbar-thumb{background:rgba(243,239,228,.2);border-radius:7px}
+  #premiumModalScroll{overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
+  #premiumModalScroll::-webkit-scrollbar{width:7px}#premiumModalScroll::-webkit-scrollbar-thumb{background:rgba(243,239,228,.2);border-radius:7px}
+  #premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(14,10,20,0),rgba(14,10,20,.96) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
   #premiumModalClose{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
     color:var(--soft);background:rgba(243,239,228,.06);border:none;cursor:pointer;transition:background .2s ease,color .2s ease}
   #premiumModalClose:hover{background:rgba(243,239,228,.14);color:var(--ink)}
@@ -907,16 +909,20 @@
     <button id="premiumModalClose" type="button" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
-    <span class="premBadge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-      Premium
-    </span>
-    <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
-    <p class="premSub">Everything Holistic Loader has to offer — for your breathing practice, your sound healing sessions and your nutrition tracking.</p>
-    <div id="premiumModalSections"></div>
-    <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
-    <p class="premCancelNote">Cancel anytime!</p>
-    <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+    <div id="premiumModalScroll">
+      <span class="premBadge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Premium
+      </span>
+      <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
+      <p class="premSub">Everything Holistic Loader has to offer — for your breathing practice, your sound healing sessions and your nutrition tracking.</p>
+      <div id="premiumModalSections"></div>
+    </div>
+    <div id="premiumModalFooter">
+      <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
+      <p class="premCancelNote">Cancel anytime!</p>
+      <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+    </div>
   </div>
 </div>
 
