@@ -450,12 +450,12 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
 .premCtaGhost:hover{background:rgba(244,241,234,.08);color:var(--ink);border-color:rgba(244,241,234,.35)}
 #frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
-#donateWrap{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto}
+#donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
 @supports(padding:max(0px)){
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
 }
 @media(max-width:560px){
-  #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
+  #donateWrap{left:4px;top:max(0px,calc(env(safe-area-inset-top) - 12px))}
   @supports(padding:max(0px)){
     #donateWrap{left:max(4px,env(safe-area-inset-left))}
   }
@@ -592,6 +592,14 @@ body.immersive #howToBox{display:none}
 
 </style>
 <link rel="stylesheet" href="auth-ui.css">
+<style>
+/* Nudge the login/account icon that auth.js renders into #authRoot up a
+   few pixels so it clears the gold #topNavLine under the header tabs.
+   auth-ui.css wasn't included in this file, so if the icon still touches
+   the line after this, that stylesheet's own top/margin value needs the
+   same small adjustment. */
+#authRoot{transform:translateY(-6px)}
+</style>
 </head>
 <body>
 <noscript><div id="noscriptMsg"><div><strong>Holistic Loader</strong><br>A free online space to breathe, meditate and relax to healing sound frequencies and calming nature scenes.<br>Please enable JavaScript to use the breathing circle and sounds.</div></div></noscript>
@@ -936,9 +944,9 @@ function renderReel(){
       r.appendChild(it);
     }
   });
-  const add=document.createElement('button'); add.className='reel-item add reel-locked';
-  add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>'+lockBadgeHTML;
-  add.onclick=()=>openPremiumModal('breathing');
+  const add=document.createElement('button'); add.className='reel-item add'+(isPremium?'':' reel-locked');
+  add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>'+(isPremium?'':lockBadgeHTML);
+  add.onclick=isPremium?(()=>$('fileInput').click()):(()=>openPremiumModal('breathing'));
   r.appendChild(add);
 }
 $('fileInput').addEventListener('change',e=>{
