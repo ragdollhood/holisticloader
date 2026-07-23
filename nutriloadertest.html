@@ -288,7 +288,35 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
 .chip.flash{animation:chipflash 1.4s ease 2}
 
 /* ---------- header ---------- */
-header{position:relative;text-align:center;padding:4px 70px 10px}
+/* ---- rubrikflik: samma stil som på instruments-sidan, en nedfälld flik under navigationen ---- */
+.h1-frame{
+  position:sticky;
+  top:max(46px,calc(env(safe-area-inset-top) + 34px));
+  margin:-46px auto 0;
+  z-index:30;
+  width:min(94vw,820px);
+  padding:8px 24px;
+  border:1.5px solid #ffd98a;
+  border-top:none;
+  border-radius:0 0 30px 30px;
+  background:linear-gradient(180deg, rgba(20,14,28,.74) 0%, rgba(14,10,20,.62) 100%);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
+  display:flex;align-items:center;justify-content:center;
+}
+.h1-frame h1{margin:0;line-height:0}
+.h1-frame .title-image{width:clamp(150px,22vw,230px);height:auto;display:block;margin:0}
+@media (max-width:560px){
+  .h1-frame{
+    top:max(42px,calc(env(safe-area-inset-top) + 28px));
+    margin-top:-32px;
+    width:92vw;
+    padding:7px 14px;
+    border-radius:0 0 18px 18px;
+  }
+  .h1-frame .title-image{width:clamp(120px,34vw,170px)}
+}
+header{position:relative;text-align:center;padding:10px 70px 8px}
 header h1{
   font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;
   font-size:clamp(34px,5.4vw,58px);letter-spacing:.32em;text-indent:.32em;
@@ -664,7 +692,7 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
   #nutriBody{grid-template-columns:1fr}
 }
 @media (max-width:680px){
-  header{padding:42px 20px 6px}
+  header{padding:6px 20px 4px}
   #resetBtnTop{padding:6px 11px;font-size:11.5px}
   #plateZone{height:480px}
   #bars{grid-template-columns:1fr}
@@ -914,7 +942,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--tn-gold) 15%,var(--tn-violet) 50%,var(--tn-gold) 85%,transparent);
   opacity:.55}
-#donateWrap{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto;
+#donateWrap{position:fixed;left:16px;top:max(8px,env(safe-area-inset-top));z-index:45;pointer-events:auto;
   display:flex;align-items:center;gap:10px}
 @supports(padding:max(0px)){
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
@@ -1044,6 +1072,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 .premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--tn-ink);border-color:rgba(243,239,228,.4)}
 </style>
 <link rel="stylesheet" href="auth-ui.css">
+<style>#topNav #authRoot{top:9px}@media(max-width:640px){#topNav #authRoot{top:5px}}</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
 
@@ -1125,11 +1154,11 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
     </header>
   </div>
 
-<header>
+<div class="h1-frame">
   <h1><img src="images/logga-alpha.png" alt="Nutri Loader" class="title-image"><span class="sr-only">NutriLoader – Nutrition Tracker & Meal Planner</span></h1>
+</div>
+<header>
   <div class="tagline" data-i18n="tagline">With focus on nourishment - not calories</div>
-
-
 </header>
 
 <main class="layout">
