@@ -325,8 +325,13 @@ text-decoration:none;
   (function(){
     const mBtn=$('menuBtn'), mPanel=$('menuPanel');
     const closeMenu=function(){ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
+    // Exposed so auth.js's account-icon menu can close this one when it opens.
+    window.closeHamburgerMenu=closeMenu;
     if(mBtn&&mPanel){
       mBtn.addEventListener('click',function(e){ e.stopPropagation();
+        // Close the account-icon menu (if auth.js built one) before opening
+        // this one, so only one menu is ever open at a time.
+        if(typeof window.closeAccountMenu==='function') window.closeAccountMenu();
         const open=mPanel.classList.toggle('show'); mBtn.classList.toggle('open',open); mBtn.setAttribute('aria-expanded',open?'true':'false');
         if(!open){ const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
       document.addEventListener('click',function(e){ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
