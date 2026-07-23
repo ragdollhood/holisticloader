@@ -37,7 +37,13 @@
      6. Maintains a global `isPremium` boolean and a global `currentUser`
         object that the rest of your site can read.
      7. Renders the header UI (Login / Get Premium / Logout buttons,
-        "Logged in as: ..." text) and the login modal.
+        "Logged in as: ..." text) and the login modal. The modal itself is
+        appended directly to <body> (not left inside the header's DOM),
+        so a transformed/filtered header never traps its fixed positioning.
+     8. Exposes a "Forgot password?" link inside the login modal, which
+        calls sb.auth.resetPasswordForEmail() and redirects the emailed
+        link to reset-password.html (which must exist at your site root
+        and use the SAME Supabase project's URL/anon key).
 
      PURCHASE FLOW (Get Premium -> paying customer):
        Click "Get Premium" (header or locked content)
@@ -224,6 +230,17 @@ function _buildAuthDom() {
   const root = document.getElementById("authRoot");
   if (!root) return;
 
+  // IMPORTANT: only the header buttons/account menu go inside #authRoot.
+  // #authRoot lives inside #topNav, and #topNav (like the rest of this
+  // site's "glass" look) uses backdrop-filter/transform. Per the CSS spec,
+  // any ancestor with transform/filter/backdrop-filter/perspective/
+  // will-change creates a new "containing block" for its position:fixed
+  // descendants — so a `position:fixed; inset:0` modal nested inside that
+  // header would size and position itself relative to the HEADER's box,
+  // not the viewport. That's exactly the "modal is half off-screen and
+  // looks too small" bug. Fix: build the modal separately and append it
+  // straight to <body>, completely outside the header, so `inset:0` is
+  // always relative to the real viewport.
   root.innerHTML = `
     <div id="authButtons">
       <button id="loginBtn" type="button">Login</button>
@@ -239,8 +256,16 @@ function _buildAuthDom() {
         </div>
       </div>
     </div>
+  `;
 
-    <div id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+  let modal = document.getElementById("authModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "authModal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "authModalTitle");
+    modal.innerHTML = `
       <div id="authModalCard">
         <button id="authModalClose" type="button" aria-label="Close">
           <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
@@ -251,12 +276,16 @@ function _buildAuthDom() {
           <input id="authEmail" type="email" autocomplete="email" required>
           <label for="authPassword">Password</label>
           <input id="authPassword" type="password" autocomplete="current-password" required minlength="6">
-          <p id="authError" role="alert"></p>
+          <div id="authRow">
+            <button id="forgotPasswordBtn" type="button">Forgot password?</button>
+          </div>
+          <p id="authMessage" role="alert"></p>
           <button id="authSubmit" type="submit">Log in</button>
         </form>
       </div>
-    </div>
-  `;
+    `;
+    document.body.appendChild(modal);
+  }
 
   _wireAuthDom();
 }
@@ -276,11 +305,18 @@ function _wireAuthDom() {
   const modal = document.getElementById("authModal");
   const closeBtn = document.getElementById("authModalClose");
   const form = document.getElementById("authForm");
-  const errorEl = document.getElementById("authError");
+  const messageEl = document.getElementById("authMessage");
+  const forgotBtn = document.getElementById("forgotPasswordBtn");
+
+  function showAuthMessage(text, type) {
+    messageEl.textContent = text;
+    messageEl.className = type || "";
+  }
 
   function openModal() {
-    errorEl.textContent = "";
+    showAuthMessage("", "");
     form.reset();
+    document.getElementById("authSubmit").textContent = "Log in";
     modal.classList.add("show");
     document.getElementById("authEmail").focus();
   }
@@ -296,9 +332,6 @@ function _wireAuthDom() {
     accountMenu.classList.remove("show");
     accountBtn.setAttribute("aria-expanded", "false");
   }
-  // Exposed so other menus on the page (e.g. the hamburger menu built by
-  // the page's own script) can close this one when they open.
-  window.closeAccountMenu = closeAccountMenu;
   function toggleAccountMenu() {
     if (accountMenu.classList.contains("show")) closeAccountMenu();
     else openAccountMenu();
@@ -306,9 +339,6 @@ function _wireAuthDom() {
 
   accountBtn.onclick = (e) => {
     e.stopPropagation();
-    // Close the hamburger menu (if the page defines one) before opening
-    // this one, so only one menu is ever open at a time.
-    if (typeof window.closeHamburgerMenu === "function") window.closeHamburgerMenu();
     toggleAccountMenu();
   };
   document.addEventListener("click", (e) => {
@@ -348,9 +378,42 @@ function _wireAuthDom() {
     await openBillingPortal(manageSubBtn);
   };
 
+  // "Forgot password?" — sends the Supabase reset email. The link inside
+  // that email points at reset-password.html, which reads the recovery
+  // token from the URL and lets the user set a new password.
+  forgotBtn.onclick = async () => {
+    const email = document.getElementById("authEmail").value.trim();
+    if (!email) {
+      showAuthMessage("Enter your email above first, then click \u201cForgot password?\u201d again.", "error");
+      document.getElementById("authEmail").focus();
+      return;
+    }
+
+    forgotBtn.disabled = true;
+    const originalLabel = forgotBtn.textContent;
+    forgotBtn.textContent = "Sending...";
+
+    try {
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/reset-password.html"
+      });
+      if (error) throw error;
+      showAuthMessage("Check your email for a password reset link.", "success");
+    } catch (err) {
+      console.error("resetPasswordForEmail error:", err);
+      const readable =
+        (err && typeof err.message === "string" && err.message.trim()) ? err.message :
+        "Could not send the reset email. Please try again.";
+      showAuthMessage(readable, "error");
+    } finally {
+      forgotBtn.disabled = false;
+      forgotBtn.textContent = originalLabel;
+    }
+  };
+
   form.onsubmit = async (e) => {
     e.preventDefault();
-    errorEl.textContent = "";
+    showAuthMessage("", "");
     const email = document.getElementById("authEmail").value.trim();
     const password = document.getElementById("authPassword").value;
     const submitBtn = document.getElementById("authSubmit");
@@ -371,7 +434,7 @@ function _wireAuthDom() {
         (err && err.status) ? `Request failed (status ${err.status}). Check the console for details.` :
         "Something went wrong. Please try again.";
 
-      errorEl.textContent = readable;
+      showAuthMessage(readable, "error");
     } finally {
       submitBtn.disabled = false;
     }
