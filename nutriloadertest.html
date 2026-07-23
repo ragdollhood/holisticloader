@@ -304,8 +304,12 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
   box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
   display:flex;align-items:center;justify-content:center;
 }
-.h1-frame h1{margin:0;line-height:0}
-.h1-frame .title-image{width:clamp(150px,22vw,230px);height:auto;display:block;margin:0}
+.h1-frame h1{
+  font-family:Georgia,serif;font-size:clamp(15px,4.2vw,20px);font-weight:600;
+  letter-spacing:.14em;text-align:center;line-height:1.4;max-width:none;margin:0 auto;
+  background:linear-gradient(90deg,var(--gold),var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
 @media (max-width:560px){
   .h1-frame{
     top:max(42px,calc(env(safe-area-inset-top) + 28px));
@@ -314,7 +318,6 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
     padding:7px 14px;
     border-radius:0 0 18px 18px;
   }
-  .h1-frame .title-image{width:clamp(120px,34vw,170px)}
 }
 header{position:relative;text-align:center;padding:10px 70px 8px}
 header h1{
@@ -942,7 +945,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--tn-gold) 15%,var(--tn-violet) 50%,var(--tn-gold) 85%,transparent);
   opacity:.55}
-#donateWrap{position:fixed;left:16px;top:max(8px,env(safe-area-inset-top));z-index:45;pointer-events:auto;
+#donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto;
   display:flex;align-items:center;gap:10px}
 @supports(padding:max(0px)){
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
@@ -987,6 +990,10 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 #loginMenuBtn:active,#getPremiumMenuBtn:active{transform:scale(.97)}
 @media(max-width:560px){
   #topTabs .tab{padding:8px 13px;font-size:11px}
+  #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
+  @supports(padding:max(0px)){
+    #donateWrap{left:max(4px,env(safe-area-inset-left))}
+  }
   #menuBtn{width:30px;height:30px}
   /* pull page content up much closer to the gold line under the tabs */
   body{padding-top:max(74px,calc(env(safe-area-inset-top) + 58px))}
@@ -1072,7 +1079,13 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 .premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--tn-ink);border-color:rgba(243,239,228,.4)}
 </style>
 <link rel="stylesheet" href="auth-ui.css">
-<style>#topNav #authRoot{top:9px}@media(max-width:640px){#topNav #authRoot{top:5px}}</style>
+<style>
+/* Nudge the login/account icon that auth.js renders into #authRoot up a
+   few pixels on desktop so it clears the gold #topNavLine under the header
+   tabs. Left untouched on mobile, where the default position is already fine. */
+#authRoot{transform:translateY(-6px)}
+@media(max-width:560px){ #authRoot{transform:none} }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
 
@@ -1155,7 +1168,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   </div>
 
 <div class="h1-frame">
-  <h1><img src="images/logga-alpha.png" alt="Nutri Loader" class="title-image"><span class="sr-only">NutriLoader – Nutrition Tracker & Meal Planner</span></h1>
+  <h1>MEASURE YOUR NUTRIENTS<span class="sr-only"> – NutriLoader Nutrition Tracker &amp; Meal Planner</span></h1>
 </div>
 <header>
   <div class="tagline" data-i18n="tagline">With focus on nourishment - not calories</div>
