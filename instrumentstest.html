@@ -870,7 +870,7 @@
   #premiumScrollHint.hide{opacity:0}
   @media(max-width:560px){ #premiumScrollHint{display:flex} }
   @keyframes premScrollBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
-  #premiumModalClose{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  #premiumModalClose{position:absolute;top:16px;right:16px;z-index:2;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
     color:var(--soft);background:rgba(243,239,228,.06);border:none;cursor:pointer;transition:background .2s ease,color .2s ease}
   #premiumModalClose:hover{background:rgba(243,239,228,.14);color:var(--ink)}
   #premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
