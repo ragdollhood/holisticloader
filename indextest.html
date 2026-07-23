@@ -499,8 +499,11 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 #menuBtn.open .menu-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
 #menuBtn.open .menu-bar:nth-child(2){opacity:0}
 #menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-#menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;
-  display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+#menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;min-width:190px;
+  display:flex;flex-direction:column;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:14px;
+  padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.4);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
 #menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 .toggle-row{display:flex;gap:8px}.toggle-row .chip{flex:1;text-align:center}
@@ -560,33 +563,33 @@ body.immersive #brand{opacity:0}
 .mini .sl{display:none}
 .mini.off .wv{display:none}
 .mini.off .sl{display:inline}
-/* contact / email — one button that expands to the right */
-#contactBtn{display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
-  border-radius:999px;padding:8px 14px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
-#contactBtn:hover{transform:scale(1.04)}#contactBtn:active{transform:scale(.97)}
+/* contact / email — plain row that expands to the right, matching the
+   shared #menuPanel background instead of its own pill */
+#contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
+  border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--ink);cursor:pointer;
+  transition:background .15s ease}
+#contactBtn:hover{background:rgba(244,241,234,.1)}
 #contactBtn .env{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#contactBtn .clabel{font-size:12px;letter-spacing:.06em;margin-left:8px;white-space:nowrap}
+#contactBtn .clabel{font-size:12px;letter-spacing:.04em;margin-left:8px;white-space:nowrap}
 #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
 #contactBtn .ctext:hover{text-decoration:underline}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
 #contactBtn.hidden{display:none}
 
-/* "Login", "Get Premium", "How to use" and "Contact" all share the same
-   left padding (14px) and 16x16 icon size so every icon sits the same
-   distance from the left edge. */
+/* "Login", "Get Premium" and "How to use" are now plain rows inside the
+   shared #menuPanel background (no individual pill/border per item). */
 #loginMenuBtn,#getPremiumMenuBtn,#howToBtn{
-  display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto;gap:8px;
-  font-family:inherit;font-size:12px;letter-spacing:.06em;color:var(--ink);
-  background:var(--glass);border:1px solid var(--line);border-radius:999px;
-  padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  cursor:pointer;transition:transform .12s ease,opacity .5s ease;
+  display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
+  width:100%;box-sizing:border-box;
+  font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);
+  background:transparent;border:none;border-radius:8px;
+  padding:9px 10px;cursor:pointer;transition:background .15s ease;
 }
 #loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#getPremiumMenuBtn{color:var(--bg);background:var(--gold);border-color:var(--gold);font-weight:600}
+#getPremiumMenuBtn{color:var(--gold);font-weight:600}
 #getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
-@media(hover:hover){#loginMenuBtn:hover,#howToBtn:hover{transform:scale(1.04)}#getPremiumMenuBtn:hover{transform:scale(1.04);background:var(--gold-soft,var(--gold))}}
-#loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active{transform:scale(.97)}
+#loginMenuBtn:hover,#getPremiumMenuBtn:hover,#howToBtn:hover{background:rgba(244,241,234,.1)}
+#loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active{background:rgba(244,241,234,.16)}
 #loginMenuBtn.hidden,#getPremiumMenuBtn.hidden,#howToBtn.hidden{display:none}
 body.immersive #loginMenuBtn,body.immersive #getPremiumMenuBtn,body.immersive #howToBtn{opacity:0;pointer-events:none}
 
