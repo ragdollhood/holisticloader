@@ -296,9 +296,6 @@ function _wireAuthDom() {
     accountMenu.classList.remove("show");
     accountBtn.setAttribute("aria-expanded", "false");
   }
-  // Exposed so other menus on the page (e.g. the hamburger menu built by
-  // the page's own script) can close this one when they open.
-  window.closeAccountMenu = closeAccountMenu;
   function toggleAccountMenu() {
     if (accountMenu.classList.contains("show")) closeAccountMenu();
     else openAccountMenu();
@@ -306,9 +303,6 @@ function _wireAuthDom() {
 
   accountBtn.onclick = (e) => {
     e.stopPropagation();
-    // Close the hamburger menu (if the page defines one) before opening
-    // this one, so only one menu is ever open at a time.
-    if (typeof window.closeHamburgerMenu === "function") window.closeHamburgerMenu();
     toggleAccountMenu();
   };
   document.addEventListener("click", (e) => {
