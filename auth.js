@@ -153,16 +153,18 @@ async function loginUser(email, password) {
 /* -----------------------------------------------------------------------
    5b. WELCOME EMAIL
 ----------------------------------------------------------------------- */
-async function sendWelcomeEmail() {
+async function sendWelcomeEmail(email) {
   try {
     const { data, error } = await sb.functions.invoke(
       "send-welcome-email",
-      { body: {} }
+      {
+        body: { email }
+      }
     );
 
     if (error) throw error;
 
-    console.log("Welcome email sent", data);
+    console.log("Welcome email sent:", data);
     return true;
   } catch (err) {
     console.error("sendWelcomeEmail error:", err);
