@@ -25,20 +25,11 @@
 }
 #authButtons{ display:flex; align-items:center; gap:8px; }
 
-#loginBtn, #registerBtn{
-  font-family:var(--ui,inherit); font-size:12px; letter-spacing:.04em;
-  color:var(--ink); background:var(--glass); border:1px solid var(--line);
-  border-radius:999px; padding:8px 16px; cursor:pointer; white-space:nowrap;
-  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  transition:background .2s ease, border-color .2s ease, transform .12s ease;
-}
-#loginBtn:hover, #registerBtn:hover{
-  background:var(--glass-strong); border-color:var(--gold);
-}
-#registerBtn{ color:var(--bg); background:var(--gold); border-color:var(--gold); font-weight:600; }
-#registerBtn:hover{ background:var(--gold-soft,var(--gold)); }
-
-/* ---------- Account icon + dropdown (replaces the old inline email/logout row) ---------- */
+/* ---------- Account icon + dropdown ----------
+   Both the logged-out menu (Login / Get Premium) and the logged-in menu
+   (account email / Manage Subscription / Logout) live behind the same
+   #accountBtn icon — only one of #loggedOutMenu / #loggedInMenu is
+   visible at a time, toggled by renderAuthUI() in auth.js. */
 #accountRoot{ position:relative; display:inline-flex; }
 
 #accountBtn{
@@ -64,6 +55,8 @@
 }
 #accountMenu.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
 
+#loggedOutMenu, #loggedInMenu{ display:flex; flex-direction:column; }
+
 #accountEmailLabel{
   font-size:11.5px; color:var(--muted); white-space:nowrap; overflow:hidden;
   text-overflow:ellipsis; padding:8px 10px 10px; border-bottom:1px solid var(--line);
@@ -79,10 +72,10 @@
 #accountMenu button:hover{ background:rgba(244,241,234,.1); }
 #accountMenu button:disabled{ opacity:.6; cursor:not-allowed; }
 #logoutBtn{ color:#e79a9a; }
+#registerBtn{ color:var(--gold); font-weight:600; }
 
 @media (max-width:640px){
   #authRoot{ top:8px; right:8px; }
-  #loginBtn, #registerBtn{ padding:7px 12px; font-size:11px; }
   #accountMenu{ min-width:200px; }
 }
 
