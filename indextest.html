@@ -185,6 +185,14 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   /* preset active: hide the Breathing / Sound Healing / Nutrition tabs and the line under them */
   body.preset-active #topTabs,
   body.preset-active #topNavLine{display:none}
+  /* how-to-use fills the whole screen on mobile and scrolls, instead of a small anchored box */
+  #howToBox{
+    position:fixed;inset:0;top:0;left:0;right:0;bottom:0;width:100%;height:100%;
+    max-width:none;border-radius:0;
+    padding:max(28px,calc(env(safe-area-inset-top) + 16px)) 22px max(28px,env(safe-area-inset-bottom));
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  .htu-list.htu-cols{display:flex;flex-direction:column}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
@@ -573,33 +581,43 @@ body.immersive #brand{opacity:0}
 #loginMenuBtn.hidden,#getPremiumMenuBtn.hidden,#howToBtn.hidden{display:none}
 body.immersive #loginMenuBtn,body.immersive #getPremiumMenuBtn,body.immersive #howToBtn{opacity:0;pointer-events:none}
 
-/* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button */
+/* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button.
+   Desktop: wide enough that everything fits without a scrollbar. Mobile: fills the screen and scrolls (see media query below). */
 #howToBox{
   position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
-  z-index:46;max-width:min(340px,88vw);max-height:min(72vh,560px);overflow-y:auto;scrollbar-width:thin;
+  z-index:46;width:min(680px,90vw);
   background:var(--glass-strong);border:1px solid var(--line);border-radius:16px;
-  padding:16px 16px 18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  padding:22px 26px 26px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
 }
-#howToBox::-webkit-scrollbar{width:6px}
-#howToBox::-webkit-scrollbar-thumb{background:rgba(244,241,234,.2);border-radius:6px}
 #howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+#howToClose{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;color:var(--muted);
+  background:rgba(244,241,234,.06);transition:background .2s ease,color .2s ease}
+#howToClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
+#howToClose svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 #howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
-  font-weight:600;margin-bottom:10px;white-space:nowrap}
+  font-weight:600;margin-bottom:10px}
+.htu-sub{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 #howToBox ol{list-style:none;display:flex;flex-direction:column;gap:8px}
 #howToBox li{display:flex;gap:7px;font-size:10.5px;line-height:1.45;letter-spacing:.02em;
   text-transform:uppercase;color:var(--muted)}
 #howToBox li b{color:var(--gold);font-weight:600;flex:0 0 auto}
-.htu-detail{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.htu-detail{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.htu-detail h3{margin-top:0}
 .htu-detail h4{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
-  font-weight:600;margin:14px 0 9px}
-.htu-lead{font-size:12px;line-height:1.6;letter-spacing:.01em;color:var(--muted);text-transform:none}
+  font-weight:600;margin:16px 0 10px}
+.htu-lead{font-size:12.5px;line-height:1.6;letter-spacing:.01em;color:var(--muted);text-transform:none;margin-bottom:8px}
 .htu-lead b{color:var(--ink);font-weight:600}
 .htu-list{list-style:none;display:flex;flex-direction:column;gap:10px}
-.htu-list li{font-size:11.5px;line-height:1.55;letter-spacing:.01em;color:var(--muted);text-transform:none}
+.htu-list li{font-size:12px;line-height:1.55;letter-spacing:.01em;color:var(--muted);text-transform:none}
 .htu-list li b{color:var(--gold);font-weight:600}
 .htu-list li i{color:var(--ink);font-style:normal;font-weight:500}
-.htu-foot{margin-top:14px;font-size:11px;line-height:1.6;letter-spacing:.01em;color:var(--faint);text-transform:none}
+.htu-foot{margin-top:16px;font-size:11.5px;line-height:1.6;letter-spacing:.01em;color:var(--faint);text-transform:none}
+/* on wide screens, lay the six-tab explanations out in two columns so the box stays short */
+@media(min-width:700px){
+  .htu-list.htu-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px 26px}
+}
 body.immersive #howToBox{display:none}
 
 </style>
@@ -654,7 +672,11 @@ body.immersive #howToBox{display:none}
 </header>
 
 <div id="howToBox">
-  <h3>Choose your:</h3>
+  <button id="howToClose" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <h3>Quick guide</h3>
+  <p class="htu-sub">Choose your:</p>
   <ol>
     <li><b>1.</b> Place.</li>
     <li><b>2.</b> Sound</li>
@@ -662,17 +684,27 @@ body.immersive #howToBox{display:none}
     <li><b>4.</b> Press start</li>
   </ol>
   <div class="htu-detail">
-    <p class="htu-lead">Swipe through <b>My place</b> to pick a calming scene, and <b>My sound</b> to pick the instrument that plays as you breathe. Below that sits a row of six small tabs — here's what each one does:</p>
+    <h3>Detailed guide</h3>
+    <p class="htu-lead">Pick a calming scene by choosing a picture, or tap <b>Add image</b> to use your own. Pick an instrument that will play during your breathing session.</p>
+    <p class="htu-lead">There's a row of six small tabs at the bottom — here's what each one does:</p>
     <h4>The six tabs</h4>
-    <ul class="htu-list">
-      <li><b>Frequency</b> — tunes the healing tone (Solfeggio, planetary and singing-bowl frequencies) from 45–963 Hz. Drag the slider or tap a preset value; the number shown is the frequency in Hz.</li>
+    <ul class="htu-list htu-cols">
+      <li><b>Frequency</b> — tunes the healing tone from 45–963 Hz; the number shown is the frequency in Hz. This is also where you'll find preset frequencies such as Solfeggio and planetary tones.</li>
       <li><b>Resonance</b> — controls how much reverb/echo surrounds the sound, from a dry, close tone (0%) to a spacious, cathedral-like wash (100%).</li>
-      <li><b>Breathing tempo</b> — sets the rhythm of the guided circle. Switch between <i>Breathe in</i>, <i>Hold</i> and <i>Breathe out</i> and drag the slider to set each phase's length in seconds (e.g. 4-4-4 for box breathing, or a longer exhale for 4-7-8 breathing).</li>
-      <li><b>Sound tempo</b> — decides when the sound plays. Leave <i>Follows breathing</i> on and the sound swells and fades with your breath automatically, or turn it off to choose independently whether the sound plays on the breathe-in and/or breathe-out.</li>
+      <li><b>Breathing tempo</b> — sets the rhythm of the guided circle. Switch between <i>Breathe in</i>, <i>Hold</i> and <i>Breathe out</i>, and drag the slider to set each phase's length in seconds (e.g. 4-4-4 for box breathing, or a longer exhale for 4-7-8 breathing).</li>
+      <li><b>Sound tempo</b> — decides when the sound plays. When <i>Follows breathing</i> is on, the sound swells and fades with your breath automatically. Turn it off to choose independently whether the sound plays.</li>
       <li><b>Session length</b> — sets how long the whole session runs, from 1 to 60 minutes. Drag the slider or tap one of the quick-select chips.</li>
       <li><b>Presets</b> — opens a panel of ready-made combinations (place, sound, frequency, tempo and length already tuned together, e.g. "Gong Bath" or "Moon · Sleep"). Tap one to load it instantly instead of setting everything by hand.</li>
     </ul>
-    <p class="htu-foot">Your choices are saved live as you adjust them — once you're happy, press the start button in the centre of the circle to begin. During a session you can pause, mute the sound, hide the breathing cue, or end early, all from the small controls that appear around the circle.</p>
+    <p class="htu-foot">Your choices are saved live as you adjust them — once you're happy, press the <b>start</b> button in the centre of the circle to begin your breathing session.</p>
+    <h4>During your session you can</h4>
+    <ul class="htu-list">
+      <li>Pause your session.</li>
+      <li>Hide the buttons by pressing the <b>eye</b>.</li>
+      <li>Mute the <b>sound</b>.</li>
+      <li>Hide the guiding <b>text</b> that appears inside the breathing circle.</li>
+      <li>Stop the session and go back using the arrow, or by pressing the breathing circle.</li>
+    </ul>
   </div>
 </div>
 
@@ -1376,6 +1408,8 @@ function setSound(on){S.soundOn=on;
     document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
     addEventListener('resize',()=>{ if(hBox.classList.contains('show'))positionHowToBox(); });
+    const hClose=$('howToClose');
+    if(hClose)hClose.addEventListener('click',e=>{ e.stopPropagation(); hide(); });
   }
 }
 
