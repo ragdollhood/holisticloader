@@ -964,7 +964,6 @@
     <li><b>2.</b> Voice &amp; tune.</li>
     <li><b>3.</b> Tone &amp; space.</li>
     <li><b>4.</b> Tap or drag to play.</li>
-    <li><b>5.</b> Press repeat to start a loop with your choosen BPM and length.</li>
   </ol>
   <div class="htu-detail">
     <h3>Detailed guide</h3>
@@ -1389,7 +1388,7 @@
     document.addEventListener('click',function(e){ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape')hide(); });
     addEventListener('resize',function(){ if(hBox.classList.contains('show'))positionHowToBox(); });
-    if(hClose)hClose.addEventListener('click',function(e){ e.stopPropagation(); hide(); });
+    if(hClose)hClose.addEventListener('click',function(e){ e.stopPropagation(); hide(); if(typeof window.closeHamburgerMenu==='function')window.closeHamburgerMenu(); });
   })();
 
   /* ============ KOSMOS: galaxer som roterar, norrsken, supernovor ============
@@ -3238,8 +3237,8 @@
   }
   const PAN_DEG=[0,2,4,5,7,9,11];
   const RAND={
-    gong:function(){strikeGong(Math.random());setTimeout(function(){if(ac)strikeGong(Math.random())},1500);},
-    bowl:function(){strikeBowl();setTimeout(function(){if(ac)strikeBowl()},1900);},
+    gong:function(){strikeGong(Math.random());},
+    bowl:function(){strikeBowl();},
     hand:function(){shuffled(9).slice(0,6).forEach(function(i,k){
       setTimeout(function(){if(!ac)return;strikeHand(handF()*HP_FIELDS[i].ratio,true);hpGlowAt(i);},k*300);});},
     tongue:function(){shuffled(11).slice(0,7).forEach(function(i,k){
