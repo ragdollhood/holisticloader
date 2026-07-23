@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <!-- ============ SEO ============ -->
-<title>Play Sound Healing Instruments Online — Gong, Singing Bowl, Handpan &amp; More | Holistic Loader</title>
-<meta name="description" content="Play interactive sound healing instruments free in your browser: gong, crystal &amp; Tibetan singing bowls, handpan, tongue drum, wind chimes, harp, sansula, monochord and pan flute. Tune each instrument to its own Hz frequency and relax, meditate or focus. No app, no sign-up.">
+<title>Play Gong, Singing Bowl &amp; Handpan Online | Holistic Loader</title>
+<meta name="description" content="Play a virtual gong, crystal &amp; Tibetan singing bowls, handpan and more sound healing instruments online — tuned to healing Hz frequencies, free, no app, no sign-up.">
 <meta name="keywords" content="sound healing, sound bath, play instruments online, virtual gong, singing bowl online, crystal singing bowl, tibetan singing bowl, handpan online, tongue drum, wind chimes, monochord, sansula, kalimba, pan flute, solfeggio frequencies, meditation instruments, relaxation sounds, online meditation, stress relief, mindfulness, holistic loader">
 <meta name="author" content="Holistic Loader">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -60,6 +60,47 @@
     "Handpan, tongue drum, wind chimes and triangle",
     "Harp, sansula, monochord and pan flute",
     "Randomized play patterns with tempo and duration controls"
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I play sound healing instruments online for free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Holistic Loader's sound healing page is free to use directly in your browser, with no app download and no sign-up required."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which instruments can I play?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can play a gong, crystal and Tibetan singing bowls, handpan, tongue drum, wind chimes, harp, sansula, monochord, pan flute and several other sound healing and percussion instruments."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I tune the instruments to a specific frequency?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Each instrument can be tuned to its own Hz frequency, so you can explore specific tones for relaxation, meditation or focus."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I record what I play?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The page includes a record button so you can capture your session and download it as an audio file."
+      }
+    }
   ]
 }
 </script>
@@ -3237,7 +3278,7 @@
       const a=$('recDl');
       if(a.href&&a.href.indexOf('blob:')===0) URL.revokeObjectURL(a.href);
       a.href=URL.createObjectURL(blob);
-      a.download='gong-on-a-go.'+ext;
+      a.download='holistic-loader-sound-healing.'+ext;
       a.hidden=false;
       $('recStatus').textContent='Recording ready ('+Math.max(1,Math.round(blob.size/1024))+' kB). Tap below to save it.';
       $('rec').textContent='● RECORD';
