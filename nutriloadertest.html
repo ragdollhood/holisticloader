@@ -301,16 +301,18 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
   border:1.5px solid #ffd98a;
   border-top:none;
   border-radius:0 0 30px 30px;
-  background:linear-gradient(180deg, rgba(20,14,28,.74) 0%, rgba(14,10,20,.62) 100%);
+  background:rgba(6,4,9,.82);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
   display:flex;align-items:center;justify-content:center;
 }
 .h1-frame h1{
-  font-family:Georgia,serif;font-size:clamp(15px,4.2vw,20px);font-weight:600;
+  font-family:Georgia,serif;font-size:clamp(15px,4.2vw,20px);font-weight:700;
   letter-spacing:.14em;text-align:center;line-height:1.4;max-width:none;margin:0 auto;
   background:linear-gradient(90deg,var(--gold),var(--violet));
   -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:saturate(1.35) brightness(1.08);
+  text-shadow:0 0 14px rgba(255,217,138,.28);
 }
 @media (max-width:560px){
   .h1-frame{
@@ -3631,7 +3633,7 @@ registerVisit();
     var tabs=document.getElementById('topTabs');
     var frame=document.querySelector('.h1-frame');
     if(!tabs||!frame) return;
-    var w=tabs.getBoundingClientRect().width+30;
+    var w=tabs.getBoundingClientRect().width;
     var maxW=window.innerWidth*0.96;
     frame.style.width=Math.min(w,maxW)+'px';
   }
