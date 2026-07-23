@@ -59,8 +59,8 @@
   /* ---- rubrikflik: samma stil som på instruments-sidan, en nedfälld flik under navigationen ---- */
   .h1-frame{
     position:sticky;
-    top:max(56px,calc(env(safe-area-inset-top) + 44px));
-    margin:-36px auto 0;
+    top:max(46px,calc(env(safe-area-inset-top) + 34px));
+    margin:-46px auto 0;
     z-index:30;
     width:min(94vw,820px);
     padding:9px 24px;
@@ -79,8 +79,8 @@
   }
   @media (max-width:560px){
     .h1-frame{
-      top:max(38px,calc(env(safe-area-inset-top) + 24px));
-      margin-top:-22px;
+      top:max(42px,calc(env(safe-area-inset-top) + 28px));
+      margin-top:-32px;
       width:92vw;
       padding:9px 14px;
       border-radius:0 0 18px 18px;
@@ -102,7 +102,7 @@
   #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
     background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
     opacity:.55}
-  #donateWrap{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto}
+  #donateWrap{position:fixed;left:16px;top:max(8px,env(safe-area-inset-top));z-index:45;pointer-events:auto}
   @supports(padding:max(0px)){
     #donateWrap{left:max(16px,env(safe-area-inset-left))}
   }
@@ -239,6 +239,7 @@ text-decoration:none;
   .premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--ink);border-color:rgba(243,239,228,.4)}
 </style>
 <link rel="stylesheet" href="auth-ui.css">
+<style>#topNav #authRoot{top:9px}@media(max-width:640px){#topNav #authRoot{top:5px}}</style>
 </head>
 <body>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
