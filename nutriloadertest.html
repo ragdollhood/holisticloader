@@ -361,7 +361,7 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
 .layout{
   display:grid;grid-template-columns:1.15fr 1fr;gap:22px;
   max-width:1280px;margin:26px auto 0;padding:0 22px;align-items:start}
-.body-col{position:sticky;top:var(--bodyStickyTop,92px);}
+.body-col{position:sticky;top:22px;}
 .leftcol{display:flex;flex-direction:column;gap:22px;min-width:0}
 #nutriSection{max-width:1280px;margin:22px auto 0;padding:0 22px;position:relative;z-index:1}
 #nutriWide{width:100%}
@@ -992,6 +992,64 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 #getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
 @media(hover:hover){#loginMenuBtn:hover{transform:scale(1.04)}#getPremiumMenuBtn:hover{transform:scale(1.04)}}
 #loginMenuBtn:active,#getPremiumMenuBtn:active{transform:scale(.97)}
+
+/* "How to use" — same button treatment as Login / Get Premium */
+#howToBtn{
+  display:inline-flex;align-items:center;justify-content:flex-start;flex:0 0 auto;gap:8px;
+  font-family:inherit;font-size:12px;letter-spacing:.06em;color:var(--tn-ink);
+  background:var(--tn-panel);border:1px solid var(--tn-line);border-radius:999px;
+  padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  cursor:pointer;transition:transform .12s ease,opacity .5s ease;
+}
+#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+@media(hover:hover){#howToBtn:hover{transform:scale(1.04)}}
+#howToBtn:active{transform:scale(.97)}
+
+/* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button.
+   Desktop: wide enough that everything fits without a scrollbar. Mobile: fills the screen and scrolls (see media query below). */
+#howToBox{
+  position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
+  z-index:46;width:min(680px,90vw);box-sizing:border-box;
+  max-height:min(80vh,720px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  background:var(--glass-strong);border:1px solid var(--tn-line);border-radius:16px;
+  padding:22px 26px 26px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
+  color:var(--tn-ink);
+}
+#howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+#howToClose{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;color:var(--muted);z-index:2;
+  background:rgba(20,14,26,.7);transition:background .2s ease,color .2s ease}
+#howToClose:hover{background:rgba(243,239,228,.14);color:var(--tn-ink)}
+#howToClose svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+#howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--tn-gold);
+  font-weight:600;margin-bottom:10px}
+.htu-sub{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+#howToBox ol{list-style:none;display:flex;flex-direction:column;gap:8px}
+#howToBox ol li{display:flex;gap:7px;font-size:10.5px;line-height:1.45;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--muted)}
+#howToBox ol li b{color:var(--tn-gold);font-weight:600;flex:0 0 auto}
+.htu-detail{margin-top:18px;padding-top:16px;border-top:1px solid var(--tn-line)}
+.htu-detail h3{margin-top:0}
+.htu-detail h4{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tn-gold);
+  font-weight:600;margin:16px 0 10px}
+.htu-lead{font-size:12.5px;line-height:1.6;letter-spacing:.01em;color:var(--muted);text-transform:none;margin-bottom:8px}
+.htu-lead b{color:var(--tn-ink);font-weight:600}
+/* always a single, generously-wrapping column */
+.htu-list{list-style:none;display:flex;flex-direction:column;gap:8px;width:100%}
+.htu-list li{
+  font-size:12px;line-height:1.55;letter-spacing:.01em;color:var(--muted);text-transform:none;
+  padding:10px 13px;border:1px solid var(--tn-line);border-radius:12px;background:rgba(243,239,228,.035);
+  word-wrap:break-word;overflow-wrap:break-word;
+}
+.htu-list li b{
+  display:block;margin-bottom:3px;color:var(--tn-gold);font-weight:600;
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+}
+.htu-list li i{color:var(--tn-ink);font-style:normal;font-weight:500}
+.htu-ic{width:1em;height:1em;vertical-align:-0.15em;stroke:currentColor;fill:none;stroke-width:1.8;margin:0 2px}
+.htu-foot{margin-top:16px;font-size:11.5px;line-height:1.6;letter-spacing:.01em;color:var(--faint);text-transform:none}
+
 @media(max-width:560px){
   #topTabs .tab{padding:8px 13px;font-size:11px}
   #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
@@ -1002,6 +1060,13 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   /* pull page content up much closer to the gold line under the tabs */
   body{padding-top:max(74px,calc(env(safe-area-inset-top) + 58px))}
   header{padding-top:0}
+  /* how to use: fills the whole screen and only scrolls vertically, never sideways */
+  #howToBox{
+    position:fixed;inset:0;top:0;left:0;right:0;bottom:0;width:100%;height:100%;
+    max-width:none;max-height:none;border-radius:0;
+    padding:max(28px,calc(env(safe-area-inset-top) + 16px)) 18px max(28px,env(safe-area-inset-bottom));
+  }
+  #howToClose{top:max(14px,env(safe-area-inset-top));right:14px}
 }
 
 /* ===================== PREMIUM SYNC BADGE (log book) =====================
@@ -1151,11 +1216,47 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
         <button id="getPremiumMenuBtn" type="button">
           <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
         </button>
+        <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
+          <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
+        </button>
         <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
           <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
           <span class="clabel">Contact</span>
           <a class="ctext" id="contactEmail" href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a>
         </div>
+      </div>
+    </div>
+
+    <div id="howToBox">
+      <button id="howToClose" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <h3>Quick guide</h3>
+      <p class="htu-sub">Choose your:</p>
+      <ol>
+        <li><b>1.</b> Food, from the Pantry</li>
+        <li><b>2.</b> Plate, by adding what you picked</li>
+        <li><b>3.</b> Body part, to see what it's given</li>
+        <li><b>4.</b> Log, to save the day and track habits</li>
+      </ol>
+      <div class="htu-detail">
+        <h3>Detailed guide</h3>
+        <p class="htu-lead">Search or scroll the <b>Pantry</b> shelves for a food, or use one of the six meal tabs above the plate to filter by breakfast, lunch, dinner and so on. Tap a food to open its quantity slider, then add it to your plate.</p>
+        <p class="htu-lead">Once something is on your plate, tap it again any time to adjust the amount or remove it — nothing is locked in.</p>
+        <h4>The three steps</h4>
+        <ul class="htu-list">
+          <li><b>1 · Plan your plate</b> — pick food from the Pantry and see it land on your plate. This is where a day's eating takes shape.</li>
+          <li><b>2 · Feed your body</b> — tap an organ or one of its side bars on the body diagram to see which nutrients are looking after it, and why.</li>
+          <li><b>3 · See your nutrients</b> — the bars show how much of each vitamin and mineral your plate has given you so far today; tap one to see which body parts it cares for.</li>
+        </ul>
+        <p class="htu-lead">Nothing here is about counting or restricting — it's about seeing what your food actually gives you.</p>
+        <h4>Log & habits</h4>
+        <ul class="htu-list">
+          <li><b>Food log</b> — tap the logbook under the plate to save today's plate and browse previous days as a graph.</li>
+          <li><b>Bad habits</b> — the sugar, alcohol and cigarette trackers in the Pantry let you tally habits you'd rather keep an eye on; they get their own logbook and graph too.</li>
+          <li><b>Clean plates</b> — tap the broom button to clear the plate and start fresh.</li>
+          <li><b>Sync</b> — Premium keeps both logs saved to your account and synced across devices; without it, they stay on this device only.</li>
+        </ul>
       </div>
     </div>
 
@@ -3449,22 +3550,6 @@ document.getElementById('langBtn').addEventListener('click', ()=>{ setTimeout(up
 updateLogBtnLabel();
 
 
-/* Keep the sticky body/organ-bars column from scrolling up underneath the
-   dark header title flap: measure how far down that flap's stuck position
-   ends and use that as the column's sticky "top" offset (plus a small gap). */
-function updateBodyStickyTop(){
-  const frame = document.querySelector('.h1-frame');
-  if(!frame) return;
-  const topVal = parseFloat(getComputedStyle(frame).top) || 0;
-  const gap = window.matchMedia('(max-width:680px)').matches ? 10 : 16;
-  const total = Math.ceil(topVal + frame.offsetHeight + gap);
-  document.documentElement.style.setProperty('--bodyStickyTop', total+'px');
-}
-window.addEventListener('resize',updateBodyStickyTop);
-window.addEventListener('load',updateBodyStickyTop);
-if(document.fonts && document.fonts.ready) document.fonts.ready.then(updateBodyStickyTop).catch(()=>{});
-updateBodyStickyTop();
-
 window.addEventListener('resize',()=>renderPlate());
 buildBody(); buildOrganBars(); buildMicrowave(); buildSugarBox(); buildAlcoholBox(); buildCigBox(); renderStatic(); renderPantry(); renderScene(); render();
 </script>
@@ -3549,7 +3634,7 @@ registerVisit();
     if(mBtn&&mPanel){
       mBtn.addEventListener('click',function(e){ e.stopPropagation();
         const open=mPanel.classList.toggle('show'); mBtn.classList.toggle('open',open); mBtn.setAttribute('aria-expanded',open?'true':'false');
-        if(!open){ const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
+        if(!open){ const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); } });
       document.addEventListener('click',function(e){ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
       document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeMenu(); });
     }
@@ -3569,6 +3654,28 @@ registerVisit();
         const headerRegisterBtn=$('registerBtn'); if(headerRegisterBtn)headerRegisterBtn.click();
       });
     }
+  })();
+
+  /* how to use: tap to reveal the "Choose your" steps box, tap again / click outside to close */
+  (function(){
+    const hBtn=$('howToBtn'), hBox=$('howToBox');
+    if(!hBtn||!hBox) return;
+    const hide=function(){ hBox.classList.remove('show'); hBtn.setAttribute('aria-expanded','false'); };
+    function positionHowToBox(){
+      if(innerWidth<=560)return;
+      const r=hBtn.getBoundingClientRect();
+      const maxLeft=innerWidth-hBox.offsetWidth-12;
+      hBox.style.left=Math.max(12,Math.min(r.left,maxLeft))+'px';
+      hBox.style.top=(r.bottom+7)+'px';
+    }
+    hBtn.addEventListener('click',function(e){ e.stopPropagation();
+      positionHowToBox();
+      const open=hBox.classList.toggle('show'); hBtn.setAttribute('aria-expanded',open?'true':'false'); });
+    document.addEventListener('click',function(e){ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape')hide(); });
+    addEventListener('resize',function(){ if(hBox.classList.contains('show'))positionHowToBox(); });
+    const hClose=$('howToClose');
+    if(hClose)hClose.addEventListener('click',function(e){ e.stopPropagation(); hide(); });
   })();
 
   /* contact: tap the envelope to expand it and reveal the email */
