@@ -363,8 +363,8 @@ footer.note a{ color:var(--gold); text-decoration:underline; }
     submitBtn.textContent = 'Creating your account…';
 
     try {
-      const { user } = await registerUser(email, password);
-await sendWelcomeEmail();
+const { user } = await registerUser(email, password);
+await sendWelcomeEmail(email);
 
       // The registration trigger (see migration.sql) applies any pending
       // Stripe payment for this email immediately. If the webhook fired
