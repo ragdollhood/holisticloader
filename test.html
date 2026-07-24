@@ -1123,8 +1123,7 @@ function currentFreqRange(){return S.advanced?FULL_FREQ_RANGE:instrumentRange(S.
 function switchSound(id){
   S.sound=id;
   const r=instrumentRange(id);
-  if(S.advanced){S.freq=Math.min(FULL_FREQ_RANGE.max,Math.max(FULL_FREQ_RANGE.min,S.freq));}
-  else{S.freq=r.def;}
+  S.freq=r.def;
   clearPreset();applyFreqBounds();updateFreq();
 }
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
