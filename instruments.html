@@ -1096,14 +1096,14 @@
 
   <div class="instr-label">Crystal bowl</div>
   <div class="bowl-wrap" id="bowlWrap">
-    <img loading="lazy" src="images/crystal_bowl.jpg" alt="Transparent crystal singing bowl with sacred geometry and a mallet">
+    <img loading="lazy" src="images/quartz_bowl.jpg" alt="Transparent crystal singing bowl with sacred geometry and a mallet">
   </div>
   <div class="voice-row" id="bowlVoices">
-    <button data-v="crystal" class="sel">Crystal</button>
+    <button data-v="crystal">Crystal</button>
     <button data-v="tibetan">Tibetan</button>
-    <button data-v="deep">Deep quartz</button>
+    <button data-v="deep" class="sel">Deep quartz</button>
   </div>
-  <div class="tune b"><span>TUNE</span><input type="range" id="bowlTune" min="280" max="880" value="480" aria-label="Tune the bowl"><span id="bowlHz">480 Hz</span></div>
+  <div class="tune b"><span>TUNE</span><input type="range" id="bowlTune" min="280" max="880" value="432" aria-label="Tune the bowl"><span id="bowlHz">432 Hz</span></div>
   <div class="opt-slider bpm-slider" id="bowlBpmRow" hidden><span>BPM</span><input type="range" id="bowlBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for bowl"><span id="bowlBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="bowlTimeRow" hidden><span>TIME</span><input type="range" id="bowlTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for bowl"><span id="bowlTimeVal">30 sec</span></div>
   <div class="rand-row">
@@ -1972,7 +1972,7 @@
     tibetan:{mul:1,dec:8,parts:[[1.93,.28,.6],[3.4,.1,.35],[5.1,.05,.18]],att:.012,beatMul:1.6,ping:[5.8,.08,.25]},
     deep:{mul:.5,dec:18,parts:[[2,.15,.6],[2.32,.08,.45]],att:.09,beatMul:.7,ping:[4.2,.04,.7]}
   };
-  let bowlVoice='crystal';
+  let bowlVoice='deep';
   function strikeBowl(){
     const V=BOWL_VOICES[bowlVoice];
     const t0=ac.currentTime+.02;
@@ -3259,7 +3259,7 @@
     tamtam:'images/tam-tam_drum.jpg'
   };
   const BOWL_IMGS={
-    crystal:bowlImgEl.src,
+    crystal:'images/crystal_bowl.jpg',
     tibetan:'images/tibetan_bowl.jpg',
     deep:'images/quartz_bowl.jpg'
   };
