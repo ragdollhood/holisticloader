@@ -1577,7 +1577,13 @@ const VOICES={
   quartz_bowl:{partials:[[1,1],[1.006,.8],[1.5,.1],[2,.22],[3,.07]],type:'sine',attack:.45,decay:7.5,lp:5200,peak:.12},
   tibetan_bowl:{partials:[[1,1],[1.003,.7],[2.76,.4],[4.07,.22],[5.43,.12],[6.8,.06]],type:'sine',attack:.03,decay:6,lp:3200,peak:.13,noise:.32,noiseFreq:3.0,noiseDur:.12},
   /* gongs — dense shimmering wash */
-  gong:{partials:[[1,1],[1.52,.42],[2,.5],[2.67,.33],[3.46,.22],[4.16,.15],[5.43,.1]],type:'sine',attack:.01,decay:7,lp:3000,peak:.13,noise:.55,noiseFreq:2.4,noiseDur:.26},
+  // "gong" = the Symphonic voice. Redesigned for the "Sound Creation Gong No.3
+  // Earth" character: alive, multi-layered structure — coarse, wide-beating
+  // sub + fundamental for peaceful, unfathomable-dark lows, under a dense,
+  // finely-spaced cluster of upper partials that swell/foam in (3rd tuple
+  // value = that partial's own attack time) rather than strike, all dissolving
+  // into a long tail.
+  gong:{partials:[[.497,.24],[.503,.24],[.994,.42],[1,.85],[1.008,.42],[1.34,.24],[1.78,.16],[2.68,.14,.45],[2.71,.13,.5],[3.36,.10,.55],[4.07,.075,.62],[4.97,.05,.7],[6.1,.032,.78],[7.35,.02,.85]],type:'sine',attack:.03,decay:11,lp:5200,peak:.13,noise:.42,noiseFreq:1.7,noiseDur:.5},
   tibetansk_gong:{partials:[[0.5,.5],[1,1],[1.48,.4],[2,.45],[2.7,.28],[3.5,.18]],type:'sine',attack:.015,decay:8.5,lp:2200,peak:.13,fmul:.7,noise:.5,noiseFreq:1.8,noiseDur:.3},
   'tam-tam_drum':{partials:[[0.5,.6],[1,1],[1.34,.5],[1.83,.45],[2.4,.35],[3.1,.25],[4.2,.16]],type:'sine',attack:.008,decay:9,lp:1800,peak:.13,fmul:.6,noise:.7,noiseFreq:1.2,noiseDur:.4},
   /* struck / plucked melodic */
@@ -1637,10 +1643,13 @@ function playVoice(type,freq,when,mult=1){
   vg.gain.setValueAtTime(.0001,t);vg.gain.linearRampToValueAtTime(peak,t+attack);vg.gain.exponentialRampToValueAtTime(.0001,t+attack+decay);
   let vibGain=null;
   if(cfg.vib){const lfo=ctx.createOscillator();lfo.frequency.value=cfg.vib.rate;vibGain=ctx.createGain();vibGain.gain.value=cfg.vib.depth;lfo.connect(vibGain);lfo.start(t);lfo.stop(t+attack+decay+.15);}
-  cfg.partials.forEach(([ratio,amp])=>{const o=ctx.createOscillator();o.type=cfg.type;o.frequency.value=f0*ratio;
+  cfg.partials.forEach(([ratio,amp,pAtt])=>{const o=ctx.createOscillator();o.type=cfg.type;o.frequency.value=f0*ratio;
     if(cfg.drop){o.frequency.setValueAtTime(f0*ratio*Math.pow(2,cfg.drop/12),t);o.frequency.exponentialRampToValueAtTime(f0*ratio,t+attack+.12);}
     if(vibGain)vibGain.connect(o.detune);
-    const g=ctx.createGain();g.gain.value=amp;o.connect(g);g.connect(vg);o.start(t);o.stop(t+attack+decay+.15);});
+    const g=ctx.createGain();
+    if(pAtt!=null){g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(amp,t+pAtt);}
+    else g.gain.value=amp;
+    o.connect(g);g.connect(vg);o.start(t);o.stop(t+attack+decay+.15);});
   if(cfg.noise){const ndur=cfg.noiseDur||.18,nb=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*ndur)),ctx.sampleRate),nd=nb.getChannelData(0);
     for(let i=0;i<nd.length;i++)nd[i]=(Math.random()*2-1)*Math.pow(1-i/nd.length,3);
     const ns=ctx.createBufferSource();ns.buffer=nb;const nf=ctx.createBiquadFilter();nf.type='bandpass';nf.frequency.value=f0*(cfg.noiseFreq||2.2);nf.Q.value=cfg.noiseQ||.7;
