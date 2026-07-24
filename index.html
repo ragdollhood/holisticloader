@@ -942,7 +942,7 @@ const PRESET_ICONS = {"gongbath": "images/gongbath.jpg", "earthom": "images/eart
 const INSTRUMENT_ICONS = {"crystal_bowl": "images/crystal_bowl.jpg", "quartz_bowl": "images/quartz_bowl.jpg", "tibetan_bowl": "images/tibetan_bowl.jpg", "gong": "images/gong.jpg", "tibetansk_gong": "images/tibetansk_gong.jpg", "tam-tam_drum": "images/tam-tam_drum.jpg", "handpan": "images/handpan.jpg", "tonguedrum": "images/tonguedrum.jpg", "sansula": "images/sansula.jpg", "harpa": "images/harpa.jpg", "monochord": "images/monochord.jpg", "panflute": "images/panflute.jpg", "native_american_fluit": "images/native_american_fluit.jpg", "chime": "images/chimes.jpg", "triangel": "images/triangel.jpg", "djembe": "images/djembe.jpg", "shaman_drum": "images/shaman_drum.jpg", "thunder_drum": "images/thunder_drum.jpg", "ocean_drum": "images/ocean_drum.jpg", "rainstick": "images/rainstick.jpg"};
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
-const S = {bg:IMAGES[0].id, sound:'crystal_bowl', freq:432, tempo:12, tempoFollow:true,
+const S = {bg:IMAGES[0].id, sound:'quartz_bowl', freq:432, tempo:12, tempoFollow:true,
   animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
@@ -1056,7 +1056,7 @@ $('fileInput').addEventListener('change',e=>{
 
 /* sound type + preview */
 const SOUNDS=[
-  {id:'tibetan_bowl',label:'Tibetan bowl'},{id:'crystal_bowl',label:'Crystal bowl'},{id:'quartz_bowl',label:'Quartz bowl'},
+  {id:'quartz_bowl',label:'Quartz bowl'},{id:'crystal_bowl',label:'Crystal bowl'},{id:'tibetan_bowl',label:'Tibetan bowl'},
   {id:'gong',label:'Gong'},{id:'tibetansk_gong',label:'Tibetan gong'},{id:'tam-tam_drum',label:'Tam-tam'},
   {id:'handpan',label:'Handpan'},{id:'tonguedrum',label:'Tongue drum'},{id:'sansula',label:'Sansula'},
   {id:'harpa',label:'Harp'},{id:'monochord',label:'Monochord'},{id:'panflute',label:'Pan flute'},
@@ -1065,7 +1065,7 @@ const SOUNDS=[
   {id:'rainstick',label:'Rainstick'},
 ];
 const SGROUPS=[
-  {id:'bowl', label:'Bowl',  cover:'tibetan_bowl', members:['crystal_bowl','quartz_bowl','tibetan_bowl']},
+  {id:'bowl', label:'Bowl',  cover:'quartz_bowl', members:['quartz_bowl','crystal_bowl','tibetan_bowl']},
   {id:'gong', label:'Gong',  cover:'gong',         members:['gong','tibetansk_gong','tam-tam_drum']},
   {id:'handpan',label:'Handpan',cover:'handpan',   members:['handpan','tonguedrum']},
   {id:'string',label:'String',cover:'harpa',       members:['harpa','monochord']},
@@ -1074,6 +1074,7 @@ const SGROUPS=[
 ];
 const SMEMBER2GROUP={}; SGROUPS.forEach(g=>g.members.forEach(id=>SMEMBER2GROUP[id]=g));
 function sgroupOf(id){return SMEMBER2GROUP[id]||null;}
+const GROUP_DEFAULT_FREQ={gong:80};
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
 const FREE_SOUND_GROUPS=['bowl','gong'];
@@ -1121,7 +1122,11 @@ function onSoundGroupTap(g,tileEl){
   closeSub();
   if(openSGroup===g.id){closeSoundSub();return;}
   openSGroup=g.id;
-  if(!g.members.includes(S.sound)){S.sound=g.cover;clearPreset();updateSoundActiveStates();preview();}
+  if(!g.members.includes(S.sound)){
+    S.sound=g.cover;
+    if(GROUP_DEFAULT_FREQ[g.id]!==undefined){S.freq=GROUP_DEFAULT_FREQ[g.id];updateFreq();}
+    clearPreset();updateSoundActiveStates();preview();
+  }
   renderSoundSub(g,tileEl);
 }
 function renderSoundSub(g,tileEl){
@@ -1132,7 +1137,13 @@ function renderSoundSub(g,tileEl){
     const it=document.createElement('button');
     it.className='sub-item'+(id===S.sound?' active':''); it.dataset.sndid=id;
     it.innerHTML=`<div class="pic" style="background-image:url(${INSTRUMENT_ICONS[id]||''})"></div><div class="cap">${sndLabel(id)}</div>`;
-    it.onclick=()=>{S.sound=id;clearPreset();renderSounds();preview();closeSoundSub();};
+    it.onclick=()=>{
+      const prevG=sgroupOf(S.sound);
+      S.sound=id;
+      const newG=sgroupOf(id);
+      if(newG&&GROUP_DEFAULT_FREQ[newG.id]!==undefined&&(!prevG||prevG.id!==newG.id)){S.freq=GROUP_DEFAULT_FREQ[newG.id];updateFreq();}
+      clearPreset();renderSounds();preview();closeSoundSub();
+    };
     s.appendChild(it);
   });
   s.classList.add('show'); positionSoundSub(tileEl);
@@ -1473,7 +1484,7 @@ function fmt(sec){sec=Math.max(0,Math.ceil(sec));const m=Math.floor(sec/60),s=se
 
 /* PRESETS */
 const PRESETS=[
-  {id:'gongbath', name:'Gong Bath', theme:'Deep gong waves, slow & immersive', sound:'gong', freq:73, tempo:7, br:[4,0,8], anim:'sound', len:15, bg:'rymden'},
+  {id:'gongbath', name:'Gong Bath', theme:'Deep gong waves, slow & immersive', sound:'gong', freq:80, tempo:7, br:[4,0,8], anim:'sound', len:15, bg:'rymden'},
   {id:'earthom',  name:'Earth · OM', theme:'Grounding 136 Hz hum', sound:'crystal_bowl', freq:136.10, tempo:9, br:[4,2,6], anim:'breath', len:10, bg:'hage'},
   {id:'moonsleep',name:'Moon · Sleep', theme:'Soft 210 Hz, long exhales', sound:'tibetan_bowl', freq:210.42, tempo:11, br:[4,7,8], anim:'breath', len:20, bg:'norrsken', locked:true},
   {id:'sunrise',  name:'Sun · Vitality', theme:'Warm 126 Hz to awaken', sound:'harpa', freq:126.22, tempo:6, br:[4,0,6], anim:'breath', len:10, bg:'bergen', locked:true},
