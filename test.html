@@ -232,13 +232,16 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .timer-glow{text-align:center;font-size:15px;font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em;
   text-shadow:0 0 10px rgba(231,201,162,.75),0 0 22px rgba(231,201,162,.4);margin:-2px 0 0}
 
-/* ===== advanced frequency mode toggle ===== */
-#advRow{display:flex;align-items:center;justify-content:center;gap:10px;max-width:420px;margin:2px auto 6px;padding:0 6px}
+/* ===== frequency range selector (Natural range / Full range) ===== */
+#advRow{display:flex;justify-content:center;gap:8px;max-width:420px;margin:2px auto 8px;padding:0 6px}
 #advRow.hidden{display:none}
-#advRow .adv-lbl{display:flex;flex-direction:column;gap:1px;text-align:right}
-#advRow .adv-lbl b{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
-#advRow .adv-lbl span{font-size:10px;color:var(--faint);font-variant-numeric:tabular-nums}
-#advRow .swtoggle{flex:0 0 auto}
+.range-btn{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px 7px;
+  border-radius:12px;border:1px solid var(--line);background:rgba(244,241,234,.04);
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
+.range-btn .rb-title{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.range-btn .rb-val{font-size:12.5px;color:var(--faint);font-variant-numeric:tabular-nums;font-weight:600}
+.range-btn.active{background:rgba(110,214,143,.16);border-color:rgba(110,214,143,.6);box-shadow:0 0 12px rgba(110,214,143,.35)}
+.range-btn.active .rb-title,.range-btn.active .rb-val{color:#6ed68f}
 
 /* ===== shared control tab bar (Frequency / Resonance / Breathing tempo / Sound tempo / Session / Presets) ===== */
 #ctrlTabs{display:flex;justify-content:center;gap:0;max-width:420px;margin:0 auto 8px;padding:0 6px}
@@ -839,8 +842,12 @@ body.immersive #howToBox{display:none}
       <span class="v" id="ctrlVal">432 Hz · A4</span>
     </div>
     <div id="advRow" class="hidden">
-      <button type="button" id="advancedToggle" class="swtoggle" aria-pressed="false" aria-label="Advanced mode — free frequency range"><span class="sw-knob"></span></button>
-      <span class="adv-lbl"><b id="advTitle">Advanced mode</b><span id="advRangeTxt">200–700 Hz</span></span>
+      <button type="button" id="rangeNatural" class="range-btn" data-range="natural" aria-pressed="true">
+        <span class="rb-title">Natural range</span><span class="rb-val" id="rangeNaturalVal">300–600 Hz</span>
+      </button>
+      <button type="button" id="rangeFull" class="range-btn" data-range="full" aria-pressed="false">
+        <span class="rb-title">Full range</span><span class="rb-val">45–963 Hz</span>
+      </button>
     </div>
     <div class="freqfront hidden" id="lengthFrontWrap">
       <input type="range" id="timerSlider" min="1" max="60" step="1" value="10">
@@ -1254,21 +1261,22 @@ function applyFreqBounds(){
   syncAdvancedUI();
 }
 function syncAdvancedUI(){
-  const btn=$('advancedToggle'); if(!btn)return;
-  btn.classList.toggle('on',S.advanced);btn.setAttribute('aria-pressed',S.advanced?'true':'false');
-  const rt=$('advRangeTxt');
-  if(rt){
-    if(S.advanced)rt.textContent='Free range · '+FULL_FREQ_RANGE.min+'–'+FULL_FREQ_RANGE.max+' Hz';
-    else{const r=instrumentRange(S.sound);rt.textContent=fmtHz(r.min)+'–'+fmtHz(r.max)+' Hz';}
-  }
+  const bn=$('rangeNatural'), bf=$('rangeFull'); if(!bn||!bf)return;
+  bn.classList.toggle('active',!S.advanced); bn.setAttribute('aria-pressed',S.advanced?'false':'true');
+  bf.classList.toggle('active',S.advanced); bf.setAttribute('aria-pressed',S.advanced?'true':'false');
+  const rt=$('rangeNaturalVal');
+  if(rt){const r=instrumentRange(S.sound);rt.textContent=fmtHz(r.min)+'–'+fmtHz(r.max)+' Hz';}
 }
-$('advancedToggle').onclick=()=>{
-  S.advanced=!S.advanced;
-  if(!S.advanced){ /* leaving advanced mode: snap back to this instrument's preset */
+function setFreqRange(advanced){
+  if(S.advanced===advanced)return;
+  S.advanced=advanced;
+  if(!S.advanced){ /* back to natural range: snap to this instrument's preset */
     const r=instrumentRange(S.sound); S.freq=r.def; clearPreset();
   }
   applyFreqBounds();updateFreq();preview();
-};
+}
+$('rangeNatural').onclick=()=>setFreqRange(false);
+$('rangeFull').onclick=()=>setFreqRange(true);
 function renderQuick(){const w=$('freqQuick');if(!w)return;w.innerHTML='';
   QUICK.forEach(f=>{const b=document.createElement('button');b.className='chip sm'+(Math.abs(S.freq-f)<0.5?' active':'');b.textContent=f+' Hz';
     b.onclick=()=>setFreq(f);w.appendChild(b);});}
