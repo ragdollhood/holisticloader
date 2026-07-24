@@ -1602,6 +1602,11 @@ const VOICES={
 VOICES.crystal=VOICES.crystal_bowl;VOICES.bowl=VOICES.tibetan_bowl;VOICES.harp=VOICES.harpa;VOICES.bell=VOICES.tonguedrum;VOICES.soft=VOICES.handpan;
 function initAudio(){if(audio.ctx)return;
   const ctx=new (window.AudioContext||window.webkitAudioContext)();
+  // iOS Safari kan rapportera state='running' efter resume() utan att
+  // faktiskt släppa igenom ljud till högtalaren förrän en källa verkligen
+  // startat inom samma användar-gest. Lura igång ljudmotorn med en tyst,
+  // 1-sample lång buffer direkt när kontexten skapas.
+  try{const ub=ctx.createBuffer(1,1,22050);const us=ctx.createBufferSource();us.buffer=ub;us.connect(ctx.destination);us.start(0);}catch(e){}
   const master=ctx.createGain();master.gain.value=MASTER;
   const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;comp.knee.value=24;comp.ratio.value=3;comp.attack.value=.01;comp.release.value=.3;
   const limiter=ctx.createDynamicsCompressor();limiter.threshold.value=-1;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.002;limiter.release.value=.1;
@@ -1645,7 +1650,9 @@ function playFinal(){const ctx=audio.ctx,t=ctx.currentTime+.05;
   audio.revGain.gain.setValueAtTime(audio.revGain.gain.value,t);audio.revGain.gain.linearRampToValueAtTime(.8,t+.1);
   playVoice('tibetansk_gong',S.freq*.5,t,1.4);playVoice('crystal_bowl',S.freq*.5,t+.05,1.3);}
 ['pointerdown','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,function once(){
-  try{initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();}catch(e){}
+  try{initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
+    const ub=audio.ctx.createBuffer(1,1,22050);const us=audio.ctx.createBufferSource();us.buffer=ub;us.connect(audio.ctx.destination);us.start(0);
+  }catch(e){}
   document.removeEventListener(ev,once);},{passive:true}));
 
 /* scheduler */
