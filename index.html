@@ -232,6 +232,15 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .timer-glow{text-align:center;font-size:15px;font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em;
   text-shadow:0 0 10px rgba(231,201,162,.75),0 0 22px rgba(231,201,162,.4);margin:-2px 0 0}
 
+/* ===== frequency range selector (Natural range / Full range) ===== */
+#advRow{display:flex;align-items:center;justify-content:center;gap:10px;max-width:420px;margin:0 auto 6px;padding:0 6px}
+#advRow.hidden{display:none}
+#advRow .rdiv{color:var(--faint);font-size:11px}
+.range-btn{display:flex;flex-direction:column;align-items:center;gap:1px;padding:2px 2px;background:none;border:none}
+.range-btn .rb-title{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:600;transition:color .2s ease}
+.range-btn .rb-val{font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums;transition:color .2s ease}
+.range-btn.active .rb-title,.range-btn.active .rb-val{color:#6ed68f;text-shadow:0 0 10px rgba(110,214,143,.55)}
+
 /* ===== shared control tab bar (Frequency / Resonance / Breathing tempo / Sound tempo / Session / Presets) ===== */
 #ctrlTabs{display:flex;justify-content:center;gap:0;max-width:420px;margin:0 auto 8px;padding:0 6px}
 .ctrl-tab{flex:1 1 0;font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
@@ -830,6 +839,15 @@ body.immersive #howToBox{display:none}
       <input type="range" id="ctrlSlider" min="45" max="963" step="1" value="432">
       <span class="v" id="ctrlVal">432 Hz · A4</span>
     </div>
+    <div id="advRow" class="hidden">
+      <button type="button" id="rangeNatural" class="range-btn" data-range="natural" aria-pressed="true">
+        <span class="rb-title">Natural range</span><span class="rb-val" id="rangeNaturalVal">300–600 Hz</span>
+      </button>
+      <span class="rdiv">·</span>
+      <button type="button" id="rangeFull" class="range-btn" data-range="full" aria-pressed="false">
+        <span class="rb-title">Full range</span><span class="rb-val">45–963 Hz</span>
+      </button>
+    </div>
     <div class="freqfront hidden" id="lengthFrontWrap">
       <input type="range" id="timerSlider" min="1" max="60" step="1" value="10">
       <span class="timer-glow" id="timerLiveVal">10 min</span>
@@ -943,7 +961,7 @@ const INSTRUMENT_ICONS = {"crystal_bowl": "images/crystal_bowl.jpg", "quartz_bow
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'quartz_bowl', freq:432, tempo:12, tempoFollow:true,
-  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false};
+  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
 
@@ -1074,7 +1092,39 @@ const SGROUPS=[
 ];
 const SMEMBER2GROUP={}; SGROUPS.forEach(g=>g.members.forEach(id=>SMEMBER2GROUP[id]=g));
 function sgroupOf(id){return SMEMBER2GROUP[id]||null;}
-const GROUP_DEFAULT_FREQ={gong:80,bowl:432};
+/* Per-instrument frequency presets & natural ranges.
+   min/max = the instrument's natural playing range (used to bound the slider
+   unless Advanced Mode is on). def = the preset frequency loaded whenever the
+   player switches to that instrument in normal (non-advanced) mode. */
+const INSTRUMENT_RANGE={
+  /* bowls — kept at the classic 432 Hz preset */
+  quartz_bowl:{min:300,max:600,def:432}, crystal_bowl:{min:300,max:600,def:432}, tibetan_bowl:{min:250,max:550,def:432},
+  /* gongs — kept at the classic 80 Hz preset */
+  gong:{min:45,max:150,def:80}, tibetansk_gong:{min:45,max:150,def:80}, 'tam-tam_drum':{min:45,max:150,def:80},
+  /* handpan family */
+  handpan:{min:100,max:450,def:220}, tonguedrum:{min:100,max:450,def:220}, sansula:{min:100,max:450,def:220},
+  /* strings */
+  harpa:{min:100,max:700,def:432}, monochord:{min:60,max:300,def:136.1},
+  /* flutes */
+  panflute:{min:250,max:900,def:528}, native_american_fluit:{min:150,max:650,def:432},
+  /* metal / bells */
+  chime:{min:300,max:963,def:528}, triangel:{min:400,max:963,def:741},
+  /* drums */
+  djembe:{min:60,max:250,def:110}, shaman_drum:{min:45,max:180,def:80}, thunder_drum:{min:45,max:180,def:80}, ocean_drum:{min:45,max:280,def:100},
+  rainstick:{min:45,max:280,def:100},
+};
+const FULL_FREQ_RANGE={min:45,max:963};
+function instrumentRange(id){return INSTRUMENT_RANGE[id]||FULL_FREQ_RANGE;}
+/* current usable range for the slider — full range in Advanced Mode, otherwise the instrument's natural range */
+function currentFreqRange(){return S.advanced?FULL_FREQ_RANGE:instrumentRange(S.sound);}
+/* switch to a new instrument: loads its frequency preset (normal mode) or keeps
+   the current custom frequency clamped to the full range (advanced mode) */
+function switchSound(id){
+  S.sound=id;
+  const r=instrumentRange(id);
+  S.freq=r.def;
+  clearPreset();applyFreqBounds();updateFreq();
+}
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
 const FREE_SOUND_GROUPS=['bowl','gong'];
@@ -1099,7 +1149,7 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
       const locked=isSoundLocked(s.id);
       const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.sndid=s.id;
       b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`+(locked?lockBadgeHTML:'');
-      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();S.sound=s.id;clearPreset();renderSounds();preview();});
+      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();switchSound(s.id);renderSounds();preview();});
       if(s.id===S.sound)activeEl=b;w.appendChild(b);
     }
   });
@@ -1123,9 +1173,8 @@ function onSoundGroupTap(g,tileEl){
   if(openSGroup===g.id){closeSoundSub();return;}
   openSGroup=g.id;
   if(!g.members.includes(S.sound)){
-    S.sound=g.cover;
-    if(GROUP_DEFAULT_FREQ[g.id]!==undefined){S.freq=GROUP_DEFAULT_FREQ[g.id];updateFreq();}
-    clearPreset();updateSoundActiveStates();preview();
+    switchSound(g.cover);
+    updateSoundActiveStates();preview();
   }
   renderSoundSub(g,tileEl);
 }
@@ -1138,11 +1187,8 @@ function renderSoundSub(g,tileEl){
     it.className='sub-item'+(id===S.sound?' active':''); it.dataset.sndid=id;
     it.innerHTML=`<div class="pic" style="background-image:url(${INSTRUMENT_ICONS[id]||''})"></div><div class="cap">${sndLabel(id)}</div>`;
     it.onclick=()=>{
-      const prevG=sgroupOf(S.sound);
-      S.sound=id;
-      const newG=sgroupOf(id);
-      if(newG&&GROUP_DEFAULT_FREQ[newG.id]!==undefined&&(!prevG||prevG.id!==newG.id)){S.freq=GROUP_DEFAULT_FREQ[newG.id];updateFreq();}
-      clearPreset();renderSounds();preview();closeSoundSub();
+      switchSound(id);
+      renderSounds();preview();closeSoundSub();
     };
     s.appendChild(it);
   });
@@ -1196,7 +1242,39 @@ const SOLF=[
   {hz:396,name:'Release fear'},{hz:417,name:'Embrace change'},{hz:528,name:'Transform'},
   {hz:639,name:'Connection'},{hz:741,name:'Intuition'},{hz:963,name:'Oneness'},
 ];
-function setFreq(hz){S.freq=hz;const f=$('freq');if(f)f.value=Math.round(hz);clearPreset();updateFreq();preview();}
+function setFreq(hz){
+  /* a tapped preset (Solfeggio/planetary/quick chip) may fall outside the
+     current instrument's natural range — in that case switch into Advanced
+     Mode automatically so the tone can actually be reached */
+  const r=instrumentRange(S.sound);
+  if(!S.advanced&&(hz<r.min-0.5||hz>r.max+0.5)){S.advanced=true;syncAdvancedUI();}
+  S.freq=hz;clearPreset();applyFreqBounds();updateFreq();preview();
+}
+/* keep the slider's min/max in sync with the current instrument's natural
+   range (or the full range in Advanced Mode), clamping S.freq if needed */
+function applyFreqBounds(){
+  const r=currentFreqRange();
+  if(S.freq<r.min)S.freq=r.min; if(S.freq>r.max)S.freq=r.max;
+  if(ctrlTab==='freq'){const sl=$('ctrlSlider'); if(sl){sl.min=r.min;sl.max=r.max;}}
+  syncAdvancedUI();
+}
+function syncAdvancedUI(){
+  const bn=$('rangeNatural'), bf=$('rangeFull'); if(!bn||!bf)return;
+  bn.classList.toggle('active',!S.advanced); bn.setAttribute('aria-pressed',S.advanced?'false':'true');
+  bf.classList.toggle('active',S.advanced); bf.setAttribute('aria-pressed',S.advanced?'true':'false');
+  const rt=$('rangeNaturalVal');
+  if(rt){const r=instrumentRange(S.sound);rt.textContent=fmtHz(r.min)+'–'+fmtHz(r.max)+' Hz';}
+}
+function setFreqRange(advanced){
+  if(S.advanced===advanced)return;
+  S.advanced=advanced;
+  if(!S.advanced){ /* back to natural range: snap to this instrument's preset */
+    const r=instrumentRange(S.sound); S.freq=r.def; clearPreset();
+  }
+  applyFreqBounds();updateFreq();preview();
+}
+$('rangeNatural').onclick=()=>setFreqRange(false);
+$('rangeFull').onclick=()=>setFreqRange(true);
 function renderQuick(){const w=$('freqQuick');if(!w)return;w.innerHTML='';
   QUICK.forEach(f=>{const b=document.createElement('button');b.className='chip sm'+(Math.abs(S.freq-f)<0.5?' active':'');b.textContent=f+' Hz';
     b.onclick=()=>setFreq(f);w.appendChild(b);});}
@@ -1208,6 +1286,7 @@ function ftile(o,withIcon){const b=document.createElement('button');
 function renderPlanets(){const w=$('freqPlanet');w.innerHTML='';PLANET.forEach(o=>w.appendChild(ftile(o,true)));}
 function renderSolf(){const w=$('freqSolf');w.innerHTML='';SOLF.forEach(o=>w.appendChild(ftile(o,false)));}
 function updateFreq(){
+  applyFreqBounds();
   const txt=`${fmtHz(S.freq)} Hz · ${noteName(S.freq)}`;
   const fv=$('freqVal'); if(fv)fv.textContent=txt;
   const r=Math.round(S.freq);
@@ -1235,8 +1314,10 @@ function syncCtrlSlider(){
   if(!slider||!val)return;
   if(ctrlTab==='freq'){
     kw.textContent='My frequency';
-    slider.min=45;slider.max=963;slider.step=1;slider.value=Math.round(S.freq);
+    const r=currentFreqRange();
+    slider.min=r.min;slider.max=r.max;slider.step=1;slider.value=Math.round(S.freq);
     val.textContent=`${fmtHz(S.freq)} Hz · ${noteName(S.freq)}`;
+    syncAdvancedUI();
   }else if(ctrlTab==='tempo'){
     kw.textContent='My breathing tempo';
     slider.min=0;slider.max=15;slider.step=1;slider.value=S[breathPhase];
@@ -1265,6 +1346,7 @@ function renderCtrlTabs(){
   const ssub=$('soundSubTabs'); if(ssub)ssub.classList.toggle('hidden',ctrlTab!=='soundtempo');
   const ff=$('freqFrontWrap'); if(ff)ff.classList.toggle('hidden',ctrlTab==='length');
   const lf=$('lengthFrontWrap'); if(lf)lf.classList.toggle('hidden',ctrlTab!=='length');
+  const ar=$('advRow'); if(ar)ar.classList.toggle('hidden',ctrlTab!=='freq');
 }
 function renderBreathSubtabs(){
   document.querySelectorAll('.breath-subtab').forEach(b=>{
