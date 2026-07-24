@@ -1149,7 +1149,7 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
       const locked=isSoundLocked(s.id);
       const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.sndid=s.id;
       b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`+(locked?lockBadgeHTML:'');
-      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();switchSound(s.id);renderSounds();preview();});
+      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();switchSound(s.id);renderSounds();previewInstrument();});
       if(s.id===S.sound)activeEl=b;w.appendChild(b);
     }
   });
@@ -1174,7 +1174,7 @@ function onSoundGroupTap(g,tileEl){
   openSGroup=g.id;
   if(!g.members.includes(S.sound)){
     switchSound(g.cover);
-    updateSoundActiveStates();preview();
+    updateSoundActiveStates();previewInstrument();
   }
   renderSoundSub(g,tileEl);
 }
@@ -1188,7 +1188,7 @@ function renderSoundSub(g,tileEl){
     it.innerHTML=`<div class="pic" style="background-image:url(${INSTRUMENT_ICONS[id]||''})"></div><div class="cap">${sndLabel(id)}</div>`;
     it.onclick=()=>{
       switchSound(id);
-      renderSounds();preview();closeSoundSub();
+      renderSounds();previewInstrument();closeSoundSub();
     };
     s.appendChild(it);
   });
@@ -1224,6 +1224,25 @@ document.addEventListener('click',e=>{
 function preview(){initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
   if(!S.running)audio.master.gain.setTargetAtTime(MASTER,audio.ctx.currentTime,.02);
   playVoice(S.sound,S.freq,audio.ctx.currentTime+.04);}
+/* melodic instruments get a short 4-note random phrase when picked, so their
+   character (vibrato, breath, resonance) is easier to hear than from one note */
+const PHRASE_PREVIEW=new Set(['panflute','native_american_fluit']);
+const PHRASE_RATIOS=[1,9/8,5/4,4/3,3/2,5/3,2];
+function playPreviewPhrase(){
+  const ctx=audio.ctx,r=currentFreqRange(),base=S.freq;
+  let when=ctx.currentTime+.04;
+  for(let i=0;i<4;i++){
+    const ratio=PHRASE_RATIOS[Math.floor(Math.random()*PHRASE_RATIOS.length)];
+    let f=base*ratio;
+    while(f>r.max)f/=2; while(f<r.min)f*=2; /* keep the note musical by folding it into range by octaves, not clamping it flat */
+    playVoice(S.sound,f,when);
+    when+=0.36+Math.random()*0.18; /* ~0.36–0.54s apart — a relaxed, natural phrasing pace */
+  }
+}
+function previewInstrument(){initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
+  if(!S.running)audio.master.gain.setTargetAtTime(MASTER,audio.ctx.currentTime,.02);
+  if(PHRASE_PREVIEW.has(S.sound))playPreviewPhrase();
+  else playVoice(S.sound,S.freq,audio.ctx.currentTime+.04);}
 
 /* frequency */
 const NOTE=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -1729,7 +1748,7 @@ const VOICES={
   shaman_drum:{partials:[[1,1],[1.5,.3]],type:'sine',attack:.004,decay:1.1,lp:600,peak:.15,fmul:.5,drop:5,noise:.4,noiseFreq:1.2,noiseDur:.2},
   /* noise textures */
   thunder_drum:{texture:1,brown:true,fc:160,ftype:'lowpass',q:.7,peak:.18,swell:.5,decay:3.6,subAmp:.12,subMul:.25,trem:{rate:.7,depth:.05}},
-  ocean_drum:{texture:1,fc:900,ftype:'lowpass',q:.6,peak:.16,swell:1.2,decay:3.4,trem:{rate:.5,depth:.06}},
+  ocean_drum:{texture:1,fc:900,ftype:'lowpass',q:.6,peak:.16,swell:1.2,decay:3.4},
   rainstick:{texture:1,fc:2600,ftype:'highpass',q:.4,peak:.1,swell:.15,decay:2.6,trem:{rate:11,depth:.05}},
 };
 /* legacy aliases (presets / closing tone) */
