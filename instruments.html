@@ -2139,22 +2139,23 @@
     registerStrike(gains,t0+9);
   }
   function panNote(f,soft){
-    const t0=ac.currentTime+.005, v=masterVol()*(soft?.35:.5);
+    const t0=ac.currentTime+.01, v=masterVol()*(soft?.32:.42);
     const gains=[
-      partial(t0,f,v*.4,.85,2,.04),
-      partial(t0,f*2,v*.06,.5,0,.03)
+      partial(t0,f,v*.42,3.2,1.5,.28),
+      partial(t0,f*2,v*.05,2.4,0,.32),
+      partial(t0,f*3,v*.018,1.8,0,.36)
     ];
     const nb=ac.createBufferSource();
-    const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.5),ac.sampleRate);
+    const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*3.4),ac.sampleRate);
     const d=buf.getChannelData(0);
     for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.5);
     nb.buffer=buf;
-    const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=f; bp.Q.value=7;
+    const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=f; bp.Q.value=3.5;
     const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
-    ng.gain.linearRampToValueAtTime(v*.45,t0+.003);
-    ng.gain.exponentialRampToValueAtTime(.0001,t0+.5);
+    ng.gain.linearRampToValueAtTime(v*.22,t0+.09);
+    ng.gain.exponentialRampToValueAtTime(.0001,t0+3.2);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
-    registerStrike(gains,t0+.9);
+    registerStrike(gains,t0+3.6);
   }
   function shamanHit(edge,soft){
     const t0=ac.currentTime+.005, v=masterVol()*(soft?.55:.95);
