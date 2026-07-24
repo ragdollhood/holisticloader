@@ -233,15 +233,13 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   text-shadow:0 0 10px rgba(231,201,162,.75),0 0 22px rgba(231,201,162,.4);margin:-2px 0 0}
 
 /* ===== frequency range selector (Natural range / Full range) ===== */
-#advRow{display:flex;justify-content:center;gap:8px;max-width:420px;margin:2px auto 8px;padding:0 6px}
+#advRow{display:flex;align-items:center;justify-content:center;gap:10px;max-width:420px;margin:0 auto 6px;padding:0 6px}
 #advRow.hidden{display:none}
-.range-btn{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px 7px;
-  border-radius:12px;border:1px solid var(--line);background:rgba(244,241,234,.04);
-  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
-.range-btn .rb-title{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.range-btn .rb-val{font-size:12.5px;color:var(--faint);font-variant-numeric:tabular-nums;font-weight:600}
-.range-btn.active{background:rgba(110,214,143,.16);border-color:rgba(110,214,143,.6);box-shadow:0 0 12px rgba(110,214,143,.35)}
-.range-btn.active .rb-title,.range-btn.active .rb-val{color:#6ed68f}
+#advRow .rdiv{color:var(--faint);font-size:11px}
+.range-btn{display:flex;flex-direction:column;align-items:center;gap:1px;padding:2px 2px;background:none;border:none}
+.range-btn .rb-title{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:600;transition:color .2s ease}
+.range-btn .rb-val{font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums;transition:color .2s ease}
+.range-btn.active .rb-title,.range-btn.active .rb-val{color:#6ed68f;text-shadow:0 0 10px rgba(110,214,143,.55)}
 
 /* ===== shared control tab bar (Frequency / Resonance / Breathing tempo / Sound tempo / Session / Presets) ===== */
 #ctrlTabs{display:flex;justify-content:center;gap:0;max-width:420px;margin:0 auto 8px;padding:0 6px}
@@ -845,6 +843,7 @@ body.immersive #howToBox{display:none}
       <button type="button" id="rangeNatural" class="range-btn" data-range="natural" aria-pressed="true">
         <span class="rb-title">Natural range</span><span class="rb-val" id="rangeNaturalVal">300–600 Hz</span>
       </button>
+      <span class="rdiv">·</span>
       <button type="button" id="rangeFull" class="range-btn" data-range="full" aria-pressed="false">
         <span class="rb-title">Full range</span><span class="rb-val">45–963 Hz</span>
       </button>
