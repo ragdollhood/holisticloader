@@ -1106,7 +1106,7 @@ const INSTRUMENT_RANGE={
   /* strings */
   harpa:{min:100,max:700,def:432}, monochord:{min:60,max:300,def:136.1},
   /* flutes */
-  panflute:{min:250,max:900,def:528}, native_american_fluit:{min:150,max:650,def:432},
+  panflute:{min:400,max:3000,def:528}, native_american_fluit:{min:150,max:650,def:432},
   /* metal / bells */
   chime:{min:300,max:963,def:528}, triangel:{min:400,max:963,def:741},
   /* drums */
@@ -1685,7 +1685,27 @@ const VOICES={
   sansula:{partials:[[1,1],[2,.7],[3,.4],[4.5,.2],[6,.1]],type:'sine',attack:.003,decay:1.7,lp:6500,peak:.13,noise:.2,noiseFreq:6,noiseDur:.05},
   harpa:{partials:[[.999,.5],[1.001,.5],[1.997,.25],[2.003,.25],[2.996,.15],[3.004,.15],[3.994,.09],[4.006,.09],[4.993,.05],[5.007,.05],[5.991,.03],[6.009,.03]],type:'triangle',attack:.006,decay:6,lp:5800,peak:.12,noise:.08,noiseFreq:5,noiseDur:.05},
   monochord:{partials:[[.997,.7],[1,1],[1.003,.7],[2,.5],[2.006,.4],[3,.22],[4,.12],[5,.07]],type:'triangle',attack:.25,decay:7,lp:4000,peak:.11},
-  panflute:{partials:[[1,1],[2,.16],[3,.05],[4,.02]],type:'sine',attack:.32,decay:4.5,lp:3000,peak:.1,noise:.3,noiseFreq:2.4,noiseQ:.5,noiseDur:.7,vib:{rate:4,depth:4}},
+  /* Bamboo pan flute — bright, airy and melodic; built to sit clearly above
+     the Native Flute in character. Layer 1+4: fundamental + harmonic overtones
+     (stronger 2nd harmonic than the native flute → more "reedy" shimmer).
+     Layer 2: tube resonance (peaking formant near the 2nd harmonic).
+     Layer 3: soft attack chiff + a light continuous breath bed.
+     Layer 5: stereo "multi-tube" spread + the shared reverb send for room ambience. */
+  panflute:{
+    partials:[[1,1],[2,.34],[3,.15],[4,.07],[5,.03],[6,.014]],
+    type:'sine',
+    adsr:{a:.05,d:.15,s:.8,r:.55}, /* attack 50ms, decay 150ms to 80% sustain, ~0.55s release */
+    decay:3.2,
+    lp:5400,lpSweep:{to:4400,time:2},
+    resonance:{freqMul:2,q:3.4,gain:5},
+    peak:.11,
+    noise:.16,noiseFreq:3.4,noiseQ:.7,noiseDur:.18,
+    breath:{amp:.035,freqMul:3.6,q:.65,attack:.05,swell:{rate:.45,depth:.3}},
+    vib:{rate:4.9,depth:6,delay:.15},
+    drift:{rate:.3,depth:1.8},
+    jitter:2,ampJitter:.05,
+    spread:true
+  },
   /* Native American (cedar) flute — built from clean sine partials (a duct/fipple
      flute's tone is close to pure, so stacking a timbral waveform on top of the
      partials would just make it buzzy). Warmth and "breath" come from the
@@ -1742,15 +1762,39 @@ function playTexture(cfg,freq,t,mult){const ctx=audio.ctx,dur=cfg.decay*mult;
   if(cfg.subAmp){const o=ctx.createOscillator();o.type='sine';o.frequency.value=freq*(cfg.subMul||.25);
     const og=ctx.createGain();og.gain.setValueAtTime(.0001,t);og.gain.linearRampToValueAtTime(cfg.subAmp,t+cfg.swell);og.gain.exponentialRampToValueAtTime(.0001,t+dur);
     o.connect(og);og.connect(audio.dry);og.connect(audio.rev);o.start(t);o.stop(t+dur+.2);}}
+/* fixed pan offsets used when a voice asks for stereo "tube" spread — small
+   and mostly-symmetric so the image stays centered but feels wider/airier */
+const TUBE_PAN=[-0.22,0.2,-0.12,0.15,-0.07,0.09,-0.03,0.05];
 function playVoice(type,freq,when,mult=1){
   const ctx=audio.ctx,cfg=VOICES[type]||VOICES.crystal_bowl,t=when;
   if(cfg.texture){playTexture(cfg,freq,t,mult);return;}
-  const decay=cfg.decay*mult,attack=cfg.attack,peak=cfg.peak||.13,f0=freq*(cfg.fmul||1),stop=t+attack+decay+.15;
+  const ring=cfg.decay*mult,peak=cfg.peak||.13,f0=freq*(cfg.fmul||1);
+  let attack,stop;
   const vg=ctx.createGain(),lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=cfg.lp;
   /* filter sweep — lets a long note's timbre evolve instead of staying static (e.g. a flute's tone gently mellowing) */
-  if(cfg.lpSweep){lp.frequency.setValueAtTime(cfg.lp,t);lp.frequency.linearRampToValueAtTime(cfg.lpSweep.to,t+(cfg.lpSweep.time||decay));}
-  vg.connect(lp);lp.connect(audio.dry);lp.connect(audio.rev);
-  vg.gain.setValueAtTime(.0001,t);vg.gain.linearRampToValueAtTime(peak,t+attack);vg.gain.exponentialRampToValueAtTime(.0001,t+attack+decay);
+  if(cfg.lpSweep){lp.frequency.setValueAtTime(cfg.lp,t);lp.frequency.linearRampToValueAtTime(cfg.lpSweep.to,t+(cfg.lpSweep.time||ring));}
+  /* optional tube/bore resonance — a narrow peaking filter that colors the tone
+     like the standing wave inside a bamboo tube, instead of a flat spectrum */
+  let outNode=lp;
+  if(cfg.resonance){const rf=ctx.createBiquadFilter();rf.type='peaking';
+    rf.frequency.value=f0*(cfg.resonance.freqMul||2);rf.Q.value=cfg.resonance.q||3;rf.gain.value=cfg.resonance.gain||6;
+    lp.connect(rf);outNode=rf;}
+  vg.connect(lp);outNode.connect(audio.dry);outNode.connect(audio.rev);
+  if(cfg.adsr){
+    /* full attack–decay–sustain–release envelope for expressive, "played" notes */
+    const{a,d,s,r}=cfg.adsr,sustain=peak*s,holdEnd=Math.max(a+d,ring-r);
+    attack=a;
+    vg.gain.setValueAtTime(.0001,t);
+    vg.gain.linearRampToValueAtTime(peak,t+a);
+    vg.gain.linearRampToValueAtTime(sustain,t+a+d);
+    vg.gain.setValueAtTime(sustain,t+holdEnd);
+    vg.gain.exponentialRampToValueAtTime(.0001,t+holdEnd+r);
+    stop=t+holdEnd+r+.15;
+  }else{
+    attack=cfg.attack;
+    vg.gain.setValueAtTime(.0001,t);vg.gain.linearRampToValueAtTime(peak,t+attack);vg.gain.exponentialRampToValueAtTime(.0001,t+attack+ring);
+    stop=t+attack+ring+.15;
+  }
   let vibGain=null;
   if(cfg.vib){const lfo=ctx.createOscillator();lfo.frequency.value=cfg.vib.rate;vibGain=ctx.createGain();
     if(cfg.vib.delay){vibGain.gain.setValueAtTime(0,t);vibGain.gain.linearRampToValueAtTime(cfg.vib.depth,t+cfg.vib.delay);}
@@ -1759,21 +1803,26 @@ function playVoice(type,freq,when,mult=1){
   /* slow pitch drift — a hair of organic wander so a sustained tone never sits perfectly still */
   let driftGain=null;
   if(cfg.drift){const dlfo=ctx.createOscillator();dlfo.type='sine';dlfo.frequency.value=cfg.drift.rate;driftGain=ctx.createGain();driftGain.gain.value=cfg.drift.depth;dlfo.connect(driftGain);dlfo.start(t);dlfo.stop(stop);}
-  cfg.partials.forEach(([ratio,amp,pAtt])=>{const o=ctx.createOscillator();o.type=cfg.type;o.frequency.value=f0*ratio;
+  const canPan=cfg.spread&&ctx.createStereoPanner;
+  cfg.partials.forEach(([ratio,amp,pAtt],idx)=>{const o=ctx.createOscillator();o.type=cfg.type;o.frequency.value=f0*ratio;
     if(cfg.drop){o.frequency.setValueAtTime(f0*ratio*Math.pow(2,cfg.drop/12),t);o.frequency.exponentialRampToValueAtTime(f0*ratio,t+attack+.12);}
     if(cfg.jitter)o.detune.value+=(Math.random()*2-1)*cfg.jitter; /* per-note micro-variation so repeats don't sound identical */
     if(vibGain)vibGain.connect(o.detune);
     if(driftGain)driftGain.connect(o.detune);
+    let ampUse=amp; if(cfg.ampJitter)ampUse*=1+(Math.random()*2-1)*cfg.ampJitter; /* human-like loudness variation between overtones */
     const g=ctx.createGain();
-    if(pAtt!=null){g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(amp,t+pAtt);}
-    else g.gain.value=amp;
-    o.connect(g);g.connect(vg);o.start(t);o.stop(stop);});
+    if(pAtt!=null){g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(ampUse,t+pAtt);}
+    else g.gain.value=ampUse;
+    o.connect(g);
+    let node=g;
+    if(canPan){const pan=ctx.createStereoPanner();pan.pan.value=TUBE_PAN[idx%TUBE_PAN.length];g.connect(pan);node=pan;}
+    node.connect(vg);o.start(t);o.stop(stop);});
   if(cfg.noise){const ndur=cfg.noiseDur||.18,nb=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*ndur)),ctx.sampleRate),nd=nb.getChannelData(0);
     for(let i=0;i<nd.length;i++)nd[i]=(Math.random()*2-1)*Math.pow(1-i/nd.length,3);
     const ns=ctx.createBufferSource();ns.buffer=nb;const nf=ctx.createBiquadFilter();nf.type='bandpass';nf.frequency.value=f0*(cfg.noiseFreq||2.2);nf.Q.value=cfg.noiseQ||.7;
     const ng=ctx.createGain();ng.gain.setValueAtTime(.0001,t);ng.gain.linearRampToValueAtTime(peak*cfg.noise,t+.003);ng.gain.exponentialRampToValueAtTime(.0001,t+ndur);ns.connect(nf);nf.connect(ng);ng.connect(vg);ns.start(t);ns.stop(t+ndur+.05);}
   /* continuous breath bed — sustained, gently swelling airflow noise under the tone (not just an onset transient) */
-  if(cfg.breath){const bc=cfg.breath,bdur=attack+decay+.3;
+  if(cfg.breath){const bc=cfg.breath,bdur=attack+ring+.3;
     const bsrc=ctx.createBufferSource();bsrc.buffer=noiseBuf(bdur,false);
     const bf=ctx.createBiquadFilter();bf.type='bandpass';bf.frequency.value=f0*(bc.freqMul||2.5);bf.Q.value=bc.q||.5;
     const bg=ctx.createGain();const bAtt=bc.attack!=null?bc.attack:attack;
