@@ -1690,6 +1690,15 @@
     if(ac && ac.state==='closed') ac=null;
     if(!ac){
       ac=new (window.AudioContext||window.webkitAudioContext)();
+      // iOS Safari kan rapportera state='running' efter resume() utan att
+      // faktiskt släppa igenom ljud till högtalaren förrän en källa verkligen
+      // startat inom samma användar-gest. Lura igång ljudmotorn med en tyst,
+      // 1-sample lång buffer direkt när kontexten skapas.
+      try{
+        const ub=ac.createBuffer(1,1,22050);
+        const us=ac.createBufferSource();
+        us.buffer=ub; us.connect(ac.destination); us.start(0);
+      }catch(e){}
       // mobilen kan när som helst sätta ljudet i 'suspended' eller 'interrupted'
       // (skärmlås, samtal, annan ljudapp). Väck det automatiskt så fort det går.
       ac.onstatechange=function(){
@@ -3154,6 +3163,7 @@
   },1000);
   document.addEventListener('pointerdown',function(e){
     if(ac&&ac.state!=='running'&&ac.state!=='closed') ac.resume().catch(function(){});
+    if(ac){ try{ const ub=ac.createBuffer(1,1,22050); const us=ac.createBufferSource(); us.buffer=ub; us.connect(ac.destination); us.start(0); }catch(err){} }
     const onSilence = e.target && e.target.closest && e.target.closest('#silence');
     if(silenced && !onSilence){
       silenced=false;
