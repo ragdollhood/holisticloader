@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <!-- ============ SEO ============ -->
-<title>Holistic Loader — Free Online Breathing, Meditation &amp; Sound Healing</title>
-<meta name="description" content="Holistic Loader is a free online wellness space. Follow a guided breathing circle, play interactive sound healing instruments and relax to healing frequencies (Solfeggio, planetary &amp; singing-bowl tones) with calming nature scenes — beach, forest, mountains, meadows and the cosmos. No app, no sign-up.">
+<title>Holistic Loader — Breathing, Meditation &amp; Sound Healing</title>
+<meta name="description" content="Holistic Loader is an online wellness space. Follow a guided breathing circle, play interactive sound healing instruments and relax to healing frequencies (Solfeggio, planetary &amp; singing-bowl tones) with calming nature scenes — beach, forest, mountains, meadows and the cosmos. No app needed.">
 <meta name="keywords" content="holistic loader, meditation, online meditation, breathing exercise, guided breathing, box breathing, 4-7-8 breathing, calm breathing, sound healing, solfeggio frequencies, 528 Hz, 432 Hz, singing bowl, gong bath, binaural relaxation, mindfulness, stress relief, anxiety relief, relaxation, sleep, focus, nature scenes, peaceful place">
 <meta name="author" content="Holistic Loader">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -29,7 +29,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Holistic Loader">
 <meta property="og:title" content="Holistic Loader — Breathe, Relax &amp; Heal">
-<meta property="og:description" content="A free online space to breathe, meditate, play sound healing instruments and relax to healing frequencies and calming nature scenes. No app, no sign-up.">
+<meta property="og:description" content="An online space to breathe, meditate, play sound healing instruments and relax to healing frequencies and calming nature scenes. No app needed.">
 <meta property="og:image" id="ogImage" content="https://holisticloader.com/images/preview-holistic.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -40,7 +40,7 @@
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Holistic Loader — Breathe, Relax &amp; Heal">
-<meta name="twitter:description" content="A free online space to breathe, meditate, play sound healing instruments and relax to healing frequencies and calming nature scenes.">
+<meta name="twitter:description" content="An online space to breathe, meditate, play sound healing instruments and relax to healing frequencies and calming nature scenes.">
 <meta name="twitter:image" id="twImage" content="https://holisticloader.com/images/preview-holistic.jpg">
 <meta name="twitter:image:alt" content="Holistic Loader preview">
 
@@ -51,14 +51,13 @@
   "@type": "WebApplication",
   "name": "Holistic Loader",
   "url": "https://holisticloader.com/",
-  "description": "A free online wellness space with a guided breathing circle, interactive sound healing instruments, healing sound frequencies (Solfeggio, planetary and singing-bowl tones) and calming nature scenes for relaxation, focus and sleep.",
+  "description": "An online wellness space with a guided breathing circle, interactive sound healing instruments, healing sound frequencies (Solfeggio, planetary and singing-bowl tones) and calming nature scenes for relaxation, focus and sleep.",
   "applicationCategory": "HealthApplication",
   "operatingSystem": "Any (web browser)",
   "browserRequirements": "Requires JavaScript",
   "inLanguage": "en",
-  "isAccessibleForFree": true,
+  "isAccessibleForFree": false,
   "image": "https://holisticloader.com/images/icon-holistic.png",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "featureList": [
     "Guided breathing circle (Calm, Box, 4-7-8, Deep)",
     "Healing sound frequencies and Solfeggio tones",
@@ -137,7 +136,7 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
 
 #brand{
   position:absolute;
-  top:max(128px,calc(env(safe-area-inset-top) + 112px));
+  top:max(98px,calc(env(safe-area-inset-top) + 82px));
   left:0;
   right:0;
   z-index:6;
@@ -159,8 +158,6 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,7,10,.82) 0%,rgba(6,7,10,.5) 65%,transparent 100%)}
-#topNavBrand{display:flex;align-items:center;gap:10px;pointer-events:auto;text-decoration:none;margin-bottom:10px}
-#topNavLogo{height:50px;width:auto;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
 #topTabs{display:flex;pointer-events:auto}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
   padding:9px 20px;color:var(--muted);text-decoration:none;white-space:nowrap;
@@ -168,7 +165,7 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
 #topTabs .tab:hover{color:var(--ink)}
-#topTabs .tab.active{color:var(--ink);background:var(--glass-strong);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2}
+#topTabs .tab.active{color:var(--gold);background:var(--glass-strong);border-color:var(--gold);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--gold-soft) 50%,var(--gold) 85%,transparent);
   opacity:.55}
@@ -176,16 +173,12 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 
 @media(max-width:560px){
   #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
-  #brand{top:max(96px,calc(env(safe-area-inset-top) + 86px))}
-  #topNavLogo{height:28px}
+  /* logo moved up a bit and enlarged — the Start button follows automatically
+     since positionOrb() places it relative to #brand's live bounding box */
+  #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px))}
+  #brandLogo{max-height:clamp(120px,24vw,216px)}
   #topTabs .tab{padding:8px 13px;font-size:11px}
-  #donateFixed{height:30px;width:38px;padding:0;justify-content:center}
-  #donateFixed span{display:none}
-
   /* ---- mobile icon rearrangement ---- */
-  /* facebook icon: top-right, highest */
-  #shareFbTop{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));left:auto;z-index:47}
-
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
   /* preset active: hide the Breathing / Sound Healing / Nutrition tabs and the line under them */
@@ -237,7 +230,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 #freqLabelFront{margin-top:0}
 .freqfront .v{text-align:center;font-size:12px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em}
 .timer-glow{text-align:center;font-size:15px;font-weight:600;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em;
-  text-shadow:0 0 10px rgba(231,201,162,.75),0 0 22px rgba(231,201,162,.4);margin:2px 0 0}
+  text-shadow:0 0 10px rgba(231,201,162,.75),0 0 22px rgba(231,201,162,.4);margin:-2px 0 0}
 
 /* ===== shared control tab bar (Frequency / Resonance / Breathing tempo / Sound tempo / Session / Presets) ===== */
 #ctrlTabs{display:flex;justify-content:center;gap:0;max-width:420px;margin:0 auto 8px;padding:0 6px}
@@ -252,13 +245,18 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 /* all tabs are icon-only, on every screen size */
 .ctrl-tab-icon{display:flex;align-items:center;justify-content:center}
 .ctrl-tab-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;display:block}
+/* fine vertical alignment: Sound tempo icon sits fractionally higher than
+   Breathing tempo by default — nudge it down 1px to match */
+#ctrlTabSoundTempo svg{transform:translateY(1px)}
 
 .breath-subtabs{display:flex;justify-content:center;gap:7px;max-width:420px;margin:8px auto 0;padding:0 6px}
 .breath-subtabs.hidden{display:none}
-.sound-toggles{display:flex;justify-content:center;gap:10px;max-width:420px;margin:10px auto 0;padding:0 6px}
+.sound-toggles{display:flex;flex-direction:column;max-width:420px;margin:9px auto 0;padding:0 6px}
 .sound-toggles.hidden{display:none}
-.sti{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:9px}
-.sti-lbl{display:flex;align-items:center;justify-content:center;gap:5px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3}
+.sst-desc{font-size:11.5px;line-height:1.5;color:var(--muted);text-align:center;margin:0 0 4px}
+.sti-row{display:flex;justify-content:center;gap:10px}
+.sti{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.sti-lbl{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;min-height:2.6em}
 .sti-ic{width:14px;height:14px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8}
 .swtoggle{position:relative;width:46px;height:26px;border-radius:999px;flex:0 0 auto;cursor:pointer;
   background:rgba(244,241,234,.14);border:1px solid var(--line);transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
@@ -385,10 +383,106 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .pcard .ptxt{min-width:0}
 .pcard .pn{font-size:14px;font-weight:500;letter-spacing:.01em}
 .pcard .pt{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.3}
+.pcard.pcard-locked{position:relative;cursor:pointer}
+.pcard.pcard-locked .picon{filter:grayscale(.7) brightness(.6)}
+.pcard.pcard-locked .pn,.pcard.pcard-locked .pt{opacity:.55}
+.itile.itile-locked,.reel-item.reel-locked{position:relative}
+.itile.itile-locked .iimg,.reel-item.reel-locked .pic{filter:grayscale(.72) brightness(.55)}
+.itile.itile-locked .ilbl,.reel-item.reel-locked .cap{opacity:.55}
+.lockBadge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--ui);font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,var(--gold-soft));
+  border-radius:999px;white-space:nowrap;
+  animation:premGlow 2.4s ease-in-out infinite;
+}
+.lockBadge svg{display:block;flex:0 0 auto}
+.pcard .lockBadge{position:absolute;top:8px;right:8px;font-size:8.5px;padding:4px 9px}
+.pcard .lockBadge svg{width:10px;height:10px}
+.itile .lockBadge,.reel-item .lockBadge{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:7.5px;padding:3px 8px}
+.itile .lockBadge svg,.reel-item .lockBadge svg{width:9px;height:9px}
+@keyframes premGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,217,138,.6),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
+  50%{box-shadow:0 0 0 6px rgba(255,217,138,0),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
+}
+/* ===== Premium features modal ===== */
+#premiumModal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(6,7,10,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;transition:opacity .3s ease}
+#premiumModal.show{opacity:1;pointer-events:auto}
+#premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:24px;padding:0;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(231,201,162,.08) inset;
+  transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1),width .2s ease;text-align:center;
+  -webkit-user-select:text;user-select:text}
+#premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
+@media(min-width:861px){
+  #premiumModalCard{width:min(760px,92vw)}
+  #premiumModalCard .premSub{max-width:520px;margin-left:auto;margin-right:auto}
+  #premiumModalSections{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;text-align:left}
+  .premSection{margin-bottom:0}
+  .premSection:last-child{margin-bottom:0}
+}
+#premiumModalScroll{position:relative;overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
+#premiumModalScroll::-webkit-scrollbar{width:7px}#premiumModalScroll::-webkit-scrollbar-thumb{background:rgba(244,241,234,.2);border-radius:7px}
+#premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(13,15,21,0),var(--glass-strong) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
+#premiumScrollHint{display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);pointer-events:none;
+  align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  background:rgba(231,201,162,.14);border:1px solid rgba(231,201,162,.35);
+  opacity:1;transition:opacity .25s ease;animation:premScrollBounce 1.6s ease-in-out infinite}
+#premiumScrollHint svg{width:13px;height:13px;stroke:var(--gold);fill:none;stroke-width:2.4}
+#premiumScrollHint.hide{opacity:0}
+@media(max-width:560px){ #premiumScrollHint{display:flex} }
+@keyframes premScrollBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
+#premiumModalClose{position:absolute;top:16px;right:16px;z-index:2;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--muted);background:rgba(244,241,234,.06);transition:background .2s ease,color .2s ease}
+#premiumModalClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
+#premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.premBadge{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,var(--gold-soft));padding:6px 14px;border-radius:999px;margin-bottom:20px;
+  box-shadow:0 4px 14px rgba(231,201,162,.3)}
+.premBadge svg{width:11px;height:11px;flex:0 0 auto}
+#premiumModalCard h2{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(23px,5vw,29px);letter-spacing:.01em;color:var(--ink);margin-bottom:9px}
+#premiumModalCard .premSub{font-size:12.5px;color:var(--muted);letter-spacing:.02em;line-height:1.55;margin-bottom:28px;padding:0 4px}
+#premiumModalSections{margin-bottom:8px}
+.premSection{margin-bottom:26px}
+.premSection:last-child{margin-bottom:22px}
+.premSectionTitle{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:15px;text-align:left}
+.premSectionTitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(231,201,162,.5),transparent)}
+.premList{display:flex;flex-direction:column;gap:16px;text-align:left}
+.premList li{display:flex;align-items:flex-start;gap:12px}
+.premList .premCheck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-top:1px;
+  background:rgba(231,201,162,.14);border:1px solid rgba(231,201,162,.4)}
+.premList .premCheck svg{width:11px;height:11px;stroke:var(--gold);fill:none;stroke-width:2.6}
+.premTxt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.premHead{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);line-height:1.3}
+.premDetail{font-size:12px;color:var(--muted);line-height:1.5;letter-spacing:.01em}
+.premFoot{font-size:10.5px;color:var(--faint);letter-spacing:.04em;line-height:1.5;margin-bottom:20px}
+.premCta{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border-radius:999px;background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#241c12;font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+  text-decoration:none;box-sizing:border-box;box-shadow:0 10px 30px rgba(231,201,162,.28);transition:transform .12s ease,filter .2s ease}
+.premCta:hover{filter:brightness(1.05)}
+.premCta:active{transform:scale(.97)}
+.premCancelNote{font-size:11px;color:var(--muted);letter-spacing:.02em;text-align:center;margin:11px 0 18px}
+.premCtaGhost{width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);
+  font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.premCtaGhost:hover{background:rgba(244,241,234,.08);color:var(--ink);border-color:rgba(244,241,234,.35)}
 #frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
-#donateWrap{position:fixed;left:16px;top:max(12px,env(safe-area-inset-top));z-index:45;pointer-events:auto}
+#donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
 @supports(padding:max(0px)){
   #donateWrap{left:max(16px,env(safe-area-inset-left))}
+}
+@media(max-width:560px){
+  #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
+  @supports(padding:max(0px)){
+    #donateWrap{left:max(4px,env(safe-area-inset-left))}
+  }
+  /* fine vertical alignment between the icon-only ctrl tabs: on narrow screens
+     Sound tempo sits lower than Breathing tempo, and Session length sits lower
+     than both — nudge them back up so all tabs line up */
+  #ctrlTabSoundTempo svg{transform:translateY(-1px)}
+  #ctrlTabLength svg{transform:translateY(-1px)}
+  /* menuBtn should never stand taller than the tabs beside it */
+  #menuBtn{width:30px;height:30px}
 }
 #donateNote{font-size:11px;color:var(--muted);letter-spacing:.02em;line-height:1.25;max-width:210px}
 .donate{display:inline-flex;align-items:center;gap:8px;font-family:'Outfit',system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;
@@ -396,13 +490,22 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .donate:hover{filter:brightness(1.05)}
 .donate:active{transform:scale(.96)}
 .donate .ppmark{flex:0 0 auto;background:#fff;border-radius:5px;padding:2px}
-#donateSecondRow{position:absolute;top:calc(100% + 7px);left:0;width:max-content;display:flex;align-items:center;gap:6px;pointer-events:auto}
-.shareIconBtn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:999px;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease;color:#fff}
-.shareIconBtn:hover{transform:translateY(-1px)}
-.shareIconBtn:active{transform:scale(.92)}
-.shareIconBtn svg{width:14px;height:14px;display:block}
-.shareIconBtn.shareFb{background:#1877F2}
+#menuBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:34px;height:34px;padding:0;
+  border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
+#menuBtn:hover{background:rgba(244,241,234,.12)}
+#menuBtn:active{transform:scale(.95)}
+#menuBtn .menu-bar{width:16px;height:2px;border-radius:2px;background:currentColor;transition:transform .22s ease,opacity .18s ease}
+#menuBtn.open .menu-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
+#menuBtn.open .menu-bar:nth-child(2){opacity:0}
+#menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+#menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;min-width:190px;
+  display:flex;flex-direction:column;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:14px;
+  padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.4);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
+#menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 .toggle-row{display:flex;gap:8px}.toggle-row .chip{flex:1;text-align:center}
 .switch{display:inline-flex;align-items:center;gap:11px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(244,241,234,.04);color:var(--ink);font-size:13.5px;cursor:pointer;transition:background .2s ease}
 .switch:hover{background:rgba(244,241,234,.09)}
@@ -460,111 +563,205 @@ body.immersive #brand{opacity:0}
 .mini .sl{display:none}
 .mini.off .wv{display:none}
 .mini.off .sl{display:inline}
-/* contact / email — one button that expands to the right */
-#contactBtn{display:inline-flex;align-items:center;max-width:calc(100vw - 32px);overflow:hidden;
-  border-radius:999px;padding:8px 11px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
-#contactBtn:hover{background:rgba(244,241,234,.12)}#contactBtn:active{transform:scale(.97)}
-#contactBtn .env{flex:0 0 auto;width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
-#contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:8px}
-#contactBtn .ctext b{color:var(--gold);font-weight:600;letter-spacing:.12em;margin-right:5px}
+/* contact / email — plain row that expands to the right, matching the
+   shared #menuPanel background instead of its own pill */
+#contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
+  border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--ink);cursor:pointer;
+  transition:background .15s ease}
+#contactBtn:hover{background:rgba(244,241,234,.1)}
+#contactBtn .env{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#contactBtn .clabel{font-size:12px;letter-spacing:.04em;margin-left:8px;white-space:nowrap}
+#contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
+#contactBtn .ctext:hover{text-decoration:underline}
+#contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
 #contactBtn.hidden{display:none}
 
-@media(max-width:560px){
-  /* contact icon: top-left, right next to the donate button — placed after the base rule so it wins the cascade */
-  #contactBtn{position:fixed;top:max(12px,env(safe-area-inset-top));left:calc(max(16px,env(safe-area-inset-left)) + 46px);
-    z-index:47;height:30px;width:38px;padding:0;justify-content:center}
-  #contactBtn.open{width:auto;padding:0 11px;justify-content:flex-start}
+/* "Login", "Get Premium" and "How to use" are now plain rows inside the
+   shared #menuPanel background (no individual pill/border per item). */
+#loginMenuBtn,#getPremiumMenuBtn,#howToBtn{
+  display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
+  width:100%;box-sizing:border-box;
+  font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);
+  background:transparent;border:none;border-radius:8px;
+  padding:9px 10px;cursor:pointer;transition:background .15s ease;
 }
+#loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#getPremiumMenuBtn{color:var(--gold);font-weight:600}
+#getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
+#loginMenuBtn:hover,#getPremiumMenuBtn:hover,#howToBtn:hover{background:rgba(244,241,234,.1)}
+#loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active{background:rgba(244,241,234,.16)}
+#loginMenuBtn.hidden,#getPremiumMenuBtn.hidden,#howToBtn.hidden{display:none}
+body.immersive #loginMenuBtn,body.immersive #getPremiumMenuBtn,body.immersive #howToBtn{opacity:0;pointer-events:none}
 
-/* "How to use" button — sits inline between the Facebook and Contact buttons */
-#howToBtn{
-  display:inline-flex;align-items:center;flex:0 0 auto;
-  font-family:inherit;font-size:11px;letter-spacing:.06em;color:var(--ink);
-  background:var(--glass);border:1px solid var(--line);border-radius:999px;
-  padding:8px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  cursor:pointer;transition:background .2s ease,transform .12s ease,opacity .5s ease;
-}
-@media(hover:hover){#howToBtn:hover{background:rgba(244,241,234,.12)}}
-#howToBtn:active{transform:scale(.97)}
-#howToBtn.hidden{display:none}
-#howToBtn .htu-short{display:none}
-body.immersive #howToBtn{opacity:0;pointer-events:none}
-
-/* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button */
+/* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button.
+   Desktop: wide enough that everything fits without a scrollbar. Mobile: fills the screen and scrolls (see media query below, which is placed AFTER this rule on purpose — same-specificity CSS rules are resolved by source order, and the mobile override must win). */
 #howToBox{
   position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
-  z-index:46;max-width:180px;
+  z-index:46;width:min(680px,90vw);box-sizing:border-box;
+  max-height:min(80vh,720px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
   background:var(--glass-strong);border:1px solid var(--line);border-radius:16px;
-  padding:16px 16px 18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  padding:22px 26px 26px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
 }
 #howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+#howToClose{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;color:var(--muted);z-index:2;
+  background:rgba(20,14,26,.7);transition:background .2s ease,color .2s ease}
+#howToClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
+#howToClose svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 #howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
-  font-weight:600;margin-bottom:10px;white-space:nowrap}
+  font-weight:600;margin-bottom:10px}
+.htu-sub{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 #howToBox ol{list-style:none;display:flex;flex-direction:column;gap:8px}
-#howToBox li{display:flex;gap:7px;font-size:10.5px;line-height:1.45;letter-spacing:.02em;
+#howToBox ol li{display:flex;gap:7px;font-size:10.5px;line-height:1.45;letter-spacing:.02em;
   text-transform:uppercase;color:var(--muted)}
-#howToBox li b{color:var(--gold);font-weight:600;flex:0 0 auto}
-body.immersive #howToBox{display:none}
-
-@media(max-width:560px){
-  /* "How to use" — smaller, transparent, sits right under the gold line on mobile (detached from the donate row) */
-  #howToBtn{display:none}
+#howToBox ol li b{color:var(--gold);font-weight:600;flex:0 0 auto}
+.htu-detail{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.htu-detail h3{margin-top:0}
+.htu-detail h4{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
+  font-weight:600;margin:16px 0 10px}
+.htu-lead{font-size:12.5px;line-height:1.6;letter-spacing:.01em;color:var(--muted);text-transform:none;margin-bottom:8px}
+.htu-lead b{color:var(--ink);font-weight:600}
+/* always a single, generously-wrapping column — a two-column grid here is what caused
+   the cramped/overflowing look, so it's intentionally not used at any width. */
+.htu-list{list-style:none;display:flex;flex-direction:column;gap:8px;width:100%}
+.htu-list li{
+  font-size:12px;line-height:1.55;letter-spacing:.01em;color:var(--muted);text-transform:none;
+  padding:10px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(244,241,234,.035);
+  word-wrap:break-word;overflow-wrap:break-word;
 }
+.htu-list li b{
+  display:block;margin-bottom:3px;color:var(--gold);font-weight:600;
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+}
+.htu-list li i{color:var(--ink);font-style:normal;font-weight:500}
+.htu-ic{width:1em;height:1em;vertical-align:-0.15em;stroke:currentColor;fill:none;stroke-width:1.8;margin:0 2px}
+.htu-foot{margin-top:16px;font-size:11.5px;line-height:1.6;letter-spacing:.01em;color:var(--faint);text-transform:none}
+body.immersive #howToBox{display:none}
+/* mobile: fills the whole screen and only scrolls vertically, never sideways */
+@media(max-width:560px){
+  #howToBox{
+    position:fixed;inset:0;top:0;left:0;right:0;bottom:0;width:100%;height:100%;
+    max-width:none;max-height:none;border-radius:0;
+    padding:max(28px,calc(env(safe-area-inset-top) + 16px)) 18px max(28px,env(safe-area-inset-bottom));
+  }
+  /* still position:absolute (inherited from the desktop rule above) — on mobile
+     #howToBox fills the whole screen, so this still sits at the true top-right
+     corner; just nudged down for the notch/status bar. */
+  #howToClose{top:max(14px,env(safe-area-inset-top));right:14px}
+}
+
+</style>
+<link rel="stylesheet" href="auth-ui.css">
+<style>
+/* Nudge the login/account icon that auth.js renders into #authRoot up a
+   few pixels so it clears the gold #topNavLine under the header tabs.
+   auth-ui.css wasn't included in this file, so if the icon still touches
+   the line after this, that stylesheet's own top/margin value needs the
+   same small adjustment. */
+#authRoot{transform:translateY(-6px)}
+@media(max-width:560px){ #authRoot{transform:none} }
 </style>
 </head>
 <body>
-<noscript><div id="noscriptMsg"><div><strong>Holistic Loader</strong><br>A free online space to breathe, meditate and relax to healing sound frequencies and calming nature scenes.<br>Please enable JavaScript to use the breathing circle and sounds.</div></div></noscript>
+<noscript><div id="noscriptMsg"><div><strong>Holistic Loader</strong><br>An online space to breathe, meditate and relax to healing sound frequencies and calming nature scenes.<br>Please enable JavaScript to use the breathing circle and sounds.</div></div></noscript>
 <div class="sr-only">
-  <h2>A free online place to breathe, relax and heal</h2>
-  <p>Holistic Loader is a calming meditation web app. Follow the guided breathing circle, choose healing sound frequencies such as 528&nbsp;Hz and other Solfeggio tones, planetary tones and singing-bowl gongs, and relax with serene nature scenes — beach, forest, meadow, mountains and the cosmos. Set a session timer and unwind. It is free to use, with no sign-up and no app to install.</p>
+  <h2>An online place to breathe, relax and heal</h2>
+  <p>Holistic Loader is a calming meditation web app. Follow the guided breathing circle, choose healing sound frequencies such as 528&nbsp;Hz and other Solfeggio tones, planetary tones and singing-bowl gongs, and relax with serene nature scenes — beach, forest, meadow, mountains and the cosmos. Set a session timer and unwind — no app to install.</p>
 </div>
 <div id="donateWrap">
-
-   <a id="donateFixed" class="donate" target="_blank" rel="noopener"
-         href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ragdollhood%40gmail.com&item_name=Holistic%20Loader&currency_code=SEK&no_shipping=1">
-     
-    <svg class="ppmark" viewBox="0 0 24 28" width="16" height="18" aria-hidden="true">
-      <path d="M7.4 27 l.9-5.6 H6 L8.6 4.3 h7.3 c3.7 0 6 1.9 5.4 5.8 -.6 4.2 -3.7 6.2 -7.8 6.2 H10 l-.9 5.7 -.2 1.4 Z" fill="#003087"/>
-      <path d="M9.1 22.8 l.9-5.6 h2.9 c4.6 0 8-2.2 8.7-7 .1-.5.1-1 .1-1.4 1.6 .9 2.3 2.6 1.8 5.3 -.8 4.7 -4.1 6.9 -8.7 6.9 h-1.6 l-.9 5.6 -.2 1.4 H9 Z" fill="#0070e0"/>
-    </svg>
-    <span>Thank you!</span>
-  </a>
-  <div id="donateSecondRow">
-    <a class="shareIconBtn shareFb" id="shareFbTop" href="#" target="_blank" rel="noopener" aria-label="Share on Facebook" title="Share on Facebook">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.16 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.78 8.44-4.94 8.44-9.94Z"/></svg>
-    </a>
-    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="htu-full">How to use</span><span class="htu-short">How?</span></button>
-    <button id="contactBtn" type="button" aria-label="Contact" aria-expanded="false">
-      <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
-      <span class="ctext"><b>CONTACT ME:</b> holisticloader@gmail.com</span>
+  <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+    <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
+  </button>
+  <div id="menuPanel" role="menu">
+    <button id="loginMenuBtn" type="button">
+      <svg class="lgn-ic" viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>Login
     </button>
+    <button id="getPremiumMenuBtn" type="button">
+      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
+    </button>
+    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
+      <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
+    </button>
+    <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
+      <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
+      <span class="clabel">Contact</span>
+      <a class="ctext" id="contactEmail" href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a>
+    </div>
   </div>
 </div>
 
 <header id="topNav">
-  <a href="index.html" id="topNavBrand" aria-label="Holistic Loader — home">
-    <img src="images/logga-holistictitel.png" alt="Holistic Loader" id="topNavLogo">
-  </a>
   <nav id="topTabs" aria-label="Main sections">
     <a href="index.html" class="tab active" aria-current="page">Breathing</a>
     <a href="instruments.html" class="tab">Sound Healing</a>
     <a href="nutriloader.html" class="tab">Nutrition</a>
     <a href="store.html" class="tab">Store</a>
   </nav>
+  <div id="authRoot"></div>
   <div id="topNavLine"></div>
 </header>
 
 <div id="howToBox">
-  <h3>Choose your:</h3>
+  <button id="howToClose" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <h3>Quick guide</h3>
+  <p class="htu-sub">Choose your:</p>
   <ol>
     <li><b>1.</b> Place.</li>
     <li><b>2.</b> Sound</li>
     <li><b>3.</b> Frequency / Breathing tempo / Session length</li>
     <li><b>4.</b> Press start</li>
   </ol>
+  <div class="htu-detail">
+    <h3>Detailed guide</h3>
+    <p class="htu-lead">Pick a calming scene by choosing a picture, or tap <b>Add image</b> to use your own. Pick an instrument that will play during your breathing session.</p>
+    <p class="htu-lead">There's a row of six small tabs at the bottom — here's what each one does:</p>
+    <h4>The six tabs</h4>
+    <ul class="htu-list">
+      <li><b>Frequency</b> — tunes the healing tone from 45–963 Hz; the number shown is the frequency in Hz. This is also where you'll find preset frequencies such as Solfeggio and planetary tones.</li>
+      <li><b>Resonance</b> — controls how much reverb/echo surrounds the sound, from a dry, close tone (0%) to a spacious, cathedral-like wash (100%).</li>
+      <li><b>Breathing tempo</b> — sets the rhythm of the guided circle. Switch between <i>Breathe in</i>, <i>Hold</i> and <i>Breathe out</i>, and drag the slider to set each phase's length in seconds (e.g. 4-4-4 for box breathing, or a longer exhale for 4-7-8 breathing).</li>
+      <li><b>Sound tempo</b> — decides when the sound plays. When <i>Follows breathing</i> is on, the sound swells and fades with your breath automatically. Turn it off to choose independently whether the sound plays.</li>
+      <li><b>Session length</b> — sets how long the whole session runs, from 1 to 60 minutes. Drag the slider or tap one of the quick-select chips.</li>
+      <li><b>Presets</b> — opens a panel of ready-made combinations (place, sound, frequency, tempo and length already tuned together, e.g. "Gong Bath" or "Moon · Sleep"). Tap one to load it instantly instead of setting everything by hand.</li>
+    </ul>
+    <p class="htu-lead">Your choices are saved live as you adjust them — once you're happy, press the <b>start</b> button in the centre of the circle to begin your breathing session.</p>
+    <h4>During your session you can</h4>
+    <ul class="htu-list">
+      <li>(<svg class="htu-ic" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>) Pause your session.</li>
+      <li>(<svg class="htu-ic" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>) — hides all the buttons.</li>
+      <li>(<svg class="htu-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>) mutes the sound.</li>
+      <li>(<svg class="htu-ic" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"/></svg>) hides the guiding texts inside the breathing circle.</li>
+      <li>(<svg class="htu-ic" viewBox="0 0 24 24"><path d="M10 19l-7-7 7-7"/><path d="M3 12h17"/></svg>) Stop the session and go back. You can also abort the session by pressing the breathing circle.</li>
+    </ul>
+  </div>
+</div>
+
+<div id="premiumModal" role="dialog" aria-modal="true" aria-labelledby="premiumModalTitle">
+  <div id="premiumModalCard">
+    <button id="premiumModalClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div id="premiumModalScroll">
+      <span class="premBadge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Premium
+      </span>
+      <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
+      <p class="premSub">Everything Holistic Loader has to offer — for your breathing practice, your sound healing sessions and your nutrition tracking.</p>
+      <div id="premiumModalSections"></div>
+      <div id="premiumScrollHint" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+    <div id="premiumModalFooter">
+      <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/test_fZu5kvdDc85W56Nflr4F200">Get Premium for $4.99/month</a>
+      <p class="premCancelNote">Cancel anytime!</p>
+      <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+    </div>
+  </div>
 </div>
 
 <div id="stage">
@@ -644,17 +841,20 @@ body.immersive #howToBox{display:none}
       <button class="breath-subtab" data-phase="exhale" role="tab" aria-selected="false">Breath out<span class="bs-val" id="bsValExhale">4 sec</span></button>
     </div>
     <div class="sound-toggles hidden" id="soundSubTabs" role="group" aria-label="Sound options">
-      <div class="sti">
-        <span class="sti-lbl">Sound follows breathing</span>
-        <button class="swtoggle on" id="soundFollowBtn" aria-pressed="true" aria-label="Sound follows breathing"><span class="sw-knob"></span></button>
-      </div>
-      <div class="sti" id="stiBreatheIn">
-        <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe in</span>
-        <button class="swtoggle on" id="soundInBtn" aria-pressed="true" aria-label="Sound on breathe in"><span class="sw-knob"></span></button>
-      </div>
-      <div class="sti" id="stiBreatheOut">
-        <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe out</span>
-        <button class="swtoggle on" id="soundOutBtn" aria-pressed="true" aria-label="Sound on breathe out"><span class="sw-knob"></span></button>
+      <p class="sst-desc">Let the sound rise and fall with your breath, or choose exactly when it plays.</p>
+      <div class="sti-row">
+        <div class="sti">
+          <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Follows breathing</span>
+          <button class="swtoggle on" id="soundFollowBtn" aria-pressed="true" aria-label="Sound follows breathing"><span class="sw-knob"></span></button>
+        </div>
+        <div class="sti" id="stiBreatheIn">
+          <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe in</span>
+          <button class="swtoggle on" id="soundInBtn" aria-pressed="true" aria-label="Sound on breathe in"><span class="sw-knob"></span></button>
+        </div>
+        <div class="sti" id="stiBreatheOut">
+          <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe out</span>
+          <button class="swtoggle on" id="soundOutBtn" aria-pressed="true" aria-label="Sound on breathe out"><span class="sw-knob"></span></button>
+        </div>
       </div>
     </div>
   </div>
@@ -733,13 +933,16 @@ body.immersive #howToBox{display:none}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+
 <script>
 const IMAGES = [{"thumb": "images/thumbs/bergen.jpg", "id": "bergen", "label": "Mountain lake", "data": "images/bergen.jpg"}, {"thumb": "images/thumbs/ang.jpg", "id": "ang", "label": "Wildflower meadow", "data": "images/ang.jpg"}, {"thumb": "images/thumbs/hage.jpg", "id": "hage", "label": "Misty pasture", "data": "images/hage.jpg"}, {"thumb": "images/thumbs/strand.jpg", "id": "strand", "label": "Tropical beach", "data": "images/strand.jpg"}, {"thumb": "images/thumbs/sagoskog.jpg", "id": "sagoskog", "label": "Enchanted forest", "data": "images/sagoskog.jpg"}, {"thumb": "images/thumbs/skog3.jpg", "id": "skog3", "label": "Birch forest", "data": "images/skog3.jpg"}, {"thumb": "images/thumbs/korallrev.jpg", "id": "korallrev", "label": "Coral reef", "data": "images/korallrev.jpg"}, {"thumb": "images/thumbs/moln.jpg", "id": "moln", "label": "Above the clouds", "data": "images/moln.jpg"}, {"thumb": "images/thumbs/norrsken.jpg", "id": "norrsken", "label": "Northern lights", "data": "images/norrsken.jpg"}, {"thumb": "images/thumbs/rymden.jpg", "id": "rymden", "label": "Galaxy", "data": "images/rymden.jpg"}, {"thumb": "images/thumbs/fro.jpg", "id": "fro", "label": "Sprouting seed", "data": "images/fro.jpg"}, {"thumb": "images/thumbs/ljusterapi.jpg", "id": "ljusterapi", "label": "Light therapy room", "data": "images/ljusterapi.jpg"}, {"thumb": "images/thumbs/pals.jpg", "id": "pals", "label": "Soft fur", "data": "images/pals.jpg"}, {"thumb": "images/thumbs/rymd2.jpg", "id": "rymd2", "label": "Milky Way", "data": "images/rymd2.jpg"}, {"thumb": "images/thumbs/universum.jpg", "id": "universum", "label": "Cosmos", "data": "images/universum.jpg"}, {"thumb": "images/thumbs/skog2.jpg", "id": "skog2", "label": "Sunlit forest", "data": "images/skog2.jpg"}, {"thumb": "images/thumbs/bergen2.jpg", "id": "bergen2", "label": "Mountain peak", "data": "images/bergen2.jpg"}, {"thumb": "images/thumbs/bergen3.jpg", "id": "bergen3", "label": "Tundra lake", "data": "images/bergen3.jpg"}, {"thumb": "images/thumbs/meadow2.jpg", "id": "meadow2", "label": "Golden meadow", "data": "images/meadow2.jpg"}, {"thumb": "images/thumbs/beach2.jpg", "id": "beach2", "label": "Misty shore", "data": "images/beach2.jpg"}, {"thumb": "images/thumbs/fantasy2.jpg", "id": "fantasy2", "label": "Fairy lake", "data": "images/fantasy2.jpg"}, {"thumb": "images/thumbs/fantasy3.jpg", "id": "fantasy3", "label": "Fairy village", "data": "images/fantasy3.jpg"}, {"thumb": "images/thumbs/pasture2.jpg", "id": "pasture2", "label": "Red barn", "data": "images/pasture2.jpg"}, {"thumb": "images/thumbs/pasture3.jpg", "id": "pasture3", "label": "Country road", "data": "images/pasture3.jpg"}, {"thumb": "images/thumbs/coral2.jpg", "id": "coral2", "label": "Reef garden", "data": "images/coral2.jpg"}, {"thumb": "images/thumbs/coral3.jpg", "id": "coral3", "label": "Sunlit shallows", "data": "images/coral3.jpg"}];
 const PRESET_ICONS = {"gongbath": "images/gongbath.jpg", "earthom": "images/earthom.jpg", "moonsleep": "images/moonsleep.jpg", "sunrise": "images/sunrise.jpg", "heart": "images/heart.jpg", "crystal": "images/crystal.jpg", "saturn": "images/saturn.jpg", "forest": "images/forest.jpg"};
-const INSTRUMENT_ICONS = {"crystal_bowl": "images/crystal_bowl.jpg", "quartz_bowl": "images/quartz_bowl.jpg", "tibetan_bowl": "images/tibetan_bowl.jpg", "gong": "images/gong.jpg", "tibetansk_gong": "images/tibetansk_gong.jpg", "tam-tam_drum": "images/tam-tam_drum.jpg", "handpan": "images/handpan.jpg", "tonguedrum": "images/tonguedrum.jpg", "sansula": "images/sansula.jpg", "harpa": "images/harpa.jpg", "monochord": "images/monochord.jpg", "panflute": "images/panflute.jpg", "native_american_fluit": "images/native_american_fluit.jpg", "triangel": "images/triangel.jpg", "djembe": "images/djembe.jpg", "shaman_drum": "images/shaman_drum.jpg", "thunder_drum": "images/thunder_drum.jpg", "ocean_drum": "images/ocean_drum.jpg", "rainstick": "images/rainstick.jpg"};
+const INSTRUMENT_ICONS = {"crystal_bowl": "images/crystal_bowl.jpg", "quartz_bowl": "images/quartz_bowl.jpg", "tibetan_bowl": "images/tibetan_bowl.jpg", "gong": "images/gong.jpg", "tibetansk_gong": "images/tibetansk_gong.jpg", "tam-tam_drum": "images/tam-tam_drum.jpg", "handpan": "images/handpan.jpg", "tonguedrum": "images/tonguedrum.jpg", "sansula": "images/sansula.jpg", "harpa": "images/harpa.jpg", "monochord": "images/monochord.jpg", "panflute": "images/panflute.jpg", "native_american_fluit": "images/native_american_fluit.jpg", "chime": "images/chimes.jpg", "triangel": "images/triangel.jpg", "djembe": "images/djembe.jpg", "shaman_drum": "images/shaman_drum.jpg", "thunder_drum": "images/thunder_drum.jpg", "ocean_drum": "images/ocean_drum.jpg", "rainstick": "images/rainstick.jpg"};
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
-const S = {bg:IMAGES[0].id, sound:'tibetan_bowl', freq:432, tempo:12, tempoFollow:true,
+const S = {bg:IMAGES[0].id, sound:'crystal_bowl', freq:432, tempo:12, tempoFollow:true,
   animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
@@ -761,6 +964,9 @@ const GROUPS=[
 const MEMBER2GROUP={}; GROUPS.forEach(g=>g.members.forEach(id=>MEMBER2GROUP[id]=g));
 function groupOf(id){return MEMBER2GROUP[id]||null;}
 let openGroup=null;
+const FREE_BG_GROUPS=['mountain','meadow'];
+const FREE_BG_IDS=new Set(GROUPS.filter(g=>FREE_BG_GROUPS.includes(g.id)).flatMap(g=>g.members));
+function isBgLocked(id){return !isPremium && !FREE_BG_IDS.has(id);}
 
 function setBackground(id,instant){
   const img=imgById(id); if(!img) return; S.bg=id;
@@ -816,25 +1022,27 @@ function renderReel(){
     const g=groupOf(img.id);
     if(g){
       if(done[g.id]) return; done[g.id]=true;
+      const locked=!isPremium && !FREE_BG_GROUPS.includes(g.id);
       const act=g.members.includes(S.bg);
       const showId=act?S.bg:g.cover, shImg=imgById(showId)||imgById(g.cover)||img;
       const showLbl=act?((imgById(showId)&&imgById(showId).label)||g.label):g.label;
       const it=document.createElement('button');
-      it.className='reel-item group'+(act?' active':''); it.dataset.group=g.id;
-      it.innerHTML=`<div class="pic" style="background-image:url(${shImg.thumb||shImg.data})"><span class="gbadge"><i></i><i></i><i></i></span></div><div class="cap">${showLbl}</div>`;
-      it.onclick=()=>onGroupTap(g);
+      it.className='reel-item group'+(act?' active':'')+(locked?' reel-locked':''); it.dataset.group=g.id;
+      it.innerHTML=`<div class="pic" style="background-image:url(${shImg.thumb||shImg.data})"><span class="gbadge"><i></i><i></i><i></i></span></div><div class="cap">${showLbl}</div>`+(locked?lockBadgeHTML:'');
+      it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>onGroupTap(g));
       r.appendChild(it);
     } else {
+      const locked=!isPremium && IMAGES.some(i=>i.id===img.id)&&isBgLocked(img.id);
       const it=document.createElement('button');
-      it.className='reel-item'+(img.id===S.bg?' active':''); it.dataset.bgid=img.id;
-      it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`;
-      it.onclick=()=>{closeSub();closeSoundSub();setBackground(img.id);};
+      it.className='reel-item'+(img.id===S.bg?' active':'')+(locked?' reel-locked':''); it.dataset.bgid=img.id;
+      it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`+(locked?lockBadgeHTML:'');
+      it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();setBackground(img.id);});
       r.appendChild(it);
     }
   });
-  const add=document.createElement('button'); add.className='reel-item add';
-  add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>';
-  add.onclick=()=>{closeSub();$('fileInput').click();};
+  const add=document.createElement('button'); add.className='reel-item add'+(isPremium?'':' reel-locked');
+  add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>'+(isPremium?'':lockBadgeHTML);
+  add.onclick=isPremium?(()=>$('fileInput').click()):(()=>openPremiumModal('breathing'));
   r.appendChild(add);
 }
 $('fileInput').addEventListener('change',e=>{
@@ -852,7 +1060,7 @@ const SOUNDS=[
   {id:'gong',label:'Gong'},{id:'tibetansk_gong',label:'Tibetan gong'},{id:'tam-tam_drum',label:'Tam-tam'},
   {id:'handpan',label:'Handpan'},{id:'tonguedrum',label:'Tongue drum'},{id:'sansula',label:'Sansula'},
   {id:'harpa',label:'Harp'},{id:'monochord',label:'Monochord'},{id:'panflute',label:'Pan flute'},
-  {id:'native_american_fluit',label:'Native flute'},{id:'triangel',label:'Triangle'},{id:'djembe',label:'Djembe'},
+  {id:'native_american_fluit',label:'Native flute'},{id:'chime',label:'Wind chimes'},{id:'triangel',label:'Triangle'},{id:'djembe',label:'Djembe'},
   {id:'shaman_drum',label:'Shaman drum'},{id:'thunder_drum',label:'Thunder drum'},{id:'ocean_drum',label:'Ocean drum'},
   {id:'rainstick',label:'Rainstick'},
 ];
@@ -862,12 +1070,16 @@ const SGROUPS=[
   {id:'handpan',label:'Handpan',cover:'handpan',   members:['handpan','tonguedrum']},
   {id:'string',label:'String',cover:'harpa',       members:['harpa','monochord']},
   {id:'flute',label:'Flute', cover:'panflute',     members:['panflute','native_american_fluit']},
-  {id:'drum', label:'Drum',  cover:'shaman_drum',  members:['djembe','shaman_drum','thunder_drum','ocean_drum']},
+  {id:'drum', label:'Drum',  cover:'shaman_drum',  members:['shaman_drum','thunder_drum','ocean_drum']},
 ];
 const SMEMBER2GROUP={}; SGROUPS.forEach(g=>g.members.forEach(id=>SMEMBER2GROUP[id]=g));
 function sgroupOf(id){return SMEMBER2GROUP[id]||null;}
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
+const FREE_SOUND_GROUPS=['bowl','gong'];
+const FREE_SOUND_IDS=new Set(SGROUPS.filter(g=>FREE_SOUND_GROUPS.includes(g.id)).flatMap(g=>g.members));
+function isSoundLocked(id){return !isPremium && !FREE_SOUND_IDS.has(id);}
+const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
 
 function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);}
 function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scrollLeft;w.innerHTML='';let activeEl=null;const done={};
@@ -875,16 +1087,18 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
     const g=sgroupOf(s.id);
     if(g){
       if(done[g.id])return; done[g.id]=true;
+      const locked=!isPremium && !FREE_SOUND_GROUPS.includes(g.id);
       const act=g.members.includes(S.sound);
       const showId=act?S.sound:g.cover, showLbl=act?sndLabel(S.sound):g.label;
-      const b=document.createElement('button');b.className='itile group'+(act?' active':'');b.dataset.sgroup=g.id;
-      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[showId]||''})"><span class="gbadge"><i></i><i></i><i></i></span></span><span class="ilbl">${showLbl}</span>`;
-      b.onclick=()=>onSoundGroupTap(g,b);
+      const b=document.createElement('button');b.className='itile group'+(act?' active':'')+(locked?' itile-locked':'');b.dataset.sgroup=g.id;
+      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[showId]||''})"><span class="gbadge"><i></i><i></i><i></i></span></span><span class="ilbl">${showLbl}</span>`+(locked?lockBadgeHTML:'');
+      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>onSoundGroupTap(g,b));
       if(act)activeEl=b;w.appendChild(b);
     } else {
-      const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'');b.dataset.sndid=s.id;
-      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`;
-      b.onclick=()=>{closeSub();closeSoundSub();S.sound=s.id;clearPreset();renderSounds();preview();};
+      const locked=isSoundLocked(s.id);
+      const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.sndid=s.id;
+      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`+(locked?lockBadgeHTML:'');
+      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();S.sound=s.id;clearPreset();renderSounds();preview();});
       if(s.id===S.sound)activeEl=b;w.appendChild(b);
     }
   });
@@ -1155,13 +1369,47 @@ function setSound(on){S.soundOn=on;
   if(audio.ctx)audio.master.gain.setTargetAtTime(on?MASTER:.0001,audio.ctx.currentTime,.12);}
 {const at=$('assistToggle'); if(at)at.addEventListener('click',()=>setShowCircle(!S.showCircle));}
 
+/* hamburger menu: toggles the panel holding Login + How to use + Contact */
+{
+  const mBtn=$('menuBtn'), mPanel=$('menuPanel');
+  const closeMenu=()=>{ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
+  // Exposed so auth.js's account-icon menu can close this one when it opens.
+  window.closeHamburgerMenu=closeMenu;
+  if(mBtn&&mPanel){
+    mBtn.addEventListener('click',e=>{ e.stopPropagation();
+      // Close the account-icon menu (if auth.js built one) before opening
+      // this one, so only one menu is ever open at a time.
+      if(typeof window.closeAccountMenu==='function') window.closeAccountMenu();
+      const open=mPanel.classList.toggle('show'); mBtn.classList.toggle('open',open); mBtn.setAttribute('aria-expanded',open?'true':'false');
+      if(!open){ const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
+    document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
+  }
+  /* "Login" and "Get Premium" in the menu just trigger the same header
+     buttons (built by auth.js) and close this menu. */
+  const loginMenuBtn=$('loginMenuBtn');
+  if(loginMenuBtn){
+    loginMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
+      closeMenu();
+      const headerLoginBtn=$('loginBtn'); if(headerLoginBtn)headerLoginBtn.click();
+    });
+  }
+  const getPremiumMenuBtn=$('getPremiumMenuBtn');
+  if(getPremiumMenuBtn){
+    getPremiumMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
+      closeMenu();
+      const headerRegisterBtn=$('registerBtn'); if(headerRegisterBtn)headerRegisterBtn.click();
+    });
+  }
+}
+
 /* contact: tap the envelope to expand it and reveal the email */
 {
   const cBtn=$('contactBtn');
   const hide=()=>{ if(cBtn){cBtn.classList.remove('open');cBtn.setAttribute('aria-expanded','false');} };
   /* The button's CSS max-width assumes it starts near the left edge of the
-     viewport, but on wider screens it now sits to the right of the Facebook
-     and "How to use" buttons in the donate row. Recompute how much room is
+     viewport, but on wider screens it now sits to the right of the
+     "How to use" button in the donate row. Recompute how much room is
      actually left before the viewport edge so the expanded email address
      isn't clipped by body's overflow:hidden. */
   function updateContactMaxWidth(){
@@ -1173,6 +1421,8 @@ function setSound(on){S.soundOn=on;
   if(cBtn)cBtn.addEventListener('click',e=>{ e.stopPropagation();
     updateContactMaxWidth();
     const open=cBtn.classList.toggle('open'); cBtn.setAttribute('aria-expanded',open?'true':'false'); });
+  if(cBtn)cBtn.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cBtn.click(); } });
+  {const cEmail=$('contactEmail'); if(cEmail)cEmail.addEventListener('click',e=>e.stopPropagation());}
   document.addEventListener('click',e=>{ if(cBtn&&cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hide(); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
   addEventListener('resize',()=>{ if(cBtn&&cBtn.classList.contains('open'))updateContactMaxWidth(); });
@@ -1185,7 +1435,8 @@ function setSound(on){S.soundOn=on;
   function positionHowToBox(){
     if(!hBtn||!hBox||innerWidth<=560)return;
     const r=hBtn.getBoundingClientRect();
-    hBox.style.left=r.left+'px';
+    const maxLeft=innerWidth-hBox.offsetWidth-12;
+    hBox.style.left=Math.max(12,Math.min(r.left,maxLeft))+'px';
     hBox.style.top=(r.bottom+7)+'px';
   }
   if(hBtn&&hBox){
@@ -1195,6 +1446,8 @@ function setSound(on){S.soundOn=on;
     document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
     addEventListener('resize',()=>{ if(hBox.classList.contains('show'))positionHowToBox(); });
+    const hClose=$('howToClose');
+    if(hClose)hClose.addEventListener('click',e=>{ e.stopPropagation(); hide(); if(typeof window.closeHamburgerMenu==='function')window.closeHamburgerMenu(); });
   }
 }
 
@@ -1222,17 +1475,78 @@ function fmt(sec){sec=Math.max(0,Math.ceil(sec));const m=Math.floor(sec/60),s=se
 const PRESETS=[
   {id:'gongbath', name:'Gong Bath', theme:'Deep gong waves, slow & immersive', sound:'gong', freq:73, tempo:7, br:[4,0,8], anim:'sound', len:15, bg:'rymden'},
   {id:'earthom',  name:'Earth · OM', theme:'Grounding 136 Hz hum', sound:'crystal_bowl', freq:136.10, tempo:9, br:[4,2,6], anim:'breath', len:10, bg:'hage'},
-  {id:'moonsleep',name:'Moon · Sleep', theme:'Soft 210 Hz, long exhales', sound:'tibetan_bowl', freq:210.42, tempo:11, br:[4,7,8], anim:'breath', len:20, bg:'norrsken'},
-  {id:'sunrise',  name:'Sun · Vitality', theme:'Warm 126 Hz to awaken', sound:'harpa', freq:126.22, tempo:6, br:[4,0,6], anim:'breath', len:10, bg:'bergen'},
-  {id:'heart',    name:'Venus · Heart', theme:'639 Hz heart opening', sound:'harpa', freq:639, tempo:7, br:[5,2,7], anim:'breath', len:10, bg:'ang'},
-  {id:'crystal',  name:'Crystal Healing', theme:'528 Hz crystal bowls', sound:'crystal_bowl', freq:528, tempo:8, br:[4,2,6], anim:'breath', len:15, bg:'korallrev'},
-  {id:'saturn',   name:'Singing Bowl Journey', theme:'148 Hz Saturn bowls', sound:'tibetan_bowl', freq:147.85, tempo:9, br:[4,0,7], anim:'breath', len:15, bg:'sagoskog'},
-  {id:'forest',   name:'Forest Calm', theme:'Gentle 432 Hz soft tones', sound:'handpan', freq:432, tempo:8, br:[4,0,6], anim:'breath', len:10, bg:'skog3'},
+  {id:'moonsleep',name:'Moon · Sleep', theme:'Soft 210 Hz, long exhales', sound:'tibetan_bowl', freq:210.42, tempo:11, br:[4,7,8], anim:'breath', len:20, bg:'norrsken', locked:true},
+  {id:'sunrise',  name:'Sun · Vitality', theme:'Warm 126 Hz to awaken', sound:'harpa', freq:126.22, tempo:6, br:[4,0,6], anim:'breath', len:10, bg:'bergen', locked:true},
+  {id:'heart',    name:'Venus · Heart', theme:'639 Hz heart opening', sound:'harpa', freq:639, tempo:7, br:[5,2,7], anim:'breath', len:10, bg:'ang', locked:true},
+  {id:'crystal',  name:'Crystal Healing', theme:'528 Hz crystal bowls', sound:'crystal_bowl', freq:528, tempo:8, br:[4,2,6], anim:'breath', len:15, bg:'korallrev', locked:true},
+  {id:'saturn',   name:'Singing Bowl Journey', theme:'148 Hz Saturn bowls', sound:'tibetan_bowl', freq:147.85, tempo:9, br:[4,0,7], anim:'breath', len:15, bg:'sagoskog', locked:true},
+  {id:'forest',   name:'Forest Calm', theme:'Gentle 432 Hz soft tones', sound:'handpan', freq:432, tempo:8, br:[4,0,6], anim:'breath', len:10, bg:'skog3', locked:true},
 ];
+const PREMIUM_SECTIONS=[
+  {
+    id:'breathing',
+    label:'Breathing',
+    items:[
+      {head:'26 Background Scenes',detail:'21 additional scenes to choose from, so your background always matches your mood.'},
+      {head:'Your Own Background',detail:'Upload a photo of your own and use it as your personal background.'},
+      {head:'19 Instruments',detail:'13 additional instruments to layer and personalize your sound.'},
+      {head:'8 Guided Presets',detail:'6 additional complete journeys, ready to press play.'}
+    ]
+  },
+  {
+    id:'sound',
+    label:'Sound Healing',
+    items:[
+      {head:'16 Instruments',detail:'12 additional instruments to explore and combine.'},
+      {head:'Signal Generator',detail:'Full access to shape and play your own frequencies.'},
+      {head:'Record & Save',detail:'Record and save your own custom-designed sounds.'}
+    ]
+  },
+  {
+    id:'nutrition',
+    label:'Nutrition',
+    items:[
+      {head:'Daily Intake Log',detail:'Log your meals and daily habits, and see them summarized as clear statistics over time.'},
+      {head:'Synced Across Devices',detail:'Your log follows you — pick up right where you left off on your phone, tablet or computer.'}
+    ]
+  }
+];
+const premScrollBox=$('premiumModalScroll'), premScrollHint=$('premiumScrollHint');
+function updatePremiumScrollHint(){
+  if(!premScrollBox||!premScrollHint) return;
+  const overflows=premScrollBox.scrollHeight>premScrollBox.clientHeight+4;
+  const atBottom=premScrollBox.scrollTop+premScrollBox.clientHeight>=premScrollBox.scrollHeight-4;
+  premScrollHint.classList.toggle('hide',!overflows||atBottom);
+}
+function openPremiumModal(context){
+  const modal=$('premiumModal'), wrap=$('premiumModalSections');
+  if(!modal||!wrap) return;
+  wrap.innerHTML=PREMIUM_SECTIONS.map(sec=>`
+    <div class="premSection">
+      <div class="premSectionTitle">${sec.label}</div>
+      <ul class="premList">
+        ${sec.items.map(it=>`<li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premTxt"><span class="premHead">${it.head}</span><span class="premDetail">${it.detail}</span></span></li>`).join('')}
+      </ul>
+    </div>`).join('');
+  modal.classList.add('show');
+  if(premScrollBox) premScrollBox.scrollTop=0;
+  setTimeout(updatePremiumScrollHint,50);
+}
+if(premScrollBox) premScrollBox.addEventListener('scroll',updatePremiumScrollHint);
+window.addEventListener('resize',updatePremiumScrollHint);
+function closePremiumModal(){ const m=$('premiumModal'); if(m)m.classList.remove('show'); }
+{
+  const pm=$('premiumModal'), pClose=$('premiumModalClose'), pCta=$('premiumModalCta');
+  if(pClose)pClose.onclick=closePremiumModal;
+  if(pCta)pCta.onclick=closePremiumModal;
+  if(pm)pm.addEventListener('click',e=>{ if(e.target===pm)closePremiumModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape')closePremiumModal(); });
+}
 function renderPresets(){const w=$('presetGrid');if(!w)return;w.innerHTML='';
-  PRESETS.forEach(p=>{const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'');
-    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`;
-    b.onclick=()=>applyPreset(p);w.appendChild(b);});}
+  PRESETS.forEach(p=>{const locked=p.locked&&!isPremium;
+    const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'')+(locked?' pcard-locked':'');
+    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`+(locked?lockBadgeHTML:'');
+    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>applyPreset(p));w.appendChild(b);});}
 function applyPreset(p){
   S.sound=p.sound;S.freq=p.freq;S.tempo=p.tempo;S.tempoFollow=false;
   S.inhale=p.br[0];S.hold=p.br[1];S.exhale=p.br[2];
@@ -1274,6 +1588,7 @@ const VOICES={
   monochord:{partials:[[.997,.7],[1,1],[1.003,.7],[2,.5],[2.006,.4],[3,.22],[4,.12],[5,.07]],type:'triangle',attack:.25,decay:7,lp:4000,peak:.11},
   panflute:{partials:[[1,1],[2,.18],[3,.06]],type:'sine',attack:.12,decay:2.6,lp:3800,peak:.12,noise:.4,noiseFreq:3,noiseDur:.35,vib:{rate:5,depth:8}},
   native_american_fluit:{partials:[[1,1],[2,.3],[3,.12],[4,.05]],type:'triangle',attack:.08,decay:3.2,lp:3200,peak:.12,noise:.45,noiseFreq:2.5,noiseDur:.4,vib:{rate:4.5,depth:10}},
+  chime:{partials:[[1,1],[2.76,.55],[5.4,.35],[8.9,.2],[13,.1]],type:'sine',attack:.004,decay:7,lp:9000,peak:.11,fmul:2.2,noise:.15,noiseFreq:6,noiseDur:.05},
   triangel:{partials:[[1,1],[2.76,.7],[5.4,.5],[8.9,.35],[13,.2]],type:'sine',attack:.002,decay:5.5,lp:13000,peak:.1,fmul:4,noise:.25,noiseFreq:9,noiseDur:.03},
   /* drums — pitched membrane with quick pitch drop */
   djembe:{partials:[[1,1],[1.6,.4],[2.3,.2]],type:'sine',attack:.002,decay:.8,lp:1400,peak:.15,drop:7,noise:.5,noiseFreq:3,noiseDur:.12},
@@ -1376,7 +1691,7 @@ function positionOrb(){
   const b=$('brand').getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
   if(!r.height) return;
   const oh=ow.offsetHeight;
-  const mobileOffset=innerWidth<=560?28:0;
+  const mobileOffset=innerWidth<=560?21:0;
   const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38 + mobileOffset);
   ow.style.marginTop=mt+'px';
   updateLensGeom();
@@ -1589,6 +1904,14 @@ positionOrb();
 requestAnimationFrame(()=>{positionBrand();positionOrb();updateCues();});
 setTimeout(()=>{positionBrand();positionOrb();},400);
 setTimeout(positionOrb,1200);
+
+/* Re-render locked content live the instant premium status changes
+   (login, logout, or a fresh isPremium check on page load) */
+onPremiumStatusChange(()=>{
+  renderReel();
+  renderSounds();
+  renderPresets();
+});
 </script>
 
 <script>
@@ -1660,13 +1983,6 @@ async function registerVisit() {
 }
 
 registerVisit();
-</script>
-<script>
-(function(){
-  const pageUrl = window.location.href;
-  const fbLink = document.getElementById('shareFbTop');
-  if(fbLink) fbLink.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(pageUrl);
-})();
 </script>
 </body>
 </html>
