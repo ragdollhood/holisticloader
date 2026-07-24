@@ -1074,7 +1074,7 @@ const SGROUPS=[
 ];
 const SMEMBER2GROUP={}; SGROUPS.forEach(g=>g.members.forEach(id=>SMEMBER2GROUP[id]=g));
 function sgroupOf(id){return SMEMBER2GROUP[id]||null;}
-const GROUP_DEFAULT_FREQ={gong:80};
+const GROUP_DEFAULT_FREQ={gong:80,bowl:432};
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
 const FREE_SOUND_GROUPS=['bowl','gong'];
