@@ -1124,6 +1124,7 @@ function switchSound(id){
   const r=instrumentRange(id);
   S.freq=r.def;
   clearPreset();applyFreqBounds();updateFreq();
+  syncChimeEngine();
 }
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
@@ -1242,6 +1243,7 @@ function playPreviewPhrase(){
 function previewInstrument(){initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
   if(!S.running)audio.master.gain.setTargetAtTime(MASTER,audio.ctx.currentTime,.02);
   if(PHRASE_PREVIEW.has(S.sound))playPreviewPhrase();
+  else if(S.sound==='chime')playChimeCluster();
   else playVoice(S.sound,S.freq,audio.ctx.currentTime+.04);}
 
 /* frequency */
@@ -1478,7 +1480,8 @@ function setShowCue(on){S.showCue=on;
 function setSound(on){S.soundOn=on;
   const b=$('btnSoundTgl'); if(b){b.classList.toggle('on',on);b.classList.toggle('off',!on);}
   const st=$('soundState'); if(st)st.textContent=on?'On':'Off';
-  if(audio.ctx)audio.master.gain.setTargetAtTime(on?MASTER:.0001,audio.ctx.currentTime,.12);}
+  if(audio.ctx)audio.master.gain.setTargetAtTime(on?MASTER:.0001,audio.ctx.currentTime,.12);
+  syncChimeEngine();}
 {const at=$('assistToggle'); if(at)at.addEventListener('click',()=>setShowCircle(!S.showCircle));}
 
 /* hamburger menu: toggles the panel holding Login + How to use + Contact */
@@ -1741,7 +1744,7 @@ const VOICES={
     drift:{rate:.2,depth:2.5},
     jitter:3
   },
-  chime:{partials:[[.9985,.5],[1.0015,.5],[2.758,.275],[2.762,.275],[5.397,.175],[5.403,.175],[8.897,.1],[8.903,.1],[12.994,.05],[13.006,.05]],type:'sine',attack:.006,decay:10,lp:9000,peak:.11,fmul:2.2,noise:.12,noiseFreq:6,noiseDur:.06},
+  chime:{partials:[[.9985,.5],[1.0015,.5],[2.758,.275],[2.762,.275],[5.397,.175],[5.403,.175],[8.897,.1],[8.903,.1],[12.994,.05],[13.006,.05]],type:'sine',attack:.006,decay:10,lp:9000,peak:.11,fmul:2.2,noise:.12,noiseFreq:6,noiseDur:.06,jitter:4,ampJitter:.1},
   triangel:{partials:[[1,1],[2.76,.7],[5.4,.5],[8.9,.35],[13,.2]],type:'sine',attack:.002,decay:5.5,lp:13000,peak:.1,fmul:4,noise:.25,noiseFreq:9,noiseDur:.03},
   /* drums — pitched membrane with quick pitch drop */
   djembe:{partials:[[1,1],[1.6,.4],[2.3,.2]],type:'sine',attack:.002,decay:.8,lp:1400,peak:.15,drop:7,noise:.5,noiseFreq:3,noiseDur:.12},
@@ -1784,10 +1787,10 @@ function playTexture(cfg,freq,t,mult){const ctx=audio.ctx,dur=cfg.decay*mult;
 /* fixed pan offsets used when a voice asks for stereo "tube" spread — small
    and mostly-symmetric so the image stays centered but feels wider/airier */
 const TUBE_PAN=[-0.22,0.2,-0.12,0.15,-0.07,0.09,-0.03,0.05];
-function playVoice(type,freq,when,mult=1){
+function playVoice(type,freq,when,mult=1,opts){
   const ctx=audio.ctx,cfg=VOICES[type]||VOICES.crystal_bowl,t=when;
   if(cfg.texture){playTexture(cfg,freq,t,mult);return;}
-  const ring=cfg.decay*mult,peak=cfg.peak||.13,f0=freq*(cfg.fmul||1);
+  const ring=cfg.decay*mult,peak=(cfg.peak||.13)*(opts&&opts.vel!=null?opts.vel:1),f0=freq*(cfg.fmul||1);
   let attack,stop;
   const vg=ctx.createGain(),lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=cfg.lp;
   /* filter sweep — lets a long note's timbre evolve instead of staying static (e.g. a flute's tone gently mellowing) */
@@ -1798,7 +1801,11 @@ function playVoice(type,freq,when,mult=1){
   if(cfg.resonance){const rf=ctx.createBiquadFilter();rf.type='peaking';
     rf.frequency.value=f0*(cfg.resonance.freqMul||2);rf.Q.value=cfg.resonance.q||3;rf.gain.value=cfg.resonance.gain||6;
     lp.connect(rf);outNode=rf;}
-  vg.connect(lp);outNode.connect(audio.dry);outNode.connect(audio.rev);
+  /* per-event stereo placement (e.g. each wind-chime note landing at a slightly
+     different spot in the stereo field) — separate from the per-partial TUBE_PAN spread */
+  let vgOut=vg;
+  if(opts&&opts.pan!=null&&ctx.createStereoPanner){const pn=ctx.createStereoPanner();pn.pan.value=Math.max(-1,Math.min(1,opts.pan));vg.connect(pn);vgOut=pn;}
+  vgOut.connect(lp);outNode.connect(audio.dry);outNode.connect(audio.rev);
   if(cfg.adsr){
     /* full attack–decay–sustain–release envelope for expressive, "played" notes */
     const{a,d,s,r}=cfg.adsr,sustain=peak*s,holdEnd=Math.max(a+d,ring-r);
@@ -1870,8 +1877,45 @@ function startScheduler(){
   if(S.tempoFollow){clearInterval(schedTimer);schedTimer=null;lastBreathPhase=null;return;}
   nextToneTime=audio.ctx.currentTime+.05;clearInterval(schedTimer);
   schedTimer=setInterval(()=>{if(!S.running)return;const ahead=audio.ctx.currentTime+.2;
-    while(nextToneTime<ahead){if(soundPhaseAllowed())playVoice(S.sound,S.freq,nextToneTime);nextToneTime+=S.tempo;}},40);}
+    while(nextToneTime<ahead){if(S.sound!=='chime'&&soundPhaseAllowed())playVoice(S.sound,S.freq,nextToneTime);nextToneTime+=S.tempo;}},40);}
 function stopScheduler(){clearInterval(schedTimer);schedTimer=null;}
+
+/* ===== wind chime — autonomous "gust" engine =====
+   Real wind chimes don't ring on a beat: a breeze stirs up a handful of notes,
+   then it's quiet again for a while. So instead of the regular per-tempo/
+   per-breath trigger above (which is deliberately skipped for 'chime'), this
+   runs its own randomized timer for as long as chime is selected, sound is on
+   and a session is running. */
+const CHIME_SCALE=[1,9/8,5/4,4/3,3/2,5/3,15/8,2,9/4]; /* wide, consonant intervals so random notes always sound pleasant together */
+function playChimeCluster(){
+  if(!audio.ctx)return;
+  const r=instrumentRange('chime'),base=S.sound==='chime'?S.freq:r.def;
+  /* cluster size: mostly 1–4 soft notes, occasionally a bigger cascade up to 8 */
+  const roll=Math.random();
+  const n=roll<0.35?1+Math.floor(Math.random()*2):roll<0.75?3+Math.floor(Math.random()*2):roll<0.93?5+Math.floor(Math.random()*2):7+Math.floor(Math.random()*2);
+  let when=audio.ctx.currentTime+.03;
+  for(let i=0;i<n;i++){
+    const ratio=CHIME_SCALE[Math.floor(Math.random()*CHIME_SCALE.length)];
+    let f=base*ratio;
+    while(f>r.max)f/=2; while(f<r.min)f*=2; /* fold into the natural range by octaves, never a hard clamp */
+    const vel=.5+Math.random()*.65;             /* random velocity/volume */
+    const pan=(Math.random()*2-1)*.85;            /* random stereo position */
+    const ringMult=.75+Math.random()*.6;           /* each tube rings a slightly different length */
+    playVoice('chime',f,when,ringMult,{vel,pan});
+    when+=.09+Math.random()*.46;                   /* irregular gaps between notes — never mechanical */
+  }
+}
+let chimeTimer=null;
+function chimeActive(){return S.sound==='chime'&&S.soundOn&&S.running&&!!audio.ctx;}
+function scheduleNextChimeGust(){
+  clearTimeout(chimeTimer);chimeTimer=null;
+  if(!chimeActive())return;
+  const gap=2400+Math.random()*6400; /* a gust roughly every 2.4–8.8s, deliberately not a fixed period */
+  chimeTimer=setTimeout(()=>{if(chimeActive())playChimeCluster();scheduleNextChimeGust();},gap);
+}
+function stopChimeEngine(){clearTimeout(chimeTimer);chimeTimer=null;}
+function syncChimeEngine(){if(chimeActive()){if(!chimeTimer)scheduleNextChimeGust();}else stopChimeEngine();}
+
 
 /* particles */
 const cv=$('motes'),cx=cv.getContext('2d');let motes=[],cw=0,ch=0;
@@ -1961,7 +2005,7 @@ function loop(ts){requestAnimationFrame(loop);
       const ph=cue==='Breathe in'?'in':cue==='Hold'?'hold':'out';
       if(ph!==lastBreathPhase){lastBreathPhase=ph;
         const allowed=ph==='in'?S.soundBreathIn:ph==='hold'?true:S.soundBreathOut;
-        if(S.soundOn&&allowed)playVoice(S.sound,S.freq,audio.ctx.currentTime+.03);}
+        if(S.sound!=='chime'&&S.soundOn&&allowed)playVoice(S.sound,S.freq,audio.ctx.currentTime+.03);}
     }
   }else{const cyc=Math.max(2,S.tempo),u=(breathClock%cyc)/cyc;phase=(1-Math.cos(2*Math.PI*u))/2;cue=u<.5?'Breathe in':'Breathe out';}
   const amp=reduceMotion?.4:1;
@@ -2039,7 +2083,7 @@ function startSession(){
   S.running=true;
   audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);
   audio.master.gain.setTargetAtTime(S.soundOn?MASTER:.0001,audio.ctx.currentTime,.1);
-  if(S.soundOn)playVoice(S.sound,S.freq,audio.ctx.currentTime+.06);
+  if(S.soundOn){if(S.sound==='chime')playChimeCluster();else playVoice(S.sound,S.freq,audio.ctx.currentTime+.06);}
   document.body.classList.add('immersive');
   $('center').classList.add('live');$('front').classList.add('gone');$('brand').style.opacity='0';$('frontMeta').classList.add('hidden');$('donateWrap')&&$('donateWrap').classList.add('hidden');$('contactBtn')&&$('contactBtn').classList.remove('open');closeSub();closeSoundSub();
   $('timerCluster').classList.remove('hidden');
@@ -2048,15 +2092,15 @@ function startSession(){
   setSound(S.soundOn); setShowCircle(S.showCircle); setShowCue(S.showCue);
   $('timerReadout').textContent=fmt(remainingMs/1000);$('panel').classList.remove('open');document.body.classList.remove('preset-active');
   $('btnPause').classList.remove('paused');
-  startScheduler();
+  startScheduler();syncChimeEngine();
 }
-function pauseSession(){S.running=false;stopScheduler();
+function pauseSession(){S.running=false;stopScheduler();stopChimeEngine();
   audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.15);
   $('breathCue').style.opacity=0;$('btnPause').classList.add('paused');}
 function resumeSession(){S.running=true;if(audio.ctx.state==='suspended')audio.ctx.resume();
   audio.master.gain.setTargetAtTime(S.soundOn?MASTER:.0001,audio.ctx.currentTime,.1);
-  $('btnPause').classList.remove('paused');startScheduler();}
-function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
+  $('btnPause').classList.remove('paused');startScheduler();syncChimeEngine();}
+function endSession(){S.running=false;S.ended=false;stopScheduler();stopChimeEngine();remainingMs=0;breathClock=0;wanderT=0;
   $('breathCue').style.opacity=0;$('timerReadout').textContent='0:00';
   if(audio.ctx){
     if(S.soundOn){
@@ -2071,7 +2115,7 @@ function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=
   $('endOverlay').classList.remove('show');
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
   $('timerCluster').classList.add('hidden');$('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
-function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
+function resetToFront(){S.running=false;S.ended=false;stopScheduler();stopChimeEngine();remainingMs=0;breathClock=0;wanderT=0;
   if(audio.ctx){audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.25);}
   document.body.classList.remove('immersive');
   $('endOverlay').classList.remove('show');
