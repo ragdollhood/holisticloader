@@ -1590,11 +1590,11 @@ const VOICES={
   handpan:{partials:[[1,1],[2,.6],[3,.32],[4,.12]],type:'sine',attack:.006,decay:3.2,lp:4800,peak:.13,noise:.12,noiseFreq:4,noiseDur:.05},
   tonguedrum:{partials:[[1,1],[2,.5],[3,.2],[5,.06]],type:'sine',attack:.005,decay:3,lp:4200,peak:.13,noise:.07,noiseFreq:4,noiseDur:.04},
   sansula:{partials:[[1,1],[2,.7],[3,.4],[4.5,.2],[6,.1]],type:'sine',attack:.003,decay:1.7,lp:6500,peak:.13,noise:.2,noiseFreq:6,noiseDur:.05},
-  harpa:{partials:[[1,1],[2,.5],[3,.3],[4,.18],[5,.1],[6,.06]],type:'triangle',attack:.004,decay:2.4,lp:5400,peak:.12,noise:.1,noiseFreq:5,noiseDur:.04},
+  harpa:{partials:[[.999,.5],[1.001,.5],[1.997,.25],[2.003,.25],[2.996,.15],[3.004,.15],[3.994,.09],[4.006,.09],[4.993,.05],[5.007,.05],[5.991,.03],[6.009,.03]],type:'triangle',attack:.006,decay:6,lp:5800,peak:.12,noise:.08,noiseFreq:5,noiseDur:.05},
   monochord:{partials:[[.997,.7],[1,1],[1.003,.7],[2,.5],[2.006,.4],[3,.22],[4,.12],[5,.07]],type:'triangle',attack:.25,decay:7,lp:4000,peak:.11},
   panflute:{partials:[[1,1],[2,.18],[3,.06]],type:'sine',attack:.12,decay:2.6,lp:3800,peak:.12,noise:.4,noiseFreq:3,noiseDur:.35,vib:{rate:5,depth:8}},
   native_american_fluit:{partials:[[1,1],[2,.3],[3,.12],[4,.05]],type:'triangle',attack:.08,decay:3.2,lp:3200,peak:.12,noise:.45,noiseFreq:2.5,noiseDur:.4,vib:{rate:4.5,depth:10}},
-  chime:{partials:[[1,1],[2.76,.55],[5.4,.35],[8.9,.2],[13,.1]],type:'sine',attack:.004,decay:7,lp:9000,peak:.11,fmul:2.2,noise:.15,noiseFreq:6,noiseDur:.05},
+  chime:{partials:[[.9985,.5],[1.0015,.5],[2.758,.275],[2.762,.275],[5.397,.175],[5.403,.175],[8.897,.1],[8.903,.1],[12.994,.05],[13.006,.05]],type:'sine',attack:.006,decay:10,lp:9000,peak:.11,fmul:2.2,noise:.12,noiseFreq:6,noiseDur:.06},
   triangel:{partials:[[1,1],[2.76,.7],[5.4,.5],[8.9,.35],[13,.2]],type:'sine',attack:.002,decay:5.5,lp:13000,peak:.1,fmul:4,noise:.25,noiseFreq:9,noiseDur:.03},
   /* drums — pitched membrane with quick pitch drop */
   djembe:{partials:[[1,1],[1.6,.4],[2.3,.2]],type:'sine',attack:.002,decay:.8,lp:1400,peak:.15,drop:7,noise:.5,noiseFreq:3,noiseDur:.12},
