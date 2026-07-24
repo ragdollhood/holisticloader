@@ -1686,7 +1686,22 @@ const VOICES={
   harpa:{partials:[[.999,.5],[1.001,.5],[1.997,.25],[2.003,.25],[2.996,.15],[3.004,.15],[3.994,.09],[4.006,.09],[4.993,.05],[5.007,.05],[5.991,.03],[6.009,.03]],type:'triangle',attack:.006,decay:6,lp:5800,peak:.12,noise:.08,noiseFreq:5,noiseDur:.05},
   monochord:{partials:[[.997,.7],[1,1],[1.003,.7],[2,.5],[2.006,.4],[3,.22],[4,.12],[5,.07]],type:'triangle',attack:.25,decay:7,lp:4000,peak:.11},
   panflute:{partials:[[1,1],[2,.16],[3,.05],[4,.02]],type:'sine',attack:.32,decay:4.5,lp:3000,peak:.1,noise:.3,noiseFreq:2.4,noiseQ:.5,noiseDur:.7,vib:{rate:4,depth:4}},
-  native_american_fluit:{partials:[[1,1],[2,.3],[3,.12],[4,.05]],type:'triangle',attack:.08,decay:3.2,lp:3200,peak:.12,noise:.45,noiseFreq:2.5,noiseDur:.4,vib:{rate:4.5,depth:10}},
+  /* Native American (cedar) flute — built from clean sine partials (a duct/fipple
+     flute's tone is close to pure, so stacking a timbral waveform on top of the
+     partials would just make it buzzy). Warmth and "breath" come from the
+     continuous filtered-noise bed under the tone, not from the oscillator shape. */
+  native_american_fluit:{
+    partials:[[1,1],[2,.22],[3,.09],[4,.035],[5,.015]],
+    type:'sine',
+    attack:.12,decay:3.6,
+    lp:3200,lpSweep:{to:2100,time:2.4},
+    peak:.12,
+    noise:.22,noiseFreq:2.0,noiseQ:.6,noiseDur:.35,
+    breath:{amp:.06,freqMul:2.4,q:.55,attack:.18,swell:{rate:.32,depth:.4}},
+    vib:{rate:4.3,depth:8,delay:.4},
+    drift:{rate:.2,depth:2.5},
+    jitter:3
+  },
   chime:{partials:[[.9985,.5],[1.0015,.5],[2.758,.275],[2.762,.275],[5.397,.175],[5.403,.175],[8.897,.1],[8.903,.1],[12.994,.05],[13.006,.05]],type:'sine',attack:.006,decay:10,lp:9000,peak:.11,fmul:2.2,noise:.12,noiseFreq:6,noiseDur:.06},
   triangel:{partials:[[1,1],[2.76,.7],[5.4,.5],[8.9,.35],[13,.2]],type:'sine',attack:.002,decay:5.5,lp:13000,peak:.1,fmul:4,noise:.25,noiseFreq:9,noiseDur:.03},
   /* drums — pitched membrane with quick pitch drop */
@@ -1730,23 +1745,41 @@ function playTexture(cfg,freq,t,mult){const ctx=audio.ctx,dur=cfg.decay*mult;
 function playVoice(type,freq,when,mult=1){
   const ctx=audio.ctx,cfg=VOICES[type]||VOICES.crystal_bowl,t=when;
   if(cfg.texture){playTexture(cfg,freq,t,mult);return;}
-  const decay=cfg.decay*mult,attack=cfg.attack,peak=cfg.peak||.13,f0=freq*(cfg.fmul||1);
+  const decay=cfg.decay*mult,attack=cfg.attack,peak=cfg.peak||.13,f0=freq*(cfg.fmul||1),stop=t+attack+decay+.15;
   const vg=ctx.createGain(),lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=cfg.lp;
+  /* filter sweep — lets a long note's timbre evolve instead of staying static (e.g. a flute's tone gently mellowing) */
+  if(cfg.lpSweep){lp.frequency.setValueAtTime(cfg.lp,t);lp.frequency.linearRampToValueAtTime(cfg.lpSweep.to,t+(cfg.lpSweep.time||decay));}
   vg.connect(lp);lp.connect(audio.dry);lp.connect(audio.rev);
   vg.gain.setValueAtTime(.0001,t);vg.gain.linearRampToValueAtTime(peak,t+attack);vg.gain.exponentialRampToValueAtTime(.0001,t+attack+decay);
   let vibGain=null;
-  if(cfg.vib){const lfo=ctx.createOscillator();lfo.frequency.value=cfg.vib.rate;vibGain=ctx.createGain();vibGain.gain.value=cfg.vib.depth;lfo.connect(vibGain);lfo.start(t);lfo.stop(t+attack+decay+.15);}
+  if(cfg.vib){const lfo=ctx.createOscillator();lfo.frequency.value=cfg.vib.rate;vibGain=ctx.createGain();
+    if(cfg.vib.delay){vibGain.gain.setValueAtTime(0,t);vibGain.gain.linearRampToValueAtTime(cfg.vib.depth,t+cfg.vib.delay);}
+    else vibGain.gain.value=cfg.vib.depth;
+    lfo.connect(vibGain);lfo.start(t);lfo.stop(stop);}
+  /* slow pitch drift — a hair of organic wander so a sustained tone never sits perfectly still */
+  let driftGain=null;
+  if(cfg.drift){const dlfo=ctx.createOscillator();dlfo.type='sine';dlfo.frequency.value=cfg.drift.rate;driftGain=ctx.createGain();driftGain.gain.value=cfg.drift.depth;dlfo.connect(driftGain);dlfo.start(t);dlfo.stop(stop);}
   cfg.partials.forEach(([ratio,amp,pAtt])=>{const o=ctx.createOscillator();o.type=cfg.type;o.frequency.value=f0*ratio;
     if(cfg.drop){o.frequency.setValueAtTime(f0*ratio*Math.pow(2,cfg.drop/12),t);o.frequency.exponentialRampToValueAtTime(f0*ratio,t+attack+.12);}
+    if(cfg.jitter)o.detune.value+=(Math.random()*2-1)*cfg.jitter; /* per-note micro-variation so repeats don't sound identical */
     if(vibGain)vibGain.connect(o.detune);
+    if(driftGain)driftGain.connect(o.detune);
     const g=ctx.createGain();
     if(pAtt!=null){g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(amp,t+pAtt);}
     else g.gain.value=amp;
-    o.connect(g);g.connect(vg);o.start(t);o.stop(t+attack+decay+.15);});
+    o.connect(g);g.connect(vg);o.start(t);o.stop(stop);});
   if(cfg.noise){const ndur=cfg.noiseDur||.18,nb=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*ndur)),ctx.sampleRate),nd=nb.getChannelData(0);
     for(let i=0;i<nd.length;i++)nd[i]=(Math.random()*2-1)*Math.pow(1-i/nd.length,3);
     const ns=ctx.createBufferSource();ns.buffer=nb;const nf=ctx.createBiquadFilter();nf.type='bandpass';nf.frequency.value=f0*(cfg.noiseFreq||2.2);nf.Q.value=cfg.noiseQ||.7;
     const ng=ctx.createGain();ng.gain.setValueAtTime(.0001,t);ng.gain.linearRampToValueAtTime(peak*cfg.noise,t+.003);ng.gain.exponentialRampToValueAtTime(.0001,t+ndur);ns.connect(nf);nf.connect(ng);ng.connect(vg);ns.start(t);ns.stop(t+ndur+.05);}
+  /* continuous breath bed — sustained, gently swelling airflow noise under the tone (not just an onset transient) */
+  if(cfg.breath){const bc=cfg.breath,bdur=attack+decay+.3;
+    const bsrc=ctx.createBufferSource();bsrc.buffer=noiseBuf(bdur,false);
+    const bf=ctx.createBiquadFilter();bf.type='bandpass';bf.frequency.value=f0*(bc.freqMul||2.5);bf.Q.value=bc.q||.5;
+    const bg=ctx.createGain();const bAtt=bc.attack!=null?bc.attack:attack;
+    bg.gain.setValueAtTime(0,t);bg.gain.linearRampToValueAtTime(bc.amp,t+bAtt);
+    bsrc.connect(bf);bf.connect(bg);bg.connect(vg);bsrc.start(t);bsrc.stop(t+bdur+.1);
+    if(bc.swell){const lfo=ctx.createOscillator();lfo.frequency.value=bc.swell.rate;const lg=ctx.createGain();lg.gain.value=bc.amp*bc.swell.depth;lfo.connect(lg);lg.connect(bg.gain);lfo.start(t);lfo.stop(t+bdur+.1);}}
 }
 function playFinal(){const ctx=audio.ctx,t=ctx.currentTime+.05;
   audio.revGain.gain.setValueAtTime(audio.revGain.gain.value,t);audio.revGain.gain.linearRampToValueAtTime(.8,t+.1);
