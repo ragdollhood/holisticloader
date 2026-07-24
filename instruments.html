@@ -1906,7 +1906,7 @@
   function strikeGong(edge){
     const V=GONG_VOICES[gongVoice];
     const t0=ac.currentTime+.02;
-    const f=gongF(), v=masterVol()*.85, sh=shimmer();
+    const f=gongF(), v=masterVol()*4.0, sh=shimmer();
     const gains=[]; let maxDec=0;
     const weights=V.ratios.map(function(r,i){
       let w;
