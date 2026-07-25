@@ -1972,7 +1972,7 @@
   function strikeBowl(){
     const V=BOWL_VOICES[bowlVoice];
     const t0=ac.currentTime+.02;
-    const f=bowlF()*V.mul, v=masterVol()*.75, b=beat()*V.beatMul;
+    const f=bowlF()*V.mul, v=masterVol()*.6, b=beat()*V.beatMul;
     const gains=[];
     gains.push(partial(t0,f-b/2,v*.5,V.dec,0,V.att));
     gains.push(partial(t0,f+b/2,v*.5,V.dec,0,V.att));
@@ -2160,7 +2160,7 @@
     registerStrike(gains,t0+3.6);
   }
   function shamanHit(edge,soft){
-    const t0=ac.currentTime+.005, v=masterVol()*(soft?.28:.48);
+    const t0=ac.currentTime+.005, v=masterVol()*(soft?.44:.75);
     const f=88-edge*16;
     const ring=1.0-edge*0.42;
     const gains=[];
