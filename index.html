@@ -226,6 +226,8 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .reel-label .kw-val{display:none;font-size:1.05em;color:var(--gold);font-weight:600;letter-spacing:.05em;margin-left:8px;font-variant-numeric:tabular-nums;
   text-shadow:0 0 10px rgba(231,201,162,.75),0 0 22px rgba(231,201,162,.4)}
 #reelLabel,#soundLabelFront{margin-bottom:3px}
+#ambInfo{text-align:center;font-size:11.5px;line-height:1.4;color:var(--muted);max-width:360px;margin:2px auto 10px;padding:0 16px;transition:opacity .3s ease}
+#ambInfo.hidden{display:none}
 .freqfront{display:flex;flex-direction:column;align-items:stretch;gap:7px;max-width:420px;margin:0 auto 6px;padding:0 6px}
 #freqLabelFront{margin-top:0}
 .freqfront .v{text-align:center;font-size:12px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em}
@@ -267,6 +269,8 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .sti{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px}
 .sti-lbl{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;min-height:2.6em}
 .sti-ic{width:14px;height:14px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8}
+
+/* (ambience is now selected as items in the instrument row — see .itile) */
 .swtoggle{position:relative;width:46px;height:26px;border-radius:999px;flex:0 0 auto;cursor:pointer;
   background:rgba(244,241,234,.14);border:1px solid var(--line);transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
 .swtoggle .sw-knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#9a9a9a;
@@ -814,6 +818,7 @@ body.immersive #howToBox{display:none}
       <div class="iscroll" id="soundScrollFront"></div>
       <svg class="scrollcue" id="soundCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
     </div>
+    <div id="ambInfo" class="hidden"></div>
     <div class="reel-label" id="freqLabelFront"><span class="kw" id="ctrlKw">My frequency</span><span class="kw-val" id="ctrlKwVal"></span></div>
     <div id="ctrlTabs" role="tablist" aria-label="Sound &amp; breath controls">
       <button class="ctrl-tab ctrl-tab-icon active" id="ctrlTabFreq" data-ctrl="freq" role="tab" aria-selected="true" aria-label="Frequency">
@@ -940,8 +945,6 @@ body.immersive #howToBox{display:none}
           <div class="hintline">A preset sets the sound, tone, breathing rhythm, scene and length. Then tap the circle to start.</div>
         </div>
       </div>
-
-    </div>
     <div class="panel-foot"><button class="done-btn" id="panelDone">Done</button></div>
   </div>
 
@@ -961,7 +964,8 @@ const INSTRUMENT_ICONS = {"crystal_bowl": "images/crystal_bowl.jpg", "quartz_bow
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'quartz_bowl', freq:432, tempo:12, tempoFollow:true,
-  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false};
+  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false,
+  amb:{wave:0,greennoise:0,whitenoise:0,pinknoise:0,brownnoise:0,blue:0,violet:0,gray:0,black:0}};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
 
@@ -1092,6 +1096,40 @@ const SGROUPS=[
 ];
 const SMEMBER2GROUP={}; SGROUPS.forEach(g=>g.members.forEach(id=>SMEMBER2GROUP[id]=g));
 function sgroupOf(id){return SMEMBER2GROUP[id]||null;}
+/* Ambience "instruments" — continuous nature-sound / noise-color layers (see the ambience mixer
+   further down). They live at the end of the same instrument row instead of a separate picker, and
+   unlike the tuned instruments above they have no frequency / resonance / sound-tempo controls. */
+const AMB_SOUNDS=[
+  {id:'amb_greennoise',label:'Green noise',img:'images/noisegreen.jpg',amb:'greennoise'},
+  {id:'amb_whitenoise',label:'White noise',img:'images/noisewhite.jpg',amb:'whitenoise'},
+  {id:'amb_pinknoise', label:'Pink noise', img:'images/noisepink.jpg', amb:'pinknoise'},
+  {id:'amb_brownnoise',label:'Brown noise',img:'images/noisebrown.jpg',amb:'brownnoise'},
+  {id:'amb_bluenoise', label:'Blue noise', img:'images/noiseblue.jpg', amb:'blue'},
+  {id:'amb_violetnoise',label:'Violet noise',img:'images/noiseviolet.jpg',amb:'violet'},
+  {id:'amb_graynoise', label:'Gray noise', img:'images/noisegray.jpg', amb:'gray'},
+  {id:'amb_blacknoise',label:'Black noise',img:'images/noiseblack.jpg',amb:'black'},
+  {id:'amb_wave',  label:'Wave',   img:'images/wave.jpg',   amb:'wave'},
+];
+function isAmbSound(id){return AMB_SOUNDS.some(a=>a.id===id);}
+function ambSoundOf(id){return AMB_SOUNDS.find(a=>a.id===id);}
+/* short, plain-language line shown in #ambInfo under the sound row while that ambience is selected */
+const AMB_INFO={
+  greennoise:'Noise balanced around the middle of the hearing range — a calm, natural-sounding backdrop for easy focus.',
+  whitenoise:'Equal energy across every frequency — a steady, even hiss that helps mask distracting sounds.',
+  pinknoise:'Softer than white noise, with more weight in the lows — a smoother backdrop many find easier to relax to.',
+  brownnoise:'Deep and rumbling, weighted even further toward the low end — a warm, enveloping backdrop for sleep or focus.',
+  blue:'Brighter than white noise, with the low end thinned out — a soft, airy hiss.',
+  violet:'The brightest, hissiest color — nearly all high frequencies and almost no low end.',
+  gray:'Shaped to sound perceptually even across the whole hearing range, not just physically flat.',
+  black:'Mostly quiet — a deep, sparse rumble that drifts in and out rather than holding steady.',
+  wave:'Slow swells rolling in and receding, like waves on a shore — a steady, calming rhythm.',
+};
+function updateAmbInfo(){
+  const box=$('ambInfo');if(!box)return;
+  const a=ambSoundOf(S.sound);
+  if(!a||!AMB_INFO[a.amb]){box.classList.add('hidden');box.textContent='';return;}
+  box.textContent=AMB_INFO[a.amb];box.classList.remove('hidden');
+}
 /* Per-instrument frequency presets & natural ranges.
    min/max = the instrument's natural playing range (used to bound the slider
    unless Advanced Mode is on). def = the preset frequency loaded whenever the
@@ -1121,9 +1159,26 @@ function currentFreqRange(){return S.advanced?FULL_FREQ_RANGE:instrumentRange(S.
    the current custom frequency clamped to the full range (advanced mode) */
 function switchSound(id){
   S.sound=id;
+  stopAllAmbience();
   const r=instrumentRange(id);
   S.freq=r.def;
-  clearPreset();applyFreqBounds();updateFreq();
+  clearPreset();applyFreqBounds();updateFreq();renderCtrlTabs();syncCtrlSlider();
+}
+/* select one of the ambience "instruments" (Birds/Water/Rain/Forest) — mutually exclusive with
+   both the tuned instruments and with each other; no frequency/resonance/tempo controls apply */
+function switchAmbSound(item){
+  S.sound=item.id;
+  clearPreset();
+  stopAllAmbience();
+  ensureAmbience();
+  setAmbience(item.amb,65);
+  if(!S.running){
+    /* not in a session yet — this is just a quick preview while choosing, so it fades out
+       on its own after a couple of seconds. Once Start is pressed, startSession() cancels
+       this pending timer and the sound plays continuously for the whole session instead. */
+    ambPreviewTimer=setTimeout(()=>{setAmbience(item.amb,0);ambPreviewTimer=null;},AMB_PREVIEW_MS);
+  }
+  renderCtrlTabs();syncCtrlSlider();
 }
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
@@ -1132,7 +1187,7 @@ const FREE_SOUND_IDS=new Set(SGROUPS.filter(g=>FREE_SOUND_GROUPS.includes(g.id))
 function isSoundLocked(id){return !isPremium && !FREE_SOUND_IDS.has(id);}
 const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
 
-function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);}
+function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);updateAmbInfo();}
 function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scrollLeft;w.innerHTML='';let activeEl=null;const done={};
   SOUNDS.forEach(s=>{
     const g=sgroupOf(s.id);
@@ -1153,11 +1208,19 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
       if(s.id===S.sound)activeEl=b;w.appendChild(b);
     }
   });
+  /* ambience "instruments" continue the same row, after the tuned instruments */
+  AMB_SOUNDS.forEach(a=>{
+    const b=document.createElement('button');b.className='itile'+(a.id===S.sound?' active':'');b.dataset.ambid=a.id;
+    b.innerHTML=`<span class="iimg" style="background-image:url(${a.img})"></span><span class="ilbl">${a.label}</span>`;
+    b.onclick=()=>{closeSub();closeSoundSub();switchAmbSound(a);renderSounds();};
+    if(a.id===S.sound)activeEl=b;w.appendChild(b);
+  });
   if(center&&activeEl){requestAnimationFrame(()=>{w.scrollLeft=activeEl.offsetLeft-w.clientWidth/2+activeEl.offsetWidth/2;});}
   else{w.scrollLeft=sx;}
 }
 function updateSoundActiveStates(){
   document.querySelectorAll('.itile[data-sndid]').forEach(el=>el.classList.toggle('active',el.dataset.sndid===S.sound));
+  document.querySelectorAll('.itile[data-ambid]').forEach(el=>el.classList.toggle('active',el.dataset.ambid===S.sound));
   document.querySelectorAll('.itile.group[data-sgroup]').forEach(el=>{
     const gg=SGROUPS.find(x=>x.id===el.dataset.sgroup); if(!gg)return;
     const act=gg.members.includes(S.sound);
@@ -1221,7 +1284,8 @@ document.addEventListener('click',e=>{
   }
 });
 {const rl=$('reel'); if(rl)rl.addEventListener('scroll',updatePlaceCue,{passive:true});}
-function preview(){initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
+function preview(){initAudio();resumeAudio();
+  if(isAmbSound(S.sound))return; /* already playing continuously via the ambience mixer */
   if(!S.running)audio.master.gain.setTargetAtTime(MASTER,audio.ctx.currentTime,.02);
   playVoice(S.sound,S.freq,audio.ctx.currentTime+.04);}
 
@@ -1339,6 +1403,11 @@ function syncCtrlSlider(){
 }
 function renderCtrlTabs(){
   document.querySelectorAll('.ctrl-tab').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});
+  /* Frequency, Resonance and Sound tempo only apply to tuned instruments — hide them
+     while one of the ambience sounds (Birds/Water/Rain/Forest) is selected */
+  const ambActive=isAmbSound(S.sound);
+  ['ctrlTabFreq','ctrlTabResonance','ctrlTabSoundTempo'].forEach(id=>{const b=$(id);if(b)b.classList.toggle('hidden',ambActive);});
+  if(ambActive&&(ctrlTab==='freq'||ctrlTab==='resonance'||ctrlTab==='soundtempo'))ctrlTab='tempo';
   const idMap={freq:'ctrlTabFreq',tempo:'ctrlTabTempo',resonance:'ctrlTabResonance',length:'ctrlTabLength',soundtempo:'ctrlTabSoundTempo'};
   const b=$(idMap[ctrlTab]);
   if(b){b.classList.add('active');b.setAttribute('aria-selected','true');}
@@ -1699,13 +1768,12 @@ const VOICES={
 };
 /* legacy aliases (presets / closing tone) */
 VOICES.crystal=VOICES.crystal_bowl;VOICES.bowl=VOICES.tibetan_bowl;VOICES.harp=VOICES.harpa;VOICES.bell=VOICES.tonguedrum;VOICES.soft=VOICES.handpan;
-function initAudio(){if(audio.ctx)return;
+function initAudio(force){
+  if(audio.ctx&&!force)return;
+  if(force&&audio.ctx){try{audio.ctx.close();}catch(e){}amb.ready=false;}
   const ctx=new (window.AudioContext||window.webkitAudioContext)();
-  // iOS Safari kan rapportera state='running' efter resume() utan att
-  // faktiskt släppa igenom ljud till högtalaren förrän en källa verkligen
-  // startat inom samma användar-gest. Lura igång ljudmotorn med en tyst,
-  // 1-sample lång buffer direkt när kontexten skapas.
-  try{const ub=ctx.createBuffer(1,1,22050);const us=ctx.createBufferSource();us.buffer=ub;us.connect(ctx.destination);us.start(0);}catch(e){}
+  Object.assign(audio,{ctx});
+  unlockAudioOutput();
   const master=ctx.createGain();master.gain.value=MASTER;
   const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;comp.knee.value=24;comp.ratio.value=3;comp.attack.value=.01;comp.release.value=.3;
   const limiter=ctx.createDynamicsCompressor();limiter.threshold.value=-1;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.002;limiter.release.value=.1;
@@ -1714,10 +1782,48 @@ function initAudio(){if(audio.ctx)return;
   const revGain=ctx.createGain();revGain.gain.value=S.resonance/100;
   dry.connect(master);rev.connect(revGain);revGain.connect(master);master.connect(comp);comp.connect(limiter);limiter.connect(ctx.destination);
   Object.assign(audio,{ctx,master,dry,rev,revGain});}
+/* iOS Safari can report state='running' right after resume() without actually letting
+   sound reach the speaker until a source has genuinely started within that same
+   reactivation. Playing one silent 1-sample buffer immediately "unlocks" real output.
+   This used to only run once, at the very first ctx creation — fine for the initial tap,
+   but the SAME silent-running-but-muted state can recur any time the context is
+   suspended and resumed again later (going idle after a stretch of silence, the tab being
+   backgrounded, the screen locking mid-session, a phone call interrupting audio, etc.).
+   Since nothing replayed the unlock trick after that first time, once any later
+   suspend/resume cycle hit this quirk the noise/wave ambience — and everything else —
+   would go silent for good, which is why the buttons "stop working after a while" instead
+   of just occasionally missing a single click. */
+function unlockAudioOutput(){
+  try{const ctx=audio.ctx,ub=ctx.createBuffer(1,1,22050),us=ctx.createBufferSource();us.buffer=ub;us.connect(ctx.destination);us.start(0);}catch(e){}
+}
+/* Central place to (re)start audio: resumes a suspended context, rebuilds from scratch if
+   the browser has fully torn the context down (state 'closed' — resume() can never recover
+   from that, it always rejects), and re-plays the unlock trick every time either way. Every
+   call site that used to do `if(state==='suspended')ctx.resume()` should go through this
+   instead so the fix above actually applies everywhere audio can restart. */
+function resumeAudio(){
+  if(!audio.ctx){initAudio();return Promise.resolve();}
+  if(audio.ctx.state==='closed'){
+    const wasAmb=Object.assign({},S.amb);
+    initAudio(true);
+    if(Object.values(wasAmb).some(v=>v>0)){ensureAmbience();Object.keys(wasAmb).forEach(k=>{if(wasAmb[k]>0)setAmbience(k,wasAmb[k]);});}
+    return Promise.resolve();
+  }
+  return Promise.resolve(audio.ctx.resume()).then(unlockAudioOutput);
+}
 function makeImpulse(ctx,sec,decay){const rate=ctx.sampleRate,len=Math.floor(rate*sec),buf=ctx.createBuffer(2,len,rate);
   for(let ch=0;ch<2;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}return buf;}
 function noiseBuf(sec,brown){const len=Math.max(1,Math.floor(audio.ctx.sampleRate*sec)),b=audio.ctx.createBuffer(1,len,audio.ctx.sampleRate),d=b.getChannelData(0);
-  let last=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;if(brown){last=(last+.02*w)/1.02;d[i]=last*3.4;}else d[i]=w;}return b;}
+  let last=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;if(brown){last=(last+.02*w)/1.02;d[i]=last*3.4;}else d[i]=w;}
+  /* Brown noise is a running sum, so the buffer's end value drifts away from where it
+     started — every time a looping source wraps back to sample 0 that mismatch shows up
+     as a small but perfectly regular "thump" (once per loop length). Cancel the drift... */
+  if(brown&&len>1){const drift=d[len-1]-d[0];for(let i=0;i<len;i++)d[i]-=drift*(i/(len-1));}
+  /* ...and cross-fade a short head/tail window either way, so the loop seam is inaudible
+     even for the non-brown (white) case. */
+  const fade=Math.min(Math.floor(len/4),Math.floor(audio.ctx.sampleRate*.03));
+  for(let i=0;i<fade;i++){const g=i/fade,tailIdx=len-fade+i,mix=d[i]*g+d[tailIdx]*(1-g);d[i]=mix;d[tailIdx]=mix;}
+  return b;}
 function playTexture(cfg,freq,t,mult){const ctx=audio.ctx,dur=cfg.decay*mult;
   const src=ctx.createBufferSource();src.buffer=noiseBuf(dur+.3,cfg.brown);
   const f=ctx.createBiquadFilter();f.type=cfg.ftype||'lowpass';f.frequency.value=cfg.fc;if(cfg.q)f.Q.value=cfg.q;
@@ -1728,6 +1834,7 @@ function playTexture(cfg,freq,t,mult){const ctx=audio.ctx,dur=cfg.decay*mult;
     const og=ctx.createGain();og.gain.setValueAtTime(.0001,t);og.gain.linearRampToValueAtTime(cfg.subAmp,t+cfg.swell);og.gain.exponentialRampToValueAtTime(.0001,t+dur);
     o.connect(og);og.connect(audio.dry);og.connect(audio.rev);o.start(t);o.stop(t+dur+.2);}}
 function playVoice(type,freq,when,mult=1){
+  if(!VOICES[type])return; /* ambience sounds (Wave, noise colors) have no tuned voice — they run continuously via the ambience mixer instead */
   const ctx=audio.ctx,cfg=VOICES[type]||VOICES.crystal_bowl,t=when;
   if(cfg.texture){playTexture(cfg,freq,t,mult);return;}
   const decay=cfg.decay*mult,attack=cfg.attack,peak=cfg.peak||.13,f0=freq*(cfg.fmul||1);
@@ -1751,10 +1858,197 @@ function playVoice(type,freq,when,mult=1){
 function playFinal(){const ctx=audio.ctx,t=ctx.currentTime+.05;
   audio.revGain.gain.setValueAtTime(audio.revGain.gain.value,t);audio.revGain.gain.linearRampToValueAtTime(.8,t+.1);
   playVoice('tibetansk_gong',S.freq*.5,t,1.4);playVoice('crystal_bowl',S.freq*.5,t+.05,1.3);}
+
+/* ===== ambience mixer: Birds / Water / Rain / Forest — continuous nature-sound layers ===== */
+const amb={ready:false};
+/* while just previewing a sound on the front page (session not running yet), it auto-stops
+   after this long; once a session is actually running it plays continuously instead — see
+   switchAmbSound() and startSession() */
+const AMB_PREVIEW_MS=2000;
+let ambPreviewTimer=null;
+function loopNoise(sec,brown){
+  const src=audio.ctx.createBufferSource();src.buffer=noiseBuf(sec,brown);src.loop=true;src.start();return src;
+}
+/* Pink noise (-3dB/octave, midway in weight between white and brown) via Paul Kellet's
+   well-known economy IIR approximation, baked into a buffer the same way noiseBuf() is. */
+function pinkBuf(sec){
+  const len=Math.max(1,Math.floor(audio.ctx.sampleRate*sec)),b=audio.ctx.createBuffer(1,len,audio.ctx.sampleRate),d=b.getChannelData(0);
+  let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+  for(let i=0;i<len;i++){
+    const w=Math.random()*2-1;
+    b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;b2=.96900*b2+w*.1538520;
+    b3=.86650*b3+w*.3104856;b4=.55000*b4+w*.5329522;b5=-.7616*b5-w*.0168980;
+    d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*.11;b6=w*.115926;
+  }
+  /* same loop-seam crossfade as noiseBuf, so it can play seamlessly */
+  const fade=Math.min(Math.floor(len/4),Math.floor(audio.ctx.sampleRate*.03));
+  for(let i=0;i<fade;i++){const g=i/fade,tailIdx=len-fade+i,mix=d[i]*g+d[tailIdx]*(1-g);d[i]=mix;d[tailIdx]=mix;}
+  return b;
+}
+function loopPink(sec){const src=audio.ctx.createBufferSource();src.buffer=pinkBuf(sec);src.loop=true;src.start();return src;}
+/* Discrete first difference of a buffer: d[i] = s[i] - s[i-1]. In the frequency domain,
+   differencing multiplies the spectrum by (a factor proportional to) frequency, which tilts
+   the power spectral density by +6 dB/octave relative to whatever went in. That single fact
+   generates two more noise colors for free:
+     - diff(white)  -> +6 dB/oct  = violet/purple noise
+     - diff(pink)   -> -3+6=+3dB/oct = blue noise
+   The very first sample wraps around to the buffer's last sample (i-1 at i=0 reads the tail),
+   which is exactly the sample that precedes it once the buffer is set to loop — so the
+   derivative already loops seamlessly with no extra crossfade needed. */
+function diffBuf(src){
+  const len=src.length,ctx=audio.ctx,b=ctx.createBuffer(1,len,ctx.sampleRate),d=b.getChannelData(0),s=src.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=(s[i]-s[(i-1+len)%len])*.6; /* *.6 keeps gain-staging in the same ballpark as the other layers */
+  return b;
+}
+function loopBuffer(buf){const src=audio.ctx.createBufferSource();src.buffer=buf;src.loop=true;src.start();return src;}
+function ensureAmbience(){
+  if(amb.ready)return;initAudio();amb.ready=true;
+  const ctx=audio.ctx;
+  amb.bus=ctx.createGain();amb.bus.gain.value=1;amb.bus.connect(audio.dry);
+  /* (intentionally NOT connected to audio.rev — reverb is for the struck/plucked instruments;
+     on a continuously-running noise bed it just smears into a washy, indistinct hiss) */
+
+  /* Green noise — energy weighted toward the middle of the hearing range (~500 Hz), the
+     register often described as sounding like a steady breeze or rustling leaves */
+  {
+    const src=loopNoise(5,false);
+    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=500;bp.Q.value=.8;
+    const wander=ctx.createOscillator();wander.frequency.value=.04;
+    const wanderG=ctx.createGain();wanderG.gain.value=60;
+    wander.connect(wanderG).connect(bp.frequency);wander.start();
+    amb.greennoiseG=ctx.createGain();amb.greennoiseG.gain.value=0;
+    src.connect(bp).connect(amb.greennoiseG);amb.greennoiseG.connect(amb.bus);
+  }
+
+  /* White noise — full, flat-spectrum hiss, equal energy at every frequency */
+  {
+    const src=loopNoise(4,false);
+    amb.whitenoiseG=ctx.createGain();amb.whitenoiseG.gain.value=0;
+    src.connect(amb.whitenoiseG);amb.whitenoiseG.connect(amb.bus);
+  }
+
+  /* Pink noise — energy falls off -3dB/octave, a softer, deeper hiss than white noise */
+  {
+    const src=loopPink(4);
+    amb.pinknoiseG=ctx.createGain();amb.pinknoiseG.gain.value=0;
+    src.connect(amb.pinknoiseG);amb.pinknoiseG.connect(amb.bus);
+  }
+
+  /* Brown noise — even more low-end weighted than pink, a deep, steady rumble */
+  {
+    const src=loopNoise(4,true);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;lp.Q.value=.5;
+    amb.brownnoiseG=ctx.createGain();amb.brownnoiseG.gain.value=0;
+    src.connect(lp).connect(amb.brownnoiseG);amb.brownnoiseG.connect(amb.bus);
+  }
+
+  /* Blue noise — +3 dB/octave, the derivative of pink noise: brighter and airier than white,
+     with the low end thinned out — a soft, breathy hiss */
+  {
+    const src=loopBuffer(diffBuf(pinkBuf(5)));
+    amb.blueG=ctx.createGain();amb.blueG.gain.value=0;
+    src.connect(amb.blueG);amb.blueG.connect(amb.bus);
+  }
+
+  /* Violet noise — +6 dB/octave, the derivative of white noise: the brightest, hissiest
+     color here, all top end and almost no body */
+  {
+    const src=loopBuffer(diffBuf(noiseBuf(5,false)));
+    amb.violetG=ctx.createGain();amb.violetG.gain.value=0;
+    src.connect(amb.violetG);amb.violetG.connect(amb.bus);
+  }
+
+  /* Gray noise — white noise reshaped to sound perceptually flat: the ear is most sensitive
+     around 2-5 kHz, so that band is dipped and the lows/very-highs are lifted to compensate,
+     an approximation of an inverse equal-loudness curve rather than a fixed dB/octave slope */
+  {
+    const src=loopNoise(4,false);
+    const dip=ctx.createBiquadFilter();dip.type='peaking';dip.frequency.value=3200;dip.Q.value=.9;dip.gain.value=-9;
+    const lowLift=ctx.createBiquadFilter();lowLift.type='lowshelf';lowLift.frequency.value=150;lowLift.gain.value=5;
+    const highLift=ctx.createBiquadFilter();highLift.type='highshelf';highLift.frequency.value=7000;highLift.gain.value=5;
+    amb.grayG=ctx.createGain();amb.grayG.gain.value=0;
+    src.connect(dip).connect(lowLift).connect(highLift).connect(amb.grayG);amb.grayG.connect(amb.bus);
+  }
+
+  /* Black noise — there's no strict standard definition; the common, practical meaning is
+     "mostly quiet, deeper and sparser than brown noise" rather than a continuous bed. Built
+     as heavily low-passed brown noise (well below the brown-noise cutoff) whose level is then
+     driven down toward near-silence by two slow, unrelated-rate LFOs multiplied together, so
+     it drifts in and out with an irregular, non-repeating rhythm instead of a steady rumble */
+  {
+    const src=loopNoise(6,true);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=180;lp.Q.value=.4;
+    const sparseStage=ctx.createGain();sparseStage.gain.value=0;
+    const sparseConst=ctx.createConstantSource();sparseConst.offset.value=.35;sparseConst.connect(sparseStage.gain);sparseConst.start();
+    const lfo1=ctx.createOscillator();lfo1.frequency.value=.045;
+    const lfo1G=ctx.createGain();lfo1G.gain.value=.3;
+    lfo1.connect(lfo1G).connect(sparseStage.gain);lfo1.start();
+    const lfo2=ctx.createOscillator();lfo2.frequency.value=.017;
+    const lfo2G=ctx.createGain();lfo2G.gain.value=.25;
+    lfo2.connect(lfo2G).connect(sparseStage.gain);lfo2.start();
+    amb.blackG=ctx.createGain();amb.blackG.gain.value=0;
+    src.connect(lp).connect(sparseStage).connect(amb.blackG);amb.blackG.connect(amb.bus);
+  }
+
+  /* Wave — slow swelling lowpass noise, waves rolling in and receding */
+  {
+    const src=loopNoise(6,false);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1000;lp.Q.value=.5;
+    const wander=ctx.createOscillator();wander.frequency.value=.03;
+    const wanderG=ctx.createGain();wanderG.gain.value=260;
+    wander.connect(wanderG).connect(lp.frequency);wander.start();
+    /* multiplicative swell stage, deeper than the others — this IS the wave motion */
+    const swellStage=ctx.createGain();swellStage.gain.value=0;
+    const swellConst=ctx.createConstantSource();swellConst.offset.value=.55;swellConst.connect(swellStage.gain);swellConst.start();
+    const swell=ctx.createOscillator();swell.frequency.value=.16;
+    const swellG=ctx.createGain();swellG.gain.value=.45;
+    swell.connect(swellG).connect(swellStage.gain);swell.start();
+    amb.waveG=ctx.createGain();amb.waveG.gain.value=0;
+    src.connect(lp).connect(swellStage).connect(amb.waveG);amb.waveG.connect(amb.bus);
+  }
+}
+const AMB_PEAK={wave:.3,greennoise:.3,whitenoise:.22,pinknoise:.26,brownnoise:.32,blue:.18,violet:.14,gray:.22,black:.34};
+const AMB_TAU ={wave:.7,greennoise:.4,whitenoise:.4,pinknoise:.4,brownnoise:.4,blue:.4,violet:.4,gray:.4,black:.6};
+const AMB_NODE={wave:'waveG',greennoise:'greennoiseG',whitenoise:'whitenoiseG',pinknoise:'pinknoiseG',brownnoise:'brownnoiseG',blue:'blueG',violet:'violetG',gray:'grayG',black:'blackG'};
+function setAmbience(key,val){
+  S.amb[key]=Math.max(0,Math.min(100,Math.round(val)));
+  const lbl=$('amb'+key.charAt(0).toUpperCase()+key.slice(1)+'Val');if(lbl)lbl.textContent=S.amb[key]+'%';
+  const rampNow=()=>{
+    const node=amb[AMB_NODE[key]]; if(!node)return;
+    const t=audio.ctx.currentTime, g=node.gain;
+    const target=S.amb[key]>0?(S.amb[key]/100)*AMB_PEAK[key]:0;
+    /* Pin the gain to its actual current value before laying down the new ramp. Without
+       this, a ramp left over from just before the AudioContext auto-suspended (which
+       Chrome does after a couple of seconds of silence — exactly what happens once a
+       preview has faded all the way out) can leave a stale/queued curve that the new
+       setTargetAtTime doesn't cleanly take over from. */
+    g.cancelScheduledValues(t);
+    g.setValueAtTime(g.value,t);
+    g.setTargetAtTime(target,t,AMB_TAU[key]);
+  };
+  if(S.amb[key]>0){
+    ensureAmbience();
+    /* Always resume — regardless of what .state currently reports — and wait for the
+       resume to actually finish before scheduling the gain change. The old code checked
+       .state and called resume() but scheduled the ramp immediately afterwards without
+       waiting; if the context was still mid-resume (the common case right after it had
+       auto-suspended during a silent stretch) the ramp could be dropped, which is why
+       clicking a noise/wave button again after it had fully faded out sometimes produced
+       no sound at all. */
+    resumeAudio().then(rampNow);
+  }else if(amb.ready){
+    rampNow();
+  }
+}
+/* mute every ambience layer — used when switching to a tuned instrument, or between
+   ambience "instruments", since only one sound plays at a time in the instrument row */
+function stopAllAmbience(){
+  if(ambPreviewTimer){clearTimeout(ambPreviewTimer);ambPreviewTimer=null;}
+  ['wave','greennoise','whitenoise','pinknoise','brownnoise','blue','violet','gray','black'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
+}
+
 ['pointerdown','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,function once(){
-  try{initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
-    const ub=audio.ctx.createBuffer(1,1,22050);const us=audio.ctx.createBufferSource();us.buffer=ub;us.connect(audio.ctx.destination);us.start(0);
-  }catch(e){}
+  try{initAudio();resumeAudio();}catch(e){}
   document.removeEventListener(ev,once);},{passive:true}));
 
 /* scheduler */
@@ -1931,8 +2225,15 @@ requestAnimationFrame(loop);
 
 /* session */
 function startSession(){
-  initAudio(); if(audio.ctx.state==='suspended')audio.ctx.resume();
+  initAudio(); resumeAudio();
   S.ended=false;$('endOverlay').classList.remove('show');
+  if(ambPreviewTimer){clearTimeout(ambPreviewTimer);ambPreviewTimer=null;} /* the sound now plays for the whole session, not just a short preview */
+  if(isAmbSound(S.sound)){
+    /* being selected is enough — turn it back on even if its preview had already faded to silence */
+    const a=ambSoundOf(S.sound);
+    ensureAmbience();
+    setAmbience(a.amb,65);
+  }
   if(remainingMs<=0){remainingMs=S.timerMin*60*1000;breathClock=0;wanderT=0;}
   cueTarget='';cueText='';cueState='out';cueOp=0;$('breathCueTxt').textContent='';
   S.running=true;
@@ -1952,11 +2253,12 @@ function startSession(){
 function pauseSession(){S.running=false;stopScheduler();
   audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.15);
   $('breathCue').style.opacity=0;$('btnPause').classList.add('paused');}
-function resumeSession(){S.running=true;if(audio.ctx.state==='suspended')audio.ctx.resume();
+function resumeSession(){S.running=true;resumeAudio();
   audio.master.gain.setTargetAtTime(S.soundOn?MASTER:.0001,audio.ctx.currentTime,.1);
   $('btnPause').classList.remove('paused');startScheduler();}
 function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
   $('breathCue').style.opacity=0;$('timerReadout').textContent='0:00';
+  stopAllAmbience(); /* any Wave/noise-color ambience stops right away, instead of lingering through the closing tone's fade */
   if(audio.ctx){
     if(S.soundOn){
       audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);
@@ -1971,6 +2273,7 @@ function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
   $('timerCluster').classList.add('hidden');$('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
 function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
+  stopAllAmbience();
   if(audio.ctx){audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.25);}
   document.body.classList.remove('immersive');
   $('endOverlay').classList.remove('show');
