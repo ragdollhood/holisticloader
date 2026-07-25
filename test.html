@@ -267,6 +267,14 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .sti{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px}
 .sti-lbl{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;min-height:2.6em}
 .sti-ic{width:14px;height:14px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8}
+
+/* ===== ambience mixer (Birds / Water / Rain / Forest) ===== */
+.amb-list{display:flex;flex-direction:column;gap:16px;margin-top:6px}
+.amb-row{display:flex;align-items:center;gap:10px}
+.amb-ic{width:20px;height:20px;flex:0 0 auto;stroke:var(--gold);fill:none;stroke-width:1.6}
+.amb-lbl{font-size:12.5px;color:var(--ink);min-width:44px;flex:0 0 auto}
+.amb-row input[type="range"]{flex:1 1 auto}
+.amb-val{font-size:11px;color:var(--muted);min-width:34px;text-align:right;font-variant-numeric:tabular-nums;flex:0 0 auto}
 .swtoggle{position:relative;width:46px;height:26px;border-radius:999px;flex:0 0 auto;cursor:pointer;
   background:rgba(244,241,234,.14);border:1px solid var(--line);transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
 .swtoggle .sw-knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#9a9a9a;
@@ -834,6 +842,9 @@ body.immersive #howToBox{display:none}
       <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabPreset" data-panel="preset" role="tab" aria-selected="false" aria-label="Presets">
         <svg viewBox="0 0 24 24"><path d="M12 3l1.7 4.6L18.5 9.3 13.9 11 12 15.6 10.1 11 5.5 9.3 10.3 7.6Z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8Z"/></svg>
       </button>
+      <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabAmbience" data-panel="ambience" role="tab" aria-selected="false" aria-label="Ambience sounds">
+        <svg viewBox="0 0 24 24"><path d="M3 16.5c1.2-4 2.4-4 3.6 0M9 16.5c1.2-6 2.4-6 3.6 0M15 16.5c1.2-4.5 2.4-4.5 3.6 0M21 16.5c-.6-2-1.2-2-1.8 0"/><circle cx="17.5" cy="6.5" r="1.6"/><path d="M17.5 8.1v2.4"/></svg>
+      </button>
     </div>
     <div class="freqfront" id="freqFrontWrap">
       <input type="range" id="ctrlSlider" min="45" max="963" step="1" value="432">
@@ -941,7 +952,38 @@ body.immersive #howToBox{display:none}
         </div>
       </div>
 
-    </div>
+      <div class="tabpane" id="paneambience">
+        <div class="block">
+          <div class="blk-lbl"><span>Ambience</span></div>
+          <p class="sst-desc">Layer soft nature sounds under your session. Drag a fader up to bring a layer in — down to 0 to turn it off.</p>
+          <div class="amb-list">
+            <div class="amb-row">
+              <svg class="amb-ic" viewBox="0 0 24 24"><path d="M4 15c2-3 4-3 6 0s4 3 6 0 3-2 4-1"/><path d="M6 9c1-1.5 2-1.5 3 0"/></svg>
+              <span class="amb-lbl">Birds</span>
+              <input type="range" id="ambBirds" min="0" max="100" step="1" value="0" aria-label="Birds volume">
+              <span class="amb-val" id="ambBirdsVal">0%</span>
+            </div>
+            <div class="amb-row">
+              <svg class="amb-ic" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 10.5A6 6 0 0 1 6 13.5C6 10 9 7 12 3Z"/></svg>
+              <span class="amb-lbl">Water</span>
+              <input type="range" id="ambWater" min="0" max="100" step="1" value="0" aria-label="Water volume">
+              <span class="amb-val" id="ambWaterVal">0%</span>
+            </div>
+            <div class="amb-row">
+              <svg class="amb-ic" viewBox="0 0 24 24"><path d="M6 13a4 4 0 1 1 1.2-7.8A5 5 0 0 1 17 7a4 4 0 0 1-1 7.9H6Z"/><path d="M8 17.5v2.3M12 17.5v2.3M16 17.5v2.3"/></svg>
+              <span class="amb-lbl">Rain</span>
+              <input type="range" id="ambRain" min="0" max="100" step="1" value="0" aria-label="Rain volume">
+              <span class="amb-val" id="ambRainVal">0%</span>
+            </div>
+            <div class="amb-row">
+              <svg class="amb-ic" viewBox="0 0 24 24"><path d="M12 21V10"/><path d="M12 12c0-4 3-6 6-6-1 4-3 6-6 6Z"/><path d="M12 15c0-3.5-2.6-5-5-5 .8 3.4 2.6 5 5 5Z"/></svg>
+              <span class="amb-lbl">Forest</span>
+              <input type="range" id="ambForest" min="0" max="100" step="1" value="0" aria-label="Forest volume">
+              <span class="amb-val" id="ambForestVal">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
     <div class="panel-foot"><button class="done-btn" id="panelDone">Done</button></div>
   </div>
 
@@ -961,7 +1003,8 @@ const INSTRUMENT_ICONS = {"crystal_bowl": "images/crystal_bowl.jpg", "quartz_bow
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'quartz_bowl', freq:432, tempo:12, tempoFollow:true,
-  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false};
+  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false,
+  amb:{birds:0,water:0,rain:0,forest:0}};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
 
@@ -1751,8 +1794,126 @@ function playVoice(type,freq,when,mult=1){
 function playFinal(){const ctx=audio.ctx,t=ctx.currentTime+.05;
   audio.revGain.gain.setValueAtTime(audio.revGain.gain.value,t);audio.revGain.gain.linearRampToValueAtTime(.8,t+.1);
   playVoice('tibetansk_gong',S.freq*.5,t,1.4);playVoice('crystal_bowl',S.freq*.5,t+.05,1.3);}
+
+/* ===== ambience mixer: Birds / Water / Rain / Forest — continuous nature-sound layers ===== */
+const amb={ready:false,birdsTimer:null,rainTimer:null,forestBirdTimer:null};
+function loopNoise(sec,brown){
+  const src=audio.ctx.createBufferSource();src.buffer=noiseBuf(sec,brown);src.loop=true;src.start();return src;
+}
+/* a short pitched glide-burst, used both for the standalone Birds layer and the sparse chirps inside Forest */
+function chirpOnce(dest,level){
+  if(!level)return;
+  const ctx=audio.ctx;let tt=ctx.currentTime;
+  const notes=2+Math.floor(Math.random()*3);
+  for(let i=0;i<notes;i++){
+    const base=1900+Math.random()*2300,up=Math.random()<.5?-1:1;
+    const o=ctx.createOscillator();o.type='sine';
+    o.frequency.setValueAtTime(base,tt);
+    o.frequency.exponentialRampToValueAtTime(base*(1+up*(.12+Math.random()*.22)),tt+.045+Math.random()*.05);
+    const g=ctx.createGain();g.gain.setValueAtTime(.0001,tt);
+    g.gain.linearRampToValueAtTime(level,tt+.008);
+    g.gain.exponentialRampToValueAtTime(.0001,tt+.14+Math.random()*.08);
+    o.connect(g);g.connect(dest);o.start(tt);o.stop(tt+.3);
+    tt+=.055+Math.random()*.05;
+  }
+}
+function ensureAmbience(){
+  if(amb.ready)return;initAudio();amb.ready=true;
+  const ctx=audio.ctx;
+  amb.bus=ctx.createGain();amb.bus.gain.value=1;amb.bus.connect(audio.dry);amb.bus.connect(audio.rev);
+
+  /* Birds — standalone chirps, scheduled at random intervals */
+  amb.birdsBus=ctx.createGain();amb.birdsBus.gain.value=1;amb.birdsBus.connect(amb.bus);
+  (function scheduleBirds(){
+    if(S.amb.birds>0)chirpOnce(amb.birdsBus,(S.amb.birds/100)*.5);
+    amb.birdsTimer=setTimeout(scheduleBirds,1200+Math.random()*3800);
+  })();
+
+  /* Water — bandpass-filtered noise with a slowly wandering centre frequency + gentle tremolo, for a babbling-brook feel */
+  {
+    const src=loopNoise(4,false);
+    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1100;bp.Q.value=1.1;
+    const wander=ctx.createOscillator();wander.frequency.value=.11;
+    const wanderG=ctx.createGain();wanderG.gain.value=380;
+    wander.connect(wanderG).connect(bp.frequency);wander.start();
+    const trem=ctx.createOscillator();trem.frequency.value=2.6;
+    const tremG=ctx.createGain();tremG.gain.value=.16;
+    trem.connect(tremG);trem.start();
+    amb.waterG=ctx.createGain();amb.waterG.gain.value=0;
+    tremG.connect(amb.waterG.gain);
+    src.connect(bp).connect(amb.waterG);amb.waterG.connect(amb.bus);
+  }
+
+  /* Rain — steady high-passed noise hiss, plus its own scattered droplet clicks */
+  {
+    const src=loopNoise(4,false);
+    const hp=ctx.createBiquadFilter();hp.type='bandpass';hp.frequency.value=3600;hp.Q.value=.6;
+    const trem=ctx.createOscillator();trem.frequency.value=7;
+    const tremG=ctx.createGain();tremG.gain.value=.05;
+    trem.connect(tremG);trem.start();
+    amb.rainG=ctx.createGain();amb.rainG.gain.value=0;
+    tremG.connect(amb.rainG.gain);
+    src.connect(hp).connect(amb.rainG);amb.rainG.connect(amb.bus);
+    amb.rainDropBus=ctx.createGain();amb.rainDropBus.gain.value=1;amb.rainDropBus.connect(amb.bus);
+    (function scheduleDrops(){
+      if(S.amb.rain>0){
+        const t=ctx.currentTime,dur=.05,nb=ctx.createBuffer(1,Math.floor(ctx.sampleRate*dur),ctx.sampleRate),nd=nb.getChannelData(0);
+        for(let i=0;i<nd.length;i++)nd[i]=(Math.random()*2-1)*Math.pow(1-i/nd.length,2);
+        const ns=ctx.createBufferSource();ns.buffer=nb;
+        const nf=ctx.createBiquadFilter();nf.type='bandpass';nf.frequency.value=4500+Math.random()*2500;nf.Q.value=3;
+        const ng=ctx.createGain();ng.gain.setValueAtTime((S.amb.rain/100)*.22,t);ng.gain.exponentialRampToValueAtTime(.0001,t+dur);
+        ns.connect(nf).connect(ng).connect(amb.rainDropBus);ns.start(t);ns.stop(t+dur+.02);
+      }
+      amb.rainTimer=setTimeout(scheduleDrops,90+Math.random()*260);
+    })();
+  }
+
+  /* Forest — low, lowpassed brown-noise wind through leaves with slow gusts, plus occasional distant chirps */
+  {
+    const src=loopNoise(4,true);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=700;lp.Q.value=.5;
+    const wander=ctx.createOscillator();wander.frequency.value=.05;
+    const wanderG=ctx.createGain();wanderG.gain.value=220;
+    wander.connect(wanderG).connect(lp.frequency);wander.start();
+    const gust=ctx.createOscillator();gust.frequency.value=.08;
+    const gustG=ctx.createGain();gustG.gain.value=.14;
+    gust.connect(gustG);gust.start();
+    amb.forestG=ctx.createGain();amb.forestG.gain.value=0;
+    gustG.connect(amb.forestG.gain);
+    src.connect(lp).connect(amb.forestG);amb.forestG.connect(amb.bus);
+    amb.forestBirdsBus=ctx.createGain();amb.forestBirdsBus.gain.value=1;amb.forestBirdsBus.connect(amb.bus);
+    (function scheduleForestBirds(){
+      if(S.amb.forest>0)chirpOnce(amb.forestBirdsBus,(S.amb.forest/100)*.22);
+      amb.forestBirdTimer=setTimeout(scheduleForestBirds,3500+Math.random()*8000);
+    })();
+  }
+}
+function setAmbience(key,val){
+  S.amb[key]=Math.max(0,Math.min(100,Math.round(val)));
+  const lbl=$('amb'+key.charAt(0).toUpperCase()+key.slice(1)+'Val');if(lbl)lbl.textContent=S.amb[key]+'%';
+  if(S.amb[key]>0){
+    ensureAmbience();
+    if(audio.ctx.state==='suspended')audio.ctx.resume();
+    const t=audio.ctx.currentTime;
+    if(key==='water')amb.waterG.gain.setTargetAtTime((S.amb.water/100)*.3,t,.4);
+    if(key==='rain')amb.rainG.gain.setTargetAtTime((S.amb.rain/100)*.28,t,.4);
+    if(key==='forest')amb.forestG.gain.setTargetAtTime((S.amb.forest/100)*.22,t,.6);
+  }else if(amb.ready){
+    const t=audio.ctx.currentTime;
+    if(key==='water')amb.waterG.gain.setTargetAtTime(0,t,.4);
+    if(key==='rain')amb.rainG.gain.setTargetAtTime(0,t,.4);
+    if(key==='forest')amb.forestG.gain.setTargetAtTime(0,t,.6);
+  }
+}
+['birds','water','rain','forest'].forEach(key=>{
+  const idBase='amb'+key.charAt(0).toUpperCase()+key.slice(1);
+  const sl=$(idBase);if(!sl)return;
+  sl.addEventListener('input',e=>setAmbience(key,+e.target.value));
+});
+
 ['pointerdown','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,function once(){
   try{initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
+
     const ub=audio.ctx.createBuffer(1,1,22050);const us=audio.ctx.createBufferSource();us.buffer=ub;us.connect(audio.ctx.destination);us.start(0);
   }catch(e){}
   document.removeEventListener(ev,once);},{passive:true}));
@@ -1979,7 +2140,7 @@ function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingM
   $('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
 
 /* panel */
-const TITLES={sound:'My sound tempo',breath:'Breathing',preset:'Preset'};
+const TITLES={sound:'My sound tempo',breath:'Breathing',preset:'Preset',ambience:'Ambience'};
 function openPanel(name){document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('show',p.id==='pane'+name));
   $('panelTitle').textContent=TITLES[name];$('panel').classList.add('open');
   if(name==='preset')document.body.classList.add('preset-active');}
