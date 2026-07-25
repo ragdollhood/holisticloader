@@ -1171,7 +1171,6 @@ function switchAmbSound(item){
   clearPreset();
   stopAllAmbience();
   ensureAmbience();
-  if(audio.ctx.state==='suspended')audio.ctx.resume();
   setAmbience(item.amb,65);
   if(!S.running){
     /* not in a session yet — this is just a quick preview while choosing, so it fades out
@@ -1285,7 +1284,7 @@ document.addEventListener('click',e=>{
   }
 });
 {const rl=$('reel'); if(rl)rl.addEventListener('scroll',updatePlaceCue,{passive:true});}
-function preview(){initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
+function preview(){initAudio();resumeAudio();
   if(isAmbSound(S.sound))return; /* already playing continuously via the ambience mixer */
   if(!S.running)audio.master.gain.setTargetAtTime(MASTER,audio.ctx.currentTime,.02);
   playVoice(S.sound,S.freq,audio.ctx.currentTime+.04);}
@@ -1769,13 +1768,12 @@ const VOICES={
 };
 /* legacy aliases (presets / closing tone) */
 VOICES.crystal=VOICES.crystal_bowl;VOICES.bowl=VOICES.tibetan_bowl;VOICES.harp=VOICES.harpa;VOICES.bell=VOICES.tonguedrum;VOICES.soft=VOICES.handpan;
-function initAudio(){if(audio.ctx)return;
+function initAudio(force){
+  if(audio.ctx&&!force)return;
+  if(force&&audio.ctx){try{audio.ctx.close();}catch(e){}amb.ready=false;}
   const ctx=new (window.AudioContext||window.webkitAudioContext)();
-  // iOS Safari kan rapportera state='running' efter resume() utan att
-  // faktiskt släppa igenom ljud till högtalaren förrän en källa verkligen
-  // startat inom samma användar-gest. Lura igång ljudmotorn med en tyst,
-  // 1-sample lång buffer direkt när kontexten skapas.
-  try{const ub=ctx.createBuffer(1,1,22050);const us=ctx.createBufferSource();us.buffer=ub;us.connect(ctx.destination);us.start(0);}catch(e){}
+  Object.assign(audio,{ctx});
+  unlockAudioOutput();
   const master=ctx.createGain();master.gain.value=MASTER;
   const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;comp.knee.value=24;comp.ratio.value=3;comp.attack.value=.01;comp.release.value=.3;
   const limiter=ctx.createDynamicsCompressor();limiter.threshold.value=-1;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.002;limiter.release.value=.1;
@@ -1784,6 +1782,35 @@ function initAudio(){if(audio.ctx)return;
   const revGain=ctx.createGain();revGain.gain.value=S.resonance/100;
   dry.connect(master);rev.connect(revGain);revGain.connect(master);master.connect(comp);comp.connect(limiter);limiter.connect(ctx.destination);
   Object.assign(audio,{ctx,master,dry,rev,revGain});}
+/* iOS Safari can report state='running' right after resume() without actually letting
+   sound reach the speaker until a source has genuinely started within that same
+   reactivation. Playing one silent 1-sample buffer immediately "unlocks" real output.
+   This used to only run once, at the very first ctx creation — fine for the initial tap,
+   but the SAME silent-running-but-muted state can recur any time the context is
+   suspended and resumed again later (going idle after a stretch of silence, the tab being
+   backgrounded, the screen locking mid-session, a phone call interrupting audio, etc.).
+   Since nothing replayed the unlock trick after that first time, once any later
+   suspend/resume cycle hit this quirk the noise/wave ambience — and everything else —
+   would go silent for good, which is why the buttons "stop working after a while" instead
+   of just occasionally missing a single click. */
+function unlockAudioOutput(){
+  try{const ctx=audio.ctx,ub=ctx.createBuffer(1,1,22050),us=ctx.createBufferSource();us.buffer=ub;us.connect(ctx.destination);us.start(0);}catch(e){}
+}
+/* Central place to (re)start audio: resumes a suspended context, rebuilds from scratch if
+   the browser has fully torn the context down (state 'closed' — resume() can never recover
+   from that, it always rejects), and re-plays the unlock trick every time either way. Every
+   call site that used to do `if(state==='suspended')ctx.resume()` should go through this
+   instead so the fix above actually applies everywhere audio can restart. */
+function resumeAudio(){
+  if(!audio.ctx){initAudio();return Promise.resolve();}
+  if(audio.ctx.state==='closed'){
+    const wasAmb=Object.assign({},S.amb);
+    initAudio(true);
+    if(Object.values(wasAmb).some(v=>v>0)){ensureAmbience();Object.keys(wasAmb).forEach(k=>{if(wasAmb[k]>0)setAmbience(k,wasAmb[k]);});}
+    return Promise.resolve();
+  }
+  return Promise.resolve(audio.ctx.resume()).then(unlockAudioOutput);
+}
 function makeImpulse(ctx,sec,decay){const rate=ctx.sampleRate,len=Math.floor(rate*sec),buf=ctx.createBuffer(2,len,rate);
   for(let ch=0;ch<2;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}return buf;}
 function noiseBuf(sec,brown){const len=Math.max(1,Math.floor(audio.ctx.sampleRate*sec)),b=audio.ctx.createBuffer(1,len,audio.ctx.sampleRate),d=b.getChannelData(0);
@@ -2008,7 +2035,7 @@ function setAmbience(key,val){
        auto-suspended during a silent stretch) the ramp could be dropped, which is why
        clicking a noise/wave button again after it had fully faded out sometimes produced
        no sound at all. */
-    Promise.resolve(audio.ctx.resume()).then(rampNow);
+    resumeAudio().then(rampNow);
   }else if(amb.ready){
     rampNow();
   }
@@ -2021,10 +2048,7 @@ function stopAllAmbience(){
 }
 
 ['pointerdown','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,function once(){
-  try{initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
-
-    const ub=audio.ctx.createBuffer(1,1,22050);const us=audio.ctx.createBufferSource();us.buffer=ub;us.connect(audio.ctx.destination);us.start(0);
-  }catch(e){}
+  try{initAudio();resumeAudio();}catch(e){}
   document.removeEventListener(ev,once);},{passive:true}));
 
 /* scheduler */
@@ -2201,14 +2225,13 @@ requestAnimationFrame(loop);
 
 /* session */
 function startSession(){
-  initAudio(); if(audio.ctx.state==='suspended')audio.ctx.resume();
+  initAudio(); resumeAudio();
   S.ended=false;$('endOverlay').classList.remove('show');
   if(ambPreviewTimer){clearTimeout(ambPreviewTimer);ambPreviewTimer=null;} /* the sound now plays for the whole session, not just a short preview */
   if(isAmbSound(S.sound)){
     /* being selected is enough — turn it back on even if its preview had already faded to silence */
     const a=ambSoundOf(S.sound);
     ensureAmbience();
-    if(audio.ctx.state==='suspended')audio.ctx.resume();
     setAmbience(a.amb,65);
   }
   if(remainingMs<=0){remainingMs=S.timerMin*60*1000;breathClock=0;wanderT=0;}
@@ -2230,7 +2253,7 @@ function startSession(){
 function pauseSession(){S.running=false;stopScheduler();
   audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.15);
   $('breathCue').style.opacity=0;$('btnPause').classList.add('paused');}
-function resumeSession(){S.running=true;if(audio.ctx.state==='suspended')audio.ctx.resume();
+function resumeSession(){S.running=true;resumeAudio();
   audio.master.gain.setTargetAtTime(S.soundOn?MASTER:.0001,audio.ctx.currentTime,.1);
   $('btnPause').classList.remove('paused');startScheduler();}
 function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
