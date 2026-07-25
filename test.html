@@ -271,7 +271,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 /* ===== ambience mixer (Birds / Water / Rain / Forest) ===== */
 .amb-list{display:flex;flex-direction:column;gap:16px;margin-top:6px}
 .amb-row{display:flex;align-items:center;gap:10px}
-.amb-ic{width:20px;height:20px;flex:0 0 auto;stroke:var(--gold);fill:none;stroke-width:1.6}
+.amb-ic{width:28px;height:28px;flex:0 0 auto;border-radius:50%;object-fit:cover;box-shadow:0 0 0 1px rgba(244,241,234,.28)}
 .amb-lbl{font-size:12.5px;color:var(--ink);min-width:44px;flex:0 0 auto}
 .amb-row input[type="range"]{flex:1 1 auto}
 .amb-val{font-size:11px;color:var(--muted);min-width:34px;text-align:right;font-variant-numeric:tabular-nums;flex:0 0 auto}
@@ -958,25 +958,25 @@ body.immersive #howToBox{display:none}
           <p class="sst-desc">Layer soft nature sounds under your session. Drag a fader up to bring a layer in — down to 0 to turn it off.</p>
           <div class="amb-list">
             <div class="amb-row">
-              <svg class="amb-ic" viewBox="0 0 24 24"><path d="M4 15c2-3 4-3 6 0s4 3 6 0 3-2 4-1"/><path d="M6 9c1-1.5 2-1.5 3 0"/></svg>
+              <img class="amb-ic" src="images/bird.jpg" alt="">
               <span class="amb-lbl">Birds</span>
               <input type="range" id="ambBirds" min="0" max="100" step="1" value="0" aria-label="Birds volume">
               <span class="amb-val" id="ambBirdsVal">0%</span>
             </div>
             <div class="amb-row">
-              <svg class="amb-ic" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 10.5A6 6 0 0 1 6 13.5C6 10 9 7 12 3Z"/></svg>
+              <img class="amb-ic" src="images/drop.jpg" alt="">
               <span class="amb-lbl">Water</span>
               <input type="range" id="ambWater" min="0" max="100" step="1" value="0" aria-label="Water volume">
               <span class="amb-val" id="ambWaterVal">0%</span>
             </div>
             <div class="amb-row">
-              <svg class="amb-ic" viewBox="0 0 24 24"><path d="M6 13a4 4 0 1 1 1.2-7.8A5 5 0 0 1 17 7a4 4 0 0 1-1 7.9H6Z"/><path d="M8 17.5v2.3M12 17.5v2.3M16 17.5v2.3"/></svg>
+              <img class="amb-ic" src="images/rain.jpg" alt="">
               <span class="amb-lbl">Rain</span>
               <input type="range" id="ambRain" min="0" max="100" step="1" value="0" aria-label="Rain volume">
               <span class="amb-val" id="ambRainVal">0%</span>
             </div>
             <div class="amb-row">
-              <svg class="amb-ic" viewBox="0 0 24 24"><path d="M12 21V10"/><path d="M12 12c0-4 3-6 6-6-1 4-3 6-6 6Z"/><path d="M12 15c0-3.5-2.6-5-5-5 .8 3.4 2.6 5 5 5Z"/></svg>
+              <img class="amb-ic" src="images/forest.jpg" alt="">
               <span class="amb-lbl">Forest</span>
               <input type="range" id="ambForest" min="0" max="100" step="1" value="0" aria-label="Forest volume">
               <span class="amb-val" id="ambForestVal">0%</span>
@@ -1836,24 +1836,29 @@ function ensureAmbience(){
     const wander=ctx.createOscillator();wander.frequency.value=.11;
     const wanderG=ctx.createGain();wanderG.gain.value=380;
     wander.connect(wanderG).connect(bp.frequency);wander.start();
+    /* tremolo is a MULTIPLICATIVE stage (const 1 + depth*sine) placed BEFORE the level
+       control, so it never adds any signal once the level gain below is at 0 */
+    const tremStage=ctx.createGain();tremStage.gain.value=0;
+    const tremConst=ctx.createConstantSource();tremConst.offset.value=1;tremConst.connect(tremStage.gain);tremConst.start();
     const trem=ctx.createOscillator();trem.frequency.value=2.6;
     const tremG=ctx.createGain();tremG.gain.value=.16;
-    trem.connect(tremG);trem.start();
+    trem.connect(tremG).connect(tremStage.gain);trem.start();
     amb.waterG=ctx.createGain();amb.waterG.gain.value=0;
-    tremG.connect(amb.waterG.gain);
-    src.connect(bp).connect(amb.waterG);amb.waterG.connect(amb.bus);
+    src.connect(bp).connect(tremStage).connect(amb.waterG);amb.waterG.connect(amb.bus);
   }
 
   /* Rain — steady high-passed noise hiss, plus its own scattered droplet clicks */
   {
     const src=loopNoise(4,false);
     const hp=ctx.createBiquadFilter();hp.type='bandpass';hp.frequency.value=3600;hp.Q.value=.6;
+    /* multiplicative tremolo stage — see water layer above for why */
+    const tremStage=ctx.createGain();tremStage.gain.value=0;
+    const tremConst=ctx.createConstantSource();tremConst.offset.value=1;tremConst.connect(tremStage.gain);tremConst.start();
     const trem=ctx.createOscillator();trem.frequency.value=7;
     const tremG=ctx.createGain();tremG.gain.value=.05;
-    trem.connect(tremG);trem.start();
+    trem.connect(tremG).connect(tremStage.gain);trem.start();
     amb.rainG=ctx.createGain();amb.rainG.gain.value=0;
-    tremG.connect(amb.rainG.gain);
-    src.connect(hp).connect(amb.rainG);amb.rainG.connect(amb.bus);
+    src.connect(hp).connect(tremStage).connect(amb.rainG);amb.rainG.connect(amb.bus);
     amb.rainDropBus=ctx.createGain();amb.rainDropBus.gain.value=1;amb.rainDropBus.connect(amb.bus);
     (function scheduleDrops(){
       if(S.amb.rain>0){
@@ -1875,12 +1880,14 @@ function ensureAmbience(){
     const wander=ctx.createOscillator();wander.frequency.value=.05;
     const wanderG=ctx.createGain();wanderG.gain.value=220;
     wander.connect(wanderG).connect(lp.frequency);wander.start();
+    /* multiplicative gust stage — see water layer above for why */
+    const gustStage=ctx.createGain();gustStage.gain.value=0;
+    const gustConst=ctx.createConstantSource();gustConst.offset.value=1;gustConst.connect(gustStage.gain);gustConst.start();
     const gust=ctx.createOscillator();gust.frequency.value=.08;
     const gustG=ctx.createGain();gustG.gain.value=.14;
-    gust.connect(gustG);gust.start();
+    gust.connect(gustG).connect(gustStage.gain);gust.start();
     amb.forestG=ctx.createGain();amb.forestG.gain.value=0;
-    gustG.connect(amb.forestG.gain);
-    src.connect(lp).connect(amb.forestG);amb.forestG.connect(amb.bus);
+    src.connect(lp).connect(gustStage).connect(amb.forestG);amb.forestG.connect(amb.bus);
     amb.forestBirdsBus=ctx.createGain();amb.forestBirdsBus.gain.value=1;amb.forestBirdsBus.connect(amb.bus);
     (function scheduleForestBirds(){
       if(S.amb.forest>0)chirpOnce(amb.forestBirdsBus,(S.amb.forest/100)*.22);
