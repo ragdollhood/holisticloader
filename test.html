@@ -1041,8 +1041,8 @@
     <ul class="htu-list">
       <li><b>Voice</b> — the gong and the bowl each have a few voices (Symphonic / Tibetan / Tam-tam, and Crystal / Tibetan / Quartz). Tap one to switch its timbre before you play.</li>
       <li><b>Tune</b> — drag the slider under an instrument to set its pitch in Hz.</li>
-      <li><b>Repeat</b> — turns the instrument into a steady auto-playing loop, at the tempo (BPM) and for the duration you've chosen. Good for a nice meditation session.</li>
-      <li><b>BPM</b> — the slider sets how many beats per minute it plays when on repeat.</li>
+      <li><b>Repeat</b> — turns the instrument into a steady auto-playing loop, at the tempo you've chosen and for the duration you've chosen. Good for a nice meditation session.</li>
+      <li><b>TEMPO</b> — the slider sets how many beats per minute it plays when on repeat.</li>
       <li><b>Time</b> — sets the duration (30 sec–30 min) that the repeat button will play the loop.</li>
     </ul>
     <h4>Tone &amp; space</h4>
@@ -1086,11 +1086,11 @@
     <button data-v="tamtam">Tam-tam</button>
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="gongTune" min="55" max="170" value="80" aria-label="Tune the gong"><span id="gongHz">80 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="gongBpmRow" hidden><span>BPM</span><input type="range" id="gongBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for gong"><span id="gongBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="gongBpmRow" hidden><span>TEMPO</span><input type="range" id="gongBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for gong"><span id="gongBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="gongTimeRow" hidden><span>TIME</span><input type="range" id="gongTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for gong"><span id="gongTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="gong">Random sound</button>
-    <button class="opt-toggle" data-i="gong" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="gong" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="gong" data-opt="time">TIME</button>
   </div>
 
@@ -1104,11 +1104,11 @@
     <button data-v="deep" class="sel">Deep quartz</button>
   </div>
   <div class="tune b"><span>TUNE</span><input type="range" id="bowlTune" min="280" max="880" value="432" aria-label="Tune the bowl"><span id="bowlHz">432 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="bowlBpmRow" hidden><span>BPM</span><input type="range" id="bowlBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for bowl"><span id="bowlBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="bowlBpmRow" hidden><span>TEMPO</span><input type="range" id="bowlBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for bowl"><span id="bowlBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="bowlTimeRow" hidden><span>TIME</span><input type="range" id="bowlTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for bowl"><span id="bowlTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="bowl">Random sound</button>
-    <button class="opt-toggle" data-i="bowl" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="bowl" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="bowl" data-opt="time">TIME</button>
   </div>
 
@@ -1117,11 +1117,11 @@
     <img loading="lazy" src="images/handpan.jpg" alt="Dark steel handpan engraved with golden celestial patterns, seen from above">
   </div>
   <div class="tune h"><span>TUNE</span><input type="range" id="handTune" min="110" max="220" value="147" aria-label="Tune the handpan"><span id="handHz">147 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="handBpmRow" hidden><span>BPM</span><input type="range" id="handBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for hand"><span id="handBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="handBpmRow" hidden><span>TEMPO</span><input type="range" id="handBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for hand"><span id="handBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="handTimeRow" hidden><span>TIME</span><input type="range" id="handTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for hand"><span id="handTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="hand">Random sound</button>
-    <button class="opt-toggle" data-i="hand" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="hand" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="hand" data-opt="time">TIME</button>
   </div>
 
@@ -1130,11 +1130,11 @@
     <img loading="lazy" src="images/tonguedrum.jpg" alt="Black steel tongue drum engraved with golden constellations, seen from above">
   </div>
   <div class="tune h"><span>TUNE</span><input type="range" id="tongueTune" min="220" max="440" value="294" aria-label="Tune the tongue drum"><span id="tongueHz">294 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="tongueBpmRow" hidden><span>BPM</span><input type="range" id="tongueBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for tongue"><span id="tongueBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="tongueBpmRow" hidden><span>TEMPO</span><input type="range" id="tongueBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for tongue"><span id="tongueBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="tongueTimeRow" hidden><span>TIME</span><input type="range" id="tongueTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for tongue"><span id="tongueTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="tongue">Random sound</button>
-    <button class="opt-toggle" data-i="tongue" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="tongue" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="tongue" data-opt="time">TIME</button>
   </div>
 
@@ -1144,11 +1144,11 @@
     <img loading="lazy" src="images/chimes.jpg" alt="Dark bronze wind chimes engraved with golden celestial symbols, hanging in space">
   </div>
   <div class="tune c"><span>TUNE</span><input type="range" id="chimeTune" min="440" max="880" value="587" aria-label="Tune the wind chimes"><span id="chimeHz">587 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="chimeBpmRow" hidden><span>BPM</span><input type="range" id="chimeBpmSlider" min="6" max="60" value="10" step="1" aria-label="Beats per minute for chime"><span id="chimeBpmVal">every 6 sec (10 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="chimeBpmRow" hidden><span>TEMPO</span><input type="range" id="chimeBpmSlider" min="6" max="60" value="10" step="1" aria-label="Tempo for chime"><span id="chimeBpmVal">every 6 sec (10 bpm)</span></div>
   <div class="opt-slider time-slider" id="chimeTimeRow" hidden><span>TIME</span><input type="range" id="chimeTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for chime"><span id="chimeTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="chime">Random sound</button>
-    <button class="opt-toggle" data-i="chime" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="chime" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="chime" data-opt="time">TIME</button>
   </div>
 
@@ -1157,11 +1157,11 @@
     <img loading="lazy" src="images/triangle.jpg" alt="Golden orchestral triangle with beater, hanging among galaxies">
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="triTune" min="1800" max="4200" value="2900" aria-label="Tune the triangle"><span id="triHz">2900 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="triBpmRow" hidden><span>BPM</span><input type="range" id="triBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for tri"><span id="triBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="triBpmRow" hidden><span>TEMPO</span><input type="range" id="triBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for tri"><span id="triBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="triTimeRow" hidden><span>TIME</span><input type="range" id="triTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for tri"><span id="triTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="tri">Random sound</button>
-    <button class="opt-toggle" data-i="tri" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="tri" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="tri" data-opt="time">TIME</button>
   </div>
 
@@ -1170,11 +1170,11 @@
     <img loading="lazy" src="images/harpa.jpg" alt="Black and gold celestial harp engraved with stars and moons, standing in space">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="harpTune" min="110" max="294" value="147" aria-label="Tune the harp"><span id="harpHz">147 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="harpBpmRow" hidden><span>BPM</span><input type="range" id="harpBpmSlider" min="6" max="60" value="10" step="1" aria-label="Beats per minute for harp"><span id="harpBpmVal">every 6 sec (10 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="harpBpmRow" hidden><span>TEMPO</span><input type="range" id="harpBpmSlider" min="6" max="60" value="10" step="1" aria-label="Tempo for harp"><span id="harpBpmVal">every 6 sec (10 bpm)</span></div>
   <div class="opt-slider time-slider" id="harpTimeRow" hidden><span>TIME</span><input type="range" id="harpTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for harp"><span id="harpTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="harp">Random sound</button>
-    <button class="opt-toggle" data-i="harp" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="harp" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="harp" data-opt="time">TIME</button>
   </div>
 
@@ -1183,11 +1183,11 @@
     <img loading="lazy" src="images/sansula.jpg" alt="Dark kalimba sansula with golden engraved tines on a starry soundboard">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="sansTune" min="196" max="392" value="220" aria-label="Tune the sansula"><span id="sansHz">220 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="sansBpmRow" hidden><span>BPM</span><input type="range" id="sansBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for sans"><span id="sansBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="sansBpmRow" hidden><span>TEMPO</span><input type="range" id="sansBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for sans"><span id="sansBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="sansTimeRow" hidden><span>TIME</span><input type="range" id="sansTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for sans"><span id="sansTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="sans">Random sound</button>
-    <button class="opt-toggle" data-i="sans" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="sans" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="sans" data-opt="time">TIME</button>
   </div>
   <div class="instr-label">Monochord</div>
@@ -1195,11 +1195,11 @@
     <img loading="lazy" src="images/monochord.jpg" alt="Long black monochord engraved with moons and stars, floating in space">
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="monoTune" min="49" max="110" value="65" aria-label="Tune the monochord"><span id="monoHz">65 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="monoBpmRow" hidden><span>BPM</span><input type="range" id="monoBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for mono"><span id="monoBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="monoBpmRow" hidden><span>TEMPO</span><input type="range" id="monoBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for mono"><span id="monoBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="monoTimeRow" hidden><span>TIME</span><input type="range" id="monoTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for mono"><span id="monoTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="mono">Random sound</button>
-    <button class="opt-toggle" data-i="mono" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="mono" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="mono" data-opt="time">TIME</button>
   </div>
   <div class="instr-label">Pan flute</div>
@@ -1207,11 +1207,11 @@
     <img loading="lazy" src="images/panflute.jpg" alt="Black pan flute with golden celestial engravings on its pipes">
   </div>
   <div class="tune c"><span>TUNE</span><input type="range" id="panTune" min="294" max="587" value="392" aria-label="Tune the pan flute"><span id="panHz">392 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="panBpmRow" hidden><span>BPM</span><input type="range" id="panBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for pan"><span id="panBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="panBpmRow" hidden><span>TEMPO</span><input type="range" id="panBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for pan"><span id="panBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="panTimeRow" hidden><span>TIME</span><input type="range" id="panTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for pan"><span id="panTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="pan">Random sound</button>
-    <button class="opt-toggle" data-i="pan" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="pan" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="pan" data-opt="time">TIME</button>
   </div>
   <div class="instr-label">Native flute</div>
@@ -1219,22 +1219,22 @@
     <img loading="lazy" src="images/native_american_fluit.jpg" alt="Native American style flute with an eagle head block and hanging feathers">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="nafTune" min="220" max="440" value="294" aria-label="Tune the native flute"><span id="nafHz">294 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="nafBpmRow" hidden><span>BPM</span><input type="range" id="nafBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for naf"><span id="nafBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="nafBpmRow" hidden><span>TEMPO</span><input type="range" id="nafBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for naf"><span id="nafBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="nafTimeRow" hidden><span>TIME</span><input type="range" id="nafTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for naf"><span id="nafTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="naf">Random sound</button>
-    <button class="opt-toggle" data-i="naf" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="naf" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="naf" data-opt="time">TIME</button>
   </div>
   <div class="instr-label">Shaman drum</div>
   <div class="shaman-wrap" id="shamanWrap">
     <img loading="lazy" src="images/shaman_drum.jpg" alt="Shamanic frame drum with golden spirit animals and feathers">
   </div>
-  <div class="opt-slider bpm-slider" id="shamanBpmRow" hidden><span>BPM</span><input type="range" id="shamanBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for shaman"><span id="shamanBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="shamanBpmRow" hidden><span>TEMPO</span><input type="range" id="shamanBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for shaman"><span id="shamanBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="shamanTimeRow" hidden><span>TIME</span><input type="range" id="shamanTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for shaman"><span id="shamanTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="shaman">Random sound</button>
-    <button class="opt-toggle" data-i="shaman" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="shaman" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="shaman" data-opt="time">TIME</button>
   </div>
 
@@ -1242,11 +1242,11 @@
   <div class="djembe-wrap" id="djembeWrap">
     <img loading="lazy" src="images/djembe.jpg" alt="Carved wooden djembe drum with lotus mandala on its head">
   </div>
-  <div class="opt-slider bpm-slider" id="djembeBpmRow" hidden><span>BPM</span><input type="range" id="djembeBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for djembe"><span id="djembeBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="djembeBpmRow" hidden><span>TEMPO</span><input type="range" id="djembeBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for djembe"><span id="djembeBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="djembeTimeRow" hidden><span>TIME</span><input type="range" id="djembeTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for djembe"><span id="djembeTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="djembe">Random sound</button>
-    <button class="opt-toggle" data-i="djembe" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="djembe" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="djembe" data-opt="time">TIME</button>
   </div>
 
@@ -1254,11 +1254,11 @@
   <div class="thunder-wrap" id="thunderWrap">
     <img loading="lazy" src="images/thunder_drum.jpg" alt="Large dark drum with golden lightning across its head">
   </div>
-  <div class="opt-slider bpm-slider" id="thunderBpmRow" hidden><span>BPM</span><input type="range" id="thunderBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for thunder"><span id="thunderBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="thunderBpmRow" hidden><span>TEMPO</span><input type="range" id="thunderBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for thunder"><span id="thunderBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="thunderTimeRow" hidden><span>TIME</span><input type="range" id="thunderTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for thunder"><span id="thunderTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="thunder">Random sound</button>
-    <button class="opt-toggle" data-i="thunder" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="thunder" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="thunder" data-opt="time">TIME</button>
   </div>
 
@@ -1266,11 +1266,11 @@
   <div class="ocean-wrap" id="oceanWrap">
     <img loading="lazy" src="images/ocean_drum.jpg" alt="Ocean drum filled with beads forming a golden sea under moon phases">
   </div>
-  <div class="opt-slider bpm-slider" id="oceanBpmRow" hidden><span>BPM</span><input type="range" id="oceanBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for ocean"><span id="oceanBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="oceanBpmRow" hidden><span>TEMPO</span><input type="range" id="oceanBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for ocean"><span id="oceanBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="oceanTimeRow" hidden><span>TIME</span><input type="range" id="oceanTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for ocean"><span id="oceanTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="ocean">Random sound</button>
-    <button class="opt-toggle" data-i="ocean" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="ocean" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="ocean" data-opt="time">TIME</button>
   </div>
 
@@ -1278,11 +1278,11 @@
   <div class="rain-wrap" id="rainWrap">
     <img loading="lazy" src="images/rainstick.jpg" alt="Engraved rainstick with feathers, drifting among galaxies">
   </div>
-  <div class="opt-slider bpm-slider" id="rainBpmRow" hidden><span>BPM</span><input type="range" id="rainBpmSlider" min="6" max="60" value="30" step="1" aria-label="Beats per minute for rain"><span id="rainBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="rainBpmRow" hidden><span>TEMPO</span><input type="range" id="rainBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for rain"><span id="rainBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="rainTimeRow" hidden><span>TIME</span><input type="range" id="rainTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for rain"><span id="rainTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="rain">Random sound</button>
-    <button class="opt-toggle" data-i="rain" data-opt="bpm">BPM</button>
+    <button class="opt-toggle" data-i="rain" data-opt="bpm">TEMPO</button>
     <button class="opt-toggle" data-i="rain" data-opt="time">TIME</button>
   </div>
 
@@ -1921,7 +1921,7 @@
   function strikeGong(edge){
     const V=GONG_VOICES[gongVoice];
     const t0=ac.currentTime+.02;
-    const f0=gongF()*(V.fmul||1), v=masterVol()*4.0;
+    const f0=gongF()*(V.fmul||1), v=masterVol()*3.65;
     const attack=V.att, decay=V.dec, peak=V.peak;
     const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=V.lp;
     const vg=ac.createGain();
@@ -1968,7 +1968,7 @@
   function strikeBowl(){
     const V=BOWL_VOICES[bowlVoice];
     const t0=ac.currentTime+.02;
-    const f=bowlF()*V.mul, v=masterVol()*.7, b=beat()*V.beatMul;
+    const f=bowlF()*V.mul, v=masterVol()*.75, b=beat()*V.beatMul;
     const gains=[];
     gains.push(partial(t0,f-b/2,v*.5,V.dec,0,V.att));
     gains.push(partial(t0,f+b/2,v*.5,V.dec,0,V.att));
@@ -1983,7 +1983,7 @@
   const HP_RATIOS=[1.4983,1.5874,1.7818,2,2.2449,2.3784,2.6697,2.9966];
   function strikeHand(f,soft){
     const t0=ac.currentTime+.01;
-    const v=masterVol()*(soft?.43:.72);
+    const v=masterVol()*(soft?.37:.62);
     const gains=[];
     [[1,.5,5.5],[2,.26,3.6],[3,.16,2.6],[4.2,.04,1.2]].forEach(function(p){
       gains.push(partial(t0,f*p[0],v*p[1],p[2],  2.5,.004));
@@ -2007,7 +2007,7 @@
   function strikeChime(f,soft,delay){
     const t0=ac.currentTime+.01+(delay||0);
     const vJit=.9+Math.random()*.2;
-    const v=masterVol()*(soft?.4:.7)*vJit;
+    const v=masterVol()*(soft?.47:.83)*vJit;
     const gains=[];
     [[1,.4,9],[2.76,.22,5.2],[5.40,.10,2.8],[8.93,.04,1.1]].forEach(function(p){
       const dJit=.85+Math.random()*.3;
@@ -2078,7 +2078,7 @@
   function pluckHarp(f,soft){
     const t0=ac.currentTime+.005;
     const vJit=.9+Math.random()*.2;
-    const v=masterVol()*(soft?.52:.85)*vJit;
+    const v=masterVol()*(soft?.76:1.23)*vJit;
     const dec=Math.min(9,Math.max(3,7*Math.sqrt(220/f)));
     const gains=[];
     [[1,.5,1],[2,.24,.7],[3,.14,.55],[4,.08,.42],[5,.05,.32],[6,.03,.24]].forEach(function(p){
@@ -2110,7 +2110,7 @@
     registerStrike(gains,t0+7);
   }
   function pluckSans(f,soft){
-    const t0=ac.currentTime+.005, v=masterVol()*(soft?.45:.68);
+    const t0=ac.currentTime+.005, v=masterVol()*(soft?.69:1.03);
     const gains=[
       partial(t0,f,v*.5,2.6,1,.004),
       partial(t0,f*2.03,v*.1,1.2,2,.004),
@@ -2129,115 +2129,34 @@
     registerStrike(gains,t0+2.6);
   }
   function pluckMono(){
-    const t0=ac.currentTime+.01, f=monoF(), v=masterVol()*.8;
+    const t0=ac.currentTime+.01, f=monoF(), v=masterVol()*.89;
     const gains=[];
     for(let n=1;n<=7;n++){
       gains.push(partial(t0,f*n,v*.5/n,Math.max(1.5,9*Math.pow(n,-.5)),(Math.random()-.5)*4,.005));
     }
     registerStrike(gains,t0+9);
   }
-  // Bambuspanflöjtens röst: ingen oscillator-preset, utan en enkel fysikalisk
-  // approximation av ett handgjort rör — luftpelarens deltoner (dominerande grundton,
-  // svagare 3:e överton som i ett rör slutet i botten, ett stänk 2:a/4:e från kantens
-  // brustoner), inblåsningens luftbrus genom hela tonen, en mjuk "blomstrande" attack,
-  // ett långsamt vibrato som vaknar efter en stunds stilla ton, luftig tonhöjdsdrift
-  // (andningens ojämnhet) och en liten "scoop" in i tonen — som en riktig musiker
-  // aldrig träffar tonen helt stilla eller identiskt två gånger.
   function panNote(f,soft){
-    const rnd=function(a,b){return a+Math.random()*(b-a)};
-    const t0=ac.currentTime+.012;
-    const velJit=rnd(.86,1.1);
-    const v=masterVol()*(soft?.45:.60)*velJit;
-    const centsOff=rnd(-7,7);                 // aldrig helt perfekt stämd
-    const f0=f*Math.pow(2,centsOff/1200);
-    const attack=rnd(.05,.13)*(soft?1.2:1);    // andetagets uppblomstring
-    const breathAmt=rnd(.12,.20);              // 12–20% filtrerat andningsbrus
-    const vibDelay=rnd(.15,.35);               // vibratot vaknar efter en stund
-    const vibRamp=rnd(.25,.5);
-    const vibRate=rnd(4.2,6.3);
-    const vibDepth=rnd(8,20);                  // cent
-    const dur=rnd(.85,1.5)*(soft?.7:1);        // kortare, naturlig tonlängd
-    const scoop=rnd(16,42)*(Math.random()<.5?-1:1); // liten glidning in i tonen
-    const scoopTime=rnd(.05,.12);
-    const noiseDur=attack+dur+.5;
-    const gains=[];
-
-    // helhetens amplitudkurva: tyst brustagning → mjuk blomning → levande sustain → naturligt avtagande
-    const bus=ac.createGain();
-    bus.gain.setValueAtTime(.0001,t0);
-    bus.gain.linearRampToValueAtTime(.0025,t0+attack*.18);
-    bus.gain.linearRampToValueAtTime(.32,t0+attack*.58);
-    bus.gain.linearRampToValueAtTime(1,t0+attack);
-    bus.gain.setTargetAtTime(rnd(.82,1.03),t0+attack+dur*.3,rnd(.28,.48));
-    bus.gain.setTargetAtTime(rnd(.74,.97),t0+attack+dur*.62,rnd(.32,.52));
-    bus.gain.exponentialRampToValueAtTime(.0001,t0+attack+dur);
-    gains.push(bus);
-
-    // bamburörets klangfärg mjuknar/ljusnar långsamt över tonens gång — ingen statisk ton
-    const lp=ac.createBiquadFilter(); lp.type='lowpass';
-    lp.frequency.setValueAtTime(f0*rnd(2.9,3.7),t0);
-    lp.frequency.linearRampToValueAtTime(f0*rnd(4.3,5.6),t0+attack+dur*.55);
-    lp.frequency.exponentialRampToValueAtTime(f0*rnd(2.1,2.8),t0+attack+dur+.3);
-    lp.Q.value=.4;
-    bus.connect(lp); lp.connect(strikeBus);
-
-    // luftpelarens deltoner: sluten/öppen rör-akustik ger stark grundton, svagare
-    // udda överton (3:e) och bara ett stänk jämna övertoner från brusexcitationen
-    const PARTIALS=[[1,.60],[2,.085],[3,.15],[4,.032],[5,.045],[6,.014]];
-    const oscs=[];
-    PARTIALS.forEach(function(p){
-      const o=ac.createOscillator(); o.type='sine';
-      o.detune.value=rnd(-3,3);
-      o.frequency.setValueAtTime(f0*p[0]*Math.pow(2,scoop/1200),t0);
-      o.frequency.exponentialRampToValueAtTime(f0*p[0],t0+scoopTime);
-      const g=ac.createGain(); g.gain.value=v*p[1];
-      o.connect(g).connect(bus);
-      o.start(t0); o.stop(t0+noiseDur);
-      oscs.push(o);
-    });
-
-    // vibrato: kommer smygande, inte konstant från start — som en verklig musikers fras
-    const vib=ac.createOscillator(); vib.type='sine'; vib.frequency.value=vibRate;
-    const vibG=ac.createGain();
-    vibG.gain.setValueAtTime(0,t0);
-    vibG.gain.setValueAtTime(0,t0+vibDelay);
-    vibG.gain.linearRampToValueAtTime(vibDepth,t0+vibDelay+vibRamp);
-    vib.connect(vibG);
-    oscs.forEach(function(o){vibG.connect(o.detune)});
-    vib.start(t0); vib.stop(t0+noiseDur);
-
-    // långsam tonhöjdsdrift: andningens ojämna lufttryck, aldrig en helt stilla ton
-    const wander=ac.createOscillator(); wander.type='sine'; wander.frequency.value=rnd(.12,.32);
-    const wanderG=ac.createGain(); wanderG.gain.value=rnd(3,6.5);
-    wander.connect(wanderG);
-    oscs.forEach(function(o){wanderG.connect(o.detune)});
-    wander.start(t0); wander.stop(t0+noiseDur);
-
-    // andningsbrus genom hela tonen, filtrerat kring grundtonen med levande turbulens
-    // (inte bara ett attack-klick) — det som får örat att tro på en riktig blåsare
+    const t0=ac.currentTime+.01, v=masterVol()*(soft?.67:.88);
+    const gains=[
+      partial(t0,f,v*.42,3.2,1.5,.28),
+      partial(t0,f*2,v*.05,2.4,0,.32),
+      partial(t0,f*3,v*.018,1.8,0,.36)
+    ];
     const nb=ac.createBufferSource();
-    const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*noiseDur),ac.sampleRate);
+    const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*3.4),ac.sampleRate);
     const d=buf.getChannelData(0);
-    for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.5);
     nb.buffer=buf;
-    const bp=ac.createBiquadFilter(); bp.type='bandpass';
-    bp.frequency.setValueAtTime(f0*rnd(.95,1.4),t0);
-    bp.Q.value=rnd(.7,1.3);
-    const turb=ac.createOscillator(); turb.type='sine'; turb.frequency.value=rnd(1.8,4.3);
-    const turbG=ac.createGain(); turbG.gain.value=f0*rnd(.08,.18);
-    turb.connect(turbG).connect(bp.frequency);
-    turb.start(t0); turb.stop(t0+noiseDur);
+    const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=f; bp.Q.value=3.5;
     const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
-    ng.gain.linearRampToValueAtTime(v*breathAmt,t0+attack*1.4);
-    ng.gain.setTargetAtTime(v*breathAmt*rnd(.65,.95),t0+attack+dur*.4,rnd(.3,.5));
-    ng.gain.exponentialRampToValueAtTime(.0001,t0+attack+dur+rnd(.2,.4));
-    nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
-    gains.push(ng);
-
-    registerStrike(gains,t0+noiseDur+.15);
+    ng.gain.linearRampToValueAtTime(v*.22,t0+.09);
+    ng.gain.exponentialRampToValueAtTime(.0001,t0+3.2);
+    nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
+    registerStrike(gains,t0+3.6);
   }
   function shamanHit(edge,soft){
-    const t0=ac.currentTime+.005, v=masterVol()*(soft?.30:.52);
+    const t0=ac.currentTime+.005, v=masterVol()*(soft?.28:.48);
     const f=88-edge*16;
     const ring=1.0-edge*0.42;
     const gains=[];
@@ -2338,7 +2257,7 @@
   }
 
   function strikeTri(soft){
-    const t0=ac.currentTime+.005, f=triF(), v=masterVol()*(soft?.51:.85);
+    const t0=ac.currentTime+.005, f=triF(), v=masterVol()*(soft?.87:1.45);
     const gains=[];
     [1,1.34,1.71,2.12,2.63,3.3].forEach(function(r){
       gains.push(partial(t0,f*r,v*.11,5*(1/Math.sqrt(r)), 3,.002));
@@ -2346,137 +2265,44 @@
     });
     registerStrike(gains,t0+5);
   }
-  // Djembens tre grundslag — bas (mitten), ton (öppet handslag) och slap (kant).
-  // Skinnets moder är inte heltalsövertoner utan Bessel-liknande förhållanden som en
-  // riktig spänd getskinn (1 : 1.59 : 2.14 : 2.30 …), och under den ligger den ihåliga
-  // trästommens egen korta träresonans. En långsam, slumpmässig "drift" i grundtonen
-  // simulerar hur skinnet sakta rör sig/stäms om under ett helt spelpass, så att inget
-  // slag — även med samma handposition — låter exakt likadant två gånger.
-  let djembeDrift=0;
-  function djembeWalk(){
-    djembeDrift+=(Math.random()-.5)*7;
-    djembeDrift=Math.max(-20,Math.min(20,djembeDrift));
-    return djembeDrift;
-  }
-  function djembeShell(t0,v,amt){
-    // trästommens/luftkroppens korta träknäpp, ligger dovt under skinnets ton
+  function djembeHit(edge,soft){
+    const t0=ac.currentTime+.005, v=masterVol()*(soft?.37:.61);
     const gains=[];
-    const f=88+Math.random()*34;
-    const o=ac.createOscillator(); o.type='sine'; o.frequency.value=f;
-    const g=ac.createGain();
-    g.gain.setValueAtTime(0,t0);
-    g.gain.linearRampToValueAtTime(v*amt,t0+.007);
-    g.gain.exponentialRampToValueAtTime(.0001,t0+.28+Math.random()*.16);
-    o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.5);
-    gains.push(g);
+    if(edge<.45){
+      const o=ac.createOscillator(); o.type='sine';
+      o.frequency.setValueAtTime(95,t0);
+      o.frequency.exponentialRampToValueAtTime(62,t0+.1);
+      const g=ac.createGain();
+      g.gain.setValueAtTime(0,t0);
+      g.gain.linearRampToValueAtTime(v*.85,t0+.005);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+.42);
+      o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.45);
+      gains.push(g);
+    } else if(edge<.78){
+      const o=ac.createOscillator(); o.type='sine';
+      o.frequency.setValueAtTime(210,t0);
+      o.frequency.exponentialRampToValueAtTime(165,t0+.05);
+      const g=ac.createGain();
+      g.gain.setValueAtTime(0,t0);
+      g.gain.linearRampToValueAtTime(v*.6,t0+.004);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+.22);
+      o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.25);
+      gains.push(g);
+    }
     const nb=ac.createBufferSource();
-    const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.05),ac.sampleRate);
+    const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.09),ac.sampleRate);
     const d=buf.getChannelData(0);
-    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.4);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.2);
     nb.buffer=buf;
-    const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=170+Math.random()*100; bp.Q.value=1.5;
+    const bp=ac.createBiquadFilter(); bp.type='bandpass';
+    bp.frequency.value=500+edge*2600; bp.Q.value=.9;
     const ng=ac.createGain();
     ng.gain.setValueAtTime(.0001,t0);
-    ng.gain.linearRampToValueAtTime(v*amt*.45,t0+.003);
-    ng.gain.exponentialRampToValueAtTime(.0001,t0+.08);
+    ng.gain.linearRampToValueAtTime(v*(edge>.78?.7:.3),t0+.003);
+    ng.gain.exponentialRampToValueAtTime(.0001,t0+(edge>.78?.09:.06));
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
     gains.push(ng);
-    return gains;
-  }
-  function djembeHit(edge,soft){
-    const rnd=function(a,b){return a+Math.random()*(b-a)};
-    const t0=ac.currentTime+.004+Math.random()*.007; // liten mänsklig osäkerhet i exakt attacktid
-    const velJit=rnd(.85,1.09);
-    const v=masterVol()*(soft?.55:.9)*velJit;
-    const driftMul=Math.pow(2,djembeWalk()/1200);
-    let gains=[];
-
-    if(edge<.45){
-      // BASS: djup mitthiten — kraftig grundton, varm kroppsvibration
-      const f0=rnd(72,86)*driftMul, bendTo=f0*rnd(.62,.72);
-      [[1,.58,rnd(.32,.42)],[1.59,.13,rnd(.16,.22)],[2.14,.05,rnd(.08,.13)]].forEach(function(p){
-        const o=ac.createOscillator(); o.type='sine';
-        o.frequency.setValueAtTime(f0*p[0]*rnd(1.15,1.3),t0);
-        o.frequency.exponentialRampToValueAtTime(bendTo*p[0],t0+rnd(.09,.14));
-        const g=ac.createGain();
-        g.gain.setValueAtTime(0,t0);
-        g.gain.linearRampToValueAtTime(v*p[1],t0+rnd(.004,.009));
-        g.gain.exponentialRampToValueAtTime(.0001,t0+p[2]);
-        o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+p[2]+.05);
-        gains.push(g);
-      });
-      const nb=ac.createBufferSource();
-      const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.07),ac.sampleRate);
-      const d=buf.getChannelData(0);
-      for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.6);
-      nb.buffer=buf;
-      const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=rnd(180,320); bp.Q.value=rnd(.7,1.1);
-      const ng=ac.createGain();
-      ng.gain.setValueAtTime(.0001,t0);
-      ng.gain.linearRampToValueAtTime(v*rnd(.2,.27),t0+.003);
-      ng.gain.exponentialRampToValueAtTime(.0001,t0+rnd(.05,.08));
-      nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
-      gains.push(ng);
-      gains=gains.concat(djembeShell(t0,v,rnd(.26,.36)));
-      registerStrike(gains,t0+.65);
-
-    } else if(edge<.78){
-      // TONE: öppet handslag — rundad mellanregisterton, naturlig sustain
-      const f0=rnd(190,235)*driftMul, bendTo=f0*rnd(.85,.92);
-      [[1,.5,rnd(.5,.68)],[1.59,.14,rnd(.28,.4)],[2.3,.045,rnd(.14,.2)]].forEach(function(p){
-        const o=ac.createOscillator(); o.type='sine';
-        o.frequency.setValueAtTime(f0*p[0]*rnd(1.04,1.1),t0);
-        o.frequency.exponentialRampToValueAtTime(bendTo*p[0],t0+rnd(.03,.06));
-        const g=ac.createGain();
-        g.gain.setValueAtTime(0,t0);
-        g.gain.linearRampToValueAtTime(v*p[1],t0+rnd(.003,.006));
-        g.gain.exponentialRampToValueAtTime(.0001,t0+p[2]);
-        o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+p[2]+.05);
-        gains.push(g);
-      });
-      const nb=ac.createBufferSource();
-      const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.08),ac.sampleRate);
-      const d=buf.getChannelData(0);
-      for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.3);
-      nb.buffer=buf;
-      const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=rnd(700,1050); bp.Q.value=rnd(.8,1.2);
-      const ng=ac.createGain();
-      ng.gain.setValueAtTime(.0001,t0);
-      ng.gain.linearRampToValueAtTime(v*rnd(.22,.3),t0+.003);
-      ng.gain.exponentialRampToValueAtTime(.0001,t0+rnd(.06,.1));
-      nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
-      gains.push(ng);
-      gains=gains.concat(djembeShell(t0,v,rnd(.12,.2)));
-      registerStrike(gains,t0+.85);
-
-    } else {
-      // SLAP: ljus accent i kanten — knivskarp attack, kort avklingning
-      const f0=rnd(340,420)*driftMul;
-      [[1,.22,rnd(.09,.14)],[1.9,.13,rnd(.05,.09)]].forEach(function(p){
-        const o=ac.createOscillator(); o.type='triangle';
-        o.frequency.value=f0*p[0];
-        const g=ac.createGain();
-        g.gain.setValueAtTime(0,t0);
-        g.gain.linearRampToValueAtTime(v*p[1],t0+.002);
-        g.gain.exponentialRampToValueAtTime(.0001,t0+p[2]);
-        o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+p[2]+.03);
-        gains.push(g);
-      });
-      const nb=ac.createBufferSource();
-      const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.06),ac.sampleRate);
-      const d=buf.getChannelData(0);
-      for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.7);
-      nb.buffer=buf;
-      const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=rnd(1800,3200); bp.Q.value=rnd(.6,1);
-      const ng=ac.createGain();
-      ng.gain.setValueAtTime(.0001,t0);
-      ng.gain.linearRampToValueAtTime(v*rnd(.6,.78),t0+.0015);
-      ng.gain.exponentialRampToValueAtTime(.0001,t0+rnd(.06,.1));
-      nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
-      gains.push(ng);
-      gains=gains.concat(djembeShell(t0,v,rnd(.04,.08)));
-      registerStrike(gains,t0+.4);
-    }
+    registerStrike(gains,t0+.5);
   }
 
   function dampen(){
@@ -3530,35 +3356,9 @@
     ocean:function(){oceanSplash();},
     rain:function(){rainBurst(2.5);},
     tri:function(){[0,420,840].forEach(function(t){setTimeout(function(){if(ac)strikeTri(true)},t);});},
-    djembe:function(){
-      if(Math.random()<.5){
-        // MEDITATION: långsamt, rymligt, hjärtslagsliknande puls med långa pauser
-        // och enstaka mjuka ceremoniella accenter — inget maskinmässigt metronomklick.
-        const n=2+Math.floor(Math.random()*3);
-        let t=0;
-        for(let k=0;k<n;k++){
-          const lub=t, dub=t+85+Math.random()*45;
-          setTimeout(function(){if(ac)djembeHit(Math.random()*.22,true)},lub);
-          setTimeout(function(){if(ac)djembeHit(Math.random()*.3,true)},dub);
-          if(Math.random()<.32){
-            const acc=dub+260+Math.random()*200;
-            setTimeout(function(){if(ac)djembeHit(.5+Math.random()*.3,true)},acc);
-          }
-          t+=1350+Math.random()*1250;
-        }
-      } else {
-        // CEREMONIELL: livligare, synkoperat mönster som blandar bas/ton/slap i fri takt
-        const n=6+Math.floor(Math.random()*5);
-        let t=0;
-        for(let k=0;k<n;k++){
-          t+=(150+Math.random()*230)*(k%3===2?1.55:1);
-          const roll=Math.random();
-          const edge=roll<.4?Math.random()*.4:(roll<.75?.45+Math.random()*.3:.8+Math.random()*.2);
-          const soft=Math.random()<.65;
-          (function(ed,sf,tt){setTimeout(function(){if(ac)djembeHit(ed,sf)},tt)})(edge,soft,t);
-        }
-      }
-    }
+    djembe:function(){let t=0;
+      for(let k=0;k<6;k++){t+=k%3===2?380:190;
+        setTimeout(function(){if(ac)djembeHit(Math.random(),true)},t);}}
   };
   const RAND_PAL={gong:'gong',bowl:'bowl',hand:'hand',tongue:'hand',chime:'chime',harp:'harp',
     sans:'harp',mono:'gong',pan:'harp',naf:'harp',shaman:'hand',thunder:'gong',ocean:'bowl',rain:'bowl',tri:'harp',djembe:'hand'};
@@ -3584,11 +3384,7 @@
     cosmicBoost(.35,RAND_PAL[k],true);
     busyUntil=Math.max(busyUntil,ac.currentTime+6);
   }
-  const SPEAKER_SVG='<svg class="spk" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">'+
-    '<path d="M4 9 v6 h4 l5 4 V5 L8 9 Z" fill="currentColor"/>'+
-    '<path d="M16 9 a4 4 0 0 1 0 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'+
-    '<path d="M18.5 6.5 a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'+
-    '</svg>';
+  const SPEAKER_SVG='<img class="spk" src="images/start.png" width="13" height="13" alt="" aria-hidden="true">';
   document.querySelectorAll('.rand').forEach(function(b){
     b.innerHTML=SPEAKER_SVG+'<span>REPEAT</span>';
     b.classList.add('hasicon');
