@@ -965,7 +965,7 @@ const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'quartz_bowl', freq:432, tempo:12, tempoFollow:true,
   animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false,
-  amb:{wave:0,greennoise:0,whitenoise:0,pinknoise:0,brownnoise:0}};
+  amb:{wave:0,greennoise:0,whitenoise:0,pinknoise:0,brownnoise:0,blue:0,violet:0,gray:0,black:0}};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
 
@@ -1104,6 +1104,10 @@ const AMB_SOUNDS=[
   {id:'amb_whitenoise',label:'White noise',img:'images/noisewhite.jpg',amb:'whitenoise'},
   {id:'amb_pinknoise', label:'Pink noise', img:'images/noisepink.jpg', amb:'pinknoise'},
   {id:'amb_brownnoise',label:'Brown noise',img:'images/noisebrown.jpg',amb:'brownnoise'},
+  {id:'amb_bluenoise', label:'Blue noise', img:'images/noiseblue.jpg', amb:'blue'},
+  {id:'amb_violetnoise',label:'Violet noise',img:'images/noiseviolet.jpg',amb:'violet'},
+  {id:'amb_graynoise', label:'Gray noise', img:'images/noisegray.jpg', amb:'gray'},
+  {id:'amb_blacknoise',label:'Black noise',img:'images/noiseblack.jpg',amb:'black'},
   {id:'amb_wave',  label:'Wave',   img:'images/wave.jpg',   amb:'wave'},
 ];
 function isAmbSound(id){return AMB_SOUNDS.some(a=>a.id===id);}
@@ -1114,6 +1118,10 @@ const AMB_INFO={
   whitenoise:'Equal energy across every frequency — a steady, even hiss that helps mask distracting sounds.',
   pinknoise:'Softer than white noise, with more weight in the lows — a smoother backdrop many find easier to relax to.',
   brownnoise:'Deep and rumbling, weighted even further toward the low end — a warm, enveloping backdrop for sleep or focus.',
+  blue:'Brighter than white noise, with the low end thinned out — a soft, airy hiss.',
+  violet:'The brightest, hissiest color — nearly all high frequencies and almost no low end.',
+  gray:'Shaped to sound perceptually even across the whole hearing range, not just physically flat.',
+  black:'Mostly quiet — a deep, sparse rumble that drifts in and out rather than holding steady.',
   wave:'Slow swells rolling in and receding, like waves on a shore — a steady, calming rhythm.',
 };
 function updateAmbInfo(){
@@ -1851,6 +1859,21 @@ function pinkBuf(sec){
   return b;
 }
 function loopPink(sec){const src=audio.ctx.createBufferSource();src.buffer=pinkBuf(sec);src.loop=true;src.start();return src;}
+/* Discrete first difference of a buffer: d[i] = s[i] - s[i-1]. In the frequency domain,
+   differencing multiplies the spectrum by (a factor proportional to) frequency, which tilts
+   the power spectral density by +6 dB/octave relative to whatever went in. That single fact
+   generates two more noise colors for free:
+     - diff(white)  -> +6 dB/oct  = violet/purple noise
+     - diff(pink)   -> -3+6=+3dB/oct = blue noise
+   The very first sample wraps around to the buffer's last sample (i-1 at i=0 reads the tail),
+   which is exactly the sample that precedes it once the buffer is set to loop — so the
+   derivative already loops seamlessly with no extra crossfade needed. */
+function diffBuf(src){
+  const len=src.length,ctx=audio.ctx,b=ctx.createBuffer(1,len,ctx.sampleRate),d=b.getChannelData(0),s=src.getChannelData(0);
+  for(let i=0;i<len;i++)d[i]=(s[i]-s[(i-1+len)%len])*.6; /* *.6 keeps gain-staging in the same ballpark as the other layers */
+  return b;
+}
+function loopBuffer(buf){const src=audio.ctx.createBufferSource();src.buffer=buf;src.loop=true;src.start();return src;}
 function ensureAmbience(){
   if(amb.ready)return;initAudio();amb.ready=true;
   const ctx=audio.ctx;
@@ -1892,6 +1915,54 @@ function ensureAmbience(){
     src.connect(lp).connect(amb.brownnoiseG);amb.brownnoiseG.connect(amb.bus);
   }
 
+  /* Blue noise — +3 dB/octave, the derivative of pink noise: brighter and airier than white,
+     with the low end thinned out — a soft, breathy hiss */
+  {
+    const src=loopBuffer(diffBuf(pinkBuf(5)));
+    amb.blueG=ctx.createGain();amb.blueG.gain.value=0;
+    src.connect(amb.blueG);amb.blueG.connect(amb.bus);
+  }
+
+  /* Violet noise — +6 dB/octave, the derivative of white noise: the brightest, hissiest
+     color here, all top end and almost no body */
+  {
+    const src=loopBuffer(diffBuf(noiseBuf(5,false)));
+    amb.violetG=ctx.createGain();amb.violetG.gain.value=0;
+    src.connect(amb.violetG);amb.violetG.connect(amb.bus);
+  }
+
+  /* Gray noise — white noise reshaped to sound perceptually flat: the ear is most sensitive
+     around 2-5 kHz, so that band is dipped and the lows/very-highs are lifted to compensate,
+     an approximation of an inverse equal-loudness curve rather than a fixed dB/octave slope */
+  {
+    const src=loopNoise(4,false);
+    const dip=ctx.createBiquadFilter();dip.type='peaking';dip.frequency.value=3200;dip.Q.value=.9;dip.gain.value=-9;
+    const lowLift=ctx.createBiquadFilter();lowLift.type='lowshelf';lowLift.frequency.value=150;lowLift.gain.value=5;
+    const highLift=ctx.createBiquadFilter();highLift.type='highshelf';highLift.frequency.value=7000;highLift.gain.value=5;
+    amb.grayG=ctx.createGain();amb.grayG.gain.value=0;
+    src.connect(dip).connect(lowLift).connect(highLift).connect(amb.grayG);amb.grayG.connect(amb.bus);
+  }
+
+  /* Black noise — there's no strict standard definition; the common, practical meaning is
+     "mostly quiet, deeper and sparser than brown noise" rather than a continuous bed. Built
+     as heavily low-passed brown noise (well below the brown-noise cutoff) whose level is then
+     driven down toward near-silence by two slow, unrelated-rate LFOs multiplied together, so
+     it drifts in and out with an irregular, non-repeating rhythm instead of a steady rumble */
+  {
+    const src=loopNoise(6,true);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=180;lp.Q.value=.4;
+    const sparseStage=ctx.createGain();sparseStage.gain.value=0;
+    const sparseConst=ctx.createConstantSource();sparseConst.offset.value=.35;sparseConst.connect(sparseStage.gain);sparseConst.start();
+    const lfo1=ctx.createOscillator();lfo1.frequency.value=.045;
+    const lfo1G=ctx.createGain();lfo1G.gain.value=.3;
+    lfo1.connect(lfo1G).connect(sparseStage.gain);lfo1.start();
+    const lfo2=ctx.createOscillator();lfo2.frequency.value=.017;
+    const lfo2G=ctx.createGain();lfo2G.gain.value=.25;
+    lfo2.connect(lfo2G).connect(sparseStage.gain);lfo2.start();
+    amb.blackG=ctx.createGain();amb.blackG.gain.value=0;
+    src.connect(lp).connect(sparseStage).connect(amb.blackG);amb.blackG.connect(amb.bus);
+  }
+
   /* Wave — slow swelling lowpass noise, waves rolling in and receding */
   {
     const src=loopNoise(6,false);
@@ -1909,9 +1980,9 @@ function ensureAmbience(){
     src.connect(lp).connect(swellStage).connect(amb.waveG);amb.waveG.connect(amb.bus);
   }
 }
-const AMB_PEAK={wave:.3,greennoise:.3,whitenoise:.22,pinknoise:.26,brownnoise:.32};
-const AMB_TAU ={wave:.7,greennoise:.4,whitenoise:.4,pinknoise:.4,brownnoise:.4};
-const AMB_NODE={wave:'waveG',greennoise:'greennoiseG',whitenoise:'whitenoiseG',pinknoise:'pinknoiseG',brownnoise:'brownnoiseG'};
+const AMB_PEAK={wave:.3,greennoise:.3,whitenoise:.22,pinknoise:.26,brownnoise:.32,blue:.18,violet:.14,gray:.22,black:.34};
+const AMB_TAU ={wave:.7,greennoise:.4,whitenoise:.4,pinknoise:.4,brownnoise:.4,blue:.4,violet:.4,gray:.4,black:.6};
+const AMB_NODE={wave:'waveG',greennoise:'greennoiseG',whitenoise:'whitenoiseG',pinknoise:'pinknoiseG',brownnoise:'brownnoiseG',blue:'blueG',violet:'violetG',gray:'grayG',black:'blackG'};
 function setAmbience(key,val){
   S.amb[key]=Math.max(0,Math.min(100,Math.round(val)));
   const lbl=$('amb'+key.charAt(0).toUpperCase()+key.slice(1)+'Val');if(lbl)lbl.textContent=S.amb[key]+'%';
@@ -1946,7 +2017,7 @@ function setAmbience(key,val){
    ambience "instruments", since only one sound plays at a time in the instrument row */
 function stopAllAmbience(){
   if(ambPreviewTimer){clearTimeout(ambPreviewTimer);ambPreviewTimer=null;}
-  ['wave','greennoise','whitenoise','pinknoise','brownnoise'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
+  ['wave','greennoise','whitenoise','pinknoise','brownnoise','blue','violet','gray','black'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
 }
 
 ['pointerdown','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,function once(){
