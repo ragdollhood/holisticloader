@@ -289,10 +289,14 @@
   .ocean-wrap.lit img,.rain-wrap.lit img{animation:glowB 4.5s ease-out}
   .rand{font-family:inherit;font-size:10.5px;letter-spacing:.08em;color:var(--soft);
     background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:999px;
-    padding:6px 14px;margin:-2px 0 10px;position:relative;z-index:6}
+    width:92px;height:27px;padding:0;margin:-2px 0 10px;position:relative;z-index:6;
+    display:flex;align-items:center;justify-content:center;overflow:hidden}
   .rand:active{color:var(--gold);border-color:var(--gold)}
-  .rand.hasicon{display:inline-flex;align-items:center;gap:6px}
-  .rand .spk{flex:0 0 auto;opacity:.85}
+  .rand .randImg{width:100%;height:100%;object-fit:contain;display:block;opacity:.9;pointer-events:none}
+  .rand.on .randImg{opacity:1}
+  .rand .cd{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+    font-size:10px;letter-spacing:.04em;background:rgba(10,8,14,.72);color:var(--gold-soft);pointer-events:none}
+  .rand.on .cd{display:flex}
   .rand-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   .rand-row .rand,.rand-row .randdur,.rand-row .opt-toggle{margin-top:0;margin-bottom:0}
   .rand-row{margin:-2px 0 10px}
@@ -1086,7 +1090,7 @@
     <button data-v="tamtam">Tam-tam</button>
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="gongTune" min="55" max="170" value="80" aria-label="Tune the gong"><span id="gongHz">80 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="gongBpmRow" hidden><span>TEMPO</span><input type="range" id="gongBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for gong"><span id="gongBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="gongBpmRow" hidden><span>TEMPO</span><input type="range" id="gongBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for gong"><span id="gongBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="gongTimeRow" hidden><span>TIME</span><input type="range" id="gongTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for gong"><span id="gongTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="gong">Random sound</button>
@@ -1104,7 +1108,7 @@
     <button data-v="deep" class="sel">Deep quartz</button>
   </div>
   <div class="tune b"><span>TUNE</span><input type="range" id="bowlTune" min="280" max="880" value="432" aria-label="Tune the bowl"><span id="bowlHz">432 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="bowlBpmRow" hidden><span>TEMPO</span><input type="range" id="bowlBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for bowl"><span id="bowlBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="bowlBpmRow" hidden><span>TEMPO</span><input type="range" id="bowlBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for bowl"><span id="bowlBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="bowlTimeRow" hidden><span>TIME</span><input type="range" id="bowlTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for bowl"><span id="bowlTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="bowl">Random sound</button>
@@ -1117,7 +1121,7 @@
     <img loading="lazy" src="images/handpan.jpg" alt="Dark steel handpan engraved with golden celestial patterns, seen from above">
   </div>
   <div class="tune h"><span>TUNE</span><input type="range" id="handTune" min="110" max="220" value="147" aria-label="Tune the handpan"><span id="handHz">147 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="handBpmRow" hidden><span>TEMPO</span><input type="range" id="handBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for hand"><span id="handBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="handBpmRow" hidden><span>TEMPO</span><input type="range" id="handBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for hand"><span id="handBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="handTimeRow" hidden><span>TIME</span><input type="range" id="handTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for hand"><span id="handTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="hand">Random sound</button>
@@ -1130,7 +1134,7 @@
     <img loading="lazy" src="images/tonguedrum.jpg" alt="Black steel tongue drum engraved with golden constellations, seen from above">
   </div>
   <div class="tune h"><span>TUNE</span><input type="range" id="tongueTune" min="220" max="440" value="294" aria-label="Tune the tongue drum"><span id="tongueHz">294 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="tongueBpmRow" hidden><span>TEMPO</span><input type="range" id="tongueBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for tongue"><span id="tongueBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="tongueBpmRow" hidden><span>TEMPO</span><input type="range" id="tongueBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for tongue"><span id="tongueBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="tongueTimeRow" hidden><span>TIME</span><input type="range" id="tongueTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for tongue"><span id="tongueTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="tongue">Random sound</button>
@@ -1144,7 +1148,7 @@
     <img loading="lazy" src="images/chimes.jpg" alt="Dark bronze wind chimes engraved with golden celestial symbols, hanging in space">
   </div>
   <div class="tune c"><span>TUNE</span><input type="range" id="chimeTune" min="440" max="880" value="587" aria-label="Tune the wind chimes"><span id="chimeHz">587 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="chimeBpmRow" hidden><span>TEMPO</span><input type="range" id="chimeBpmSlider" min="6" max="60" value="10" step="1" aria-label="Tempo for chime"><span id="chimeBpmVal">every 6 sec (10 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="chimeBpmRow" hidden><span>TEMPO</span><input type="range" id="chimeBpmSlider" min="1" max="10" value="6" step="1" aria-label="Tempo for chime"><span id="chimeBpmVal">every 6 sec (10 bpm)</span></div>
   <div class="opt-slider time-slider" id="chimeTimeRow" hidden><span>TIME</span><input type="range" id="chimeTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for chime"><span id="chimeTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="chime">Random sound</button>
@@ -1157,7 +1161,7 @@
     <img loading="lazy" src="images/triangle.jpg" alt="Golden orchestral triangle with beater, hanging among galaxies">
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="triTune" min="1800" max="4200" value="2900" aria-label="Tune the triangle"><span id="triHz">2900 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="triBpmRow" hidden><span>TEMPO</span><input type="range" id="triBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for tri"><span id="triBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="triBpmRow" hidden><span>TEMPO</span><input type="range" id="triBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for tri"><span id="triBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="triTimeRow" hidden><span>TIME</span><input type="range" id="triTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for tri"><span id="triTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="tri">Random sound</button>
@@ -1170,7 +1174,7 @@
     <img loading="lazy" src="images/harpa.jpg" alt="Black and gold celestial harp engraved with stars and moons, standing in space">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="harpTune" min="110" max="294" value="147" aria-label="Tune the harp"><span id="harpHz">147 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="harpBpmRow" hidden><span>TEMPO</span><input type="range" id="harpBpmSlider" min="6" max="60" value="10" step="1" aria-label="Tempo for harp"><span id="harpBpmVal">every 6 sec (10 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="harpBpmRow" hidden><span>TEMPO</span><input type="range" id="harpBpmSlider" min="1" max="10" value="6" step="1" aria-label="Tempo for harp"><span id="harpBpmVal">every 6 sec (10 bpm)</span></div>
   <div class="opt-slider time-slider" id="harpTimeRow" hidden><span>TIME</span><input type="range" id="harpTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for harp"><span id="harpTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="harp">Random sound</button>
@@ -1183,7 +1187,7 @@
     <img loading="lazy" src="images/sansula.jpg" alt="Dark kalimba sansula with golden engraved tines on a starry soundboard">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="sansTune" min="196" max="392" value="220" aria-label="Tune the sansula"><span id="sansHz">220 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="sansBpmRow" hidden><span>TEMPO</span><input type="range" id="sansBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for sans"><span id="sansBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="sansBpmRow" hidden><span>TEMPO</span><input type="range" id="sansBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for sans"><span id="sansBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="sansTimeRow" hidden><span>TIME</span><input type="range" id="sansTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for sans"><span id="sansTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="sans">Random sound</button>
@@ -1195,7 +1199,7 @@
     <img loading="lazy" src="images/monochord.jpg" alt="Long black monochord engraved with moons and stars, floating in space">
   </div>
   <div class="tune g"><span>TUNE</span><input type="range" id="monoTune" min="49" max="110" value="65" aria-label="Tune the monochord"><span id="monoHz">65 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="monoBpmRow" hidden><span>TEMPO</span><input type="range" id="monoBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for mono"><span id="monoBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="monoBpmRow" hidden><span>TEMPO</span><input type="range" id="monoBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for mono"><span id="monoBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="monoTimeRow" hidden><span>TIME</span><input type="range" id="monoTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for mono"><span id="monoTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="mono">Random sound</button>
@@ -1207,7 +1211,7 @@
     <img loading="lazy" src="images/panflute.jpg" alt="Black pan flute with golden celestial engravings on its pipes">
   </div>
   <div class="tune c"><span>TUNE</span><input type="range" id="panTune" min="294" max="587" value="392" aria-label="Tune the pan flute"><span id="panHz">392 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="panBpmRow" hidden><span>TEMPO</span><input type="range" id="panBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for pan"><span id="panBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="panBpmRow" hidden><span>TEMPO</span><input type="range" id="panBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for pan"><span id="panBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="panTimeRow" hidden><span>TIME</span><input type="range" id="panTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for pan"><span id="panTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="pan">Random sound</button>
@@ -1219,7 +1223,7 @@
     <img loading="lazy" src="images/native_american_fluit.jpg" alt="Native American style flute with an eagle head block and hanging feathers">
   </div>
   <div class="tune hp"><span>TUNE</span><input type="range" id="nafTune" min="220" max="440" value="294" aria-label="Tune the native flute"><span id="nafHz">294 Hz</span></div>
-  <div class="opt-slider bpm-slider" id="nafBpmRow" hidden><span>TEMPO</span><input type="range" id="nafBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for naf"><span id="nafBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="nafBpmRow" hidden><span>TEMPO</span><input type="range" id="nafBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for naf"><span id="nafBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="nafTimeRow" hidden><span>TIME</span><input type="range" id="nafTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for naf"><span id="nafTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="naf">Random sound</button>
@@ -1230,7 +1234,7 @@
   <div class="shaman-wrap" id="shamanWrap">
     <img loading="lazy" src="images/shaman_drum.jpg" alt="Shamanic frame drum with golden spirit animals and feathers">
   </div>
-  <div class="opt-slider bpm-slider" id="shamanBpmRow" hidden><span>TEMPO</span><input type="range" id="shamanBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for shaman"><span id="shamanBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="shamanBpmRow" hidden><span>TEMPO</span><input type="range" id="shamanBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for shaman"><span id="shamanBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="shamanTimeRow" hidden><span>TIME</span><input type="range" id="shamanTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for shaman"><span id="shamanTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="shaman">Random sound</button>
@@ -1242,7 +1246,7 @@
   <div class="djembe-wrap" id="djembeWrap">
     <img loading="lazy" src="images/djembe.jpg" alt="Carved wooden djembe drum with lotus mandala on its head">
   </div>
-  <div class="opt-slider bpm-slider" id="djembeBpmRow" hidden><span>TEMPO</span><input type="range" id="djembeBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for djembe"><span id="djembeBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="djembeBpmRow" hidden><span>TEMPO</span><input type="range" id="djembeBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for djembe"><span id="djembeBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="djembeTimeRow" hidden><span>TIME</span><input type="range" id="djembeTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for djembe"><span id="djembeTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="djembe">Random sound</button>
@@ -1254,7 +1258,7 @@
   <div class="thunder-wrap" id="thunderWrap">
     <img loading="lazy" src="images/thunder_drum.jpg" alt="Large dark drum with golden lightning across its head">
   </div>
-  <div class="opt-slider bpm-slider" id="thunderBpmRow" hidden><span>TEMPO</span><input type="range" id="thunderBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for thunder"><span id="thunderBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="thunderBpmRow" hidden><span>TEMPO</span><input type="range" id="thunderBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for thunder"><span id="thunderBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="thunderTimeRow" hidden><span>TIME</span><input type="range" id="thunderTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for thunder"><span id="thunderTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="thunder">Random sound</button>
@@ -1266,7 +1270,7 @@
   <div class="ocean-wrap" id="oceanWrap">
     <img loading="lazy" src="images/ocean_drum.jpg" alt="Ocean drum filled with beads forming a golden sea under moon phases">
   </div>
-  <div class="opt-slider bpm-slider" id="oceanBpmRow" hidden><span>TEMPO</span><input type="range" id="oceanBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for ocean"><span id="oceanBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="oceanBpmRow" hidden><span>TEMPO</span><input type="range" id="oceanBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for ocean"><span id="oceanBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="oceanTimeRow" hidden><span>TIME</span><input type="range" id="oceanTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for ocean"><span id="oceanTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="ocean">Random sound</button>
@@ -1278,7 +1282,7 @@
   <div class="rain-wrap" id="rainWrap">
     <img loading="lazy" src="images/rainstick.jpg" alt="Engraved rainstick with feathers, drifting among galaxies">
   </div>
-  <div class="opt-slider bpm-slider" id="rainBpmRow" hidden><span>TEMPO</span><input type="range" id="rainBpmSlider" min="6" max="60" value="30" step="1" aria-label="Tempo for rain"><span id="rainBpmVal">every 2 sec (30 bpm)</span></div>
+  <div class="opt-slider bpm-slider" id="rainBpmRow" hidden><span>TEMPO</span><input type="range" id="rainBpmSlider" min="1" max="10" value="2" step="1" aria-label="Tempo for rain"><span id="rainBpmVal">every 2 sec (30 bpm)</span></div>
   <div class="opt-slider time-slider" id="rainTimeRow" hidden><span>TIME</span><input type="range" id="rainTimeSlider" min="30" max="1800" value="30" step="5" aria-label="Loop duration for rain"><span id="rainTimeVal">30 sec</span></div>
   <div class="rand-row">
     <button class="rand" data-i="rain">Random sound</button>
@@ -3370,7 +3374,7 @@
     const L=randLoops.get(k);
     if(!L) return;
     clearTimeout(L.timer); clearInterval(L.tick);
-    if(L.lbl) L.lbl.textContent='REPEAT';
+    if(L.lbl) L.lbl.textContent='';
     L.btn.classList.remove('on');
     if(L.tempoSel) L.tempoSel.disabled=false;
     if(L.durSel) L.durSel.disabled=false;
@@ -3384,17 +3388,17 @@
     cosmicBoost(.35,RAND_PAL[k],true);
     busyUntil=Math.max(busyUntil,ac.currentTime+6);
   }
-  const SPEAKER_SVG='<img class="spk" src="images/start.png" width="13" height="13" alt="" aria-hidden="true">';
+  const SPEAKER_IMG='<img class="randImg" src="images/start.png" alt="" aria-hidden="true"><span class="cd"></span>';
   document.querySelectorAll('.rand').forEach(function(b){
-    b.innerHTML=SPEAKER_SVG+'<span>REPEAT</span>';
-    b.classList.add('hasicon');
-    const lbl=b.querySelector('span');
+    b.innerHTML=SPEAKER_IMG;
+    b.setAttribute('aria-label','Repeat');
+    const lbl=b.querySelector('.cd');
     const k=b.dataset.i;
     const tempoSel=document.getElementById(k+'BpmSlider');
     const durSel=document.getElementById(k+'TimeSlider');
 
-    function startLoop(bpm,sec){
-      const interval=60000/bpm;
+    function startLoop(secInterval,sec){
+      const interval=secInterval*1000;
       const end=Date.now()+sec*1000;
       b.classList.add('on');
       if(tempoSel) tempoSel.disabled=true;
@@ -3416,7 +3420,7 @@
       e.stopPropagation();
       if(randLoops.has(k)){ stopRandLoop(k); return; }
       await ensureAudio();
-      startLoop(+(tempoSel?tempoSel.value:30),+(durSel?durSel.value:30));
+      startLoop(+(tempoSel?tempoSel.value:2),+(durSel?durSel.value:30));
     });
   });
 
@@ -3436,8 +3440,8 @@
     const slider=document.getElementById(k+'BpmSlider');
     const val=document.getElementById(k+'BpmVal');
     if(!slider||!val) return;
-    const bpm=+slider.value;
-    const sec=Math.round((60/bpm)*10)/10;
+    const sec=+slider.value;
+    const bpm=Math.round(60/sec);
     val.textContent='every '+sec+' sec ('+bpm+' bpm)';
   }
   function fmtTimeRow(k){
