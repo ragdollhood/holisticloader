@@ -226,6 +226,8 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .reel-label .kw-val{display:none;font-size:1.05em;color:var(--gold);font-weight:600;letter-spacing:.05em;margin-left:8px;font-variant-numeric:tabular-nums;
   text-shadow:0 0 10px rgba(231,201,162,.75),0 0 22px rgba(231,201,162,.4)}
 #reelLabel,#soundLabelFront{margin-bottom:3px}
+#ambInfo{text-align:center;font-size:11.5px;line-height:1.4;color:var(--muted);max-width:360px;margin:2px auto 10px;padding:0 16px;transition:opacity .3s ease}
+#ambInfo.hidden{display:none}
 .freqfront{display:flex;flex-direction:column;align-items:stretch;gap:7px;max-width:420px;margin:0 auto 6px;padding:0 6px}
 #freqLabelFront{margin-top:0}
 .freqfront .v{text-align:center;font-size:12px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.05em}
@@ -816,6 +818,7 @@ body.immersive #howToBox{display:none}
       <div class="iscroll" id="soundScrollFront"></div>
       <svg class="scrollcue" id="soundCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
     </div>
+    <div id="ambInfo" class="hidden"></div>
     <div class="reel-label" id="freqLabelFront"><span class="kw" id="ctrlKw">My frequency</span><span class="kw-val" id="ctrlKwVal"></span></div>
     <div id="ctrlTabs" role="tablist" aria-label="Sound &amp; breath controls">
       <button class="ctrl-tab ctrl-tab-icon active" id="ctrlTabFreq" data-ctrl="freq" role="tab" aria-selected="true" aria-label="Frequency">
@@ -1105,6 +1108,20 @@ const AMB_SOUNDS=[
 ];
 function isAmbSound(id){return AMB_SOUNDS.some(a=>a.id===id);}
 function ambSoundOf(id){return AMB_SOUNDS.find(a=>a.id===id);}
+/* short, plain-language line shown in #ambInfo under the sound row while that ambience is selected */
+const AMB_INFO={
+  greennoise:'Noise balanced around the middle of the hearing range — a calm, natural-sounding backdrop for easy focus.',
+  whitenoise:'Equal energy across every frequency — a steady, even hiss that helps mask distracting sounds.',
+  pinknoise:'Softer than white noise, with more weight in the lows — a smoother backdrop many find easier to relax to.',
+  brownnoise:'Deep and rumbling, weighted even further toward the low end — a warm, enveloping backdrop for sleep or focus.',
+  wave:'Slow swells rolling in and receding, like waves on a shore — a steady, calming rhythm.',
+};
+function updateAmbInfo(){
+  const box=$('ambInfo');if(!box)return;
+  const a=ambSoundOf(S.sound);
+  if(!a||!AMB_INFO[a.amb]){box.classList.add('hidden');box.textContent='';return;}
+  box.textContent=AMB_INFO[a.amb];box.classList.remove('hidden');
+}
 /* Per-instrument frequency presets & natural ranges.
    min/max = the instrument's natural playing range (used to bound the slider
    unless Advanced Mode is on). def = the preset frequency loaded whenever the
@@ -1148,8 +1165,12 @@ function switchAmbSound(item){
   ensureAmbience();
   if(audio.ctx.state==='suspended')audio.ctx.resume();
   setAmbience(item.amb,65);
-  /* plays continuously — for the rest of the session — until the person picks a different
-     ambience or a tuned instrument, which silences it immediately via stopAllAmbience() */
+  if(!S.running){
+    /* not in a session yet — this is just a quick preview while choosing, so it fades out
+       on its own after a couple of seconds. Once Start is pressed, startSession() cancels
+       this pending timer and the sound plays continuously for the whole session instead. */
+    ambPreviewTimer=setTimeout(()=>{setAmbience(item.amb,0);ambPreviewTimer=null;},AMB_PREVIEW_MS);
+  }
   renderCtrlTabs();syncCtrlSlider();
 }
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
@@ -1159,7 +1180,7 @@ const FREE_SOUND_IDS=new Set(SGROUPS.filter(g=>FREE_SOUND_GROUPS.includes(g.id))
 function isSoundLocked(id){return !isPremium && !FREE_SOUND_IDS.has(id);}
 const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
 
-function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);}
+function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);updateAmbInfo();}
 function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scrollLeft;w.innerHTML='';let activeEl=null;const done={};
   SOUNDS.forEach(s=>{
     const g=sgroupOf(s.id);
@@ -1805,6 +1826,11 @@ function playFinal(){const ctx=audio.ctx,t=ctx.currentTime+.05;
 
 /* ===== ambience mixer: Birds / Water / Rain / Forest — continuous nature-sound layers ===== */
 const amb={ready:false};
+/* while just previewing a sound on the front page (session not running yet), it auto-stops
+   after this long; once a session is actually running it plays continuously instead — see
+   switchAmbSound() and startSession() */
+const AMB_PREVIEW_MS=2000;
+let ambPreviewTimer=null;
 function loopNoise(sec,brown){
   const src=audio.ctx.createBufferSource();src.buffer=noiseBuf(sec,brown);src.loop=true;src.start();return src;
 }
@@ -1907,6 +1933,7 @@ function setAmbience(key,val){
 /* mute every ambience layer — used when switching to a tuned instrument, or between
    ambience "instruments", since only one sound plays at a time in the instrument row */
 function stopAllAmbience(){
+  if(ambPreviewTimer){clearTimeout(ambPreviewTimer);ambPreviewTimer=null;}
   ['wave','greennoise','whitenoise','pinknoise','brownnoise'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
 }
 
@@ -2093,6 +2120,7 @@ requestAnimationFrame(loop);
 function startSession(){
   initAudio(); if(audio.ctx.state==='suspended')audio.ctx.resume();
   S.ended=false;$('endOverlay').classList.remove('show');
+  if(ambPreviewTimer){clearTimeout(ambPreviewTimer);ambPreviewTimer=null;} /* the sound now plays for the whole session, not just a short preview */
   if(remainingMs<=0){remainingMs=S.timerMin*60*1000;breathClock=0;wanderT=0;}
   cueTarget='';cueText='';cueState='out';cueOp=0;$('breathCueTxt').textContent='';
   S.running=true;
@@ -2117,6 +2145,7 @@ function resumeSession(){S.running=true;if(audio.ctx.state==='suspended')audio.c
   $('btnPause').classList.remove('paused');startScheduler();}
 function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
   $('breathCue').style.opacity=0;$('timerReadout').textContent='0:00';
+  stopAllAmbience(); /* any Wave/noise-color ambience stops right away, instead of lingering through the closing tone's fade */
   if(audio.ctx){
     if(S.soundOn){
       audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);
@@ -2131,6 +2160,7 @@ function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
   $('timerCluster').classList.add('hidden');$('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
 function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
+  stopAllAmbience();
   if(audio.ctx){audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.25);}
   document.body.classList.remove('immersive');
   $('endOverlay').classList.remove('show');
