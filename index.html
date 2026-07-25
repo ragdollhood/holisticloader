@@ -1271,7 +1271,7 @@ function setFreqRange(advanced){
   if(!S.advanced){ /* back to natural range: snap to this instrument's preset */
     const r=instrumentRange(S.sound); S.freq=r.def; clearPreset();
   }
-  applyFreqBounds();updateFreq();preview();
+  applyFreqBounds();updateFreq();
 }
 $('rangeNatural').onclick=()=>setFreqRange(false);
 $('rangeFull').onclick=()=>setFreqRange(true);
