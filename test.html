@@ -268,13 +268,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 .sti-lbl{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;min-height:2.6em}
 .sti-ic{width:14px;height:14px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8}
 
-/* ===== ambience mixer (Birds / Water / Rain / Forest) ===== */
-.amb-list{display:flex;flex-direction:column;gap:16px;margin-top:6px}
-.amb-row{display:flex;align-items:center;gap:10px}
-.amb-ic{width:28px;height:28px;flex:0 0 auto;border-radius:50%;object-fit:cover;box-shadow:0 0 0 1px rgba(244,241,234,.28)}
-.amb-lbl{font-size:12.5px;color:var(--ink);min-width:44px;flex:0 0 auto}
-.amb-row input[type="range"]{flex:1 1 auto}
-.amb-val{font-size:11px;color:var(--muted);min-width:34px;text-align:right;font-variant-numeric:tabular-nums;flex:0 0 auto}
+/* (ambience is now selected as items in the instrument row — see .itile) */
 .swtoggle{position:relative;width:46px;height:26px;border-radius:999px;flex:0 0 auto;cursor:pointer;
   background:rgba(244,241,234,.14);border:1px solid var(--line);transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
 .swtoggle .sw-knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#9a9a9a;
@@ -842,9 +836,6 @@ body.immersive #howToBox{display:none}
       <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabPreset" data-panel="preset" role="tab" aria-selected="false" aria-label="Presets">
         <svg viewBox="0 0 24 24"><path d="M12 3l1.7 4.6L18.5 9.3 13.9 11 12 15.6 10.1 11 5.5 9.3 10.3 7.6Z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8Z"/></svg>
       </button>
-      <button class="ctrl-tab ctrl-tab-icon" id="ctrlTabAmbience" data-panel="ambience" role="tab" aria-selected="false" aria-label="Ambience sounds">
-        <svg viewBox="0 0 24 24"><path d="M3 16.5c1.2-4 2.4-4 3.6 0M9 16.5c1.2-6 2.4-6 3.6 0M15 16.5c1.2-4.5 2.4-4.5 3.6 0M21 16.5c-.6-2-1.2-2-1.8 0"/><circle cx="17.5" cy="6.5" r="1.6"/><path d="M17.5 8.1v2.4"/></svg>
-      </button>
     </div>
     <div class="freqfront" id="freqFrontWrap">
       <input type="range" id="ctrlSlider" min="45" max="963" step="1" value="432">
@@ -949,39 +940,6 @@ body.immersive #howToBox{display:none}
           <div class="blk-lbl"><span>Preset sessions</span></div>
           <div class="presetgrid" id="presetGrid"></div>
           <div class="hintline">A preset sets the sound, tone, breathing rhythm, scene and length. Then tap the circle to start.</div>
-        </div>
-      </div>
-
-      <div class="tabpane" id="paneambience">
-        <div class="block">
-          <div class="blk-lbl"><span>Ambience</span></div>
-          <p class="sst-desc">Layer soft nature sounds under your session. Drag a fader up to bring a layer in — down to 0 to turn it off.</p>
-          <div class="amb-list">
-            <div class="amb-row">
-              <img class="amb-ic" src="images/bird.jpg" alt="">
-              <span class="amb-lbl">Birds</span>
-              <input type="range" id="ambBirds" min="0" max="100" step="1" value="0" aria-label="Birds volume">
-              <span class="amb-val" id="ambBirdsVal">0%</span>
-            </div>
-            <div class="amb-row">
-              <img class="amb-ic" src="images/drop.jpg" alt="">
-              <span class="amb-lbl">Water</span>
-              <input type="range" id="ambWater" min="0" max="100" step="1" value="0" aria-label="Water volume">
-              <span class="amb-val" id="ambWaterVal">0%</span>
-            </div>
-            <div class="amb-row">
-              <img class="amb-ic" src="images/rain.jpg" alt="">
-              <span class="amb-lbl">Rain</span>
-              <input type="range" id="ambRain" min="0" max="100" step="1" value="0" aria-label="Rain volume">
-              <span class="amb-val" id="ambRainVal">0%</span>
-            </div>
-            <div class="amb-row">
-              <img class="amb-ic" src="images/forest.jpg" alt="">
-              <span class="amb-lbl">Forest</span>
-              <input type="range" id="ambForest" min="0" max="100" step="1" value="0" aria-label="Forest volume">
-              <span class="amb-val" id="ambForestVal">0%</span>
-            </div>
-          </div>
         </div>
       </div>
     <div class="panel-foot"><button class="done-btn" id="panelDone">Done</button></div>
@@ -1135,6 +1093,17 @@ const SGROUPS=[
 ];
 const SMEMBER2GROUP={}; SGROUPS.forEach(g=>g.members.forEach(id=>SMEMBER2GROUP[id]=g));
 function sgroupOf(id){return SMEMBER2GROUP[id]||null;}
+/* Ambience "instruments" — continuous nature-sound layers (see the ambience mixer further down).
+   They live at the end of the same instrument row instead of a separate picker, and unlike the
+   tuned instruments above they have no frequency / resonance / sound-tempo controls. */
+const AMB_SOUNDS=[
+  {id:'amb_birds', label:'Birds',  img:'images/bird.jpg',   amb:'birds'},
+  {id:'amb_water', label:'Water',  img:'images/drop.jpg',   amb:'water'},
+  {id:'amb_rain',  label:'Rain',   img:'images/rain.jpg',   amb:'rain'},
+  {id:'amb_forest',label:'Forest', img:'images/forest.jpg', amb:'forest'},
+];
+function isAmbSound(id){return AMB_SOUNDS.some(a=>a.id===id);}
+function ambSoundOf(id){return AMB_SOUNDS.find(a=>a.id===id);}
 /* Per-instrument frequency presets & natural ranges.
    min/max = the instrument's natural playing range (used to bound the slider
    unless Advanced Mode is on). def = the preset frequency loaded whenever the
@@ -1164,9 +1133,21 @@ function currentFreqRange(){return S.advanced?FULL_FREQ_RANGE:instrumentRange(S.
    the current custom frequency clamped to the full range (advanced mode) */
 function switchSound(id){
   S.sound=id;
+  stopAllAmbience();
   const r=instrumentRange(id);
   S.freq=r.def;
-  clearPreset();applyFreqBounds();updateFreq();
+  clearPreset();applyFreqBounds();updateFreq();renderCtrlTabs();syncCtrlSlider();
+}
+/* select one of the ambience "instruments" (Birds/Water/Rain/Forest) — mutually exclusive with
+   both the tuned instruments and with each other; no frequency/resonance/tempo controls apply */
+function switchAmbSound(item){
+  S.sound=item.id;
+  clearPreset();
+  stopAllAmbience();
+  ensureAmbience();
+  if(audio.ctx.state==='suspended')audio.ctx.resume();
+  setAmbience(item.amb,65);
+  renderCtrlTabs();syncCtrlSlider();
 }
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
@@ -1196,11 +1177,19 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
       if(s.id===S.sound)activeEl=b;w.appendChild(b);
     }
   });
+  /* ambience "instruments" continue the same row, after the tuned instruments */
+  AMB_SOUNDS.forEach(a=>{
+    const b=document.createElement('button');b.className='itile'+(a.id===S.sound?' active':'');b.dataset.ambid=a.id;
+    b.innerHTML=`<span class="iimg" style="background-image:url(${a.img})"></span><span class="ilbl">${a.label}</span>`;
+    b.onclick=()=>{closeSub();closeSoundSub();switchAmbSound(a);renderSounds();};
+    if(a.id===S.sound)activeEl=b;w.appendChild(b);
+  });
   if(center&&activeEl){requestAnimationFrame(()=>{w.scrollLeft=activeEl.offsetLeft-w.clientWidth/2+activeEl.offsetWidth/2;});}
   else{w.scrollLeft=sx;}
 }
 function updateSoundActiveStates(){
   document.querySelectorAll('.itile[data-sndid]').forEach(el=>el.classList.toggle('active',el.dataset.sndid===S.sound));
+  document.querySelectorAll('.itile[data-ambid]').forEach(el=>el.classList.toggle('active',el.dataset.ambid===S.sound));
   document.querySelectorAll('.itile.group[data-sgroup]').forEach(el=>{
     const gg=SGROUPS.find(x=>x.id===el.dataset.sgroup); if(!gg)return;
     const act=gg.members.includes(S.sound);
@@ -1265,6 +1254,7 @@ document.addEventListener('click',e=>{
 });
 {const rl=$('reel'); if(rl)rl.addEventListener('scroll',updatePlaceCue,{passive:true});}
 function preview(){initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
+  if(isAmbSound(S.sound))return; /* already playing continuously via the ambience mixer */
   if(!S.running)audio.master.gain.setTargetAtTime(MASTER,audio.ctx.currentTime,.02);
   playVoice(S.sound,S.freq,audio.ctx.currentTime+.04);}
 
@@ -1382,6 +1372,11 @@ function syncCtrlSlider(){
 }
 function renderCtrlTabs(){
   document.querySelectorAll('.ctrl-tab').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});
+  /* Frequency, Resonance and Sound tempo only apply to tuned instruments — hide them
+     while one of the ambience sounds (Birds/Water/Rain/Forest) is selected */
+  const ambActive=isAmbSound(S.sound);
+  ['ctrlTabFreq','ctrlTabResonance','ctrlTabSoundTempo'].forEach(id=>{const b=$(id);if(b)b.classList.toggle('hidden',ambActive);});
+  if(ambActive&&(ctrlTab==='freq'||ctrlTab==='resonance'||ctrlTab==='soundtempo'))ctrlTab='tempo';
   const idMap={freq:'ctrlTabFreq',tempo:'ctrlTabTempo',resonance:'ctrlTabResonance',length:'ctrlTabLength',soundtempo:'ctrlTabSoundTempo'};
   const b=$(idMap[ctrlTab]);
   if(b){b.classList.add('active');b.setAttribute('aria-selected','true');}
@@ -1771,6 +1766,7 @@ function playTexture(cfg,freq,t,mult){const ctx=audio.ctx,dur=cfg.decay*mult;
     const og=ctx.createGain();og.gain.setValueAtTime(.0001,t);og.gain.linearRampToValueAtTime(cfg.subAmp,t+cfg.swell);og.gain.exponentialRampToValueAtTime(.0001,t+dur);
     o.connect(og);og.connect(audio.dry);og.connect(audio.rev);o.start(t);o.stop(t+dur+.2);}}
 function playVoice(type,freq,when,mult=1){
+  if(!VOICES[type])return; /* ambience sounds (birds/water/rain/forest) have no tuned voice — they run continuously via the ambience mixer instead */
   const ctx=audio.ctx,cfg=VOICES[type]||VOICES.crystal_bowl,t=when;
   if(cfg.texture){playTexture(cfg,freq,t,mult);return;}
   const decay=cfg.decay*mult,attack=cfg.attack,peak=cfg.peak||.13,f0=freq*(cfg.fmul||1);
@@ -1912,11 +1908,11 @@ function setAmbience(key,val){
     if(key==='forest')amb.forestG.gain.setTargetAtTime(0,t,.6);
   }
 }
-['birds','water','rain','forest'].forEach(key=>{
-  const idBase='amb'+key.charAt(0).toUpperCase()+key.slice(1);
-  const sl=$(idBase);if(!sl)return;
-  sl.addEventListener('input',e=>setAmbience(key,+e.target.value));
-});
+/* mute every ambience layer — used when switching to a tuned instrument, or between
+   ambience "instruments", since only one sound plays at a time in the instrument row */
+function stopAllAmbience(){
+  ['birds','water','rain','forest'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
+}
 
 ['pointerdown','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,function once(){
   try{initAudio();if(audio.ctx.state==='suspended')audio.ctx.resume();
@@ -2147,7 +2143,7 @@ function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingM
   $('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
 
 /* panel */
-const TITLES={sound:'My sound tempo',breath:'Breathing',preset:'Preset',ambience:'Ambience'};
+const TITLES={sound:'My sound tempo',breath:'Breathing',preset:'Preset'};
 function openPanel(name){document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('show',p.id==='pane'+name));
   $('panelTitle').textContent=TITLES[name];$('panel').classList.add('open');
   if(name==='preset')document.body.classList.add('preset-active');}
