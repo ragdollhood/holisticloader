@@ -414,6 +414,9 @@
     text-transform:uppercase;margin-bottom:12px;text-align:center;
     display:flex;align-items:center;justify-content:center;gap:8px;
   }
+  /* ===== Stop All: egen liten ruta, fastsatt mot regelrutans högra sida (endast laptop) ===== */
+  .stop-all-box{display:none}
+  #tsPanel{position:relative}
   .info-btn{
     font-family:inherit;width:18px;height:18px;line-height:16px;border-radius:50%;
     border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--soft);
@@ -690,6 +693,25 @@
       z-index:0;
     }
     #tsPanel > *{position:relative;z-index:1}
+
+    #tsPanel > .stop-all-box{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+      position:absolute;left:100%;top:50%;
+      transform:translateY(-50%);
+      margin-left:-1.5px;z-index:2;
+      width:58px;padding:14px 6px;
+      background:var(--panel);
+      border:1.5px solid var(--gold);border-left:none;
+      border-radius:0 24px 24px 0;
+      box-shadow:0 16px 30px rgba(0,0,0,.4);
+      cursor:pointer;color:var(--soft);
+      font-family:inherit;font-size:9px;font-weight:700;letter-spacing:.06em;text-align:center;
+      transition:color .15s ease,background .15s ease;
+      -webkit-tap-highlight-color:transparent;
+    }
+    #tsPanel > .stop-all-box svg{width:20px;height:20px;flex:0 0 auto;display:block}
+    #tsPanel > .stop-all-box:hover{color:var(--gold)}
+    #tsPanel > .stop-all-box:active{transform:translateY(-50%) scale(.95)}
     #tsPanel > h2{flex:none;margin-bottom:2px;font-size:9.5px;letter-spacing:.14em;flex-wrap:wrap;row-gap:4px;
       background:rgba(6,4,9,.6);border-radius:10px;padding:5px 8px}
 
@@ -1346,6 +1368,10 @@
       <a id="recDl" class="rec-dl" hidden download>⬇ Download recording</a>
     </div>
   </div>
+  <button type="button" class="stop-all-box" id="stopAllBtn" aria-label="Stop all sound" title="Stop all sound">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
+    STOP ALL
+  </button>
 </div>
 </div>
 
@@ -1916,10 +1942,25 @@
     o.start(t0); o.stop(t0+dec+.1);
     return g;
   }
+  const MAX_VOICES=48;
   function registerStrike(gains,end){
     activeStrikes.push({gains:gains,end:end});
     busyUntil=Math.max(busyUntil,end);
     activeStrikes=activeStrikes.filter(function(s){return s.end>ac.currentTime});
+    // polyphony-skydd: om väldigt mycket spelas samtidigt (flera repeat-loopar
+    // + manuellt spel) kan antalet klingande noder växa obegränsat och tynga
+    // ljudmotorn så mycket att sidan hackar eller hänger sig. Byggs det upp
+    // fler än MAX_VOICES samtidiga slag, tonas de äldsta ut snabbt (istället
+    // för att bara staplas på) så belastningen aldrig skenar.
+    while(activeStrikes.length>MAX_VOICES){
+      const oldest=activeStrikes.shift();
+      oldest.gains.forEach(function(g){
+        try{
+          g.gain.cancelScheduledValues(ac.currentTime);
+          g.gain.setTargetAtTime(0,ac.currentTime,.015);
+        }catch(e){}
+      });
+    }
     scheduleSuspend();
   }
 
@@ -2025,12 +2066,17 @@
   function strikeChime(f,soft,delay){
     const t0=ac.currentTime+.01+(delay||0);
     const vJit=.9+Math.random()*.2;
-    const v=masterVol()*(soft?.47:.83)*vJit;
+    const v=masterVol()*(soft?.4:.68)*vJit;
     const gains=[];
+    // varje deltoncent spelas som ett detunat par för svävning/kör-effekt,
+    // men de två oscillatorerna startar i det närmaste i fas — utan .5 här
+    // toppar paret på ~2x den tänkta amplituden i attacken, vilket är precis
+    // det som fick windchimes att dista i regeltoppen (extra känsligt när
+    // man drar snabbt över flera rör och många toner klingar samtidigt).
     [[1,.4,9],[2.76,.22,5.2],[5.40,.10,2.8],[8.93,.04,1.1]].forEach(function(p){
       const dJit=.85+Math.random()*.3;
-      gains.push(partial(t0,f*p[0],v*p[1],p[2],  3*dJit,.006));
-      gains.push(partial(t0,f*p[0],v*p[1],p[2], -3*dJit,.006));
+      gains.push(partial(t0,f*p[0],v*p[1]*.5,p[2],  3*dJit,.006));
+      gains.push(partial(t0,f*p[0],v*p[1]*.5,p[2], -3*dJit,.006));
     });
     registerStrike(gains,t0+9.3);
   }
@@ -3189,6 +3235,37 @@
   }
   $('toggle').addEventListener('click',function(){playing?silence():play()});
 
+  // ===== Stop All: stoppar allt som klingar just nu (drone, alla slag som
+  // fortfarande ringer ut, kontinuerlig ambiens och pågående repeat-loopar).
+  // Det är ett engångsstopp/reset — INTE en mute — så nästa gång du spelar
+  // något låter det som vanligt igen, volymreglaget är opåverkat. =====
+  function stopAllSounds(){
+    if(playing) silence();
+    if(ac){
+      const t=ac.currentTime;
+      activeStrikes.forEach(function(s){
+        s.gains.forEach(function(g){
+          try{
+            g.gain.cancelScheduledValues(t);
+            g.gain.setValueAtTime(g.gain.value,t);
+            g.gain.linearRampToValueAtTime(0,t+.03);
+          }catch(e){}
+        });
+      });
+      activeStrikes=[];
+      [oceanG,rainG,thundG,nafG,monoG].forEach(function(g){
+        if(!g) return;
+        try{ g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value,t); g.gain.linearRampToValueAtTime(0,t+.03); }catch(e){}
+      });
+    }
+    Array.from(randLoops.keys()).forEach(function(k){ stopRandLoop(k); });
+    if(ac) busyUntil=ac.currentTime+.5;
+    scheduleSuspend();
+  }
+  const stopAllBtn=$('stopAllBtn');
+  if(stopAllBtn) stopAllBtn.addEventListener('click',function(e){ e.stopPropagation(); stopAllSounds(); });
+
+
   document.addEventListener('visibilitychange',function(){
     if(!document.hidden&&ac&&ac.state!=='running'&&ac.state!=='closed') ac.resume().catch(function(){});
   });
@@ -3397,10 +3474,15 @@
   }
   function fireRand(k){
     if(silenced) return;
-    RAND[k]();
+    // skyddat: om ett enstaka ljudanrop failar (t.ex. AudioContext hann
+    // hamna i fel state just då, extra vanligt när mycket spelas samtidigt)
+    // ska det aldrig kunna avbryta resten av funktionen — annars dör
+    // repeat-loopen tyst mitt i, eftersom nästa setTimeout aldrig hinner
+    // schemaläggas (se step() i startLoop nedan).
+    try{ RAND[k](); }catch(e){}
     litWrap(RAND_WRAP[k]);
     cosmicBoost(.35,RAND_PAL[k],true);
-    busyUntil=Math.max(busyUntil,ac.currentTime+6);
+    if(ac) busyUntil=Math.max(busyUntil,ac.currentTime+6);
   }
   const SPEAKER_IMG='<img class="randImg" src="images/start.png" alt="" aria-hidden="true"><span class="cd"></span>';
   document.querySelectorAll('.rand').forEach(function(b){
@@ -3419,9 +3501,11 @@
       if(durSel) durSel.disabled=true;
       function step(){
         if(Date.now()>=end){ stopRandLoop(k); return; }
-        fireRand(k);
-        const L=randLoops.get(k);
-        if(L) L.timer=setTimeout(step,interval);
+        try{ fireRand(k); }
+        finally{
+          const L=randLoops.get(k);
+          if(L) L.timer=setTimeout(step,interval);
+        }
       }
       const tick=setInterval(function(){
         const s=Math.max(0,Math.ceil((end-Date.now())/1000));
