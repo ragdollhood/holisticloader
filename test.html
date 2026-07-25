@@ -288,11 +288,11 @@
   .pan-wrap.lit img,.naf-wrap.lit img{animation:glowHp 4s ease-out}
   .ocean-wrap.lit img,.rain-wrap.lit img{animation:glowB 4.5s ease-out}
   .rand{font-family:inherit;font-size:10.5px;letter-spacing:.08em;color:var(--soft);
-    background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:999px;
+    background:none;border:none;border-radius:999px;
     width:92px;height:27px;padding:0;margin:-2px 0 10px;position:relative;z-index:6;
     display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .rand:active{color:var(--gold);border-color:var(--gold)}
-  .rand .randImg{width:100%;height:100%;object-fit:contain;display:block;opacity:.9;pointer-events:none}
+  .rand:active{filter:brightness(1.1)}
+  .rand .randImg{width:100%;height:100%;object-fit:cover;display:block;opacity:1;pointer-events:none}
   .rand.on .randImg{opacity:1}
   .rand .cd{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
     font-size:10px;letter-spacing:.04em;background:rgba(10,8,14,.72);color:var(--gold-soft);pointer-events:none}
