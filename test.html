@@ -414,27 +414,6 @@
     text-transform:uppercase;margin-bottom:12px;text-align:center;
     display:flex;align-items:center;justify-content:center;gap:8px;
   }
-  /* ===== Mute All: liten "utväxt"-knapp, samma look i desktop- och mobilvarianten ===== */
-  .mute-all-btn{
-    font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;
-    display:flex;align-items:center;justify-content:center;gap:6px;
-    color:var(--soft);background:rgba(14,10,18,.92);
-    border:1px solid var(--line);border-radius:999px;
-    transition:color .15s ease,border-color .15s ease,background .15s ease,box-shadow .15s ease;
-  }
-  .mute-all-btn svg{width:14px;height:14px;flex:0 0 auto;display:block;pointer-events:none}
-  .mute-all-btn:active{transform:scale(.94)}
-  .mute-all-btn.on{
-    color:#ffb199;border-color:#ff8a7a;background:rgba(255,90,90,.16);
-    box-shadow:0 0 14px rgba(255,110,100,.35);
-  }
-  #tsPanel{position:relative}
-  .mute-all-desktop{
-    position:absolute;top:-15px;right:20px;z-index:7;
-    font-size:9.5px;font-weight:700;letter-spacing:.1em;
-    padding:7px 13px;box-shadow:0 4px 14px rgba(0,0,0,.4);
-  }
-  .mute-all-desktop .mute-all-label{white-space:nowrap}
   .info-btn{
     font-family:inherit;width:18px;height:18px;line-height:16px;border-radius:50%;
     border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--soft);
@@ -841,11 +820,6 @@
       border-top:1px solid var(--line);
       backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
       box-shadow:0 -6px 20px rgba(0,0,0,.35);
-    }
-    .mute-all-mobile{
-      position:absolute;right:max(10px,env(safe-area-inset-right));top:-18px;
-      width:36px;height:36px;padding:0;border-radius:50%;
-      box-shadow:0 4px 14px rgba(0,0,0,.45);
     }
     #mobileTsTabs .mts-tab{
       flex:1 1 0;min-width:0;
@@ -1322,13 +1296,6 @@
 
 <div id="tsPanelGutter">
 <div class="panel" id="tsPanel">
-  <button type="button" class="mute-all-btn mute-all-desktop" id="muteAllDesktop" aria-pressed="false" aria-label="Mute all" title="Mute all">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M3 9v6h4l5 5V4L7 9H3z"/>
-      <path d="M16.5 8.5l6 7M22.5 8.5l-6 7"/>
-    </svg>
-    <span class="mute-all-label">MUTE ALL</span>
-  </button>
   <h2>Tone &amp; space <button type="button" class="info-btn" id="tsInfoBtn" aria-expanded="false" aria-controls="tsInfoPanel" title="What do these controls do?">i</button></h2>
   <div class="ts-controls">
     <div class="info-panel" id="tsInfoPanel">
@@ -1384,12 +1351,6 @@
 
 <!-- ===== mobile only: Tone & space + Room acoustics + Recorder as fixed bottom tabs ===== -->
 <div id="mobileTsTabs" role="tablist" aria-label="Tone and space controls">
-  <button type="button" class="mute-all-btn mute-all-mobile" id="muteAllMobile" aria-pressed="false" aria-label="Mute all" title="Mute all">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M3 9v6h4l5 5V4L7 9H3z"/>
-      <path d="M16.5 8.5l6 7M22.5 8.5l-6 7"/>
-    </svg>
-  </button>
   <button type="button" class="mts-tab" data-target="vibKnob" aria-expanded="false">Shimmer/<br>Beating</button>
   <button type="button" class="mts-tab" data-target="echoKnob" aria-expanded="false">Space echo</button>
   <button type="button" class="mts-tab" data-target="reverbKnob" aria-expanded="false">Reverb</button>
@@ -1727,7 +1688,6 @@
   let gCluster=null, gClusterOscs=[];
   let bSingOscs=[], bSing=null;
   let playing=false, suspendTimer=null, busyUntil=0, activeStrikes=[];
-  let mutedAll=false, mutedPrevGain=.85;
   let silenced=false;
 
   function ensureAudio(){
@@ -1750,7 +1710,7 @@
           ac.resume().catch(function(){});
         }
       };
-      master=ac.createGain(); master.gain.value=mutedAll?0:.85;
+      master=ac.createGain(); master.gain.value=.85;
       delay=ac.createDelay(1.0); delay.delayTime.value=.34;
       fb=ac.createGain(); fb.gain.value=0;
       wet=ac.createGain(); wet.gain.value=0;
@@ -1956,25 +1916,10 @@
     o.start(t0); o.stop(t0+dec+.1);
     return g;
   }
-  const MAX_VOICES=48;
   function registerStrike(gains,end){
     activeStrikes.push({gains:gains,end:end});
     busyUntil=Math.max(busyUntil,end);
     activeStrikes=activeStrikes.filter(function(s){return s.end>ac.currentTime});
-    // polyphony-skydd: om väldigt mycket spelas samtidigt (flera repeat-loopar
-    // + manuellt spel) kan antalet klingande noder växa obegränsat och tynga
-    // ljudmotorn så mycket att sidan hackar eller hänger sig. Byggs det upp
-    // fler än MAX_VOICES samtidiga slag, tonas de äldsta ut snabbt (istället
-    // för att bara staplas på) så belastningen aldrig skenar.
-    while(activeStrikes.length>MAX_VOICES){
-      const oldest=activeStrikes.shift();
-      oldest.gains.forEach(function(g){
-        try{
-          g.gain.cancelScheduledValues(ac.currentTime);
-          g.gain.setTargetAtTime(0,ac.currentTime,.015);
-        }catch(e){}
-      });
-    }
     scheduleSuspend();
   }
 
@@ -3244,36 +3189,6 @@
   }
   $('toggle').addEventListener('click',function(){playing?silence():play()});
 
-  // ===== Mute All: instant, full mute (independent of the drone play/pause
-  // and independent of the volume slider — pressing it again restores
-  // exactly the volume you had before) =====
-  function applyMuteAll(){
-    if(!master||!ac) return;
-    const t=ac.currentTime;
-    master.gain.cancelScheduledValues(t);
-    master.gain.setValueAtTime(master.gain.value,t);
-    if(mutedAll){
-      if(master.gain.value>.001) mutedPrevGain=master.gain.value;
-      master.gain.linearRampToValueAtTime(0,t+.03);
-    }else{
-      master.gain.linearRampToValueAtTime(mutedPrevGain||.85,t+.03);
-    }
-  }
-  function toggleMuteAll(){
-    mutedAll=!mutedAll;
-    applyMuteAll();
-    document.querySelectorAll('.mute-all-btn').forEach(function(b){
-      b.classList.toggle('on',mutedAll);
-      b.setAttribute('aria-pressed',mutedAll?'true':'false');
-      b.setAttribute('aria-label',mutedAll?'Unmute':'Mute all');
-      b.title=mutedAll?'Unmute':'Mute all';
-    });
-  }
-  document.querySelectorAll('.mute-all-btn').forEach(function(b){
-    b.addEventListener('click',function(e){ e.stopPropagation(); toggleMuteAll(); });
-  });
-
-
   document.addEventListener('visibilitychange',function(){
     if(!document.hidden&&ac&&ac.state!=='running'&&ac.state!=='closed') ac.resume().catch(function(){});
   });
@@ -3482,15 +3397,10 @@
   }
   function fireRand(k){
     if(silenced) return;
-    // skyddat: om ett enstaka ljudanrop failar (t.ex. AudioContext hann
-    // hamna i fel state just då, extra vanligt när mycket spelas samtidigt)
-    // ska det aldrig kunna avbryta resten av funktionen — annars dör
-    // repeat-loopen tyst mitt i, eftersom nästa setTimeout aldrig hinner
-    // schemaläggas (se step() i startLoop nedan).
-    try{ RAND[k](); }catch(e){}
+    RAND[k]();
     litWrap(RAND_WRAP[k]);
     cosmicBoost(.35,RAND_PAL[k],true);
-    if(ac) busyUntil=Math.max(busyUntil,ac.currentTime+6);
+    busyUntil=Math.max(busyUntil,ac.currentTime+6);
   }
   const SPEAKER_IMG='<img class="randImg" src="images/start.png" alt="" aria-hidden="true"><span class="cd"></span>';
   document.querySelectorAll('.rand').forEach(function(b){
@@ -3509,11 +3419,9 @@
       if(durSel) durSel.disabled=true;
       function step(){
         if(Date.now()>=end){ stopRandLoop(k); return; }
-        try{ fireRand(k); }
-        finally{
-          const L=randLoops.get(k);
-          if(L) L.timer=setTimeout(step,interval);
-        }
+        fireRand(k);
+        const L=randLoops.get(k);
+        if(L) L.timer=setTimeout(step,interval);
       }
       const tick=setInterval(function(){
         const s=Math.max(0,Math.ceil((end-Date.now())/1000));
