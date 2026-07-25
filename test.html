@@ -1677,7 +1677,7 @@
 
   /* ================= LJUDMOTOR ================= */
   let ac=null, master=null, limiter=null, analyser=null, strikeBus=null, bassCut=null, bassShelf=null;
-  let mixBus=null, conv=null, revWet=null, mediaDest=null;
+  let mixBus=null, conv=null, revWet=null, mediaDest=null, softClip=null;
   let monoG=null, monoOscs=[], oceanG=null, oceanLP=null;
   let thundG=null, rainG=null;
   let nafOsc=null, nafG=null, nafBP=null, nafBreath=null;
@@ -1741,11 +1741,25 @@
       limiter.threshold.value=-3; limiter.knee.value=12;
       limiter.ratio.value=6; limiter.attack.value=.006; limiter.release.value=.25;
       bassShelf.connect(limiter);
+      // säkerhetsnät: DynamicsCompressor har ingen lookahead, så ett väldigt
+      // snabbt transientslag (mallet-attack på ett par ms) kan hinna toppa över
+      // 0 dBFS innan limitern hunnit reagera — det hörs som ett fult, hårt
+      // digitalt klipp. En mjuk waveshaper (tanh) efter limitern rundar av
+      // sådana enstaka toppar utan att färga eller komprimera resten av ljudet
+      // (den är i praktiken transparent för allt under ca -6 dBFS), så inget
+      // ljud kan spricka/distorta oavsett hur högt volymreglaget står.
+      softClip=ac.createWaveShaper();
+      (function(){
+        const n=2048, curve=new Float32Array(n);
+        for(let i=0;i<n;i++){ const x=(i/(n-1))*2-1; curve[i]=Math.tanh(x); }
+        softClip.curve=curve; softClip.oversample='4x';
+      })();
+      limiter.connect(softClip);
       analyser=ac.createAnalyser(); analyser.fftSize=1024;
-      limiter.connect(analyser).connect(ac.destination);
+      softClip.connect(analyser).connect(ac.destination);
       // inspelningsutgång
       mediaDest=ac.createMediaStreamDestination();
-      limiter.connect(mediaDest);
+      softClip.connect(mediaDest);
       setRoom(curRoom);
 
       osc=ac.createOscillator(); osc.type=curWave; osc.frequency.value=curFreq();
