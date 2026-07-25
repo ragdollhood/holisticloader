@@ -1155,6 +1155,9 @@ function switchAmbSound(item){
   ensureAmbience();
   if(audio.ctx.state==='suspended')audio.ctx.resume();
   setAmbience(item.amb,65);
+  /* plays for a few seconds then fades out on its own — clicking a different
+     ambience (or a tuned instrument) cancels this and silences immediately, via stopAllAmbience() */
+  ambAutoStopTimer=setTimeout(()=>{setAmbience(item.amb,0);ambAutoStopTimer=null;},AMB_MAX_MS);
   renderCtrlTabs();syncCtrlSlider();
 }
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
@@ -1810,6 +1813,9 @@ function playFinal(){const ctx=audio.ctx,t=ctx.currentTime+.05;
 
 /* ===== ambience mixer: Birds / Water / Rain / Forest — continuous nature-sound layers ===== */
 const amb={ready:false,birdsTimer:null,rainTimer:null,forestBirdTimer:null,thunderTimer:null,fireTimer:null};
+/* every ambience "instrument" auto-stops (softly) this long after being started/re-triggered */
+const AMB_MAX_MS=3000;
+let ambAutoStopTimer=null;
 function loopNoise(sec,brown){
   const src=audio.ctx.createBufferSource();src.buffer=noiseBuf(sec,brown);src.loop=true;src.start();return src;
 }
@@ -2103,6 +2109,7 @@ function setAmbience(key,val){
 /* mute every ambience layer — used when switching to a tuned instrument, or between
    ambience "instruments", since only one sound plays at a time in the instrument row */
 function stopAllAmbience(){
+  if(ambAutoStopTimer){clearTimeout(ambAutoStopTimer);ambAutoStopTimer=null;}
   ['birds','water','rain','forest','thunder','wind','fire','wave','greennoise','whitenoise','pinknoise','brownnoise'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
 }
 
