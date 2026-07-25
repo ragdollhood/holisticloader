@@ -1916,10 +1916,25 @@
     o.start(t0); o.stop(t0+dec+.1);
     return g;
   }
+  const MAX_VOICES=48;
   function registerStrike(gains,end){
     activeStrikes.push({gains:gains,end:end});
     busyUntil=Math.max(busyUntil,end);
     activeStrikes=activeStrikes.filter(function(s){return s.end>ac.currentTime});
+    // polyphony-skydd: om väldigt mycket spelas samtidigt (flera repeat-loopar
+    // + manuellt spel) kan antalet klingande noder växa obegränsat och tynga
+    // ljudmotorn så mycket att sidan hackar eller hänger sig. Byggs det upp
+    // fler än MAX_VOICES samtidiga slag, tonas de äldsta ut snabbt (istället
+    // för att bara staplas på) så belastningen aldrig skenar.
+    while(activeStrikes.length>MAX_VOICES){
+      const oldest=activeStrikes.shift();
+      oldest.gains.forEach(function(g){
+        try{
+          g.gain.cancelScheduledValues(ac.currentTime);
+          g.gain.setTargetAtTime(0,ac.currentTime,.015);
+        }catch(e){}
+      });
+    }
     scheduleSuspend();
   }
 
@@ -3397,10 +3412,15 @@
   }
   function fireRand(k){
     if(silenced) return;
-    RAND[k]();
+    // skyddat: om ett enstaka ljudanrop failar (t.ex. AudioContext hann
+    // hamna i fel state just då, extra vanligt när mycket spelas samtidigt)
+    // ska det aldrig kunna avbryta resten av funktionen — annars dör
+    // repeat-loopen tyst mitt i, eftersom nästa setTimeout aldrig hinner
+    // schemaläggas (se step() i startLoop nedan).
+    try{ RAND[k](); }catch(e){}
     litWrap(RAND_WRAP[k]);
     cosmicBoost(.35,RAND_PAL[k],true);
-    busyUntil=Math.max(busyUntil,ac.currentTime+6);
+    if(ac) busyUntil=Math.max(busyUntil,ac.currentTime+6);
   }
   const SPEAKER_IMG='<img class="randImg" src="images/start.png" alt="" aria-hidden="true"><span class="cd"></span>';
   document.querySelectorAll('.rand').forEach(function(b){
@@ -3419,9 +3439,11 @@
       if(durSel) durSel.disabled=true;
       function step(){
         if(Date.now()>=end){ stopRandLoop(k); return; }
-        fireRand(k);
-        const L=randLoops.get(k);
-        if(L) L.timer=setTimeout(step,interval);
+        try{ fireRand(k); }
+        finally{
+          const L=randLoops.get(k);
+          if(L) L.timer=setTimeout(step,interval);
+        }
       }
       const tick=setInterval(function(){
         const s=Math.max(0,Math.ceil((end-Date.now())/1000));
