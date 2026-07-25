@@ -962,7 +962,7 @@ const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'quartz_bowl', freq:432, tempo:12, tempoFollow:true,
   animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false,
-  amb:{birds:0,water:0,rain:0,forest:0}};
+  amb:{birds:0,water:0,rain:0,forest:0,thunder:0,wind:0,fire:0,wave:0}};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
 
@@ -1101,6 +1101,10 @@ const AMB_SOUNDS=[
   {id:'amb_water', label:'Water',  img:'images/drop.jpg',   amb:'water'},
   {id:'amb_rain',  label:'Rain',   img:'images/rain.jpg',   amb:'rain'},
   {id:'amb_forest',label:'Forest', img:'images/forest.jpg', amb:'forest'},
+  {id:'amb_thunder',label:'Thunder',img:'images/thunder.jpg',amb:'thunder'},
+  {id:'amb_wind',  label:'Wind',   img:'images/wind.jpg',   amb:'wind'},
+  {id:'amb_fire',  label:'Fire',   img:'images/fire.jpg',   amb:'fire'},
+  {id:'amb_wave',  label:'Wave',   img:'images/wave.jpg',   amb:'wave'},
 ];
 function isAmbSound(id){return AMB_SOUNDS.some(a=>a.id===id);}
 function ambSoundOf(id){return AMB_SOUNDS.find(a=>a.id===id);}
@@ -1755,7 +1759,16 @@ function initAudio(){if(audio.ctx)return;
 function makeImpulse(ctx,sec,decay){const rate=ctx.sampleRate,len=Math.floor(rate*sec),buf=ctx.createBuffer(2,len,rate);
   for(let ch=0;ch<2;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}return buf;}
 function noiseBuf(sec,brown){const len=Math.max(1,Math.floor(audio.ctx.sampleRate*sec)),b=audio.ctx.createBuffer(1,len,audio.ctx.sampleRate),d=b.getChannelData(0);
-  let last=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;if(brown){last=(last+.02*w)/1.02;d[i]=last*3.4;}else d[i]=w;}return b;}
+  let last=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;if(brown){last=(last+.02*w)/1.02;d[i]=last*3.4;}else d[i]=w;}
+  /* Brown noise is a running sum, so the buffer's end value drifts away from where it
+     started — every time a looping source wraps back to sample 0 that mismatch shows up
+     as a small but perfectly regular "thump" (once per loop length). Cancel the drift... */
+  if(brown&&len>1){const drift=d[len-1]-d[0];for(let i=0;i<len;i++)d[i]-=drift*(i/(len-1));}
+  /* ...and cross-fade a short head/tail window either way, so the loop seam is inaudible
+     even for the non-brown (white) case. */
+  const fade=Math.min(Math.floor(len/4),Math.floor(audio.ctx.sampleRate*.03));
+  for(let i=0;i<fade;i++){const g=i/fade,tailIdx=len-fade+i,mix=d[i]*g+d[tailIdx]*(1-g);d[i]=mix;d[tailIdx]=mix;}
+  return b;}
 function playTexture(cfg,freq,t,mult){const ctx=audio.ctx,dur=cfg.decay*mult;
   const src=ctx.createBufferSource();src.buffer=noiseBuf(dur+.3,cfg.brown);
   const f=ctx.createBiquadFilter();f.type=cfg.ftype||'lowpass';f.frequency.value=cfg.fc;if(cfg.q)f.Q.value=cfg.q;
@@ -1792,7 +1805,7 @@ function playFinal(){const ctx=audio.ctx,t=ctx.currentTime+.05;
   playVoice('tibetansk_gong',S.freq*.5,t,1.4);playVoice('crystal_bowl',S.freq*.5,t+.05,1.3);}
 
 /* ===== ambience mixer: Birds / Water / Rain / Forest — continuous nature-sound layers ===== */
-const amb={ready:false,birdsTimer:null,rainTimer:null,forestBirdTimer:null};
+const amb={ready:false,birdsTimer:null,rainTimer:null,forestBirdTimer:null,thunderTimer:null,fireTimer:null};
 function loopNoise(sec,brown){
   const src=audio.ctx.createBufferSource();src.buffer=noiseBuf(sec,brown);src.loop=true;src.start();return src;
 }
@@ -1813,10 +1826,37 @@ function chirpOnce(dest,level){
     tt+=.055+Math.random()*.05;
   }
 }
+/* a distant, rolling thunder crack — low-passed brown-noise rumble + a soft sub-bass thump */
+function boomOnce(dest,level){
+  if(!level)return;
+  const ctx=audio.ctx,t=ctx.currentTime+Math.random()*.3,dur=1.8+Math.random()*1.6;
+  const src=ctx.createBufferSource();src.buffer=noiseBuf(dur+.3,true);
+  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=90+Math.random()*60;lp.Q.value=.8;
+  const g=ctx.createGain();g.gain.setValueAtTime(.0001,t);
+  g.gain.linearRampToValueAtTime(level,t+.15+Math.random()*.2);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  src.connect(lp).connect(g).connect(dest);src.start(t);src.stop(t+dur+.2);
+  const sub=ctx.createOscillator();sub.type='sine';sub.frequency.value=42+Math.random()*14;
+  const subG=ctx.createGain();subG.gain.setValueAtTime(.0001,t);
+  subG.gain.linearRampToValueAtTime(level*.6,t+.1);subG.gain.exponentialRampToValueAtTime(.0001,t+dur*.8);
+  sub.connect(subG).connect(dest);sub.start(t);sub.stop(t+dur+.2);
+}
+/* a single short, bright crackle-pop, used for the Fire layer */
+function crackleOnce(dest,level){
+  if(!level)return;
+  const ctx=audio.ctx,t=ctx.currentTime,dur=.02+Math.random()*.05;
+  const nb=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*dur)),ctx.sampleRate),nd=nb.getChannelData(0);
+  for(let i=0;i<nd.length;i++)nd[i]=(Math.random()*2-1)*Math.pow(1-i/nd.length,1.5);
+  const ns=ctx.createBufferSource();ns.buffer=nb;
+  const nf=ctx.createBiquadFilter();nf.type='bandpass';nf.frequency.value=1200+Math.random()*3000;nf.Q.value=1.5+Math.random()*2;
+  const ng=ctx.createGain();ng.gain.setValueAtTime(level*(.5+Math.random()*.5),t);ng.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  ns.connect(nf).connect(ng).connect(dest);ns.start(t);ns.stop(t+dur+.02);
+}
 function ensureAmbience(){
   if(amb.ready)return;initAudio();amb.ready=true;
   const ctx=audio.ctx;
-  amb.bus=ctx.createGain();amb.bus.gain.value=1;amb.bus.connect(audio.dry);amb.bus.connect(audio.rev);
+  amb.bus=ctx.createGain();amb.bus.gain.value=1;amb.bus.connect(audio.dry);
+  /* (intentionally NOT connected to audio.rev — reverb is for the struck/plucked instruments;
+     on a continuously-running noise bed it just smears into a washy, indistinct hiss) */
 
   /* Birds — standalone chirps, scheduled at random intervals */
   amb.birdsBus=ctx.createGain();amb.birdsBus.gain.value=1;amb.birdsBus.connect(amb.bus);
@@ -1890,6 +1930,75 @@ function ensureAmbience(){
       amb.forestBirdTimer=setTimeout(scheduleForestBirds,3500+Math.random()*8000);
     })();
   }
+
+  /* Thunder — deep, slowly-rolling brown-noise rumble bed, plus occasional distant booms */
+  {
+    const src=loopNoise(6,true);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=140;lp.Q.value=.6;
+    const wander=ctx.createOscillator();wander.frequency.value=.035;
+    const wanderG=ctx.createGain();wanderG.gain.value=40;
+    wander.connect(wanderG).connect(lp.frequency);wander.start();
+    /* multiplicative swell stage — see water layer above for why */
+    const swellStage=ctx.createGain();swellStage.gain.value=0;
+    const swellConst=ctx.createConstantSource();swellConst.offset.value=1;swellConst.connect(swellStage.gain);swellConst.start();
+    const swell=ctx.createOscillator();swell.frequency.value=.06;
+    const swellG=ctx.createGain();swellG.gain.value=.22;
+    swell.connect(swellG).connect(swellStage.gain);swell.start();
+    amb.thunderG=ctx.createGain();amb.thunderG.gain.value=0;
+    src.connect(lp).connect(swellStage).connect(amb.thunderG);amb.thunderG.connect(amb.bus);
+    amb.thunderBoomBus=ctx.createGain();amb.thunderBoomBus.gain.value=1;amb.thunderBoomBus.connect(amb.bus);
+    (function scheduleThunder(){
+      if(S.amb.thunder>0)boomOnce(amb.thunderBoomBus,(S.amb.thunder/100)*.9);
+      amb.thunderTimer=setTimeout(scheduleThunder,7000+Math.random()*14000);
+    })();
+  }
+
+  /* Wind — open, broadband gusting noise; like Forest's air movement but without leaves or birds */
+  {
+    const src=loopNoise(5,false);
+    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=650;bp.Q.value=.7;
+    const wander=ctx.createOscillator();wander.frequency.value=.045;
+    const wanderG=ctx.createGain();wanderG.gain.value=380;
+    wander.connect(wanderG).connect(bp.frequency);wander.start();
+    /* multiplicative gust stage — see water layer above for why */
+    const gustStage=ctx.createGain();gustStage.gain.value=0;
+    const gustConst=ctx.createConstantSource();gustConst.offset.value=1;gustConst.connect(gustStage.gain);gustConst.start();
+    const gust=ctx.createOscillator();gust.frequency.value=.11;
+    const gustG=ctx.createGain();gustG.gain.value=.28;
+    gust.connect(gustG).connect(gustStage.gain);gust.start();
+    amb.windG=ctx.createGain();amb.windG.gain.value=0;
+    src.connect(bp).connect(gustStage).connect(amb.windG);amb.windG.connect(amb.bus);
+  }
+
+  /* Fire — soft low rumble bed plus frequent, irregular crackle-pops */
+  {
+    const src=loopNoise(4,true);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=380;lp.Q.value=.6;
+    amb.fireG=ctx.createGain();amb.fireG.gain.value=0;
+    src.connect(lp).connect(amb.fireG);amb.fireG.connect(amb.bus);
+    amb.fireCrackleBus=ctx.createGain();amb.fireCrackleBus.gain.value=1;amb.fireCrackleBus.connect(amb.bus);
+    (function scheduleCrackle(){
+      if(S.amb.fire>0)crackleOnce(amb.fireCrackleBus,(S.amb.fire/100)*.5);
+      amb.fireTimer=setTimeout(scheduleCrackle,70+Math.random()*220);
+    })();
+  }
+
+  /* Wave — slow swelling lowpass noise, waves rolling in and receding */
+  {
+    const src=loopNoise(6,false);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1000;lp.Q.value=.5;
+    const wander=ctx.createOscillator();wander.frequency.value=.03;
+    const wanderG=ctx.createGain();wanderG.gain.value=260;
+    wander.connect(wanderG).connect(lp.frequency);wander.start();
+    /* multiplicative swell stage, deeper than the others — this IS the wave motion */
+    const swellStage=ctx.createGain();swellStage.gain.value=0;
+    const swellConst=ctx.createConstantSource();swellConst.offset.value=.55;swellConst.connect(swellStage.gain);swellConst.start();
+    const swell=ctx.createOscillator();swell.frequency.value=.16;
+    const swellG=ctx.createGain();swellG.gain.value=.45;
+    swell.connect(swellG).connect(swellStage.gain);swell.start();
+    amb.waveG=ctx.createGain();amb.waveG.gain.value=0;
+    src.connect(lp).connect(swellStage).connect(amb.waveG);amb.waveG.connect(amb.bus);
+  }
 }
 function setAmbience(key,val){
   S.amb[key]=Math.max(0,Math.min(100,Math.round(val)));
@@ -1901,17 +2010,25 @@ function setAmbience(key,val){
     if(key==='water')amb.waterG.gain.setTargetAtTime((S.amb.water/100)*.3,t,.4);
     if(key==='rain')amb.rainG.gain.setTargetAtTime((S.amb.rain/100)*.28,t,.4);
     if(key==='forest')amb.forestG.gain.setTargetAtTime((S.amb.forest/100)*.22,t,.6);
+    if(key==='thunder')amb.thunderG.gain.setTargetAtTime((S.amb.thunder/100)*.24,t,.8);
+    if(key==='wind')amb.windG.gain.setTargetAtTime((S.amb.wind/100)*.26,t,.6);
+    if(key==='fire')amb.fireG.gain.setTargetAtTime((S.amb.fire/100)*.2,t,.4);
+    if(key==='wave')amb.waveG.gain.setTargetAtTime((S.amb.wave/100)*.3,t,.7);
   }else if(amb.ready){
     const t=audio.ctx.currentTime;
     if(key==='water')amb.waterG.gain.setTargetAtTime(0,t,.4);
     if(key==='rain')amb.rainG.gain.setTargetAtTime(0,t,.4);
     if(key==='forest')amb.forestG.gain.setTargetAtTime(0,t,.6);
+    if(key==='thunder')amb.thunderG.gain.setTargetAtTime(0,t,.8);
+    if(key==='wind')amb.windG.gain.setTargetAtTime(0,t,.6);
+    if(key==='fire')amb.fireG.gain.setTargetAtTime(0,t,.4);
+    if(key==='wave')amb.waveG.gain.setTargetAtTime(0,t,.7);
   }
 }
 /* mute every ambience layer — used when switching to a tuned instrument, or between
    ambience "instruments", since only one sound plays at a time in the instrument row */
 function stopAllAmbience(){
-  ['birds','water','rain','forest'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
+  ['birds','water','rain','forest','thunder','wind','fire','wave'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
 }
 
 ['pointerdown','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,function once(){
