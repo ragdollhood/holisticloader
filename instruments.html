@@ -3533,17 +3533,19 @@
     const durSel=document.getElementById(k+'TimeSlider');
 
     function startLoop(secInterval,sec){
-      const interval=secInterval*1000;
       const end=Date.now()+sec*1000;
       b.classList.add('on');
-      if(tempoSel) tempoSel.disabled=true;
       if(durSel) durSel.disabled=true;
       function step(){
         if(Date.now()>=end){ stopRandLoop(k); return; }
         try{ fireRand(k); }
         finally{
           const L=randLoops.get(k);
-          if(L) L.timer=setTimeout(step,interval);
+          /* read the tempo slider fresh on every beat instead of the value it had when
+             Repeat was pressed, so dragging it mid-loop changes the pace immediately —
+             matching how TUNE already applies live to the next note */
+          const liveInterval=(tempoSel?+tempoSel.value:secInterval)*1000;
+          if(L) L.timer=setTimeout(step,liveInterval);
         }
       }
       const tick=setInterval(function(){
