@@ -2121,6 +2121,13 @@ function startSession(){
   initAudio(); if(audio.ctx.state==='suspended')audio.ctx.resume();
   S.ended=false;$('endOverlay').classList.remove('show');
   if(ambPreviewTimer){clearTimeout(ambPreviewTimer);ambPreviewTimer=null;} /* the sound now plays for the whole session, not just a short preview */
+  if(isAmbSound(S.sound)){
+    /* being selected is enough — turn it back on even if its preview had already faded to silence */
+    const a=ambSoundOf(S.sound);
+    ensureAmbience();
+    if(audio.ctx.state==='suspended')audio.ctx.resume();
+    setAmbience(a.amb,65);
+  }
   if(remainingMs<=0){remainingMs=S.timerMin*60*1000;breathClock=0;wanderT=0;}
   cueTarget='';cueText='';cueState='out';cueOp=0;$('breathCueTxt').textContent='';
   S.running=true;
