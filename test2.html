@@ -1909,25 +1909,37 @@ function ensureAmbience(){
     src.connect(lp).connect(swellStage).connect(amb.waveG);amb.waveG.connect(amb.bus);
   }
 }
+const AMB_PEAK={wave:.3,greennoise:.3,whitenoise:.22,pinknoise:.26,brownnoise:.32};
+const AMB_TAU ={wave:.7,greennoise:.4,whitenoise:.4,pinknoise:.4,brownnoise:.4};
+const AMB_NODE={wave:'waveG',greennoise:'greennoiseG',whitenoise:'whitenoiseG',pinknoise:'pinknoiseG',brownnoise:'brownnoiseG'};
 function setAmbience(key,val){
   S.amb[key]=Math.max(0,Math.min(100,Math.round(val)));
   const lbl=$('amb'+key.charAt(0).toUpperCase()+key.slice(1)+'Val');if(lbl)lbl.textContent=S.amb[key]+'%';
+  const rampNow=()=>{
+    const node=amb[AMB_NODE[key]]; if(!node)return;
+    const t=audio.ctx.currentTime, g=node.gain;
+    const target=S.amb[key]>0?(S.amb[key]/100)*AMB_PEAK[key]:0;
+    /* Pin the gain to its actual current value before laying down the new ramp. Without
+       this, a ramp left over from just before the AudioContext auto-suspended (which
+       Chrome does after a couple of seconds of silence — exactly what happens once a
+       preview has faded all the way out) can leave a stale/queued curve that the new
+       setTargetAtTime doesn't cleanly take over from. */
+    g.cancelScheduledValues(t);
+    g.setValueAtTime(g.value,t);
+    g.setTargetAtTime(target,t,AMB_TAU[key]);
+  };
   if(S.amb[key]>0){
     ensureAmbience();
-    if(audio.ctx.state==='suspended')audio.ctx.resume();
-    const t=audio.ctx.currentTime;
-    if(key==='wave')amb.waveG.gain.setTargetAtTime((S.amb.wave/100)*.3,t,.7);
-    if(key==='greennoise')amb.greennoiseG.gain.setTargetAtTime((S.amb.greennoise/100)*.3,t,.4);
-    if(key==='whitenoise')amb.whitenoiseG.gain.setTargetAtTime((S.amb.whitenoise/100)*.22,t,.4);
-    if(key==='pinknoise')amb.pinknoiseG.gain.setTargetAtTime((S.amb.pinknoise/100)*.26,t,.4);
-    if(key==='brownnoise')amb.brownnoiseG.gain.setTargetAtTime((S.amb.brownnoise/100)*.32,t,.4);
+    /* Always resume — regardless of what .state currently reports — and wait for the
+       resume to actually finish before scheduling the gain change. The old code checked
+       .state and called resume() but scheduled the ramp immediately afterwards without
+       waiting; if the context was still mid-resume (the common case right after it had
+       auto-suspended during a silent stretch) the ramp could be dropped, which is why
+       clicking a noise/wave button again after it had fully faded out sometimes produced
+       no sound at all. */
+    Promise.resolve(audio.ctx.resume()).then(rampNow);
   }else if(amb.ready){
-    const t=audio.ctx.currentTime;
-    if(key==='wave')amb.waveG.gain.setTargetAtTime(0,t,.7);
-    if(key==='greennoise')amb.greennoiseG.gain.setTargetAtTime(0,t,.4);
-    if(key==='whitenoise')amb.whitenoiseG.gain.setTargetAtTime(0,t,.4);
-    if(key==='pinknoise')amb.pinknoiseG.gain.setTargetAtTime(0,t,.4);
-    if(key==='brownnoise')amb.brownnoiseG.gain.setTargetAtTime(0,t,.4);
+    rampNow();
   }
 }
 /* mute every ambience layer — used when switching to a tuned instrument, or between
