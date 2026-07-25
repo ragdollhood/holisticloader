@@ -962,7 +962,7 @@ const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'quartz_bowl', freq:432, tempo:12, tempoFollow:true,
   animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false,
-  amb:{birds:0,water:0,rain:0,forest:0,thunder:0,wind:0,fire:0,wave:0}};
+  amb:{birds:0,water:0,rain:0,forest:0,thunder:0,wind:0,fire:0,wave:0,greennoise:0,whitenoise:0,pinknoise:0,brownnoise:0}};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
 
@@ -1098,13 +1098,17 @@ function sgroupOf(id){return SMEMBER2GROUP[id]||null;}
    tuned instruments above they have no frequency / resonance / sound-tempo controls. */
 const AMB_SOUNDS=[
   {id:'amb_birds', label:'Birds',  img:'images/bird.jpg',   amb:'birds'},
-  {id:'amb_water', label:'Water',  img:'images/drop.jpg',   amb:'water'},
+  {id:'amb_water', label:'Drops',  img:'images/drop.jpg',   amb:'water'},
   {id:'amb_rain',  label:'Rain',   img:'images/rain.jpg',   amb:'rain'},
   {id:'amb_forest',label:'Forest', img:'images/forest.jpg', amb:'forest'},
   {id:'amb_thunder',label:'Thunder',img:'images/thunder.jpg',amb:'thunder'},
   {id:'amb_wind',  label:'Wind',   img:'images/wind.jpg',   amb:'wind'},
   {id:'amb_fire',  label:'Fire',   img:'images/fire.jpg',   amb:'fire'},
   {id:'amb_wave',  label:'Wave',   img:'images/wave.jpg',   amb:'wave'},
+  {id:'amb_greennoise',label:'Green noise',img:'images/noisegreen.jpg',amb:'greennoise'},
+  {id:'amb_whitenoise',label:'White noise',img:'images/noisewhite.jpg',amb:'whitenoise'},
+  {id:'amb_pinknoise', label:'Pink noise', img:'images/noisepink.jpg', amb:'pinknoise'},
+  {id:'amb_brownnoise',label:'Brown noise',img:'images/noisebrown.jpg',amb:'brownnoise'},
 ];
 function isAmbSound(id){return AMB_SOUNDS.some(a=>a.id===id);}
 function ambSoundOf(id){return AMB_SOUNDS.find(a=>a.id===id);}
@@ -1809,6 +1813,23 @@ const amb={ready:false,birdsTimer:null,rainTimer:null,forestBirdTimer:null,thund
 function loopNoise(sec,brown){
   const src=audio.ctx.createBufferSource();src.buffer=noiseBuf(sec,brown);src.loop=true;src.start();return src;
 }
+/* Pink noise (-3dB/octave, midway in weight between white and brown) via Paul Kellet's
+   well-known economy IIR approximation, baked into a buffer the same way noiseBuf() is. */
+function pinkBuf(sec){
+  const len=Math.max(1,Math.floor(audio.ctx.sampleRate*sec)),b=audio.ctx.createBuffer(1,len,audio.ctx.sampleRate),d=b.getChannelData(0);
+  let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+  for(let i=0;i<len;i++){
+    const w=Math.random()*2-1;
+    b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;b2=.96900*b2+w*.1538520;
+    b3=.86650*b3+w*.3104856;b4=.55000*b4+w*.5329522;b5=-.7616*b5-w*.0168980;
+    d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*.11;b6=w*.115926;
+  }
+  /* same loop-seam crossfade as noiseBuf, so it can play seamlessly */
+  const fade=Math.min(Math.floor(len/4),Math.floor(audio.ctx.sampleRate*.03));
+  for(let i=0;i<fade;i++){const g=i/fade,tailIdx=len-fade+i,mix=d[i]*g+d[tailIdx]*(1-g);d[i]=mix;d[tailIdx]=mix;}
+  return b;
+}
+function loopPink(sec){const src=audio.ctx.createBufferSource();src.buffer=pinkBuf(sec);src.loop=true;src.start();return src;}
 /* a short pitched glide-burst, used both for the standalone Birds layer and the sparse chirps inside Forest */
 function chirpOnce(dest,level){
   if(!level)return;
@@ -1851,6 +1872,26 @@ function crackleOnce(dest,level){
   const ng=ctx.createGain();ng.gain.setValueAtTime(level*(.5+Math.random()*.5),t);ng.gain.exponentialRampToValueAtTime(.0001,t+dur);
   ns.connect(nf).connect(ng).connect(dest);ns.start(t);ns.stop(t+dur+.02);
 }
+/* a single water droplet "plink" — a short downward-gliding tone (the resonance of the drop
+   landing) plus a tiny high, brief click (the initial impact), used for the Drops layer */
+function dropOnce(dest,level){
+  if(!level)return;
+  const ctx=audio.ctx,t=ctx.currentTime+Math.random()*.05,dur=.55+Math.random()*.35;
+  const o=ctx.createOscillator();o.type='sine';
+  const f0=650+Math.random()*550;
+  o.frequency.setValueAtTime(f0,t);
+  o.frequency.exponentialRampToValueAtTime(f0*.5,t+.1+Math.random()*.06);
+  const g=ctx.createGain();g.gain.setValueAtTime(.0001,t);
+  g.gain.linearRampToValueAtTime(level,t+.006);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.05);
+  const cdur=.02+Math.random()*.02,cb=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*cdur)),ctx.sampleRate),cd=cb.getChannelData(0);
+  for(let i=0;i<cd.length;i++)cd[i]=(Math.random()*2-1)*Math.pow(1-i/cd.length,2);
+  const cs=ctx.createBufferSource();cs.buffer=cb;
+  const cf=ctx.createBiquadFilter();cf.type='bandpass';cf.frequency.value=2400+Math.random()*1800;cf.Q.value=2;
+  const cg=ctx.createGain();cg.gain.setValueAtTime(level*.5,t);cg.gain.exponentialRampToValueAtTime(.0001,t+cdur);
+  cs.connect(cf).connect(cg).connect(dest);cs.start(t);cs.stop(t+cdur+.02);
+}
 function ensureAmbience(){
   if(amb.ready)return;initAudio();amb.ready=true;
   const ctx=audio.ctx;
@@ -1865,22 +1906,14 @@ function ensureAmbience(){
     amb.birdsTimer=setTimeout(scheduleBirds,1200+Math.random()*3800);
   })();
 
-  /* Water — bandpass-filtered noise with a slowly wandering centre frequency + gentle tremolo, for a babbling-brook feel */
+  /* Drops — a single water droplet "plink", dripping calmly and irregularly (a wide,
+     randomised interval rather than a continuous bed) — no tuned voice, event-based like Birds */
   {
-    const src=loopNoise(4,false);
-    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1100;bp.Q.value=1.1;
-    const wander=ctx.createOscillator();wander.frequency.value=.11;
-    const wanderG=ctx.createGain();wanderG.gain.value=380;
-    wander.connect(wanderG).connect(bp.frequency);wander.start();
-    /* tremolo is a MULTIPLICATIVE stage (const 1 + depth*sine) placed BEFORE the level
-       control, so it never adds any signal once the level gain below is at 0 */
-    const tremStage=ctx.createGain();tremStage.gain.value=0;
-    const tremConst=ctx.createConstantSource();tremConst.offset.value=1;tremConst.connect(tremStage.gain);tremConst.start();
-    const trem=ctx.createOscillator();trem.frequency.value=2.6;
-    const tremG=ctx.createGain();tremG.gain.value=.16;
-    trem.connect(tremG).connect(tremStage.gain);trem.start();
-    amb.waterG=ctx.createGain();amb.waterG.gain.value=0;
-    src.connect(bp).connect(tremStage).connect(amb.waterG);amb.waterG.connect(amb.bus);
+    amb.waterDropBus=ctx.createGain();amb.waterDropBus.gain.value=1;amb.waterDropBus.connect(amb.bus);
+    (function scheduleDrop(){
+      if(S.amb.water>0)dropOnce(amb.waterDropBus,(S.amb.water/100)*.55);
+      amb.waterTimer=setTimeout(scheduleDrop,550+Math.random()*2700);
+    })();
   }
 
   /* Rain — steady high-passed noise hiss, plus its own scattered droplet clicks */
@@ -1999,6 +2032,40 @@ function ensureAmbience(){
     amb.waveG=ctx.createGain();amb.waveG.gain.value=0;
     src.connect(lp).connect(swellStage).connect(amb.waveG);amb.waveG.connect(amb.bus);
   }
+
+  /* Green noise — energy weighted toward the middle of the hearing range (~500 Hz), the
+     register often described as sounding like a steady breeze or rustling leaves */
+  {
+    const src=loopNoise(5,false);
+    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=500;bp.Q.value=.8;
+    const wander=ctx.createOscillator();wander.frequency.value=.04;
+    const wanderG=ctx.createGain();wanderG.gain.value=60;
+    wander.connect(wanderG).connect(bp.frequency);wander.start();
+    amb.greennoiseG=ctx.createGain();amb.greennoiseG.gain.value=0;
+    src.connect(bp).connect(amb.greennoiseG);amb.greennoiseG.connect(amb.bus);
+  }
+
+  /* White noise — full, flat-spectrum hiss, equal energy at every frequency */
+  {
+    const src=loopNoise(4,false);
+    amb.whitenoiseG=ctx.createGain();amb.whitenoiseG.gain.value=0;
+    src.connect(amb.whitenoiseG);amb.whitenoiseG.connect(amb.bus);
+  }
+
+  /* Pink noise — energy falls off -3dB/octave, a softer, deeper hiss than white noise */
+  {
+    const src=loopPink(4);
+    amb.pinknoiseG=ctx.createGain();amb.pinknoiseG.gain.value=0;
+    src.connect(amb.pinknoiseG);amb.pinknoiseG.connect(amb.bus);
+  }
+
+  /* Brown noise — even more low-end weighted than pink, a deep, steady rumble */
+  {
+    const src=loopNoise(4,true);
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;lp.Q.value=.5;
+    amb.brownnoiseG=ctx.createGain();amb.brownnoiseG.gain.value=0;
+    src.connect(lp).connect(amb.brownnoiseG);amb.brownnoiseG.connect(amb.bus);
+  }
 }
 function setAmbience(key,val){
   S.amb[key]=Math.max(0,Math.min(100,Math.round(val)));
@@ -2007,28 +2074,36 @@ function setAmbience(key,val){
     ensureAmbience();
     if(audio.ctx.state==='suspended')audio.ctx.resume();
     const t=audio.ctx.currentTime;
-    if(key==='water')amb.waterG.gain.setTargetAtTime((S.amb.water/100)*.3,t,.4);
+    /* note: 'water' (Drops) has no continuous bed to ramp — it's event-based like Birds,
+       read straight from S.amb.water each time scheduleDrop() fires */
     if(key==='rain')amb.rainG.gain.setTargetAtTime((S.amb.rain/100)*.28,t,.4);
     if(key==='forest')amb.forestG.gain.setTargetAtTime((S.amb.forest/100)*.22,t,.6);
     if(key==='thunder')amb.thunderG.gain.setTargetAtTime((S.amb.thunder/100)*.24,t,.8);
     if(key==='wind')amb.windG.gain.setTargetAtTime((S.amb.wind/100)*.26,t,.6);
     if(key==='fire')amb.fireG.gain.setTargetAtTime((S.amb.fire/100)*.2,t,.4);
     if(key==='wave')amb.waveG.gain.setTargetAtTime((S.amb.wave/100)*.3,t,.7);
+    if(key==='greennoise')amb.greennoiseG.gain.setTargetAtTime((S.amb.greennoise/100)*.3,t,.4);
+    if(key==='whitenoise')amb.whitenoiseG.gain.setTargetAtTime((S.amb.whitenoise/100)*.22,t,.4);
+    if(key==='pinknoise')amb.pinknoiseG.gain.setTargetAtTime((S.amb.pinknoise/100)*.26,t,.4);
+    if(key==='brownnoise')amb.brownnoiseG.gain.setTargetAtTime((S.amb.brownnoise/100)*.32,t,.4);
   }else if(amb.ready){
     const t=audio.ctx.currentTime;
-    if(key==='water')amb.waterG.gain.setTargetAtTime(0,t,.4);
     if(key==='rain')amb.rainG.gain.setTargetAtTime(0,t,.4);
     if(key==='forest')amb.forestG.gain.setTargetAtTime(0,t,.6);
     if(key==='thunder')amb.thunderG.gain.setTargetAtTime(0,t,.8);
     if(key==='wind')amb.windG.gain.setTargetAtTime(0,t,.6);
     if(key==='fire')amb.fireG.gain.setTargetAtTime(0,t,.4);
     if(key==='wave')amb.waveG.gain.setTargetAtTime(0,t,.7);
+    if(key==='greennoise')amb.greennoiseG.gain.setTargetAtTime(0,t,.4);
+    if(key==='whitenoise')amb.whitenoiseG.gain.setTargetAtTime(0,t,.4);
+    if(key==='pinknoise')amb.pinknoiseG.gain.setTargetAtTime(0,t,.4);
+    if(key==='brownnoise')amb.brownnoiseG.gain.setTargetAtTime(0,t,.4);
   }
 }
 /* mute every ambience layer — used when switching to a tuned instrument, or between
    ambience "instruments", since only one sound plays at a time in the instrument row */
 function stopAllAmbience(){
-  ['birds','water','rain','forest','thunder','wind','fire','wave'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
+  ['birds','water','rain','forest','thunder','wind','fire','wave','greennoise','whitenoise','pinknoise','brownnoise'].forEach(k=>{if(S.amb[k]>0)setAmbience(k,0);});
 }
 
 ['pointerdown','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,function once(){
