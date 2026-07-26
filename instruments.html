@@ -1518,6 +1518,12 @@
      norrskensslöjor sveper förbi och varje anslag tänder en supernova. */
   const cc=$('cosmos'), cx=cc.getContext('2d');
   let stars=[], ribbons=[], novas=[], meteors=[], galaxies=[];
+  // dessa tak saknades tidigare för novas/meteors (till skillnad från ribbons,
+  // som redan hade ett tak) — varje spelad ton lägger till en supernova, så
+  // utan gräns här växer arrayen snabbare än den hinner självdö vid intensivt
+  // spel. Varje bildruta måste då rita fler och fler dyra canvas-gradienter,
+  // vilket är det som till slut fryser/kraschar sidan.
+  const NOVA_CAP=28, METEOR_CAP=20;
   let energy=0, toneActive=false, lastPal='gong';
   const PALETTES={
     gong:[[255,210,120],[255,160,90]],     // guld → bärnsten, som gongbilden
@@ -1573,6 +1579,7 @@
   }
   function spawnNova(pal){
     const [a,b]=PALETTES[pal];
+    if(novas.length>=NOVA_CAP) novas.shift();
     novas.push({
       x:innerWidth*(.08+Math.random()*.84),
       y:innerHeight*(.06+Math.random()*.4),
@@ -1583,6 +1590,7 @@
     });
   }
   function spawnMeteor(){
+    if(meteors.length>=METEOR_CAP) meteors.shift();
     const left=Math.random()<.5;
     meteors.push({x:left?-30:innerWidth+30, y:Math.random()*innerHeight*.4,
       vx:(left?1:-1)*(5+Math.random()*3), vy:1.4+Math.random(), life:1, trail:[]});
@@ -2464,6 +2472,9 @@
     });
   })();
   let ripples=[], sparks=[], bursts=[];
+  // samma orsak som NOVA_CAP/METEOR_CAP ovan: utan tak växer dessa listor
+  // obegränsat vid intensivt spel eftersom nästan varje anslag lägger till fler.
+  const SPARK_CAP=220, BURST_CAP=28;
   function fxResize(){
     const r=stage.getBoundingClientRect();
     fx.width=r.width*2; fx.height=r.height*2;
@@ -2485,6 +2496,7 @@
   }
   function glitter(x,y,rgb,n,scale){
     for(let i=0;i<n;i++){
+      if(sparks.length>=SPARK_CAP) sparks.shift();
       const a=Math.random()*6.3, sp=.05+Math.random()*.18;
       sparks.push({x:x+(Math.random()-.5)*10,y:y+(Math.random()-.5)*10,
         vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-.04,
@@ -2492,6 +2504,7 @@
     }
   }
   let bolts=[];
+  const BOLT_CAP=90;
   function lightning(cx,cy){
     function bolt(x,y,dir,segs,branchProb){
       const pts=[[x,y]];
@@ -2505,6 +2518,7 @@
                2+Math.floor(Math.random()*2),0);
         }
       }
+      if(bolts.length>=BOLT_CAP) bolts.shift();
       bolts.push({pts:pts,life:1,blue:Math.random()<.55});
     }
     const n=4+Math.floor(Math.random()*3);
@@ -2517,6 +2531,7 @@
     lightning(c[0],c[1]);
   }
   function bloom(x,y,rgb){
+    if(bursts.length>=BURST_CAP) bursts.shift();
     bursts.push({x:x,y:y,rgb:rgb,age:0,dur:3200+Math.random()*1200});
   }
   function fxLoop(now){
