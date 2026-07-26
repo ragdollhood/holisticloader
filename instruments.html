@@ -1885,14 +1885,31 @@
     }
     clearTimeout(suspendTimer);
     if(ac.state==='running') return Promise.resolve();
-    // vänta in att motorn verkligen startat; försök igen om webbläsaren strular
-    return ac.resume().then(function(){
+    // vänta in att motorn verkligen startat; försök igen om webbläsaren strular.
+    // VIKTIGT: ac.resume() kan i vissa webbläsare/lägen fastna och ALDRIG lösa
+    // sig — särskilt om resume()/suspend() hinner krocka med varandra, vilket
+    // lätt händer när man trycker på flera instrument snabbt efter varandra.
+    // Utan skydd hänger då detta await för evigt: inget ljud spelas, och eftersom
+    // varje nytt klick bara kör samma (hängande) funktion igen ser sidan ut att
+    // sluta gå att klicka på — trots att bakgrundsanimationerna (som drivs av
+    // requestAnimationFrame, helt oberoende av ljudmotorn) fortsätter som vanligt.
+    // withTimeout garanterar att vi alltid går vidare inom rimlig tid, oavsett
+    // vad resume()-löftet gör.
+    function withTimeout(p,ms){
+      return new Promise(function(res){
+        let done=false;
+        const t=setTimeout(function(){ if(!done){done=true; res();} },ms);
+        p.then(function(){ if(!done){done=true; clearTimeout(t); res();} },
+               function(){ if(!done){done=true; clearTimeout(t); res();} });
+      });
+    }
+    return withTimeout(ac.resume(),400).then(function(){
       if(ac.state==='running') return;
       return new Promise(function(res){
         let tries=0;
         const iv=setInterval(function(){
           tries++;
-          if(ac.state!=='running'){ ac.resume(); }
+          if(ac.state!=='running'){ ac.resume().catch(function(){}); }
           if(ac.state==='running'||tries>20){ clearInterval(iv); res(); }
         },25);
       });
@@ -3742,7 +3759,6 @@ registerVisit();
         {head:'26 Background Scenes',detail:'21 additional scenes to choose from, so your background always matches your mood.'},
         {head:'Your Own Background',detail:'Upload a photo of your own and use it as your personal background.'},
         {head:'19 Instruments',detail:'13 additional instruments to layer and personalize your sound.'},
-        {head:'8 Noise Colors',detail:'4 additional noise colors to mix into your session, for 8 in total.'},
         {head:'8 Guided Presets',detail:'6 additional complete journeys, ready to press play.'}
       ]
     },
