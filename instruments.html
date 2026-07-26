@@ -2844,10 +2844,25 @@
       lastStr.set(e.pointerId,i);
       if(prev>=0){
         const step=i>prev?1:-1;
-        let d=0;
-        for(let k=prev+step;step>0?k<=i:k>=i;k+=step){
-          pluckHarp(harpFreq(k),true);
-          d++;
+        const dist=Math.abs(i-prev);
+        // en snabb dragning över HELA harpan (22 strängar) kan annars trigga
+        // 20+ pluckHarp()-anrop i EN enda pointermove — vardera med ~13 egna
+        // ljud-noder. Det ger hundratals nya noder på en bråkdels sekund,
+        // vilket är mycket mer intensivt än något annat instrument i appen
+        // och kan få ljudet att hacka och sidan att låsa sig. Vid en väldigt
+        // snabb dragning spelar vi istället ett begränsat, jämnt utspritt
+        // urval av de passerade strängarna — glissando-känslan bevaras utan
+        // att belastningen kan skena.
+        const MAX_STRINGS_PER_MOVE=8;
+        if(dist<=MAX_STRINGS_PER_MOVE){
+          for(let k=prev+step;step>0?k<=i:k>=i;k+=step){
+            pluckHarp(harpFreq(k),true);
+          }
+        } else {
+          for(let s=1;s<=MAX_STRINGS_PER_MOVE;s++){
+            const k=prev+Math.round(s*dist/MAX_STRINGS_PER_MOVE)*step;
+            pluckHarp(harpFreq(k),true);
+          }
         }
       } else {
         pluckHarp(harpFreq(i),true);
