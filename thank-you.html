@@ -260,11 +260,11 @@ footer.note a{ color:var(--gold); text-decoration:underline; }
       <a class="ctaBtn" href="index.html">Go to Holistic Loader</a>
     </div>
 
-    <!-- PENDING EMAIL CONFIRMATION VIEW (only shown if Supabase "Confirm email" is switched on) -->
+    <!-- PENDING VIEW (shown if premium hasn't landed yet — normally just brief Stripe webhook latency) -->
     <div id="pendingView">
       <div id="checkWrap"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
       <h2>Almost there</h2>
-      <p>Your account is ready. Premium is being activated by Stripe now — this is usually instant but can take a minute. Log in on Holistic Loader in a moment and it'll be waiting for you (if you have email confirmation turned on, click the link we sent you first).</p>
+      <p>Your account is ready. Premium is being activated by Stripe now — this is usually instant but can take a minute. Log in on Holistic Loader in a moment and it'll be waiting for you.</p>
       <a class="ctaBtn" href="index.html">Go to Holistic Loader</a>
     </div>
   </div>
@@ -375,9 +375,9 @@ await sendWelcomeEmail(email);
       if (activated){
         showSuccess();
       } else {
-        // Not confirmed yet — could be webhook latency, or "Confirm
-        // email" is ON so there's no session. Either way, premium will
-        // apply automatically without further action from the customer.
+        // Not activated yet — Confirm email is OFF in this project, so this
+        // is just webhook latency. Premium will apply automatically without
+        // further action from the customer.
         showPending();
       }
     } catch (err) {

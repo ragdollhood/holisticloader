@@ -1104,14 +1104,15 @@ const AMB_SOUNDS=[
   {id:'amb_whitenoise',label:'White noise',img:'images/noisewhite.jpg',amb:'whitenoise'},
   {id:'amb_pinknoise', label:'Pink noise', img:'images/noisepink.jpg', amb:'pinknoise'},
   {id:'amb_brownnoise',label:'Brown noise',img:'images/noisebrown.jpg',amb:'brownnoise'},
-  {id:'amb_bluenoise', label:'Blue noise', img:'images/noiseblue.jpg', amb:'blue'},
-  {id:'amb_violetnoise',label:'Violet noise',img:'images/noiseviolet.jpg',amb:'violet'},
-  {id:'amb_graynoise', label:'Gray noise', img:'images/noisegray.jpg', amb:'gray'},
-  {id:'amb_blacknoise',label:'Black noise',img:'images/noiseblack.jpg',amb:'black'},
-  {id:'amb_wave',  label:'Wave',   img:'images/wave.jpg',   amb:'wave'},
+  {id:'amb_bluenoise', label:'Blue noise', img:'images/noiseblue.jpg', amb:'blue', locked:true},
+  {id:'amb_violetnoise',label:'Violet noise',img:'images/noiseviolet.jpg',amb:'violet', locked:true},
+  {id:'amb_graynoise', label:'Gray noise', img:'images/noisegray.jpg', amb:'gray', locked:true},
+  {id:'amb_blacknoise',label:'Black noise',img:'images/noiseblack.jpg',amb:'black', locked:true},
+  {id:'amb_wave',  label:'Wave',   img:'images/wave.jpg',   amb:'wave', locked:true},
 ];
 function isAmbSound(id){return AMB_SOUNDS.some(a=>a.id===id);}
 function ambSoundOf(id){return AMB_SOUNDS.find(a=>a.id===id);}
+function isAmbLocked(id){const a=ambSoundOf(id);return !!a&&!!a.locked&&!isPremium;}
 /* short, plain-language line shown in #ambInfo under the sound row while that ambience is selected */
 const AMB_INFO={
   greennoise:'Noise balanced around the middle of the hearing range — a calm, natural-sounding backdrop for easy focus.',
@@ -1210,9 +1211,10 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
   });
   /* ambience "instruments" continue the same row, after the tuned instruments */
   AMB_SOUNDS.forEach(a=>{
-    const b=document.createElement('button');b.className='itile'+(a.id===S.sound?' active':'');b.dataset.ambid=a.id;
-    b.innerHTML=`<span class="iimg" style="background-image:url(${a.img})"></span><span class="ilbl">${a.label}</span>`;
-    b.onclick=()=>{closeSub();closeSoundSub();switchAmbSound(a);renderSounds();};
+    const locked=isAmbLocked(a.id);
+    const b=document.createElement('button');b.className='itile'+(a.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.ambid=a.id;
+    b.innerHTML=`<span class="iimg" style="background-image:url(${a.img})"></span><span class="ilbl">${a.label}</span>`+(locked?lockBadgeHTML:'');
+    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();switchAmbSound(a);renderSounds();});
     if(a.id===S.sound)activeEl=b;w.appendChild(b);
   });
   if(center&&activeEl){requestAnimationFrame(()=>{w.scrollLeft=activeEl.offsetLeft-w.clientWidth/2+activeEl.offsetWidth/2;});}
@@ -1652,6 +1654,7 @@ const PREMIUM_SECTIONS=[
       {head:'26 Background Scenes',detail:'21 additional scenes to choose from, so your background always matches your mood.'},
       {head:'Your Own Background',detail:'Upload a photo of your own and use it as your personal background.'},
       {head:'19 Instruments',detail:'13 additional instruments to layer and personalize your sound.'},
+      {head:'8 Noise Colors',detail:'4 additional noise colors to mix into your session, for 8 in total.'},
       {head:'8 Guided Presets',detail:'6 additional complete journeys, ready to press play.'}
     ]
   },
