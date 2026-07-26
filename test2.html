@@ -2009,27 +2009,26 @@ function ensureAmbience(){
     src.connect(lp).connect(swellStage).connect(amb.waveG);amb.waveG.connect(amb.bus);
   }
 
-  /* Death Pulse — hard, intense pumping distortion over a low mutter, with an occasional
-     bright metallic ring cutting through. Three independent layers feeding the same bus:
-     1) a distorted, band-limited noise wall gated by a rhythmic "pumping" envelope
-     2) a slow-wandering sub-bass tone underneath for the low rumble
-     3) sparse, randomly-timed inharmonic clangs for the bright accents */
+  /* Death Pulse — hard, intense pumping distortion at a fast, aggressive tempo (~5x the
+     original pace), built from several distinct "instruments" feeding the same bus:
+     1) two differently-voiced distorted grind layers (a low chug + a harsher high layer)
+        gated together by one rhythmic "pumping" envelope
+     2) a slow-wandering sub-bass tone underneath for the low mutter
+     3) a fast, blast-beat-style kick pulse ticking in time with the pump
+     4) sparse, randomly-timed bright accents that alternate between two timbres */
   {
     amb.pulseG=ctx.createGain();amb.pulseG.gain.value=0;
 
-    /* distorted noise wall */
-    const src=loopNoise(5,false);
-    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=340;bp.Q.value=1.1;
-    const grindLp=ctx.createBiquadFilter();grindLp.type='lowpass';grindLp.frequency.value=2200;
-    const dist=ctx.createWaveShaper();dist.oversample='4x';
-    {const n=2048,curve=new Float32Array(n),amount=14;
+    /* shared distortion curve, reused by both grind layers */
+    const distCurve=(()=>{const n=2048,curve=new Float32Array(n),amount=14;
       for(let i=0;i<n;i++){const x=i*2/n-1;curve[i]=Math.tanh(x*amount)/Math.tanh(amount);}
-      dist.curve=curve;}
+      return curve;})();
 
     /* rhythmic pumping gate — a sine LFO reshaped into a steep 0..1 envelope so the
        texture surges on/off rather than fading smoothly like a plain tremolo, then
-       offset so it never drops to full silence (hence "intense", not "gated") */
-    const pumpOsc=ctx.createOscillator();pumpOsc.type='sine';pumpOsc.frequency.value=2.6;
+       offset so it never drops to full silence (hence "intense", not "gated").
+       13 Hz = ~5x the original 2.6 Hz pace, for a much faster, harder-driving pump. */
+    const pumpOsc=ctx.createOscillator();pumpOsc.type='sine';pumpOsc.frequency.value=13;
     const pumpShape=ctx.createWaveShaper();
     {const n=1024,curve=new Float32Array(n);
       for(let i=0;i<n;i++){const x=i*2/n-1;curve[i]=Math.pow((Math.tanh(x*5)+1)/2,1.6);}
@@ -2040,10 +2039,27 @@ function ensureAmbience(){
     pumpOsc.connect(pumpShape).connect(pumpDepth).connect(pumpStage.gain);
     pumpFloor.connect(pumpStage.gain);
     pumpOsc.start();pumpFloor.start();
+    pumpStage.connect(amb.pulseG);
 
-    src.connect(bp).connect(grindLp).connect(dist).connect(pumpStage).connect(amb.pulseG);
+    /* instrument 1 — low, chugging distorted wall */
+    {
+      const src=loopNoise(5,false);
+      const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=340;bp.Q.value=1.1;
+      const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2200;
+      const dist=ctx.createWaveShaper();dist.oversample='4x';dist.curve=distCurve;
+      src.connect(bp).connect(lp).connect(dist).connect(pumpStage);
+    }
+    /* instrument 2 — higher, harsher grind layer stacked on top for a fuller wall */
+    {
+      const src=loopNoise(5,false);
+      const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=900;bp.Q.value=1.4;
+      const hp=ctx.createBiquadFilter();hp.type='highpass';hp.frequency.value=500;
+      const dist=ctx.createWaveShaper();dist.oversample='4x';dist.curve=distCurve;
+      const g=ctx.createGain();g.gain.value=.55;
+      src.connect(bp).connect(hp).connect(dist).connect(g).connect(pumpStage);
+    }
 
-    /* low mutter — a slow-wandering sub tone underneath the distortion */
+    /* instrument 3 — low mutter underneath, slowly wandering */
     const sub=ctx.createOscillator();sub.type='sine';sub.frequency.value=46;
     const subWander=ctx.createOscillator();subWander.frequency.value=.05;
     const subWanderG=ctx.createGain();subWanderG.gain.value=6;
@@ -2051,28 +2067,49 @@ function ensureAmbience(){
     const subGain=ctx.createGain();subGain.gain.value=.5;
     sub.connect(subGain).connect(amb.pulseG);sub.start();
 
-    /* occasional bright metallic clang, at random 4-11s intervals; guarded against a
-       context rebuild (initAudio(true) on 'closed') so an old loop can't keep firing
-       into a torn-down context or pile up alongside a freshly-created one */
+    /* guard against a context rebuild (initAudio(true) on 'closed') so an old scheduled
+       loop can't keep firing into a torn-down context or pile up alongside a fresh one */
     const ownCtx=ctx;
-    function pulseClang(){
+
+    /* instrument 4 — fast blast-beat-style kick pulses, ticking in time with the pump */
+    const kickBuf=noiseBuf(.09,false);
+    const kickIntervalMs=1000/pumpOsc.frequency.value;
+    function scheduleKick(){
       if(audio.ctx!==ownCtx)return;
       const t=ownCtx.currentTime;
-      const base=900+Math.random()*900;
+      const src=ownCtx.createBufferSource();src.buffer=kickBuf;
+      const lp=ownCtx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=140;
+      const kg=ownCtx.createGain();kg.gain.setValueAtTime(.4,t);kg.gain.exponentialRampToValueAtTime(.001,t+.09);
+      src.connect(lp).connect(kg).connect(amb.pulseG);
+      src.start(t);src.stop(t+.12);
+      setTimeout(scheduleKick,kickIntervalMs);
+    }
+    setTimeout(scheduleKick,kickIntervalMs);
+
+    /* instrument 5 — occasional bright accents, alternating between two different
+       timbres (a metallic clang and a higher glassy shimmer) at random 3.5-9.5s
+       intervals, so it doesn't feel like one repeating sample */
+    function pulseAccent(){
+      if(audio.ctx!==ownCtx)return;
+      const t=ownCtx.currentTime;
+      const bell=Math.random()<.5;
+      const base=bell?(700+Math.random()*700):(1800+Math.random()*1400);
+      const partials=bell?[1,2.13,3.4,4.7]:[1,3.0,5.0,6.8];
+      const dur=bell?1.1+Math.random()*.6:.7+Math.random()*.4;
       const clangGain=ownCtx.createGain();
       clangGain.gain.setValueAtTime(0,t);
-      clangGain.gain.linearRampToValueAtTime(.22,t+.01);
-      clangGain.gain.exponentialRampToValueAtTime(.001,t+1.1+Math.random()*.6);
+      clangGain.gain.linearRampToValueAtTime(bell?.22:.14,t+.01);
+      clangGain.gain.exponentialRampToValueAtTime(.001,t+dur);
       const bpF=ownCtx.createBiquadFilter();bpF.type='bandpass';bpF.frequency.value=base;bpF.Q.value=6;
       clangGain.connect(bpF).connect(amb.pulseG);
-      [1,2.13,3.4,4.7].forEach((p,i)=>{
+      partials.forEach((p,i)=>{
         const o=ownCtx.createOscillator();o.type='sine';o.frequency.value=base*p;
         const g=ownCtx.createGain();g.gain.value=1/(i+1);
-        o.connect(g).connect(clangGain);o.start(t);o.stop(t+2);
+        o.connect(g).connect(clangGain);o.start(t);o.stop(t+dur+.1);
       });
-      setTimeout(pulseClang,4000+Math.random()*7000);
+      setTimeout(pulseAccent,3500+Math.random()*6000);
     }
-    setTimeout(pulseClang,2500+Math.random()*4000);
+    setTimeout(pulseAccent,2000+Math.random()*3000);
 
     amb.pulseG.connect(amb.bus);
   }
