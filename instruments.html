@@ -1980,9 +1980,18 @@
     g.gain.exponentialRampToValueAtTime(.0001,t0+dec);
     o.connect(g).connect(strikeBus);
     o.start(t0); o.stop(t0+dec+.1);
+    // sparar oscillatorn på gain-noden så att registerStrike() vid behov kan
+    // stoppa den direkt istället för att bara tysta den (se förklaring nedan)
+    g._osc=o;
     return g;
   }
-  const MAX_VOICES=48;
+  // omedelbart stopp av en enskild ljud-nod (oscillator eller buffer-källa),
+  // används av registerStrike() när ett gammalt anslag städas bort på riktigt
+  function killNode(node,when){
+    if(!node) return;
+    try{ node.stop(when); }catch(e){}
+  }
+  const MAX_VOICES=26;
   function registerStrike(gains,end){
     activeStrikes.push({gains:gains,end:end});
     busyUntil=Math.max(busyUntil,end);
@@ -1990,15 +1999,25 @@
     // polyphony-skydd: om väldigt mycket spelas samtidigt (flera repeat-loopar
     // + manuellt spel) kan antalet klingande noder växa obegränsat och tynga
     // ljudmotorn så mycket att sidan hackar eller hänger sig. Byggs det upp
-    // fler än MAX_VOICES samtidiga slag, tonas de äldsta ut snabbt (istället
-    // för att bara staplas på) så belastningen aldrig skenar.
+    // fler än MAX_VOICES samtidiga slag måste de äldsta verkligen STOPPAS —
+    // det räcker inte att bara tona ner deras volym (setTargetAtTime till 0),
+    // för då fortsätter oscillatorerna/bruskällorna ändå att beräknas i det
+    // tysta ända tills deras egen, ofta 5–18 sekunder långa, utklingning är
+    // klar. Det är precis det som tidigare fick antalet aktiva ljud-noder att
+    // växa obegränsat under intensivt spel — och orsakade att ljudet till slut
+    // hackade och tystnade helt. Genom att faktiskt anropa .stop() på de
+    // underliggande noderna frigörs belastningen på riktigt, direkt.
+    const stopAt=ac.currentTime+.03;
     while(activeStrikes.length>MAX_VOICES){
       const oldest=activeStrikes.shift();
       oldest.gains.forEach(function(g){
         try{
           g.gain.cancelScheduledValues(ac.currentTime);
-          g.gain.setTargetAtTime(0,ac.currentTime,.015);
+          g.gain.setTargetAtTime(0,ac.currentTime,.01);
         }catch(e){}
+        killNode(g._osc,stopAt);
+        killNode(g._src,stopAt);
+        if(g._oscs) g._oscs.forEach(function(o){killNode(o,stopAt)});
       });
     }
     scheduleSuspend();
@@ -2028,6 +2047,7 @@
     vg.gain.setValueAtTime(.0001,t0);
     vg.gain.linearRampToValueAtTime(v*peak,t0+attack);
     vg.gain.exponentialRampToValueAtTime(.0001,t0+attack+decay);
+    const vgOscs=[];
     V.partials.forEach(function(pt){
       const r=pt[0], amp=pt[1], pAtt=pt[2];
       const o=ac.createOscillator(); o.type='sine'; o.frequency.value=f0*r;
@@ -2035,7 +2055,9 @@
       if(pAtt!=null){ g.gain.setValueAtTime(.0001,t0); g.gain.linearRampToValueAtTime(amp,t0+pAtt); }
       else g.gain.value=amp;
       o.connect(g).connect(vg); o.start(t0); o.stop(t0+attack+decay+.15);
+      vgOscs.push(o);
     });
+    vg._oscs=vgOscs;
     const gains=[vg];
     if(V.noise){
       const ndur=V.noiseDur;
@@ -2052,6 +2074,7 @@
       ng.gain.exponentialRampToValueAtTime(.0001,t0+ndur);
       nb.connect(nf).connect(ng).connect(vg);
       nb.start(t0); nb.stop(t0+ndur+.05);
+      ng._src=nb;
       gains.push(ng);
     }
     registerStrike(gains,t0+attack+decay);
@@ -2099,7 +2122,7 @@
     ng.gain.linearRampToValueAtTime(v*.3,t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.05);
     nb.connect(bp).connect(ng).connect(strikeBus);
-    nb.start(t0); gains.push(ng);
+    nb.start(t0); ng._src=nb; gains.push(ng);
     registerStrike(gains,t0+5.6);
   }
 
@@ -2201,7 +2224,7 @@
     ng.gain.linearRampToValueAtTime(v*.18,t0+.0015);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.02);
     nb.connect(bp).connect(ng).connect(strikeBus);
-    nb.start(t0); gains.push(ng);
+    nb.start(t0); ng._src=nb; gains.push(ng);
     registerStrike(gains,t0+dec);
   }
 
@@ -2229,7 +2252,7 @@
     const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
     ng.gain.linearRampToValueAtTime(v*.15,t0+.0015);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.025);
-    nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
+    nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); ng._src=nb; gains.push(ng);
     registerStrike(gains,t0+2.6);
   }
   function pluckMono(){
@@ -2256,7 +2279,7 @@
     const ng=ac.createGain(); ng.gain.setValueAtTime(.0001,t0);
     ng.gain.linearRampToValueAtTime(v*.22,t0+.09);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+3.2);
-    nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); gains.push(ng);
+    nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); ng._src=nb; gains.push(ng);
     registerStrike(gains,t0+3.6);
   }
   function shamanHit(edge,soft){
@@ -2273,7 +2296,7 @@
       g.gain.linearRampToValueAtTime(v*.9,t0+.005);
       g.gain.exponentialRampToValueAtTime(.0001,t0+.95*ring);
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+1.0*ring+.05);
-      gains.push(g);
+      g._osc=o; gains.push(g);
     })();
     (function(){
       const o=ac.createOscillator(); o.type='sine';
@@ -2284,7 +2307,7 @@
       g.gain.linearRampToValueAtTime(v*.26,t0+.005);
       g.gain.exponentialRampToValueAtTime(.0001,t0+.5*ring);
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.6*ring);
-      gains.push(g);
+      g._osc=o; gains.push(g);
     })();
     (function(){
       const o=ac.createOscillator(); o.type='triangle';
@@ -2294,7 +2317,7 @@
       g.gain.linearRampToValueAtTime(v*.11*(1+edge),t0+.004);
       g.gain.exponentialRampToValueAtTime(.0001,t0+.18);
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.2);
-      gains.push(g);
+      g._osc=o; gains.push(g);
     })();
     const nb=ac.createBufferSource();
     const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.08),ac.sampleRate);
@@ -2307,7 +2330,7 @@
     ng.gain.linearRampToValueAtTime(v*(.28+edge*.4),t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.08);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
-    gains.push(ng);
+    ng._src=nb; gains.push(ng);
     registerStrike(gains,t0+1.0*ring+.1);
   }
   function thunderBoom(){
@@ -2329,7 +2352,7 @@
     }
     ng.gain.exponentialRampToValueAtTime(.0001,t0+4);
     nb.connect(lp).connect(ng).connect(strikeBus); nb.start(t0);
-    gains.push(ng);
+    ng._src=nb; gains.push(ng);
     registerStrike(gains,t0+4);
   }
   function oceanSplash(){
@@ -2381,7 +2404,7 @@
       g.gain.linearRampToValueAtTime(v*.85,t0+.005);
       g.gain.exponentialRampToValueAtTime(.0001,t0+.42);
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.45);
-      gains.push(g);
+      g._osc=o; gains.push(g);
     } else if(edge<.78){
       const o=ac.createOscillator(); o.type='sine';
       o.frequency.setValueAtTime(210,t0);
@@ -2391,7 +2414,7 @@
       g.gain.linearRampToValueAtTime(v*.6,t0+.004);
       g.gain.exponentialRampToValueAtTime(.0001,t0+.22);
       o.connect(g).connect(strikeBus); o.start(t0); o.stop(t0+.25);
-      gains.push(g);
+      g._osc=o; gains.push(g);
     }
     const nb=ac.createBufferSource();
     const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.09),ac.sampleRate);
@@ -2405,7 +2428,7 @@
     ng.gain.linearRampToValueAtTime(v*(edge>.78?.7:.3),t0+.003);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+(edge>.78?.09:.06));
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
-    gains.push(ng);
+    ng._src=nb; gains.push(ng);
     registerStrike(gains,t0+.5);
   }
 
