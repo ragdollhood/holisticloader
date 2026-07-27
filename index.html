@@ -2065,6 +2065,39 @@ function stopAllAmbience(){
   try{initAudio();resumeAudio();}catch(e){}
   document.removeEventListener(ev,once);},{passive:true}));
 
+/* Screen Wake Lock — keeps the display on during an active session so the OS doesn't
+   auto-lock it and suspend audio/timers mid-session. Not supported everywhere, and it
+   can't stop someone manually pressing the power button — that's what the
+   visibilitychange recovery below is for. Silently no-ops where unsupported. */
+let wakeLock=null;
+async function requestWakeLock(){
+  try{
+    if('wakeLock' in navigator){
+      wakeLock=await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release',()=>{wakeLock=null;});
+    }
+  }catch(e){wakeLock=null;}
+}
+function releaseWakeLock(){ if(wakeLock){try{wakeLock.release();}catch(e){} wakeLock=null;} }
+
+/* Recover from the phone locking / the tab being backgrounded mid-session: the OS
+   suspends the AudioContext and throttles timers while the screen is off (and on some
+   devices silently drops the wake lock too). Nothing previously resumed any of that
+   when the screen came back on, so the session looked "cancelled" — sound gone, tone
+   scheduler stalled. When the page becomes visible again: resume audio, re-arm the wake
+   lock, and resync the tone scheduler's next-tone time so it doesn't fire a burst of
+   missed tones trying to catch up. The countdown/render loop itself already handles a
+   long gap safely (its per-frame delta is clamped), so it needs no fix here. */
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)return;
+  if(S.running){
+    resumeAudio();
+    if(audio.ctx) nextToneTime=audio.ctx.currentTime+.05;
+    requestWakeLock();
+  }
+});
+window.addEventListener('pageshow',()=>{ if(S.running) resumeAudio(); });
+
 /* scheduler */
 let schedTimer=null,nextToneTime=0;
 function soundPhaseAllowed(){
@@ -2239,7 +2272,7 @@ requestAnimationFrame(loop);
 
 /* session */
 function startSession(){
-  initAudio(); resumeAudio();
+  initAudio(); resumeAudio(); requestWakeLock();
   S.ended=false;$('endOverlay').classList.remove('show');
   if(ambPreviewTimer){clearTimeout(ambPreviewTimer);ambPreviewTimer=null;} /* the sound now plays for the whole session, not just a short preview */
   if(isAmbSound(S.sound)){
@@ -2264,13 +2297,13 @@ function startSession(){
   $('btnPause').classList.remove('paused');
   startScheduler();
 }
-function pauseSession(){S.running=false;stopScheduler();
+function pauseSession(){S.running=false;stopScheduler();releaseWakeLock();
   audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.15);
   $('breathCue').style.opacity=0;$('btnPause').classList.add('paused');}
-function resumeSession(){S.running=true;resumeAudio();
+function resumeSession(){S.running=true;resumeAudio();requestWakeLock();
   audio.master.gain.setTargetAtTime(S.soundOn?MASTER:.0001,audio.ctx.currentTime,.1);
   $('btnPause').classList.remove('paused');startScheduler();}
-function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
+function endSession(){S.running=false;S.ended=false;stopScheduler();releaseWakeLock();remainingMs=0;breathClock=0;wanderT=0;
   $('breathCue').style.opacity=0;$('timerReadout').textContent='0:00';
   stopAllAmbience(); /* any Wave/noise-color ambience stops right away, instead of lingering through the closing tone's fade */
   if(audio.ctx){
@@ -2286,7 +2319,7 @@ function endSession(){S.running=false;S.ended=false;stopScheduler();remainingMs=
   $('endOverlay').classList.remove('show');
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
   $('timerCluster').classList.add('hidden');$('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
-function resetToFront(){S.running=false;S.ended=false;stopScheduler();remainingMs=0;breathClock=0;wanderT=0;
+function resetToFront(){S.running=false;S.ended=false;stopScheduler();releaseWakeLock();remainingMs=0;breathClock=0;wanderT=0;
   stopAllAmbience();
   if(audio.ctx){audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.25);}
   document.body.classList.remove('immersive');
