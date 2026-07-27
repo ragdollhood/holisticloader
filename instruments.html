@@ -1785,8 +1785,13 @@
   // längre ner, både när en ton klingar ut naturligt och när den avlivas i förtid.
   let voiceTimestamps=[];      // {t,w}-poster för nyligen SKAPADE noder (flödesspärr)
   let liveVoiceWeight=0;       // summan av nod-poäng som klingar just nu (samtidighetsspärr)
-  const MAX_NEW_WEIGHT_PER_SEC=110;
-  const MAX_LIVE_WEIGHT=110;
+  // 110 stoppade den ursprungliga hängningen säkert, men var för snålt för
+  // harpans normala, legitima polyfoni — ett snabbt drag över flera strängar
+  // ska låta MÅNGA strängar klinga samtidigt, det är hur en harpa faktiskt
+  // låter, inte ett flöde som ska stoppas. 160 ger gott om rum för det men
+  // ligger ändå långt under vad som tidigare kunde byggas upp obegränsat.
+  const MAX_NEW_WEIGHT_PER_SEC=160;
+  const MAX_LIVE_WEIGHT=160;
   function voiceGateOpen(weight){
     reapExpiredVoices(); // släpp vikten från allt som redan klingat klart innan vi mäter
     const now=performance.now();
@@ -2291,13 +2296,20 @@
   })();
 
   function pluckHarp(f,soft){
-    const _voiceW=13; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
+    // snabba glissando-toner (soft=true, triggas under en dragning) får färre
+    // överton-partialer än ett medvetet enskilt anslag — de hörs ändå knappt
+    // isär i en snabb svep-rörelse, men kostar betydligt mindre av den
+    // globala spärren, så fler strängar hinner klinga samtidigt utan att
+    // ljudet tystnar i förtid.
+    const partials=soft?[[1,.5,1],[2,.24,.7],[3,.14,.55],[4,.08,.42]]
+                        :[[1,.5,1],[2,.24,.7],[3,.14,.55],[4,.08,.42],[5,.05,.32],[6,.03,.24]];
+    const _voiceW=partials.length*2+1; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.005;
     const vJit=.9+Math.random()*.2;
     const v=masterVol()*(soft?.76:1.23)*vJit;
     const dec=Math.min(9,Math.max(3,7*Math.sqrt(220/f)));
     const gains=[];
-    [[1,.5,1],[2,.24,.7],[3,.14,.55],[4,.08,.42],[5,.05,.32],[6,.03,.24]].forEach(function(p){
+    partials.forEach(function(p){
       const det=2.2*(.8+Math.random()*.4);
       gains.push(partial(t0,f*p[0],v*p[1]*.5,Math.max(.6,dec*p[2]),  det,.004));
       gains.push(partial(t0,f*p[0],v*p[1]*.5,Math.max(.6,dec*p[2]), -det,.004));
