@@ -2157,6 +2157,7 @@
   };
   let gongVoice='symphonic';
   let lastGongStrikeTime=-Infinity;
+  let lastGongShimmerT=-Infinity;
   function strikeGong(edge){
     const _voiceW=16; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const V=GONG_VOICES[gongVoice];
@@ -2770,16 +2771,30 @@
       const speed=dist/Math.max(now-p.t,1);
       p.x=x; p.y=y; p.t=now; p.moved+=dist;
       if(dist<1.5) return;
+      // Strypning: pointermove kan trigga i mycket hög takt vid en snabb
+      // svepning (upp mot skärmens uppdateringsfrekvens). Tidigare skapade
+      // varje sådant event potentiellt en ny glittraton/oscillator, så en
+      // snabb sweep kunde stapla upp fler klingande noder per sekund än
+      // ljudmotorn hinner rendera i realtid — hördes som knaster/klick.
+      // Positionsspårningen ovan (för hastighet/sträcka) sker fortfarande
+      // på varje event så svepet känns lika mjukt, men själva ljud-/effekt-
+      // arbetet nedan begränsas till max ~50 ggr/sek per pekare.
+      if(now-(p.lastProc||0)<20) return;
+      p.lastProc=now;
       const t=ac.currentTime, v=masterVol();
       if(instr==='gong'){
         const drive=Math.min(1,speed*1.4);
         const build=Math.min(1,.3+p.moved/350);
         gCluster.gain.setTargetAtTime(v*.3*build*Math.max(.55,drive),t,.18);
-        if(Math.random()<.4 && voiceGateOpen(1)){
+        // egen, tidsbaserad spärr för glittertonerna utöver strypningen ovan:
+        // varje ton är en riktig oscillator+gain-nod, så de begränsas extra
+        // hårt (max ~var 90:e ms) och väger tyngre i voiceGateOpen.
+        if((now-lastGongShimmerT)>90 && Math.random()<.4 && voiceGateOpen(2)){
+          lastGongShimmerT=now;
           const r=[1.41,2.15,2.69,3.36,4.07,4.97][Math.floor(Math.random()*6)];
           const shimmerEnd=t+2+Math.random()*2.5;
           const sg=partial(t,gongF()*r,v*.09*Math.max(.5,drive),2+Math.random()*2.5,(Math.random()-.5)*16,.08);
-          registerStrike([sg],shimmerEnd,1);
+          registerStrike([sg],shimmerEnd,2);
           busyUntil=Math.max(busyUntil,t+5);
         }
         cosmicBoost(.025,'gong',false);
