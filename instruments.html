@@ -1746,29 +1746,46 @@
   let bSingOscs=[], bSing=null;
   let playing=false, suspendTimer=null, busyUntil=0, activeStrikes=[];
   // GLOBAL, instrument-oberoende säkerhetsspärr mot ljudflod ----------------
-  // Grundproblemet var att det inte fanns NÅGOT tak på hur många NYA ljud
-  // (oscillatorer/bufferkällor) som fick skapas per sekund, oavsett vilket
-  // instrument eller vilken kombination av instrument det gällde. Tidigare
-  // lappades detta ett instrument i taget (t.ex. harpans egna
-  // MAX_STRINGS_PER_MOVE-gräns för snabba dragningar) — men en sådan lapp
-  // skyddar bara exakt det fall den skrevs för. Att samma typ av hängning
-  // sedan dök upp på handpanen (som inte har harpans "dra över flera
-  // strängar"-mönster alls) bevisade att grundorsaken satt någon annanstans:
-  // det fanns inget gemensamt golv som helt enkelt vägrar skapa fler nya
-  // ljud när för många redan skapats på kort tid, oavsett var anropet kommer
-  // ifrån. voiceTimestamps + voiceGateOpen() nedan är den spärren. Den körs
-  // som allra första sats i VARJE instruments strike/pluck-funktion (se
-  // registerStrike-anropen längre ner) och stoppar nya ljud INNAN några
-  // AudioNode ens skapas — så flödet aldrig hinner belasta ljudmotorn eller
-  // huvudtråden, oavsett vilket instrument eller vilken blandning av
-  // instrument som spelas samtidigt.
-  let voiceTimestamps=[];
-  const MAX_NEW_VOICES_PER_SEC=40;
-  function voiceGateOpen(){
+  // Grundfelet satt på TVÅ ställen samtidigt, inte bara ett:
+  //  1) Inget tak fanns på hur många NYA ljud som fick skapas per sekund.
+  //  2) Inget tak fanns heller på hur många ljud-NODER (oscillatorer/
+  //     brusnoder) som fick klinga SAMTIDIGT — det gamla MAX_VOICES räknade
+  //     bara antalet "anslag" (26 st), inte hur många riktiga AudioNode varje
+  //     anslag skapar. Ett enda gongslag skapar t.ex. ~16 egna noder, en enda
+  //     vindspelston ~8 — så 26 tillåtna anslag kunde i praktiken betyda
+  //     hundratals samtidigt klingande noder.
+  // Det andra hålet är precis det som gjorde att en ren hastighetsspärr
+  // (steg 1) INTE räckte för vindspelet: dess toner klingar i över 9
+  // sekunder, så en snabb dragning över flera rör hinner trigga många nya
+  // toner innan de gamla ens tystnat — antalet samtidigt LEVANDE noder växer
+  // då förbi vad ljudmotorn/huvudtråden klarar, helt oavsett hur många nya
+  // ljud som tillåtits starta per sekund. Samma sak gäller i princip vilket
+  // långklingande instrument eller vilken kombination av instrument som helst.
+  //
+  // Lösningen: voiceGateOpen(weight) nedan vaktar BÅDA dimensionerna på en
+  // gång, med en ungefärlig "vikt" (antal AudioNode) per anslag:
+  //   - flödesspärr: hur många nod-poäng får skapas per sekund
+  //   - samtidighetsspärr: hur många nod-poäng får klinga samtidigt, oavsett
+  //     hur länge de klingar — detta är den som saknades för långklingande
+  //     instrument som vindspelet
+  // Den körs som allra första sats i VARJE instruments strike/pluck-funktion,
+  // INNAN någon AudioNode skapas, så ett avvisat anslag kostar praktiskt
+  // taget ingenting — oavsett vilket instrument eller vilken blandning av
+  // instrument som spelas samtidigt. liveVoiceWeight minskas i registerStrike()
+  // längre ner, både när en ton klingar ut naturligt och när den avlivas i förtid.
+  let voiceTimestamps=[];      // {t,w}-poster för nyligen SKAPADE noder (flödesspärr)
+  let liveVoiceWeight=0;       // summan av nod-poäng som klingar just nu (samtidighetsspärr)
+  const MAX_NEW_WEIGHT_PER_SEC=110;
+  const MAX_LIVE_WEIGHT=110;
+  function voiceGateOpen(weight){
+    reapExpiredVoices(); // släpp vikten från allt som redan klingat klart innan vi mäter
     const now=performance.now();
-    while(voiceTimestamps.length && now-voiceTimestamps[0]>1000) voiceTimestamps.shift();
-    if(voiceTimestamps.length>=MAX_NEW_VOICES_PER_SEC) return false;
-    voiceTimestamps.push(now);
+    while(voiceTimestamps.length && now-voiceTimestamps[0].t>1000) voiceTimestamps.shift();
+    const recentWeight=voiceTimestamps.reduce(function(s,e){return s+e.w},0);
+    if(recentWeight+weight>MAX_NEW_WEIGHT_PER_SEC) return false;
+    if(liveVoiceWeight+weight>MAX_LIVE_WEIGHT) return false;
+    voiceTimestamps.push({t:now,w:weight});
+    liveVoiceWeight+=weight;
     return true;
   }
   let silenced=false;
@@ -2026,10 +2043,23 @@
     try{ node.stop(when); }catch(e){}
   }
   const MAX_VOICES=26;
-  function registerStrike(gains,end){
-    activeStrikes.push({gains:gains,end:end});
+  // delas mellan voiceGateOpen() och registerStrike() så att liveVoiceWeight
+  // (samtidighetsspärren ovan) aldrig blir stående med ett gammalt, för högt
+  // värde efter en paus — utan detta skulle t.ex. ett enda nytt tryck efter
+  // några minuters tystnad kunna avvisas i onödan av rester från tidigare spel.
+  function reapExpiredVoices(){
+    if(!ac) return;
+    const now=ac.currentTime;
+    activeStrikes=activeStrikes.filter(function(s){
+      if(s.end>now) return true;
+      liveVoiceWeight=Math.max(0,liveVoiceWeight-s.weight);
+      return false;
+    });
+  }
+  function registerStrike(gains,end,weight){
+    activeStrikes.push({gains:gains,end:end,weight:weight||gains.length});
     busyUntil=Math.max(busyUntil,end);
-    activeStrikes=activeStrikes.filter(function(s){return s.end>ac.currentTime});
+    reapExpiredVoices();
     // polyphony-skydd: om väldigt mycket spelas samtidigt (flera repeat-loopar
     // + manuellt spel) kan antalet klingande noder växa obegränsat och tynga
     // ljudmotorn så mycket att sidan hackar eller hänger sig. Byggs det upp
@@ -2044,6 +2074,7 @@
     const stopAt=ac.currentTime+.03;
     while(activeStrikes.length>MAX_VOICES){
       const oldest=activeStrikes.shift();
+      liveVoiceWeight=Math.max(0,liveVoiceWeight-oldest.weight);
       oldest.gains.forEach(function(g){
         try{
           g.gain.cancelScheduledValues(ac.currentTime);
@@ -2071,7 +2102,7 @@
   };
   let gongVoice='symphonic';
   function strikeGong(edge){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=16; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const V=GONG_VOICES[gongVoice];
     const t0=ac.currentTime+.02;
     const f0=gongF()*(V.fmul||1), v=masterVol()*3.65;
@@ -2112,7 +2143,7 @@
       ng._src=nb;
       gains.push(ng);
     }
-    registerStrike(gains,t0+attack+decay);
+    registerStrike(gains,t0+attack+decay,_voiceW);
   }
 
   // Tre klangskålar: kristall (ren, svävande), tibetansk metall (varm, oharmonisk) och djup kvarts
@@ -2123,7 +2154,7 @@
   };
   let bowlVoice='deep';
   function strikeBowl(){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=9; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const V=BOWL_VOICES[bowlVoice];
     const t0=ac.currentTime+.02;
     const f=bowlF()*V.mul, v=masterVol()*.6, b=beat()*V.beatMul;
@@ -2134,13 +2165,13 @@
       gains.push(partial(t0,f*p[0],v*p[1],V.dec*p[2],3,Math.max(.01,V.att*.6)));
     });
     gains.push(partial(t0,f*V.ping[0],v*V.ping[1],V.ping[2],0,.004));
-    registerStrike(gains,t0+V.dec);
+    registerStrike(gains,t0+V.dec,_voiceW);
   }
 
   // Handpan i D-kurdisk skala: ding i mitten, åtta tonfält runt om
   const HP_RATIOS=[1.4983,1.5874,1.7818,2,2.2449,2.3784,2.6697,2.9966];
   function strikeHand(f,soft){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=9; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.01;
     const v=masterVol()*(soft?.37:.62);
     const gains=[];
@@ -2160,11 +2191,11 @@
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.05);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); ng._src=nb; gains.push(ng);
-    registerStrike(gains,t0+5.6);
+    registerStrike(gains,t0+5.6,_voiceW);
   }
 
   function strikeChime(f,soft,delay){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=8; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.01+(delay||0);
     const vJit=.9+Math.random()*.2;
     const v=masterVol()*(soft?.4:.68)*vJit;
@@ -2179,7 +2210,7 @@
       gains.push(partial(t0,f*p[0],v*p[1]*.5,p[2],  3*dJit,.006));
       gains.push(partial(t0,f*p[0],v*p[1]*.5,p[2], -3*dJit,.006));
     });
-    registerStrike(gains,t0+9.3);
+    registerStrike(gains,t0+9.3,_voiceW);
   }
 
   // ---- rumsakustik: genererade impulssvar för olika rum ----
@@ -2241,7 +2272,7 @@
   })();
 
   function pluckHarp(f,soft){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=13; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.005;
     const vJit=.9+Math.random()*.2;
     const v=masterVol()*(soft?.76:1.23)*vJit;
@@ -2264,20 +2295,20 @@
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.02);
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); ng._src=nb; gains.push(ng);
-    registerStrike(gains,t0+dec);
+    registerStrike(gains,t0+dec,_voiceW);
   }
 
   function strikeTongue(f,soft){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=4; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.01, v=masterVol()*(soft?.45:.75);
     const gains=[
       partial(t0,f,v*.5,7,2,.012), partial(t0,f,v*.5,7,-2,.012),
       partial(t0,f*2.9,v*.12,3,3,.01), partial(t0,f*4.2,v*.05,1.4,0,.008)
     ];
-    registerStrike(gains,t0+7);
+    registerStrike(gains,t0+7,_voiceW);
   }
   function pluckSans(f,soft){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=4; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.005, v=masterVol()*(soft?.69:1.03);
     const gains=[
       partial(t0,f,v*.5,2.6,1,.004),
@@ -2294,19 +2325,19 @@
     ng.gain.linearRampToValueAtTime(v*.15,t0+.0015);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.025);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); ng._src=nb; gains.push(ng);
-    registerStrike(gains,t0+2.6);
+    registerStrike(gains,t0+2.6,_voiceW);
   }
   function pluckMono(){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=7; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.01, f=monoF(), v=masterVol()*.89;
     const gains=[];
     for(let n=1;n<=7;n++){
       gains.push(partial(t0,f*n,v*.5/n,Math.max(1.5,9*Math.pow(n,-.5)),(Math.random()-.5)*4,.005));
     }
-    registerStrike(gains,t0+9);
+    registerStrike(gains,t0+9,_voiceW);
   }
   function panNote(f,soft){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=4; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.01, v=masterVol()*(soft?.67:.88);
     const gains=[
       partial(t0,f,v*.42,3.2,1.5,.28),
@@ -2323,10 +2354,10 @@
     ng.gain.linearRampToValueAtTime(v*.22,t0+.09);
     ng.gain.exponentialRampToValueAtTime(.0001,t0+3.2);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0); ng._src=nb; gains.push(ng);
-    registerStrike(gains,t0+3.6);
+    registerStrike(gains,t0+3.6,_voiceW);
   }
   function shamanHit(edge,soft){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=4; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.005, v=masterVol()*(soft?.44:.75);
     const f=88-edge*16;
     const ring=1.0-edge*0.42;
@@ -2375,10 +2406,10 @@
     ng.gain.exponentialRampToValueAtTime(.0001,t0+.08);
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
     ng._src=nb; gains.push(ng);
-    registerStrike(gains,t0+1.0*ring+.1);
+    registerStrike(gains,t0+1.0*ring+.1,_voiceW);
   }
   function thunderBoom(){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=3; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.01, v=masterVol();
     const gains=[partial(t0,52,v*.5,3.5,3,.01),partial(t0,52,v*.5,3.5,-3,.01)];
     const nb=ac.createBufferSource();
@@ -2398,7 +2429,7 @@
     ng.gain.exponentialRampToValueAtTime(.0001,t0+4);
     nb.connect(lp).connect(ng).connect(strikeBus); nb.start(t0);
     ng._src=nb; gains.push(ng);
-    registerStrike(gains,t0+4);
+    registerStrike(gains,t0+4,_voiceW);
   }
   function oceanSplash(){
     const t=ac.currentTime, v=masterVol();
@@ -2429,17 +2460,17 @@
   }
 
   function strikeTri(soft){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=12; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.005, f=triF(), v=masterVol()*(soft?.87:1.45);
     const gains=[];
     [1,1.34,1.71,2.12,2.63,3.3].forEach(function(r){
       gains.push(partial(t0,f*r,v*.11,5*(1/Math.sqrt(r)), 3,.002));
       gains.push(partial(t0,f*r,v*.11,5*(1/Math.sqrt(r)),-3,.002));
     });
-    registerStrike(gains,t0+5);
+    registerStrike(gains,t0+5,_voiceW);
   }
   function djembeHit(edge,soft){
-    if(!voiceGateOpen()) return; // global spärr: se voiceGateOpen ovan
+    const _voiceW=3; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.005, v=masterVol()*(soft?.37:.61);
     const gains=[];
     if(edge<.45){
@@ -2476,7 +2507,7 @@
     ng.gain.exponentialRampToValueAtTime(.0001,t0+(edge>.78?.09:.06));
     nb.connect(bp).connect(ng).connect(strikeBus); nb.start(t0);
     ng._src=nb; gains.push(ng);
-    registerStrike(gains,t0+.5);
+    registerStrike(gains,t0+.5,_voiceW);
   }
 
   function dampen(){
