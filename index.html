@@ -971,7 +971,7 @@ const _webpOK = (function(){
   }catch(e){ return false; }
 })();
 const _iext = _webpOK ? 'webp' : 'jpg';
-const INSTRUMENT_ICONS = {"crystal_bowl": `images/crystal_bowl.${_iext}`, "quartz_bowl": `images/quartz_bowl.${_iext}`, "tibetan_bowl": `images/tibetan_bowl.${_iext}`, "gong": `images/gong.${_iext}`, "tibetansk_gong": `images/tibetansk_gong.${_iext}`, "tam-tam_drum": `images/tam-tam_drum.${_iext}`, "handpan": `images/handpan.${_iext}`, "tonguedrum": `images/tonguedrum.${_iext}`, "sansula": `images/sansula.${_iext}`, "harpa": `images/harpa.${_iext}`, "monochord": `images/monochord.${_iext}`, "panflute": `images/panflute.${_iext}`, "native_american_fluit": `images/native_american_fluit.${_iext}`, "chime": `images/chimes.${_iext}`, "triangel": "images/triangel.jpg", "djembe": `images/djembe.${_iext}`, "shaman_drum": `images/shaman_drum.${_iext}`, "thunder_drum": `images/thunder_drum.${_iext}`, "ocean_drum": `images/ocean_drum.${_iext}`, "rainstick": `images/rainstick.${_iext}`};
+const INSTRUMENT_ICONS = {"crystal_bowl": `images/crystal_bowl.${_iext}`, "quartz_bowl": `images/quartz_bowl.${_iext}`, "tibetan_bowl": `images/tibetan_bowl.${_iext}`, "gong": `images/gong.${_iext}`, "tibetansk_gong": `images/tibetansk_gong.${_iext}`, "tam-tam_drum": `images/tam-tam_drum.${_iext}`, "handpan": `images/handpan.${_iext}`, "tonguedrum": `images/tonguedrum.${_iext}`, "sansula": `images/sansula.${_iext}`, "harpa": `images/harpa.${_iext}`, "monochord": `images/monochord.${_iext}`, "panflute": `images/panflute.${_iext}`, "native_american_fluit": `images/native_american_fluit.${_iext}`, "chime": `images/chimes.${_iext}`, "triangle": "images/triangle.jpg", "djembe": `images/djembe.${_iext}`, "shaman_drum": `images/shaman_drum.${_iext}`, "thunder_drum": `images/thunder_drum.${_iext}`, "ocean_drum": `images/ocean_drum.${_iext}`, "rainstick": `images/rainstick.${_iext}`};
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:IMAGES[0].id, sound:'quartz_bowl', freq:432, tempo:12, tempoFollow:true,
@@ -1093,7 +1093,7 @@ const SOUNDS=[
   {id:'gong',label:'Gong'},{id:'tibetansk_gong',label:'Tibetan gong'},{id:'tam-tam_drum',label:'Tam-tam'},
   {id:'handpan',label:'Handpan'},{id:'tonguedrum',label:'Tongue drum'},{id:'sansula',label:'Sansula'},
   {id:'harpa',label:'Harp'},{id:'monochord',label:'Monochord'},{id:'panflute',label:'Pan flute'},
-  {id:'native_american_fluit',label:'Native flute'},{id:'chime',label:'Wind chimes'},{id:'triangel',label:'Triangle'},{id:'djembe',label:'Djembe'},
+  {id:'native_american_fluit',label:'Native flute'},{id:'chime',label:'Wind chimes'},{id:'triangle',label:'Triangle'},{id:'djembe',label:'Djembe'},
   {id:'shaman_drum',label:'Shaman drum'},{id:'thunder_drum',label:'Thunder drum'},{id:'ocean_drum',label:'Ocean drum'},
   {id:'rainstick',label:'Rainstick'},
 ];
@@ -1158,7 +1158,7 @@ const INSTRUMENT_RANGE={
   /* flutes */
   panflute:{min:250,max:900,def:528}, native_american_fluit:{min:150,max:650,def:432},
   /* metal / bells */
-  chime:{min:300,max:963,def:528}, triangel:{min:400,max:963,def:741},
+  chime:{min:300,max:963,def:528}, triangle:{min:400,max:963,def:741},
   /* drums */
   djembe:{min:60,max:250,def:110}, shaman_drum:{min:45,max:180,def:80}, thunder_drum:{min:45,max:180,def:80}, ocean_drum:{min:45,max:280,def:100},
   rainstick:{min:45,max:280,def:100},
@@ -1771,7 +1771,7 @@ const VOICES={
   panflute:{partials:[[1,1],[2,.16],[3,.05],[4,.02]],type:'sine',attack:.32,decay:4.5,lp:3000,peak:.1,noise:.3,noiseFreq:2.4,noiseQ:.5,noiseDur:.7,vib:{rate:4,depth:4}},
   native_american_fluit:{partials:[[1,1]],type:'triangle',attack:.06,decay:3,lp:2200,peak:.13,noise:.5,noiseFreq:1,noiseQ:2,noiseDur:2.5,vib:{rate:5,depth:10}},
   chime:{partials:[[.9985,.5],[1.0015,.5],[2.758,.275],[2.762,.275],[5.397,.175],[5.403,.175],[8.897,.1],[8.903,.1],[12.994,.05],[13.006,.05]],type:'sine',attack:.006,decay:10,lp:9000,peak:.11,fmul:2.2,noise:.12,noiseFreq:6,noiseDur:.06},
-  triangel:{partials:[[1,1],[2.76,.7],[5.4,.5],[8.9,.35],[13,.2]],type:'sine',attack:.002,decay:5.5,lp:13000,peak:.1,fmul:4,noise:.25,noiseFreq:9,noiseDur:.03},
+  triangle:{partials:[[1,1],[2.76,.7],[5.4,.5],[8.9,.35],[13,.2]],type:'sine',attack:.002,decay:5.5,lp:13000,peak:.1,fmul:4,noise:.25,noiseFreq:9,noiseDur:.03},
   /* drums — pitched membrane with quick pitch drop */
   djembe:{partials:[[1,1],[1.6,.4],[2.3,.2]],type:'sine',attack:.002,decay:.8,lp:1400,peak:.15,drop:7,noise:.5,noiseFreq:3,noiseDur:.12},
   shaman_drum:{partials:[[1,1],[1.5,.3]],type:'sine',attack:.004,decay:1.1,lp:600,peak:.15,fmul:.5,drop:5,noise:.4,noiseFreq:1.2,noiseDur:.2},
