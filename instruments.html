@@ -2031,15 +2031,22 @@
     g.gain.exponentialRampToValueAtTime(.0001,t0+dec);
     o.connect(g).connect(strikeBus);
     o.start(t0); o.stop(t0+dec+.1);
+    // koppla bort noden ur grafen så fort den klingat ut helt naturligt också
+    // (inte bara vid tvångsstädning i killNode) — annars hänger den kvar
+    // ansluten, om än tyst, tills GC hinner städa.
+    o.onended=function(){ try{ o.disconnect(); g.disconnect(); }catch(e){} };
     // sparar oscillatorn på gain-noden så att registerStrike() vid behov kan
     // stoppa den direkt istället för att bara tysta den (se förklaring nedan)
     g._osc=o;
     return g;
   }
   // omedelbart stopp av en enskild ljud-nod (oscillator eller buffer-källa),
-  // används av registerStrike() när ett gammalt anslag städas bort på riktigt
+  // används av registerStrike() när ett gammalt anslag städas bort på riktigt.
+  // onended kopplar bort noden ur ljudgrafen så fort den verkligen tystnat —
+  // annars hänger den kvar ansluten (om än tyst) tills GC städar undan den.
   function killNode(node,when){
     if(!node) return;
+    node.onended=function(){ try{ node.disconnect(); }catch(e){} };
     try{ node.stop(when); }catch(e){}
   }
   const MAX_VOICES=26;
@@ -2546,7 +2553,10 @@
   let ripples=[], sparks=[], bursts=[];
   // samma orsak som NOVA_CAP/METEOR_CAP ovan: utan tak växer dessa listor
   // obegränsat vid intensivt spel eftersom nästan varje anslag lägger till fler.
-  const SPARK_CAP=220, BURST_CAP=28;
+  // sänkta från 220/28 — varje spark/burst är minst en createRadialGradient()-
+  // fyllning PER BILDRUTA så länge den lever, oavsett om något ljud spelas.
+  // Det är en konstant kostnad för hela sidan, inte bara vid intensivt spel.
+  const SPARK_CAP=100, BURST_CAP=18;
   function fxResize(){
     const r=stage.getBoundingClientRect();
     fx.width=r.width*2; fx.height=r.height*2;
@@ -2576,7 +2586,7 @@
     }
   }
   let bolts=[];
-  const BOLT_CAP=90;
+  const BOLT_CAP=50; // sänkt från 90, samma skäl som SPARK_CAP/BURST_CAP ovan
   function lightning(cx,cy){
     function bolt(x,y,dir,segs,branchProb){
       const pts=[[x,y]];
@@ -2748,8 +2758,8 @@
     {nx:.702,ny:.271,r:.080,ratio:2.6697},
     {nx:.500,ny:.197,r:.080,ratio:2.9966}
   ];
-  function hpFieldAt(e){
-    const r=$('handWrap').getBoundingClientRect();
+  function hpFieldAt(e,rect){
+    const r=rect||$('handWrap').getBoundingClientRect();
     const nx=(e.clientX-r.left)/r.width, ny=(e.clientY-r.top)/r.height;
     for(let i=0;i<HP_FIELDS.length;i++){
       const f=HP_FIELDS[i];
@@ -2758,10 +2768,10 @@
     }
     return -1;
   }
-  function hpGlowAt(i){
+  function hpGlowAt(i,wrapRect,stageRect){
     if(reduced) return;
-    const wr=$('handWrap').getBoundingClientRect();
-    const sr=stage.getBoundingClientRect();
+    const wr=wrapRect||$('handWrap').getBoundingClientRect();
+    const sr=stageRect||stage.getBoundingClientRect();
     const f=HP_FIELDS[i];
     const x=wr.left-sr.left+f.nx*wr.width;
     const y=wr.top-sr.top+f.ny*wr.height;
@@ -2770,18 +2780,24 @@
   (function(){
     const wrap=$('handWrap');
     const lastField=new Map();
+    // cachar rektanglarna en gång per pointerdown/drag istället för att
+    // tvinga fram en layout-omräkning (getBoundingClientRect) på VARJE
+    // pointermove — positionen ändras inte under en pågående dragning.
+    let cachedWrapRect=null, cachedStageRect=null;
     wrap.addEventListener('pointerdown',async function(e){
       e.preventDefault();
       await ensureAudio();
       wrap.setPointerCapture(e.pointerId);
-      const i=hpFieldAt(e);
+      cachedWrapRect=wrap.getBoundingClientRect();
+      cachedStageRect=stage.getBoundingClientRect();
+      const i=hpFieldAt(e,cachedWrapRect);
       lastField.set(e.pointerId,i);
       if(i<0) return;
       // samma resonemang som för vindspelet: glow/particlar/cosmicBoost är
       // dyrare (forcerad layout + canvas) än själva ljud-spärren, så de ska
       // bara köras när tonen faktiskt fick spela.
       if(strikeHand(handF()*HP_FIELDS[i].ratio,false)){
-        hpGlowAt(i);
+        hpGlowAt(i,cachedWrapRect,cachedStageRect);
         const xy=stagePos(e);
         if(!reduced){glowOrbs(xy[0],xy[1],'255,170,130',10);}
         cosmicBoost(.5,'hand',true);
@@ -2790,11 +2806,11 @@
     });
     wrap.addEventListener('pointermove',function(e){
       if(!ac||!lastField.has(e.pointerId)) return;
-      const i=hpFieldAt(e);
+      const i=hpFieldAt(e,cachedWrapRect);
       if(i>=0 && i!==lastField.get(e.pointerId)){
         lastField.set(e.pointerId,i);
         if(strikeHand(handF()*HP_FIELDS[i].ratio,true)){
-          hpGlowAt(i);
+          hpGlowAt(i,cachedWrapRect,cachedStageRect);
           const xy=stagePos(e);
           if(!reduced){glowOrbs(xy[0],xy[1],'255,170,130',3);}
           cosmicBoost(.1,'hand',false);
@@ -2815,8 +2831,8 @@
     {x:.686,hw:.040,top:.30,bot:.685,ratio:2}
   ];
   const CHIME_SAIL={x:.503,y:.875,r:.115};
-  function chimeHitAt(e){
-    const r=$('chimeWrap').getBoundingClientRect();
+  function chimeHitAt(e,rect){
+    const r=rect||$('chimeWrap').getBoundingClientRect();
     const nx=(e.clientX-r.left)/r.width, ny=(e.clientY-r.top)/r.height;
     const dx=(nx-CHIME_SAIL.x)*r.width, dy=(ny-CHIME_SAIL.y)*r.height;
     if(Math.hypot(dx,dy)<CHIME_SAIL.r*r.width*1.2) return 'sail';
@@ -2826,11 +2842,15 @@
     }
     return -1;
   }
-  function chimeGlow(i,delayMs){
+  function chimeGlow(i,delayMs,wrapRect,stageRect){
     if(reduced) return;
     setTimeout(function(){
-      const wr=$('chimeWrap').getBoundingClientRect();
-      const sr=stage.getBoundingClientRect();
+      // wrapRect/stageRect cachas bara för de omedelbara dragnings-anropen
+      // (delayMs=0, se pointerdown/pointermove nedan) — breeze() har en egen,
+      // flera sekunder lång fördröjning där sidan hinner ändra layout, så där
+      // hämtas rektanglarna alltid färska istället.
+      const wr=wrapRect||$('chimeWrap').getBoundingClientRect();
+      const sr=stageRect||stage.getBoundingClientRect();
       const t=CHIME_TUBES[i];
       glitter(wr.left-sr.left+t.x*wr.width,
               wr.top-sr.top+(t.top+t.bot)/2*wr.height,'255,170,130',4);
@@ -2851,11 +2871,16 @@
   (function(){
     const wrap=$('chimeWrap');
     const lastTube=new Map();
+    // cachar rektanglarna en gång per pointerdown/drag istället för att
+    // tvinga fram en layout-omräkning på VARJE pointermove.
+    let cachedWrapRect=null, cachedStageRect=null;
     wrap.addEventListener('pointerdown',async function(e){
       e.preventDefault();
       await ensureAudio();
       wrap.setPointerCapture(e.pointerId);
-      const i=chimeHitAt(e);
+      cachedWrapRect=wrap.getBoundingClientRect();
+      cachedStageRect=stage.getBoundingClientRect();
+      const i=chimeHitAt(e,cachedWrapRect);
       lastTube.set(e.pointerId,i);
       if(i==='sail'){ breeze(); }
       else if(i>=0){
@@ -2866,7 +2891,7 @@
         // ljud-spärren redan stoppat själva ljudet (samma flödesproblem som
         // ljudet hade, fast i canvas/layout-form istället för AudioNode-form).
         if(strikeChime(chimeF()*CHIME_TUBES[i].ratio,false,0)){
-          chimeGlow(i,0);
+          chimeGlow(i,0,cachedWrapRect,cachedStageRect);
           const xy=stagePos(e);
           if(!reduced) glitter(xy[0],xy[1],'255,170,130',6);
           cosmicBoost(.4,'chime',true);
@@ -2876,11 +2901,11 @@
     });
     wrap.addEventListener('pointermove',function(e){
       if(!ac||!lastTube.has(e.pointerId)) return;
-      const i=chimeHitAt(e);
+      const i=chimeHitAt(e,cachedWrapRect);
       if(typeof i==='number' && i>=0 && i!==lastTube.get(e.pointerId)){
         lastTube.set(e.pointerId,i);
         if(strikeChime(chimeF()*CHIME_TUBES[i].ratio,true,0)){
-          chimeGlow(i,0);
+          chimeGlow(i,0,cachedWrapRect,cachedStageRect);
           const xy=stagePos(e);
           if(!reduced) glitter(xy[0],xy[1],'255,170,130',3);
           cosmicBoost(.08,'chime',false);
@@ -2898,8 +2923,8 @@
     const semi=Math.floor(i/7)*12+HARP_DEG[i%7];
     return harpF()*Math.pow(2,semi/12);
   }
-  function harpStringAt(e){
-    const r=$('harpWrap').getBoundingClientRect();
+  function harpStringAt(e,rect){
+    const r=rect||$('harpWrap').getBoundingClientRect();
     const nx=(e.clientX-r.left)/r.width, ny=(e.clientY-r.top)/r.height;
     if(nx<HARP_XL-.02||nx>HARP_XR+.02) return -1;
     const yTop=.04+(nx-HARP_XL)*.75;
@@ -2910,11 +2935,15 @@
   (function(){
     const wrap=$('harpWrap');
     const lastStr=new Map();
+    // cachar rektangeln en gång per pointerdown/drag istället för att tvinga
+    // fram en layout-omräkning på VARJE pointermove.
+    let cachedRect=null;
     wrap.addEventListener('pointerdown',async function(e){
       e.preventDefault();
       await ensureAudio();
       wrap.setPointerCapture(e.pointerId);
-      const i=harpStringAt(e);
+      cachedRect=wrap.getBoundingClientRect();
+      const i=harpStringAt(e,cachedRect);
       lastStr.set(e.pointerId,i);
       if(i<0) return;
       pluckHarp(harpFreq(i),false);
@@ -2925,7 +2954,7 @@
     });
     wrap.addEventListener('pointermove',function(e){
       if(!ac||!lastStr.has(e.pointerId)) return;
-      const i=harpStringAt(e);
+      const i=harpStringAt(e,cachedRect);
       const prev=lastStr.get(e.pointerId);
       if(i<0||i===prev) return;
       lastStr.set(e.pointerId,i);
