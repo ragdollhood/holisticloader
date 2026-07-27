@@ -3087,9 +3087,23 @@
       const i=tine(e), prev=last.get(e.pointerId);
       if(i<0||i===prev) return;
       last.set(e.pointerId,i);
-      const step=i>(prev<0?i:prev)?1:-1;
-      let k=(prev<0?i:prev+step);
-      for(;step>0?k<=i:k>=i;k+=step) pluckSans(sansF()*SANS_R[k],true);
+      // samma resonemang som harpans MAX_STRINGS_PER_MOVE: en obegränsad
+      // batch-loop över alla passerade tinor kan i teorin trigga många
+      // pluckSans()-anrop i en enda pointermove. Sansulan har bara 9 tinor
+      // och lägre vikt per ton än harpan så den var aldrig lika utsatt, men
+      // samma spärr här ändå för konsekvens och framtida säkerhet.
+      const MAX_TINES_PER_MOVE=6;
+      const start=(prev<0?i:prev), dist=Math.abs(i-start);
+      const step=i>start?1:-1;
+      if(dist<=MAX_TINES_PER_MOVE){
+        let k=start+step;
+        for(;step>0?k<=i:k>=i;k+=step) pluckSans(sansF()*SANS_R[k],true);
+      } else {
+        for(let s=1;s<=MAX_TINES_PER_MOVE;s++){
+          const k=start+Math.round(s*dist/MAX_TINES_PER_MOVE)*step;
+          pluckSans(sansF()*SANS_R[k],true);
+        }
+      }
       const xy=stagePos(e);
       if(!reduced) glitter(xy[0],xy[1],'255,215,150',2);
       cosmicBoost(.06,'harp',false);
