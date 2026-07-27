@@ -1785,13 +1785,14 @@
   // längre ner, både när en ton klingar ut naturligt och när den avlivas i förtid.
   let voiceTimestamps=[];      // {t,w}-poster för nyligen SKAPADE noder (flödesspärr)
   let liveVoiceWeight=0;       // summan av nod-poäng som klingar just nu (samtidighetsspärr)
-  // 110 stoppade den ursprungliga hängningen säkert, men var för snålt för
-  // harpans normala, legitima polyfoni — ett snabbt drag över flera strängar
-  // ska låta MÅNGA strängar klinga samtidigt, det är hur en harpa faktiskt
-  // låter, inte ett flöde som ska stoppas. 160 ger gott om rum för det men
-  // ligger ändå långt under vad som tidigare kunde byggas upp obegränsat.
-  const MAX_NEW_WEIGHT_PER_SEC=160;
-  const MAX_LIVE_WEIGHT=160;
+  // 160 gav harpan gott om plats men tvingade ljudmotorn att beräkna mer
+  // samtidigt klingande ljud än den här sortens dator hinner rendera i
+  // realtid — knaster/klick är den klassiska signaturen av att ljudkortets
+  // buffer inte hinner fyllas i tid. 130 är en säkrare medelväg; tillsammans
+  // med softClip-ändringen ovan och den lättare harpvikten nedan får harpan
+  // ändå påtagligt mer utrymme än ursprungliga 110, utan att knastra.
+  const MAX_NEW_WEIGHT_PER_SEC=130;
+  const MAX_LIVE_WEIGHT=130;
   function voiceGateOpen(weight){
     reapExpiredVoices(); // släpp vikten från allt som redan klingat klart innan vi mäter
     const now=performance.now();
@@ -1867,7 +1868,11 @@
       (function(){
         const n=2048, curve=new Float32Array(n);
         for(let i=0;i<n;i++){ const x=(i/(n-1))*2-1; curve[i]=Math.tanh(x); }
-        softClip.curve=curve; softClip.oversample='4x';
+        // 2x istället för 4x: halverar denna nodens beräkningskostnad (den
+        // körs kontinuerligt på HELA mixen, oavsett hur många toner som
+        // klingar) med i praktiken omärkbar skillnad för en mjuk tanh-kurva
+        // som ändå bara gör något hörbart nära clip-gränsen.
+        softClip.curve=curve; softClip.oversample='2x';
       })();
       limiter.connect(softClip);
       analyser=ac.createAnalyser(); analyser.fftSize=1024;
@@ -2301,7 +2306,7 @@
     // isär i en snabb svep-rörelse, men kostar betydligt mindre av den
     // globala spärren, så fler strängar hinner klinga samtidigt utan att
     // ljudet tystnar i förtid.
-    const partials=soft?[[1,.5,1],[2,.24,.7],[3,.14,.55],[4,.08,.42]]
+    const partials=soft?[[1,.5,1],[2,.24,.7],[3,.14,.55]]
                         :[[1,.5,1],[2,.24,.7],[3,.14,.55],[4,.08,.42],[5,.05,.32],[6,.03,.24]];
     const _voiceW=partials.length*2+1; if(!voiceGateOpen(_voiceW)) return; // global spärr: vikt ≈ antal ljud-noder detta anslag skapar
     const t0=ac.currentTime+.005;
