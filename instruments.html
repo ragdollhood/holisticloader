@@ -1755,6 +1755,34 @@
   let gCluster=null, gClusterOscs=[];
   let bSingOscs=[], bSing=null;
   let playing=false, suspendTimer=null, busyUntil=0, activeStrikes=[];
+  // Skärmlås-fix: mobiler stänger av skärmen automatiskt efter en stunds
+  // inaktivitet, och när det händer pausar OS/webbläsaren sidans JS-timers
+  // (setTimeout/setInterval) — vilket är precis det repeat-loopen (startLoop
+  // nedan) bygger på, så loopen tystnar. Så länge en loop spelar håller vi
+  // därför skärmen vaken med Screen Wake Lock API. Stöds inte i alla
+  // webbläsare (bl.a. äldre iOS Safari), så det här är bästa möjliga skydd,
+  // ingen garanti — och det hjälper förstås inte om användaren själv trycker
+  // på låsknappen.
+  let wakeLock=null;
+  async function requestWakeLock(){
+    try{
+      if('wakeLock' in navigator){
+        wakeLock=await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release',function(){ wakeLock=null; });
+      }
+    }catch(e){ wakeLock=null; }
+  }
+  function releaseWakeLock(){
+    if(wakeLock){ wakeLock.release().catch(function(){}); wakeLock=null; }
+  }
+  // Wake locket släpps automatiskt av webbläsaren så fort fliken göms, och
+  // kan inte begäras på nytt förrän sidan syns igen — så vi försöker då,
+  // ifall en loop fortfarande är igång.
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible' && typeof randLoops!=='undefined' && randLoops.size>0 && !wakeLock){
+      requestWakeLock();
+    }
+  });
   // GLOBAL, instrument-oberoende säkerhetsspärr mot ljudflod ----------------
   // Grundfelet satt på TVÅ ställen samtidigt, inte bara ett:
   //  1) Inget tak fanns på hur många NYA ljud som fick skapas per sekund.
@@ -3736,6 +3764,7 @@
     if(L.tempoSel) L.tempoSel.disabled=false;
     if(L.durSel) L.durSel.disabled=false;
     randLoops.delete(k);
+    if(randLoops.size===0) releaseWakeLock();
     scheduleSuspend();
   }
   function fireRand(k){
@@ -3786,6 +3815,7 @@
       e.stopPropagation();
       if(randLoops.has(k)){ stopRandLoop(k); return; }
       await ensureAudio();
+      requestWakeLock();
       startLoop(+(tempoSel?tempoSel.value:2),+(durSel?durSel.value:30));
     });
   });
