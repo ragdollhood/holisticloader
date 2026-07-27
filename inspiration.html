@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Inspiration Loader — Holistic Loader</title>
+<meta name="description" content="Inspiration Loader is the Holistic Loader community board — share your wellness journey, motivation, tips and success stories with other members.">
+<meta name="theme-color" content="#0c0e13">
+<link rel="icon" type="image/png" href="images/icon-holistic.png">
+<link rel="apple-touch-icon" href="images/icon-holistic.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0c0e13; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
+  --gold:#e7c9a2; --gold-soft:#d9b98a;
+  --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(244,241,234,.15);
+  --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  font-family:var(--ui);color:var(--ink);background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  background:radial-gradient(120% 60% at 50% 0%, #1a2742 0%, #121a2c 42%, #0a0d14 100%) fixed;
+}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+.hidden{display:none !important}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
+
+/* ===== Top logo + tab navigation (cloned from index.html) ===== */
+#topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
+  padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(6,7,10,.82) 0%,rgba(6,7,10,.5) 65%,transparent 100%)}
+#topTabs{display:flex;flex-wrap:wrap;justify-content:center;pointer-events:auto}
+#topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
+  padding:9px 20px;color:var(--muted);text-decoration:none;white-space:nowrap;
+  background:var(--glass);border:1px solid var(--line);border-bottom:none;
+  border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
+#topTabs .tab:hover{color:var(--ink)}
+#topTabs .tab.active{color:var(--gold);background:var(--glass-strong);border-color:var(--gold);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2}
+#authRoot{transform:translateY(-6px)}
+#topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--gold-soft) 50%,var(--gold) 85%,transparent);
+  opacity:.55}
+@media(max-width:560px){
+  #topTabs .tab{padding:8px 12px;font-size:10.5px}
+  #authRoot{transform:none}
+}
+
+/* ===== Hamburger menu (cloned from index.html) ===== */
+#donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
+@supports(padding:max(0px)){ #donateWrap{left:max(16px,env(safe-area-inset-left))} }
+@media(max-width:560px){
+  #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
+  @supports(padding:max(0px)){ #donateWrap{left:max(4px,env(safe-area-inset-left))} }
+  #menuBtn{width:30px;height:30px}
+}
+#menuBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:34px;height:34px;padding:0;
+  border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
+#menuBtn:hover{background:rgba(244,241,234,.12)}
+#menuBtn:active{transform:scale(.95)}
+#menuBtn .menu-bar{width:16px;height:2px;border-radius:2px;background:currentColor;transition:transform .22s ease,opacity .18s ease}
+#menuBtn.open .menu-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
+#menuBtn.open .menu-bar:nth-child(2){opacity:0}
+#menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+#menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;min-width:190px;
+  display:flex;flex-direction:column;gap:2px;padding:8px;border-radius:16px;
+  background:var(--glass-strong);border:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 18px 50px rgba(0,0,0,.5);opacity:0;transform:translateY(6px) scale(.98);pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease}
+#menuPanel.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+#loginMenuBtn,#getPremiumMenuBtn,#howToBtn{
+  display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.02em;color:var(--ink);
+  background:transparent;border:none;border-radius:10px;padding:10px 11px;text-align:left;transition:background .15s ease}
+#loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#getPremiumMenuBtn{color:var(--gold);font-weight:600}
+#getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
+#loginMenuBtn:hover,#getPremiumMenuBtn:hover,#howToBtn:hover{background:rgba(244,241,234,.1)}
+#loginMenuBtn.hidden,#getPremiumMenuBtn.hidden{display:none}
+#contactBtn{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink);border-radius:10px;padding:10px 11px;
+  cursor:pointer;overflow:hidden;max-width:44px;white-space:nowrap;transition:background .15s ease,max-width .3s ease}
+#contactBtn:hover{background:rgba(244,241,234,.1)}
+#contactBtn.open{max-width:280px}
+#contactBtn .env{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7}
+#contactBtn .clabel{flex:0 0 auto}
+#contactBtn .ctext{color:var(--gold);text-decoration:none;overflow:hidden;text-overflow:ellipsis}
+
+/* ===== How-to dropdown box ===== */
+#howToBox{
+  position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
+  z-index:46;width:min(420px,90vw);box-sizing:border-box;
+  max-height:min(70vh,560px);overflow-y:auto;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:16px;
+  padding:20px 22px 22px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
+}
+#howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+#howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:12px}
+#howToBox ol{list-style:none;display:flex;flex-direction:column;gap:10px}
+#howToBox ol li{font-size:12.5px;line-height:1.55;color:var(--muted)}
+#howToBox ol li b{color:var(--ink);font-weight:600;display:block;margin-bottom:2px}
+@media(max-width:560px){ #howToBox{width:calc(100vw - 24px)} }
+
+/* ===== Page content ===== */
+main{padding:max(150px,calc(env(safe-area-inset-top) + 130px)) 20px 80px;max-width:1080px;margin:0 auto}
+
+.hero{text-align:center;margin-bottom:36px}
+.hero h1{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(34px,7vw,58px);
+  letter-spacing:.01em;color:var(--ink);text-shadow:0 3px 22px rgba(0,0,0,.5)}
+.hero p{max-width:520px;margin:14px auto 0;font-size:14px;line-height:1.6;color:var(--muted)}
+
+.shareRow{display:flex;justify-content:center;margin:26px 0 34px}
+.shareBtn{display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:999px;
+  background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#241c12;font-weight:600;font-size:13.5px;
+  letter-spacing:.03em;box-shadow:0 10px 30px rgba(231,201,162,.28);transition:transform .12s ease,filter .2s ease}
+.shareBtn:hover{filter:brightness(1.05)}
+.shareBtn:active{transform:scale(.97)}
+.shareBtn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:34px}
+.chip{padding:9px 16px;border-radius:999px;font-size:12.5px;font-weight:500;border:1px solid var(--line);
+  background:rgba(244,241,234,.04);color:var(--muted);transition:all .2s ease;white-space:nowrap}
+.chip:hover{background:rgba(244,241,234,.1);color:var(--ink)}
+.chip.active{background:rgba(231,201,162,.16);border-color:var(--gold);color:var(--gold)}
+
+#feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.pcard{
+  display:flex;flex-direction:column;border-radius:20px;border:1px solid var(--line);
+  background:rgba(244,241,234,.04);overflow:hidden;transition:transform .18s ease,border-color .18s ease;
+}
+.pcard:hover{transform:translateY(-3px);border-color:rgba(231,201,162,.4)}
+.pcard .pimg{width:100%;aspect-ratio:16/10;object-fit:cover;background:rgba(244,241,234,.06)}
+.pcard .pbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.pcard .pcat{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gold);width:max-content}
+.pcard h3{font-family:var(--display);font-weight:600;font-style:italic;font-size:19px;color:var(--ink);line-height:1.25}
+.pcard .ptext{font-size:12.5px;line-height:1.55;color:var(--muted);
+  display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.pcard .pfoot{margin-top:auto;padding-top:10px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--line);font-size:11px;color:var(--faint)}
+.pcard .pauthor{display:flex;align-items:center;gap:6px;min-width:0}
+.pcard .pauthor .anonBadge{padding:2px 8px;border-radius:999px;background:rgba(244,241,234,.08);color:var(--muted);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase}
+.likeBtn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;
+  background:rgba(244,241,234,.06);border:1px solid var(--line);color:var(--muted);font-size:11.5px;transition:all .15s ease}
+.likeBtn:hover{background:rgba(244,241,234,.12);color:var(--ink)}
+.likeBtn.liked{color:var(--gold);border-color:var(--gold);background:rgba(231,201,162,.12)}
+.likeBtn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.likeBtn.liked svg{fill:currentColor}
+
+#feedEmpty,#feedLoading{text-align:center;color:var(--muted);font-size:13px;padding:60px 20px;grid-column:1/-1}
+
+/* ===== Create-post modal ===== */
+#postModal{position:fixed;inset:0;z-index:220;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(8,9,13,.66);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .25s ease}
+#postModal.show{opacity:1;pointer-events:auto}
+#postModalCard{position:relative;width:min(480px,100%);max-height:88vh;overflow-y:auto;scrollbar-width:thin;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:22px;padding:30px 26px 26px;
+  box-shadow:0 24px 70px rgba(0,0,0,.5);transform:translateY(10px) scale(.98);transition:transform .25s ease}
+#postModal.show #postModalCard{transform:translateY(0) scale(1)}
+#postModalClose{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;color:var(--muted);background:transparent}
+#postModalClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
+#postModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+#postModalCard h2{font-family:var(--display);font-weight:400;font-style:italic;font-size:24px;color:var(--ink);margin-bottom:18px}
+#postForm{display:flex;flex-direction:column;gap:5px}
+#postForm label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:14px}
+#postForm input[type=text],#postForm textarea{
+  font-family:inherit;font-size:14px;color:var(--ink);background:rgba(244,241,234,.06);
+  border:1px solid var(--line);border-radius:12px;padding:11px 13px;outline:none;resize:vertical;transition:border-color .2s ease}
+#postForm input[type=text]:focus,#postForm textarea:focus{border-color:var(--gold)}
+#postForm textarea{min-height:110px;line-height:1.5}
+.catGrid{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.catGrid .chip{font-size:11.5px;padding:8px 13px}
+.imgPickRow{display:flex;align-items:center;gap:12px;margin-top:6px}
+.imgPickBtn{padding:9px 15px;border-radius:999px;border:1px solid var(--line);background:rgba(244,241,234,.05);font-size:12px;color:var(--muted)}
+.imgPickBtn:hover{color:var(--ink);background:rgba(244,241,234,.1)}
+#imgPreviewWrap{margin-top:10px}
+#imgPreview{max-width:100%;max-height:160px;border-radius:12px;display:none}
+.anonRow{display:flex;align-items:center;gap:9px;margin-top:16px}
+.anonRow input{width:16px;height:16px;accent-color:var(--gold)}
+.anonRow label{margin:0;font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--ink)}
+#postMessage{min-height:16px;font-size:12px;margin:12px 0 0;line-height:1.4}
+#postMessage.error{color:#e79a9a}
+#postMessage.success{color:#9ed7a7}
+#postSubmit{margin-top:18px;width:100%;font-size:13px;font-weight:600;letter-spacing:.04em;
+  color:var(--bg);background:var(--gold);border-radius:999px;padding:13px;transition:background .2s ease}
+#postSubmit:disabled{opacity:.6;cursor:not-allowed}
+
+.pageFoot{text-align:center;margin-top:50px;font-size:11px;color:var(--faint)}
+.pageFoot a{color:var(--gold);text-decoration:none}
+</style>
+
+<link rel="stylesheet" href="auth-ui.css">
+</head>
+<body>
+
+<div id="donateWrap">
+  <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+    <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
+  </button>
+  <div id="menuPanel" role="menu">
+    <button id="loginMenuBtn" type="button">
+      <svg class="lgn-ic" viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>Login
+    </button>
+    <button id="getPremiumMenuBtn" type="button">
+      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
+    </button>
+    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
+      <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
+    </button>
+    <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
+      <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
+      <span class="clabel">Contact</span>
+      <a class="ctext" id="contactEmail" href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<header id="topNav">
+  <nav id="topTabs" aria-label="Main sections">
+    <a href="index.html" class="tab">Breathing</a>
+    <a href="instruments.html" class="tab">Sound Healing</a>
+    <a href="nutriloader.html" class="tab">Nutrition</a>
+    <a href="store.html" class="tab">Store</a>
+    <a href="inspiration.html" class="tab active" aria-current="page">Inspiration</a>
+  </nav>
+  <div id="authRoot"></div>
+  <div id="topNavLine"></div>
+</header>
+
+<div id="howToBox">
+  <h3>How Inspiration Loader Works</h3>
+  <ol>
+    <li><b>1. Share</b>Post a wellness tip, question, progress update or success story — with an optional photo.</li>
+    <li><b>2. Moderation</b>Every post is reviewed before it goes live, so the board stays a safe, positive space.</li>
+    <li><b>3. Approved</b>Once approved, your post appears on the board for the whole community to see and like.</li>
+    <li><b>4. Anonymous</b>Want privacy? Tick "Post anonymously" and your name won't be shown.</li>
+  </ol>
+</div>
+
+<main>
+  <div class="hero">
+    <h1>Inspiration Loader</h1>
+    <p>Share your journey, inspire others, discover wellness tips, success stories and positive motivation from the Holistic Loader community.</p>
+  </div>
+
+  <div class="shareRow">
+    <button class="shareBtn" id="openPostModalBtn" type="button">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Share Your Inspiration
+    </button>
+  </div>
+
+  <div class="chips" id="catChips">
+    <button class="chip active" data-cat="all" type="button">All</button>
+    <button class="chip" data-cat="wellness" type="button">🌿 Wellness</button>
+    <button class="chip" data-cat="fitness" type="button">💪 Fitness</button>
+    <button class="chip" data-cat="nutrition" type="button">🥗 Nutrition</button>
+    <button class="chip" data-cat="healing" type="button">🧘 Healing</button>
+    <button class="chip" data-cat="general" type="button">📢 General</button>
+    <button class="chip" data-cat="success" type="button">🎉 Success Stories</button>
+  </div>
+
+  <div id="feed">
+    <div id="feedLoading">Loading the board…</div>
+  </div>
+
+  <div class="pageFoot">Posts are moderated before publishing. Questions? <a href="mailto:holisticloader@gmail.com">Contact us</a>.</div>
+</main>
+
+<!-- Create post modal -->
+<div id="postModal" role="dialog" aria-modal="true" aria-labelledby="postModalTitle">
+  <div id="postModalCard">
+    <button id="postModalClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <h2 id="postModalTitle">Share Your Inspiration</h2>
+    <form id="postForm" novalidate>
+      <label for="postTitle">Title</label>
+      <input id="postTitle" type="text" maxlength="120" required>
+
+      <label>Category</label>
+      <div class="catGrid" id="postCatGrid">
+        <button type="button" class="chip active" data-cat="wellness">🌿 Wellness</button>
+        <button type="button" class="chip" data-cat="fitness">💪 Fitness</button>
+        <button type="button" class="chip" data-cat="nutrition">🥗 Nutrition</button>
+        <button type="button" class="chip" data-cat="healing">🧘 Healing</button>
+        <button type="button" class="chip" data-cat="general">📢 General</button>
+        <button type="button" class="chip" data-cat="success">🎉 Success Stories</button>
+      </div>
+
+      <label for="postContent">Message</label>
+      <textarea id="postContent" maxlength="2000" required placeholder="Share what's on your mind…"></textarea>
+
+      <label>Image <span style="text-transform:none;color:var(--faint)">(optional)</span></label>
+      <div class="imgPickRow">
+        <button type="button" class="imgPickBtn" id="imgPickBtn">Choose image…</button>
+        <input type="file" id="postImage" accept="image/*" class="hidden">
+      </div>
+      <div id="imgPreviewWrap"><img id="imgPreview" alt="Selected image preview"></div>
+
+      <div class="anonRow">
+        <input type="checkbox" id="postAnon">
+        <label for="postAnon">Post anonymously</label>
+      </div>
+
+      <p id="postMessage" role="alert"></p>
+      <button id="postSubmit" type="submit">Submit for review</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+<script>
+/* -----------------------------------------------------------------------
+   Hamburger menu / contact / how-to wiring — same pattern as index.html
+----------------------------------------------------------------------- */
+function $(id){ return document.getElementById(id); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const mBtn=$('menuBtn'), mPanel=$('menuPanel');
+  const closeMenu=()=>{ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
+  window.closeHamburgerMenu=closeMenu;
+  if(mBtn&&mPanel){
+    mBtn.addEventListener('click',e=>{ e.stopPropagation();
+      if(typeof window.closeAccountMenu==='function') window.closeAccountMenu();
+      const open=mPanel.classList.toggle('show'); mBtn.classList.toggle('open',open); mBtn.setAttribute('aria-expanded',open?'true':'false');
+      if(!open){ const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
+    document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
+  }
+  const loginMenuBtn=$('loginMenuBtn');
+  if(loginMenuBtn) loginMenuBtn.addEventListener('click',e=>{ e.stopPropagation(); closeMenu(); const b=$('loginBtn'); if(b)b.click(); });
+  const getPremiumMenuBtn=$('getPremiumMenuBtn');
+  if(getPremiumMenuBtn) getPremiumMenuBtn.addEventListener('click',e=>{ e.stopPropagation(); closeMenu(); const b=$('registerBtn'); if(b)b.click(); });
+
+  const cBtn=$('contactBtn');
+  const hideContact=()=>{ if(cBtn)cBtn.classList.remove('open'); };
+  if(cBtn){
+    cBtn.addEventListener('click',e=>{ e.stopPropagation(); cBtn.classList.toggle('open'); });
+    document.addEventListener('click',e=>{ if(cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hideContact(); });
+  }
+
+  const hBtn=$('howToBtn'), hBox=$('howToBox');
+  function positionHowToBox(){
+    if(!hBtn||!hBox||innerWidth<=560)return;
+    const r=hBtn.getBoundingClientRect();
+    const maxLeft=innerWidth-hBox.offsetWidth-12;
+    hBox.style.left=Math.max(12,Math.min(r.left,maxLeft))+'px';
+    hBox.style.top=(r.bottom+7)+'px';
+  }
+  if(hBtn&&hBox){
+    hBtn.addEventListener('click',e=>{ e.stopPropagation(); positionHowToBox();
+      const open=hBox.classList.toggle('show'); hBtn.setAttribute('aria-expanded',open?'true':'false'); });
+    document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn){ hBox.classList.remove('show'); hBtn.setAttribute('aria-expanded','false'); } });
+  }
+});
+
+/* -----------------------------------------------------------------------
+   Inspiration Loader board logic
+----------------------------------------------------------------------- */
+const CAT_LABEL = {
+  wellness:'🌿 Wellness', fitness:'💪 Fitness', nutrition:'🥗 Nutrition',
+  healing:'🧘 Healing', general:'📢 General', success:'🎉 Success Stories'
+};
+const BOARD_BUCKET = 'board-images';
+
+let currentFilter = 'all';
+let allPosts = [];
+let likedPostIds = new Set();
+let selectedImageFile = null;
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function timeAgo(dateStr){
+  const d = new Date(dateStr);
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  if (diff < 2592000) return Math.floor(diff/86400) + 'd ago';
+  return d.toLocaleDateString();
+}
+
+async function loadFeed(){
+  const feed = $('feed');
+  try{
+    const { data: posts, error } = await sb
+      .from('board_posts')
+      .select('id,title,content,category,image_url,anonymous,created_at,user_id')
+      .eq('status','approved')
+      .order('created_at',{ ascending:false });
+    if (error) throw error;
+    allPosts = posts || [];
+
+    // Like counts (public) + this user's own likes, in two lightweight queries.
+    const ids = allPosts.map(p=>p.id);
+    let counts = {};
+    if (ids.length){
+      const { data: likes } = await sb.from('board_likes').select('post_id').in('post_id', ids);
+      (likes||[]).forEach(l=>{ counts[l.post_id]=(counts[l.post_id]||0)+1; });
+    }
+    allPosts.forEach(p=>{ p._likeCount = counts[p.id] || 0; });
+
+    likedPostIds = new Set();
+    if (currentUser && ids.length){
+      const { data: mine } = await sb.from('board_likes').select('post_id').eq('user_id', currentUser.id).in('post_id', ids);
+      (mine||[]).forEach(l=>likedPostIds.add(l.post_id));
+    }
+
+    renderFeed();
+  } catch(err){
+    console.error('loadFeed error:', err);
+    feed.innerHTML = '<div id="feedEmpty">Could not load the board right now. Please try again shortly.</div>';
+  }
+}
+
+function renderFeed(){
+  const feed = $('feed');
+  const list = currentFilter==='all' ? allPosts : allPosts.filter(p=>p.category===currentFilter);
+  if (!list.length){
+    feed.innerHTML = '<div id="feedEmpty">No posts here yet — be the first to share something inspiring.</div>';
+    return;
+  }
+  feed.innerHTML = list.map(p => {
+    const liked = likedPostIds.has(p.id);
+    const authorLabel = p.anonymous ? '<span class="anonBadge">Anonymous</span>' : 'Community member';
+    return `
+      <div class="pcard" data-id="${p.id}">
+        ${p.image_url ? `<img class="pimg" src="${escapeHtml(p.image_url)}" alt="" loading="lazy">` : ''}
+        <div class="pbody">
+          <span class="pcat">${CAT_LABEL[p.category] || p.category}</span>
+          <h3>${escapeHtml(p.title)}</h3>
+          <p class="ptext">${escapeHtml(p.content)}</p>
+          <div class="pfoot">
+            <span class="pauthor">${authorLabel} · ${timeAgo(p.created_at)}</span>
+            <button class="likeBtn ${liked?'liked':''}" data-id="${p.id}" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.8-9.3C.7 7.7 2.6 4.5 6 4.5c2 0 3.6 1.1 4.8 2.9C12 5.6 13.6 4.5 15.6 4.5c3.4 0 5.3 3.2 3.8 6.7C21.1 15.9 12 20.5 12 20.5Z"/></svg>
+              <span>${p._likeCount}</span>
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  feed.querySelectorAll('.likeBtn').forEach(btn=>{
+    btn.addEventListener('click', () => toggleLike(btn.dataset.id, btn));
+  });
+}
+
+async function toggleLike(postId, btn){
+  if (!currentUser){ const b=$('loginBtn'); if(b)b.click(); return; }
+  btn.disabled = true;
+  const isLiked = likedPostIds.has(postId);
+  try{
+    if (isLiked){
+      await sb.from('board_likes').delete().eq('post_id', postId).eq('user_id', currentUser.id);
+      likedPostIds.delete(postId);
+    } else {
+      await sb.from('board_likes').insert({ post_id: postId, user_id: currentUser.id });
+      likedPostIds.add(postId);
+    }
+    const post = allPosts.find(p=>p.id===postId);
+    if (post) post._likeCount += isLiked ? -1 : 1;
+    renderFeed();
+  } catch(err){
+    console.error('toggleLike error:', err);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+$('catChips').addEventListener('click', e=>{
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  currentFilter = chip.dataset.cat;
+  $('catChips').querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c===chip));
+  renderFeed();
+});
+
+/* -----------------------------------------------------------------------
+   Create-post modal
+----------------------------------------------------------------------- */
+const postModal = $('postModal');
+const postForm = $('postForm');
+const postMsgEl = $('postMessage');
+let selectedPostCategory = 'wellness';
+
+function showPostMessage(text, type){ postMsgEl.textContent = text; postMsgEl.className = type || ''; }
+
+function openPostModal(){
+  if (!currentUser){ const b=$('loginBtn'); if(b)b.click(); return; }
+  showPostMessage('', '');
+  postForm.reset();
+  selectedImageFile = null;
+  $('imgPreview').style.display = 'none';
+  $('imgPreview').src = '';
+  selectedPostCategory = 'wellness';
+  $('postCatGrid').querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c.dataset.cat==='wellness'));
+  $('postSubmit').textContent = 'Submit for review';
+  $('postSubmit').disabled = false;
+  postModal.classList.add('show');
+}
+function closePostModal(){ postModal.classList.remove('show'); }
+
+$('openPostModalBtn').addEventListener('click', openPostModal);
+$('postModalClose').addEventListener('click', closePostModal);
+postModal.addEventListener('click', e=>{ if (e.target===postModal) closePostModal(); });
+document.addEventListener('keydown', e=>{ if (e.key==='Escape' && postModal.classList.contains('show')) closePostModal(); });
+
+$('postCatGrid').addEventListener('click', e=>{
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  selectedPostCategory = chip.dataset.cat;
+  $('postCatGrid').querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c===chip));
+});
+
+$('imgPickBtn').addEventListener('click', ()=> $('postImage').click());
+$('postImage').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if (!file) { selectedImageFile = null; return; }
+  if (file.size > 5*1024*1024){
+    showPostMessage('Image is too large — please pick one under 5MB.', 'error');
+    e.target.value = '';
+    return;
+  }
+  selectedImageFile = file;
+  const reader = new FileReader();
+  reader.onload = () => { $('imgPreview').src = reader.result; $('imgPreview').style.display='block'; };
+  reader.readAsDataURL(file);
+});
+
+postForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!currentUser){ const b=$('loginBtn'); if(b)b.click(); return; }
+  showPostMessage('', '');
+
+  const title = $('postTitle').value.trim();
+  const content = $('postContent').value.trim();
+  const anonymous = $('postAnon').checked;
+  if (!title || !content){ showPostMessage('Please fill in a title and a message.', 'error'); return; }
+
+  const submitBtn = $('postSubmit');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting…';
+
+  try{
+    let imageUrl = null;
+    let imagePath = null;
+    if (selectedImageFile){
+      const ext = (selectedImageFile.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'') || 'jpg';
+      imagePath = `${currentUser.id}/${crypto.randomUUID()}.${ext}`;
+      const { error: uploadErr } = await sb.storage.from(BOARD_BUCKET).upload(imagePath, selectedImageFile, { upsert:false });
+      if (uploadErr) throw uploadErr;
+      const { data: pub } = sb.storage.from(BOARD_BUCKET).getPublicUrl(imagePath);
+      imageUrl = pub.publicUrl;
+    }
+
+    const { error: insertErr } = await sb.from('board_posts').insert({
+      user_id: currentUser.id,
+      title, content,
+      category: selectedPostCategory,
+      image_url: imageUrl,
+      image_path: imagePath,
+      anonymous
+      // status is forced to 'pending' server-side regardless of what's sent
+    });
+    if (insertErr) throw insertErr;
+
+    showPostMessage('Thanks! Your post has been submitted and is awaiting review.', 'success');
+    submitBtn.textContent = 'Submitted';
+    setTimeout(closePostModal, 1400);
+  } catch(err){
+    console.error('post submit error:', err);
+    const readable = (err && typeof err.message === 'string' && err.message.trim()) ? err.message : 'Something went wrong. Please try again.';
+    showPostMessage(readable, 'error');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit for review';
+  }
+});
+
+/* Reload the feed once auth.js has restored the session, so liked-state
+   and the create-post gate are correct from the first paint. */
+onPremiumStatusChange(()=>{ loadFeed(); });
+document.addEventListener('DOMContentLoaded', loadFeed);
+</script>
+</body>
+</html>

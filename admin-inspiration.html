@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inspiration Loader — Moderation</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="images/icon-holistic.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0c0e13; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
+  --gold:#e7c9a2; --gold-soft:#d9b98a;
+  --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(244,241,234,.15);
+  --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ui);color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;
+  background:radial-gradient(120% 60% at 50% 0%, #1a2742 0%, #121a2c 42%, #0a0d14 100%) fixed}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+.hidden{display:none !important}
+
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:18px 24px;background:rgba(6,7,10,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)}
+header h1{font-family:var(--display);font-weight:400;font-style:italic;font-size:22px;color:var(--ink)}
+header h1 span{color:var(--gold)}
+#whoami{font-size:11.5px;color:var(--muted)}
+
+main{max-width:1000px;margin:0 auto;padding:28px 20px 80px}
+
+#gate{display:flex;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:20px}
+#gate p{max-width:360px;color:var(--muted);font-size:14px;line-height:1.6}
+#gate a{color:var(--gold)}
+
+.tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.tabs button{padding:9px 18px;border-radius:999px;font-size:12.5px;font-weight:500;border:1px solid var(--line);
+  background:rgba(244,241,234,.04);color:var(--muted);transition:all .2s ease}
+.tabs button.active{background:rgba(231,201,162,.16);border-color:var(--gold);color:var(--gold)}
+.tabs button .count{margin-left:6px;opacity:.7}
+
+#list{display:flex;flex-direction:column;gap:14px}
+.mcard{display:flex;gap:16px;padding:16px;border-radius:16px;border:1px solid var(--line);background:rgba(244,241,234,.04)}
+.mcard img{width:120px;height:120px;object-fit:cover;border-radius:12px;flex:0 0 auto;background:rgba(244,241,234,.06);cursor:zoom-in}
+.mcard .mbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.mcard .mcat{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.mcard h3{font-family:var(--display);font-weight:600;font-style:italic;font-size:18px}
+.mcard .mtext{font-size:12.5px;color:var(--muted);line-height:1.5;white-space:pre-wrap}
+.mcard .mmeta{font-size:11px;color:var(--faint)}
+.mcard .mactions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.mbtn{padding:8px 15px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.03em;transition:filter .15s ease,transform .1s ease}
+.mbtn:active{transform:scale(.96)}
+.mbtn.approve{background:linear-gradient(180deg,#a9dab0,#7fc189);color:#122414}
+.mbtn.reject{background:rgba(244,241,234,.08);border:1px solid var(--line);color:var(--ink)}
+.mbtn.delete{background:rgba(231,120,120,.14);border:1px solid rgba(231,120,120,.4);color:#e79a9a}
+.mbtn:hover{filter:brightness(1.08)}
+.mbtn:disabled{opacity:.5;cursor:not-allowed}
+#listEmpty{text-align:center;color:var(--muted);font-size:13px;padding:50px 20px}
+
+#lightbox{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:rgba(6,7,10,.85);opacity:0;pointer-events:none;transition:opacity .2s ease}
+#lightbox.show{opacity:1;pointer-events:auto}
+#lightbox img{max-width:90vw;max-height:88vh;border-radius:10px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Inspiration Loader <span>Moderation</span></h1>
+  <div id="whoami"></div>
+</header>
+
+<div id="gate" class="hidden">
+  <p id="gateMsg">Checking your access…</p>
+</div>
+
+<main id="mainContent" class="hidden">
+  <div class="tabs" id="tabs">
+    <button data-status="pending" class="active">Pending <span class="count" id="countPending"></span></button>
+    <button data-status="approved">Approved <span class="count" id="countApproved"></span></button>
+    <button data-status="rejected">Rejected <span class="count" id="countRejected"></span></button>
+  </div>
+  <div id="list"><div id="listEmpty">Loading…</div></div>
+</main>
+
+<div id="lightbox"><img id="lightboxImg" alt=""></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+<script>
+function $(id){ return document.getElementById(id); }
+const CAT_LABEL = {
+  wellness:'🌿 Wellness', fitness:'💪 Fitness', nutrition:'🥗 Nutrition',
+  healing:'🧘 Healing', general:'📢 General', success:'🎉 Success Stories'
+};
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+const BOARD_BUCKET = 'board-images';
+let isAdminUser = false;
+let activeStatus = 'pending';
+let postsByStatus = { pending:[], approved:[], rejected:[] };
+
+async function checkAdminAndInit(){
+  const gate = $('gate'), gateMsg = $('gateMsg'), main = $('mainContent');
+  if (!currentUser){
+    gate.classList.remove('hidden');
+    gateMsg.innerHTML = 'Please log in with your admin account to view the moderation panel. Use the login option from the main site header.';
+    return;
+  }
+  $('whoami').textContent = currentUser.email;
+
+  const { data, error } = await sb.from('profiles').select('is_admin').eq('user_id', currentUser.id).maybeSingle();
+  if (error || !data || !data.is_admin){
+    gate.classList.remove('hidden');
+    gateMsg.textContent = "This page is restricted to Holistic Loader admins. If you believe this is a mistake, contact holisticloader@gmail.com.";
+    return;
+  }
+
+  isAdminUser = true;
+  gate.classList.add('hidden');
+  main.classList.remove('hidden');
+  await loadAll();
+}
+
+async function loadAll(){
+  const { data, error } = await sb
+    .from('board_posts')
+    .select('id,title,content,category,image_url,image_path,anonymous,status,created_at,approved_at,user_id')
+    .order('created_at', { ascending:false });
+  if (error){ console.error(error); $('list').innerHTML = '<div id="listEmpty">Could not load posts.</div>'; return; }
+
+  postsByStatus = { pending:[], approved:[], rejected:[] };
+  (data||[]).forEach(p => { if (postsByStatus[p.status]) postsByStatus[p.status].push(p); });
+
+  $('countPending').textContent = postsByStatus.pending.length || '';
+  $('countApproved').textContent = postsByStatus.approved.length || '';
+  $('countRejected').textContent = postsByStatus.rejected.length || '';
+  renderList();
+}
+
+function renderList(){
+  const list = postsByStatus[activeStatus] || [];
+  if (!list.length){
+    $('list').innerHTML = '<div id="listEmpty">Nothing here.</div>';
+    return;
+  }
+  $('list').innerHTML = list.map(p => `
+    <div class="mcard" data-id="${p.id}">
+      ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" alt="" class="mcard-img">` : ''}
+      <div class="mbody">
+        <span class="mcat">${CAT_LABEL[p.category] || p.category}</span>
+        <h3>${escapeHtml(p.title)}</h3>
+        <div class="mtext">${escapeHtml(p.content)}</div>
+        <div class="mmeta">${p.anonymous ? 'Anonymous · ' : ''}${new Date(p.created_at).toLocaleString()}</div>
+        <div class="mactions">
+          ${activeStatus !== 'approved' ? `<button class="mbtn approve" data-action="approve" data-id="${p.id}">Approve</button>` : ''}
+          ${activeStatus !== 'rejected' ? `<button class="mbtn reject" data-action="reject" data-id="${p.id}">Reject</button>` : ''}
+          <button class="mbtn delete" data-action="delete" data-id="${p.id}">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  $('list').querySelectorAll('.mcard-img').forEach(img=>{
+    img.addEventListener('click', () => {
+      $('lightboxImg').src = img.src;
+      $('lightbox').classList.add('show');
+    });
+  });
+  $('list').querySelectorAll('.mbtn').forEach(btn=>{
+    btn.addEventListener('click', () => handleAction(btn.dataset.action, btn.dataset.id, btn));
+  });
+}
+
+async function removeStorageImage(path){
+  if (!path) return;
+  const { error } = await sb.storage.from(BOARD_BUCKET).remove([path]);
+  // Don't let a storage hiccup block the moderation action itself —
+  // just log it, since the post-level change (reject/delete) is what matters most.
+  if (error) console.error('Failed to remove storage image', path, error);
+}
+
+function findPost(id){
+  for (const s of ['pending','approved','rejected']){
+    const found = postsByStatus[s].find(p => p.id === id);
+    if (found) return found;
+  }
+  return null;
+}
+
+async function handleAction(action, id, btn){
+  btn.disabled = true;
+  const post = findPost(id);
+  try{
+    if (action === 'approve'){
+      const { error } = await sb.from('board_posts').update({ status:'approved' }).eq('id', id);
+      if (error) throw error;
+    } else if (action === 'reject'){
+      // Rejected posts never go public again, so their image is deleted
+      // outright rather than just hidden — a public bucket would otherwise
+      // keep serving it at its old URL forever.
+      await removeStorageImage(post && post.image_path);
+      const { error } = await sb.from('board_posts').update({ status:'rejected', image_url:null, image_path:null }).eq('id', id);
+      if (error) throw error;
+    } else if (action === 'delete'){
+      if (!confirm('Delete this post permanently? This cannot be undone.')) { btn.disabled = false; return; }
+      await removeStorageImage(post && post.image_path);
+      const { error } = await sb.from('board_posts').delete().eq('id', id);
+      if (error) throw error;
+    }
+    await loadAll();
+  } catch(err){
+    console.error('moderation action error:', err);
+    alert('Something went wrong: ' + (err.message || 'please try again.'));
+    btn.disabled = false;
+  }
+}
+
+$('tabs').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-status]');
+  if (!btn) return;
+  activeStatus = btn.dataset.status;
+  $('tabs').querySelectorAll('button').forEach(b=>b.classList.toggle('active', b===btn));
+  renderList();
+});
+
+$('lightbox').addEventListener('click', () => $('lightbox').classList.remove('show'));
+
+onPremiumStatusChange(()=>{ checkAdminAndInit(); });
+document.addEventListener('DOMContentLoaded', () => { setTimeout(checkAdminAndInit, 50); });
+</script>
+</body>
+</html>
