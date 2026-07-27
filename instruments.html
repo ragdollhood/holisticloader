@@ -2192,6 +2192,7 @@
     nb.connect(bp).connect(ng).connect(strikeBus);
     nb.start(t0); ng._src=nb; gains.push(ng);
     registerStrike(gains,t0+5.6,_voiceW);
+    return true;
   }
 
   function strikeChime(f,soft,delay){
@@ -2211,6 +2212,7 @@
       gains.push(partial(t0,f*p[0],v*p[1]*.5,p[2], -3*dJit,.006));
     });
     registerStrike(gains,t0+9.3,_voiceW);
+    return true;
   }
 
   // ---- rumsakustik: genererade impulssvar för olika rum ----
@@ -2694,9 +2696,11 @@
         const drive=Math.min(1,speed*1.4);
         const build=Math.min(1,.3+p.moved/350);
         gCluster.gain.setTargetAtTime(v*.4*build*Math.max(.55,drive),t,.18);
-        if(Math.random()<.4){
+        if(Math.random()<.4 && voiceGateOpen(1)){
           const r=[1.41,2.15,2.69,3.36,4.07,4.97][Math.floor(Math.random()*6)];
-          partial(t,gongF()*r,v*.12*Math.max(.5,drive),2+Math.random()*2.5,(Math.random()-.5)*16,.08);
+          const shimmerEnd=t+2+Math.random()*2.5;
+          const sg=partial(t,gongF()*r,v*.12*Math.max(.5,drive),2+Math.random()*2.5,(Math.random()-.5)*16,.08);
+          registerStrike([sg],shimmerEnd,1);
           busyUntil=Math.max(busyUntil,t+5);
         }
         cosmicBoost(.025,'gong',false);
@@ -2773,11 +2777,15 @@
       const i=hpFieldAt(e);
       lastField.set(e.pointerId,i);
       if(i<0) return;
-      strikeHand(handF()*HP_FIELDS[i].ratio,false);
-      hpGlowAt(i);
-      const xy=stagePos(e);
-      if(!reduced){glowOrbs(xy[0],xy[1],'255,170,130',10);}
-      cosmicBoost(.5,'hand',true);
+      // samma resonemang som för vindspelet: glow/particlar/cosmicBoost är
+      // dyrare (forcerad layout + canvas) än själva ljud-spärren, så de ska
+      // bara köras när tonen faktiskt fick spela.
+      if(strikeHand(handF()*HP_FIELDS[i].ratio,false)){
+        hpGlowAt(i);
+        const xy=stagePos(e);
+        if(!reduced){glowOrbs(xy[0],xy[1],'255,170,130',10);}
+        cosmicBoost(.5,'hand',true);
+      }
       wrap.classList.remove('lit'); void wrap.offsetWidth; wrap.classList.add('lit');
     });
     wrap.addEventListener('pointermove',function(e){
@@ -2785,11 +2793,12 @@
       const i=hpFieldAt(e);
       if(i>=0 && i!==lastField.get(e.pointerId)){
         lastField.set(e.pointerId,i);
-        strikeHand(handF()*HP_FIELDS[i].ratio,true);
-        hpGlowAt(i);
-        const xy=stagePos(e);
-        if(!reduced){glowOrbs(xy[0],xy[1],'255,170,130',3);}
-        cosmicBoost(.1,'hand',false);
+        if(strikeHand(handF()*HP_FIELDS[i].ratio,true)){
+          hpGlowAt(i);
+          const xy=stagePos(e);
+          if(!reduced){glowOrbs(xy[0],xy[1],'255,170,130',3);}
+          cosmicBoost(.1,'hand',false);
+        }
       }
     });
     function done(e){lastField.delete(e.pointerId)}
@@ -2850,11 +2859,18 @@
       lastTube.set(e.pointerId,i);
       if(i==='sail'){ breeze(); }
       else if(i>=0){
-        strikeChime(chimeF()*CHIME_TUBES[i].ratio,false,0);
-        chimeGlow(i,0);
-        const xy=stagePos(e);
-        if(!reduced) glitter(xy[0],xy[1],'255,170,130',6);
-        cosmicBoost(.4,'chime',true);
+        // chimeGlow/glitter/cosmicBoost gör vardera minst en forcerad
+        // layout-omräkning (getBoundingClientRect) plus canvas-ritning — de
+        // ska bara köras om tonen faktiskt fick spela. Annars kan snabba
+        // svep fortsätta belasta huvudtråden med visuella effekter även när
+        // ljud-spärren redan stoppat själva ljudet (samma flödesproblem som
+        // ljudet hade, fast i canvas/layout-form istället för AudioNode-form).
+        if(strikeChime(chimeF()*CHIME_TUBES[i].ratio,false,0)){
+          chimeGlow(i,0);
+          const xy=stagePos(e);
+          if(!reduced) glitter(xy[0],xy[1],'255,170,130',6);
+          cosmicBoost(.4,'chime',true);
+        }
       } else return;
       wrap.classList.remove('lit'); void wrap.offsetWidth; wrap.classList.add('lit');
     });
@@ -2863,11 +2879,12 @@
       const i=chimeHitAt(e);
       if(typeof i==='number' && i>=0 && i!==lastTube.get(e.pointerId)){
         lastTube.set(e.pointerId,i);
-        strikeChime(chimeF()*CHIME_TUBES[i].ratio,true,0);
-        chimeGlow(i,0);
-        const xy=stagePos(e);
-        if(!reduced) glitter(xy[0],xy[1],'255,170,130',3);
-        cosmicBoost(.08,'chime',false);
+        if(strikeChime(chimeF()*CHIME_TUBES[i].ratio,true,0)){
+          chimeGlow(i,0);
+          const xy=stagePos(e);
+          if(!reduced) glitter(xy[0],xy[1],'255,170,130',3);
+          cosmicBoost(.08,'chime',false);
+        }
       }
     });
     function done(e){lastTube.delete(e.pointerId)}
