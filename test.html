@@ -154,63 +154,72 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
   font-size:clamp(22px,5vw,42px);line-height:1;color:#f4f1ea}
 
-/* ===== Left-edge tab navigation (full-height sidebar) ===== */
+/* ===== Top logo + tab navigation (OLD system — text tabs, mobile only) ===== */
+/* Hidden by default (desktop uses the new sidebar nav below); restored inside
+   the max-width:560px query so mobile keeps the original top text-tab bar. */
+#topNav{display:none;position:fixed;top:0;left:0;right:0;z-index:40;flex-direction:column;align-items:center;
+  padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(6,7,10,.82) 0%,rgba(6,7,10,.5) 65%,transparent 100%)}
+#topTabs{display:flex;pointer-events:auto}
+#topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
+  padding:9px 20px;color:var(--muted);text-decoration:none;white-space:nowrap;
+  background:var(--glass);border:1px solid var(--line);border-bottom:none;
+  border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
+#topTabs .tab:hover{color:var(--ink)}
+#topTabs .tab.active{color:var(--gold);background:var(--glass-strong);border-color:var(--gold);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2}
+#topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--gold-soft) 50%,var(--gold) 85%,transparent);
+  opacity:.55}
+body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease}
+
+/* ===== Left-edge sidebar navigation (NEW system — photo tabs, desktop only) ===== */
 :root{--sidebar-w:clamp(230px,30vw,330px)}
-#topNav{position:fixed;top:0;left:0;right:0;z-index:40;pointer-events:none}
-/* Vertical menu, running the full left edge, wrapped in one clearly
-   separated frame so it reads as a distinct panel from the scene. */
-#topTabs{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(22px,3.4vw,42px);
+#topNavDesktop{position:fixed;top:0;left:0;right:0;z-index:40;pointer-events:none}
+#topTabsDesktop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(22px,3.4vw,42px);
   pointer-events:auto;position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);
   z-index:41;padding:32px 18px;background:linear-gradient(180deg,rgba(10,12,17,.88),rgba(13,15,21,.82) 50%,rgba(10,12,17,.88));
   border-right:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   box-shadow:14px 0 40px rgba(0,0,0,.45)}
-/* gold accent line marking the frame edge, matching #topNavLine's style */
-#topTabs::after{content:'';position:absolute;top:0;right:-1px;bottom:0;width:2px;pointer-events:none;
+#topTabsDesktop::after{content:'';position:absolute;top:0;right:-1px;bottom:0;width:2px;pointer-events:none;
   background:linear-gradient(180deg,transparent,var(--gold-soft) 12%,var(--gold) 50%,var(--gold-soft) 88%,transparent);
   opacity:.6}
-#topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:13px;letter-spacing:.04em;
-  padding:12px 22px;color:var(--muted);text-decoration:none;white-space:nowrap;
-  background:var(--glass);border:1px solid var(--line);
-  border-radius:14px;transition:color .25s ease,background .25s ease}
-#topTabs .tab:hover{color:var(--ink)}
-#topTabs .tab.active{color:var(--gold);background:var(--glass-strong);border-color:var(--gold);box-shadow:0 8px 22px rgba(0,0,0,.28);z-index:2}
-/* image tabs: Breathing / Sound Healing / Nutrition / Store shown as icon buttons, 3x their original size */
-#topTabs .tabImg{display:block;width:clamp(192px,26vw,276px);height:clamp(192px,26vw,276px);border-radius:26px;overflow:hidden;
+#topTabsDesktop .tabImg{display:block;width:clamp(192px,26vw,276px);height:clamp(192px,26vw,276px);border-radius:26px;overflow:hidden;
   position:relative;border:1px solid var(--line);background:var(--glass-strong);
   box-shadow:0 10px 28px rgba(0,0,0,.4);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
-#topTabs .tabImg picture,#topTabs .tabImg img{display:block;width:100%;height:100%;object-fit:cover}
-#topTabs .tabImg:hover{transform:translateX(3px) scale(1.02)}
-#topTabs .tabImg:active{transform:translateX(0) scale(.97)}
-#topTabs .tabImg.active{border-color:var(--gold);
-  box-shadow:0 0 0 2px var(--gold),0 0 24px rgba(231,201,162,.55),0 14px 32px rgba(0,0,0,.45);}
-#topNavLine{display:none}
-body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease}
-
-/* shift the scene's foreground content clear of the left sidebar */
+#topTabsDesktop .tabImg picture,#topTabsDesktop .tabImg img{display:block;width:100%;height:100%;object-fit:cover}
+#topTabsDesktop .tabImg:hover{transform:translateX(3px) scale(1.02)}
+#topTabsDesktop .tabImg:active{transform:translateX(0) scale(.97)}
+#topTabsDesktop .tabImg.active{border-color:var(--gold);
+  box-shadow:0 0 0 2px var(--gold),0 0 24px rgba(231,201,162,.55),0 14px 32px rgba(0,0,0,.45)}
+body.immersive #topNavDesktop{opacity:0;pointer-events:none;transition:opacity .5s ease}
+/* shift the scene's foreground content clear of the left sidebar (desktop only) */
 #brand{left:var(--sidebar-w)}
+body.preset-active #topTabsDesktop{display:none}
+body.preset-active #brand,
+body.preset-active #center,
+body.preset-active #front{left:0}
 
 @media(max-width:560px){
-  :root{--sidebar-w:clamp(150px,46vw,190px)}
-  #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
+  #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
   /* logo moved up a bit and enlarged — the Start button follows automatically
      since positionOrb() places it relative to #brand's live bounding box */
-  #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px))}
+  #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px));left:0}
   #brandLogo{max-height:clamp(120px,24vw,216px)}
-  #topTabs{gap:16px;padding:20px 10px}
-  #topTabs .tab{padding:9px 14px;font-size:11.5px}
-  #topTabs .tabImg{width:clamp(120px,38vw,168px);height:clamp(120px,38vw,168px);border-radius:18px}
+  #topTabs .tab{padding:8px 13px;font-size:11px}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
+  /* mobile keeps the OLD top text-tab bar; hide the desktop sidebar entirely */
+  #topNav{display:flex}
+  #topNavDesktop{display:none}
   /* preset active: hide the Breathing / Sound Healing / Nutrition tabs and the line under them */
-  body.preset-active #topTabs{display:none}
-  body.preset-active #brand,
-  body.preset-active #center,
-  body.preset-active #front{left:0}
+  body.preset-active #topTabs,
+  body.preset-active #topNavLine{display:none}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
-#timerCluster{position:absolute;top:max(16px,calc(env(safe-area-inset-top) + 10px));left:calc(var(--sidebar-w) + 18px);z-index:7;display:flex;align-items:center;gap:3px;
+#timerCluster{position:absolute;top:max(16px,calc(env(safe-area-inset-top) + 10px));left:18px;z-index:7;display:flex;align-items:center;gap:3px;
   padding:5px 6px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
 .tc-time{font-variant-numeric:tabular-nums;font-weight:300;font-size:16px;letter-spacing:.08em;color:var(--gold);padding:0 6px;min-width:52px;text-align:center}
 .tc-btn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;color:var(--ink);transition:background .2s ease,transform .12s ease}
@@ -222,7 +231,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
 #btnPause.paused .ic-pause{display:none}
 #btnPause.paused .ic-play{display:block}
 
-#center{position:absolute;top:0;right:0;bottom:0;left:var(--sidebar-w);display:grid;place-items:start center;z-index:4;pointer-events:none}
+#center{position:absolute;inset:0;display:grid;place-items:start center;z-index:4;pointer-events:none}
 #orbWrap{position:relative;display:grid;place-items:center;width:min(62vw,320px);height:min(62vw,320px);margin-top:120px}
 #orbGlow{position:absolute;width:150%;height:150%;border-radius:50%;opacity:.12;will-change:transform,opacity;
   background:radial-gradient(circle,rgba(231,201,162,.26),rgba(231,201,162,.04) 52%,transparent 72%);filter:blur(14px)}
@@ -242,7 +251,7 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(17px,2.8vw,26px);letter-spacing:.06em;color:#fdfcf8;
   text-shadow:0 1px 3px rgba(0,0,0,.65),0 3px 22px rgba(0,0,0,.7)}
 
-#front{position:absolute;left:var(--sidebar-w);right:0;bottom:0;z-index:6;padding:0 0 max(26px,env(safe-area-inset-bottom));transition:opacity .55s ease,transform .55s ease}
+#front{position:absolute;left:0;right:0;bottom:0;z-index:6;padding:0 0 max(26px,env(safe-area-inset-bottom));transition:opacity .55s ease,transform .55s ease}
 #front.gone{opacity:0;transform:translateY(24px);pointer-events:none}
 .reel-label{text-align:center;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;white-space:nowrap}
 .reel-label .kw{font-size:1.05em;color:var(--gold);font-weight:600;letter-spacing:.1em}
@@ -502,15 +511,15 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .premCtaGhost{width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);
   font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
 .premCtaGhost:hover{background:rgba(244,241,234,.08);color:var(--ink);border-color:rgba(244,241,234,.35)}
-#frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:calc(var(--sidebar-w) + 16px);right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
-#donateWrap{position:fixed;left:calc(var(--sidebar-w) + 16px);top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
+#frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
+#donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
 @supports(padding:max(0px)){
-  #donateWrap{left:calc(var(--sidebar-w) + max(16px,env(safe-area-inset-left)))}
+  #donateWrap{left:max(16px,env(safe-area-inset-left))}
 }
 @media(max-width:560px){
-  #donateWrap{left:calc(var(--sidebar-w) + 4px);top:max(4px,calc(env(safe-area-inset-top) - 8px))}
+  #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
   @supports(padding:max(0px)){
-    #donateWrap{left:calc(var(--sidebar-w) + max(4px,env(safe-area-inset-left)))}
+    #donateWrap{left:max(4px,env(safe-area-inset-left))}
   }
   /* fine vertical alignment between the icon-only ctrl tabs: on narrow screens
      Sound tempo sits lower than Breathing tempo, and Session length sits lower
@@ -729,6 +738,18 @@ body.immersive #howToBox{display:none}
 
 <header id="topNav">
   <nav id="topTabs" aria-label="Main sections">
+    <a href="index.html" class="tab active" aria-current="page">Breathing</a>
+    <a href="instruments.html" class="tab">Sound Healing</a>
+    <a href="nutriloader.html" class="tab">Nutrition</a>
+    <a href="store.html" class="tab">Store</a>
+  </nav>
+  <div id="topNavLine"></div>
+</header>
+
+<div id="authRoot"></div>
+
+<header id="topNavDesktop">
+  <nav id="topTabsDesktop" aria-label="Main sections">
     <a href="index.html" class="tabImg active" aria-current="page" aria-label="Breathing">
       <picture>
         <source srcset="images/btn-breathe.webp" type="image/webp">
@@ -754,8 +775,6 @@ body.immersive #howToBox{display:none}
       </picture>
     </a>
   </nav>
-  <div id="authRoot"></div>
-  <div id="topNavLine"></div>
 </header>
 
 <div id="howToBox">
