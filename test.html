@@ -166,7 +166,7 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
 #topTabs .tab:hover{color:var(--ink)}
 #topTabs .tab.active{color:var(--gold);background:var(--glass-strong);border-color:var(--gold);box-shadow:0 8px 22px rgba(0,0,0,.28);z-index:2}
 /* image tabs: Breathing / Sound Healing / Nutrition shown as icon buttons */
-#topTabs .tabImg{display:block;width:clamp(46px,7vw,64px);height:clamp(46px,7vw,64px);border-radius:16px;overflow:hidden;
+#topTabs .tabImg{display:block;width:clamp(120px,17vw,170px);height:clamp(120px,17vw,170px);border-radius:24px;overflow:hidden;
   position:relative;border:1px solid var(--line);background:var(--glass-strong);
   box-shadow:0 8px 22px rgba(0,0,0,.4);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
 #topTabs .tabImg picture,#topTabs .tabImg img{display:block;width:100%;height:100%;object-fit:cover}
@@ -179,29 +179,6 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   opacity:.55}
 body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease}
 
-/* ===== Floating side buttons: Sound Healing instruments / Nutrition ===== */
-#sideBtns{position:fixed;top:0;left:0;right:0;bottom:0;z-index:36;pointer-events:none}
-.sideBtn{position:absolute;top:50%;transform:translateY(-50%);pointer-events:auto;
-  display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;
-  transition:transform .25s ease,opacity .4s ease}
-.sideBtn:hover,.sideBtn:focus-visible{transform:translateY(-50%) scale(1.06)}
-.sideBtn:active{transform:translateY(-50%) scale(.97)}
-.sideBtnLeft{left:max(10px,env(safe-area-inset-left))}
-.sideBtnRight{right:max(10px,env(safe-area-inset-right))}
-.sideBtnPic{width:clamp(64px,9vw,118px);height:clamp(64px,9vw,118px);border-radius:18px;overflow:hidden;
-  border:1px solid var(--line);box-shadow:0 10px 28px rgba(0,0,0,.45);
-  background:var(--glass-strong)}
-.sideBtnPic img{width:100%;height:100%;object-fit:cover;display:block}
-.sideBtnLbl{font-family:var(--ui);font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--muted);
-  text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.6);max-width:110px}
-body.immersive #sideBtns{opacity:0;pointer-events:none}
-body.preset-active #sideBtns{opacity:0;pointer-events:none}
-@media(max-width:760px){
-  .sideBtnPic{width:clamp(50px,15vw,72px);height:clamp(50px,15vw,72px);border-radius:14px}
-  .sideBtnLbl{font-size:9.5px;max-width:78px}
-  .sideBtnLeft{left:max(8px,env(safe-area-inset-left))}
-  .sideBtnRight{right:max(8px,env(safe-area-inset-right))}
-}
 
 @media(max-width:560px){
   #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
@@ -210,8 +187,8 @@ body.preset-active #sideBtns{opacity:0;pointer-events:none}
   #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px))}
   #brandLogo{max-height:clamp(120px,24vw,216px)}
   #topTabs .tab{padding:8px 13px;font-size:11px}
-  #topTabs{gap:8px}
-  #topTabs .tabImg{width:44px;height:44px;border-radius:12px}
+  #topTabs{gap:10px}
+  #topTabs .tabImg{width:100px;height:100px;border-radius:18px}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
@@ -743,19 +720,19 @@ body.immersive #howToBox{display:none}
     <a href="index.html" class="tabImg active" aria-current="page" aria-label="Breathing">
       <picture>
         <source srcset="images/btn-breathe.webp" type="image/webp">
-        <img src="images/btn-breathe.jpg" alt="Breathing" width="64" height="64" loading="eager">
+        <img src="images/btn-breathe.jpg" alt="Breathing" width="170" height="170" loading="eager">
       </picture>
     </a>
     <a href="instruments.html" class="tabImg" aria-label="Sound Healing">
       <picture>
         <source srcset="images/btn-instru.webp" type="image/webp">
-        <img src="images/btn-instru.jpg" alt="Sound Healing" width="64" height="64" loading="lazy">
+        <img src="images/btn-instru.jpg" alt="Sound Healing" width="170" height="170" loading="lazy">
       </picture>
     </a>
     <a href="nutriloader.html" class="tabImg" aria-label="Nutrition">
       <picture>
         <source srcset="images/btn-nutri.webp" type="image/webp">
-        <img src="images/btn-nutri.jpg" alt="Nutrition" width="64" height="64" loading="lazy">
+        <img src="images/btn-nutri.jpg" alt="Nutrition" width="170" height="170" loading="lazy">
       </picture>
     </a>
     <a href="store.html" class="tab">Store</a>
@@ -763,27 +740,6 @@ body.immersive #howToBox{display:none}
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
 </header>
-
-<div id="sideBtns">
-  <a href="instruments.html" class="sideBtn sideBtnRight" aria-label="Play sound healing instruments">
-    <span class="sideBtnPic">
-      <picture>
-        <source srcset="images/btn-instru.webp" type="image/webp">
-        <img src="images/btn-instru.jpg" alt="Tap to play — choose your tone and frequency" loading="lazy" width="118" height="118">
-      </picture>
-    </span>
-    <span class="sideBtnLbl">Sound Healing</span>
-  </a>
-  <a href="nutriloader.html" class="sideBtn sideBtnLeft" aria-label="Monitor your nutrition">
-    <span class="sideBtnPic">
-      <picture>
-        <source srcset="images/btn-nutri.webp" type="image/webp">
-        <img src="images/btn-nutri.jpg" alt="Monitor your nutrition" loading="lazy" width="118" height="118">
-      </picture>
-    </span>
-    <span class="sideBtnLbl">Nutrition</span>
-  </a>
-</div>
 
 <div id="howToBox">
   <button id="howToClose" type="button" aria-label="Close">
