@@ -188,17 +188,17 @@ body.preset-active #stage{left:0}
 #navBackdrop{position:fixed;inset:0;z-index:39;background:rgba(6,7,10,.55);opacity:0;pointer-events:none;
   transition:opacity .3s ease}
 
-/* floating handle: a couple of small colorful bouncing dots that hint the
-   drawer can be pulled open. Hidden on desktop; only shown on mobile below. */
+/* floating handle: chevron arrows + "More" label hinting the drawer can be
+   opened. Hidden on desktop; only shown on mobile below. Vertical position
+   is set from JS (positionOrb) to line up with the Start button. */
 #navHandle{display:none;position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:42;
-  width:34px;height:64px;align-items:center;justify-content:center;gap:6px;
+  width:40px;height:64px;flex-direction:column;align-items:center;justify-content:center;gap:3px;
   border-radius:0 18px 18px 0;background:var(--glass-strong);border:1px solid var(--line);border-left:none;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:6px 8px 22px rgba(0,0,0,.4);
   transition:opacity .25s ease,transform .25s ease}
-#navHandle .dot{width:9px;height:9px;border-radius:50%;animation:navDotBounce 1.1s ease-in-out infinite}
-#navHandle .dot:nth-child(1){background:#e7c9a2;animation-delay:0s}
-#navHandle .dot:nth-child(2){background:#7fd9c4;animation-delay:.18s}
-@keyframes navDotBounce{0%,60%,100%{transform:translateX(0)}30%{transform:translateX(4px)}}
+#navHandle .nav-chev{width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:2.1;animation:navChevBounce 1.1s ease-in-out infinite}
+#navHandle .nav-more{font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:8.5px;letter-spacing:.14em;color:var(--muted)}
+@keyframes navChevBounce{0%,60%,100%{transform:translateX(0)}30%{transform:translateX(4px)}}
 body.nav-open #navHandle{opacity:0;pointer-events:none;transform:translateY(-50%) translateX(-10px)}
 
 @media(max-width:560px){
@@ -743,7 +743,8 @@ body.immersive #howToBox{display:none}
 
 <div id="navBackdrop"></div>
 <button id="navHandle" aria-label="Open menu" aria-expanded="false" aria-controls="topTabsDesktop">
-  <span class="dot"></span><span class="dot"></span>
+  <svg class="nav-chev" viewBox="0 0 24 24"><path d="M7 5l6 7-6 7"/><path d="M13 5l6 7-6 7"/></svg>
+  <span class="nav-more">MORE</span>
 </button>
 
 <header id="topNavDesktop">
@@ -2204,6 +2205,9 @@ function positionOrb(){
   const mobileOffset=innerWidth<=560?21:0;
   const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38 + mobileOffset);
   ow.style.marginTop=mt+'px';
+  /* keep the mobile drawer handle lined up with the Start button's height */
+  const nh=$('navHandle');
+  if(nh&&innerWidth<=560)nh.style.top=(mt+oh/2)+'px';
   updateLensGeom();
 }
 function positionBrand(){
