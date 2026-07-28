@@ -104,7 +104,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 .hidden{display:none !important}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
 
-#stage{position:fixed;inset:0;overflow:hidden;background:radial-gradient(120% 90% at 50% 18%, #1a2742 0%, #121a2c 42%, #0a0d14 100%)}
+#stage{position:fixed;top:0;right:0;bottom:0;left:0;overflow:hidden;background:radial-gradient(120% 90% at 50% 18%, #1a2742 0%, #121a2c 42%, #0a0d14 100%)}
 #bgDrift{position:absolute;inset:0;z-index:0}
 #bgBreath{position:absolute;inset:0;transform-origin:50% 52%;will-change:transform,filter;transform:scale(1.08)}
 /* magnifying lens (shows the part of the background behind the circle, enlarged) */
@@ -177,12 +177,12 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
 #topTabsDesktop .tabImg.active{border-color:var(--gold);
   box-shadow:0 0 0 2px var(--gold),0 0 24px rgba(231,201,162,.55),0 14px 32px rgba(0,0,0,.45)}
 body.immersive #topNavDesktop{opacity:0;pointer-events:none;transition:opacity .5s ease}
-/* shift the scene's foreground content clear of the left sidebar (desktop only) */
-#brand{left:var(--sidebar-w)}
+/* shift the ENTIRE scene (background, orb, instrument reel, front controls,
+   images) clear of the left sidebar on desktop — not just the logo — so
+   nothing sits hidden underneath the panel */
+#stage{left:var(--sidebar-w)}
 body.preset-active #topTabsDesktop{display:none}
-body.preset-active #brand,
-body.preset-active #center,
-body.preset-active #front{left:0}
+body.preset-active #stage{left:0}
 
 /* darkened backdrop shown behind the drawer on mobile while it's open */
 #navBackdrop{position:fixed;inset:0;z-index:39;background:rgba(6,7,10,.55);opacity:0;pointer-events:none;
@@ -205,7 +205,8 @@ body.nav-open #navHandle{opacity:0;pointer-events:none;transform:translateY(-50%
   #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
   /* logo moved up a bit and enlarged — the Start button follows automatically
      since positionOrb() places it relative to #brand's live bounding box */
-  #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px));left:0}
+  #stage{left:0}
+  #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px))}
   #brandLogo{max-height:clamp(120px,24vw,216px)}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
