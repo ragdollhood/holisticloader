@@ -158,20 +158,26 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,7,10,.82) 0%,rgba(6,7,10,.5) 65%,transparent 100%)}
-#topTabs{display:flex;align-items:center;gap:12px;pointer-events:auto}
+/* Vertical menu, pinned to the left edge, wrapped in a single frame so it
+   reads as one menu instead of loose floating icons. */
+#topTabs{display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:auto;
+  position:fixed;left:max(14px,env(safe-area-inset-left));top:max(96px,calc(env(safe-area-inset-top) + 82px));
+  z-index:41;padding:14px 12px;background:var(--glass-strong);border:1px solid var(--line);
+  border-radius:22px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 8px 22px rgba(0,0,0,.4)}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
   padding:9px 20px;color:var(--muted);text-decoration:none;white-space:nowrap;
   background:var(--glass);border:1px solid var(--line);
-  border-radius:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
+  border-radius:12px;transition:color .25s ease,background .25s ease}
 #topTabs .tab:hover{color:var(--ink)}
 #topTabs .tab.active{color:var(--gold);background:var(--glass-strong);border-color:var(--gold);box-shadow:0 8px 22px rgba(0,0,0,.28);z-index:2}
 /* image tabs: Breathing / Sound Healing / Nutrition shown as icon buttons */
-#topTabs .tabImg{display:block;width:clamp(120px,17vw,170px);height:clamp(120px,17vw,170px);border-radius:24px;overflow:hidden;
+#topTabs .tabImg{display:block;width:clamp(64px,11vw,92px);height:clamp(64px,11vw,92px);border-radius:18px;overflow:hidden;
   position:relative;border:1px solid var(--line);background:var(--glass-strong);
-  box-shadow:0 8px 22px rgba(0,0,0,.4);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+  box-shadow:0 6px 16px rgba(0,0,0,.35);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
 #topTabs .tabImg picture,#topTabs .tabImg img{display:block;width:100%;height:100%;object-fit:cover}
-#topTabs .tabImg:hover{transform:translateY(-2px)}
-#topTabs .tabImg:active{transform:translateY(0) scale(.96)}
+#topTabs .tabImg:hover{transform:translateX(2px)}
+#topTabs .tabImg:active{transform:translateX(0) scale(.96)}
 #topTabs .tabImg.active{border-color:var(--gold);
   box-shadow:0 0 0 2px var(--gold),0 0 18px rgba(231,201,162,.55),0 10px 26px rgba(0,0,0,.45);}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
@@ -187,8 +193,8 @@ body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease
   #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px))}
   #brandLogo{max-height:clamp(120px,24vw,216px)}
   #topTabs .tab{padding:8px 13px;font-size:11px}
-  #topTabs{gap:10px}
-  #topTabs .tabImg{width:100px;height:100px;border-radius:18px}
+  #topTabs{gap:8px;padding:10px 8px;left:10px;top:max(88px,calc(env(safe-area-inset-top) + 74px))}
+  #topTabs .tabImg{width:58px;height:58px;border-radius:14px}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
