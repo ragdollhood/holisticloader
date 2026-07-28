@@ -154,33 +154,17 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
   font-size:clamp(22px,5vw,42px);line-height:1;color:#f4f1ea}
 
-/* ===== Top logo + tab navigation (OLD system — text tabs, mobile only) ===== */
-/* Hidden by default (desktop uses the new sidebar nav below); restored inside
-   the max-width:560px query so mobile keeps the original top text-tab bar. */
-#topNav{display:none;position:fixed;top:0;left:0;right:0;z-index:40;flex-direction:column;align-items:center;
-  padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
-  background:linear-gradient(to bottom,rgba(6,7,10,.82) 0%,rgba(6,7,10,.5) 65%,transparent 100%)}
-#topTabs{display:flex;pointer-events:auto}
-#topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
-  padding:9px 20px;color:var(--muted);text-decoration:none;white-space:nowrap;
-  background:var(--glass);border:1px solid var(--line);border-bottom:none;
-  border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
-#topTabs .tab:hover{color:var(--ink)}
-#topTabs .tab.active{color:var(--gold);background:var(--glass-strong);border-color:var(--gold);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2}
-#topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
-  background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--gold-soft) 50%,var(--gold) 85%,transparent);
-  opacity:.55}
-body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease}
-
-/* ===== Left-edge sidebar navigation (NEW system — photo tabs, desktop only) ===== */
+/* ===== Left-edge sidebar navigation (photo tabs) =====
+   Desktop: fixed, always visible, pushes #brand to the right.
+   Mobile: same sidebar, but collapsed off-screen as a drawer; a small
+   floating handle with bouncing colored dots opens/closes it. */
 :root{--sidebar-w:clamp(230px,30vw,330px)}
 #topNavDesktop{position:fixed;top:0;left:0;right:0;z-index:40;pointer-events:none}
 #topTabsDesktop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(22px,3.4vw,42px);
   pointer-events:auto;position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);
   z-index:41;padding:32px 18px;background:linear-gradient(180deg,rgba(10,12,17,.88),rgba(13,15,21,.82) 50%,rgba(10,12,17,.88));
   border-right:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:14px 0 40px rgba(0,0,0,.45)}
+  box-shadow:14px 0 40px rgba(0,0,0,.45);transition:transform .38s cubic-bezier(.22,.9,.32,1)}
 #topTabsDesktop::after{content:'';position:absolute;top:0;right:-1px;bottom:0;width:2px;pointer-events:none;
   background:linear-gradient(180deg,transparent,var(--gold-soft) 12%,var(--gold) 50%,var(--gold-soft) 88%,transparent);
   opacity:.6}
@@ -200,22 +184,40 @@ body.preset-active #brand,
 body.preset-active #center,
 body.preset-active #front{left:0}
 
+/* darkened backdrop shown behind the drawer on mobile while it's open */
+#navBackdrop{position:fixed;inset:0;z-index:39;background:rgba(6,7,10,.55);opacity:0;pointer-events:none;
+  transition:opacity .3s ease}
+
+/* floating handle: a couple of small colorful bouncing dots that hint the
+   drawer can be pulled open. Hidden on desktop; only shown on mobile below. */
+#navHandle{display:none;position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:42;
+  width:34px;height:64px;align-items:center;justify-content:center;gap:6px;
+  border-radius:0 18px 18px 0;background:var(--glass-strong);border:1px solid var(--line);border-left:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:6px 8px 22px rgba(0,0,0,.4);
+  transition:opacity .25s ease,transform .25s ease}
+#navHandle .dot{width:9px;height:9px;border-radius:50%;animation:navDotBounce 1.1s ease-in-out infinite}
+#navHandle .dot:nth-child(1){background:#e7c9a2;animation-delay:0s}
+#navHandle .dot:nth-child(2){background:#7fd9c4;animation-delay:.18s}
+@keyframes navDotBounce{0%,60%,100%{transform:translateX(0)}30%{transform:translateX(4px)}}
+body.nav-open #navHandle{opacity:0;pointer-events:none;transform:translateY(-50%) translateX(-10px)}
+
 @media(max-width:560px){
   #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
   /* logo moved up a bit and enlarged — the Start button follows automatically
      since positionOrb() places it relative to #brand's live bounding box */
   #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px));left:0}
   #brandLogo{max-height:clamp(120px,24vw,216px)}
-  #topTabs .tab{padding:8px 13px;font-size:11px}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
-  /* mobile keeps the OLD top text-tab bar; hide the desktop sidebar entirely */
-  #topNav{display:flex}
-  #topNavDesktop{display:none}
-  /* preset active: hide the Breathing / Sound Healing / Nutrition tabs and the line under them */
-  body.preset-active #topTabs,
-  body.preset-active #topNavLine{display:none}
+  /* sidebar becomes a collapsed drawer, off-screen until opened */
+  #topTabsDesktop{width:clamp(150px,46vw,190px);padding:24px 14px;gap:16px;transform:translateX(-100%)}
+  body.nav-open #topTabsDesktop{transform:translateX(0)}
+  #topTabsDesktop .tabImg{width:clamp(120px,38vw,168px);height:clamp(120px,38vw,168px);border-radius:18px}
+  #navHandle{display:flex}
+  body.nav-open #navBackdrop{opacity:1;pointer-events:auto}
+  /* preset active: hide the drawer/handle while a preset session is running */
+  body.preset-active #navHandle{display:none}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
@@ -736,17 +738,12 @@ body.immersive #howToBox{display:none}
   </div>
 </div>
 
-<header id="topNav">
-  <nav id="topTabs" aria-label="Main sections">
-    <a href="index.html" class="tab active" aria-current="page">Breathing</a>
-    <a href="instruments.html" class="tab">Sound Healing</a>
-    <a href="nutriloader.html" class="tab">Nutrition</a>
-    <a href="store.html" class="tab">Store</a>
-  </nav>
-  <div id="topNavLine"></div>
-</header>
-
 <div id="authRoot"></div>
+
+<div id="navBackdrop"></div>
+<button id="navHandle" aria-label="Open menu" aria-expanded="false" aria-controls="topTabsDesktop">
+  <span class="dot"></span><span class="dot"></span>
+</button>
 
 <header id="topNavDesktop">
   <nav id="topTabsDesktop" aria-label="Main sections">
@@ -2416,6 +2413,18 @@ $('btnCueTgl').onclick=()=>setShowCue(!S.showCue);
 $('btnAgain').onclick =()=>{resetToFront();startSession();};
 
 /* init */
+/* ===== Mobile nav drawer (collapsed sidebar) ===== */
+(function(){
+  const handle=$('navHandle'),backdrop=$('navBackdrop');
+  if(!handle||!backdrop)return;
+  function setOpen(open){
+    document.body.classList.toggle('nav-open',open);
+    handle.setAttribute('aria-expanded',open?'true':'false');
+  }
+  handle.addEventListener('click',()=>setOpen(!document.body.classList.contains('nav-open')));
+  backdrop.addEventListener('click',()=>setOpen(false));
+  document.querySelectorAll('#topTabsDesktop .tabImg').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
+})();
 renderReel();renderSounds(true);updateFreq();renderBreathPresets();renderTimers();renderPresets();applyTempoFollow();
 renderCtrlTabs();syncCtrlSlider();renderBreathSubtabs();
 setBackground(IMAGES[0].id,true);
