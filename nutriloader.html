@@ -978,6 +978,15 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--tn-gold) 15%,var(--tn-violet) 50%,var(--tn-gold) 85%,transparent);
   opacity:.55}
+/* golden frame that traces the active tab and flows down around the title
+   bar beneath it — ties the two together so it's obvious which section is
+   selected. Drawn as an SVG path (see init script) since the tab and the
+   title bar are different widths and don't share straight edges. */
+#activeTabFrame{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:36;overflow:visible;
+  opacity:0;transition:opacity .35s ease}
+#activeTabFrame.show{opacity:1}
+#activeTabFrame path{fill:none;stroke:url(#activeTabFrameGrad);stroke-width:2px;stroke-linejoin:round;stroke-linecap:round;
+  filter:drop-shadow(0 0 5px rgba(255,217,138,.5))}
 #donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto;
   display:flex;align-items:center;gap:10px}
 @supports(padding:max(0px)){
@@ -1000,7 +1009,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
 #menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
-/* "Login", "Unlock Premium", "How to use" and "Contact" are plain rows sharing
+/* "Login", "Get Premium", "How to use" and "Contact" are plain rows sharing
    the #menuPanel background (no individual pill/border per item). */
 #contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
   border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--tn-ink);cursor:pointer;
@@ -1127,8 +1136,13 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   color:#2a1c05;text-transform:uppercase;
   background:linear-gradient(135deg,#ffe3a3,#d9a441);
   padding:6px 12px;border-radius:999px;white-space:nowrap;
+  animation:premGlow 2.4s ease-in-out infinite;transition:transform .15s ease;
 }
 .premBadge svg{width:10px;height:10px;display:block;flex:0 0 auto}
+@keyframes premGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,217,138,.6),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
+  50%{box-shadow:0 0 0 6px rgba(255,217,138,0),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
+}
 /* ===================== PREMIUM MODAL ===================== */
 #premiumModal{position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;
   background:rgba(5,3,9,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
@@ -1179,12 +1193,12 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 .premTxt{display:flex;flex-direction:column;gap:4px;min-width:0;font-family:'Outfit',system-ui,sans-serif}
 .premHead{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tn-ink);line-height:1.3}
 .premDetail{font-size:12px;color:var(--tn-soft);line-height:1.5;letter-spacing:.01em}
-.premCta{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border-radius:999px;border:none;cursor:pointer;text-decoration:none;box-sizing:border-box;background:linear-gradient(180deg,var(--tn-gold),#d9a441);color:#241c12;font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+.premCta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;padding:12px 14px 11px;border-radius:20px;border:none;cursor:pointer;text-decoration:none;box-sizing:border-box;background:linear-gradient(180deg,var(--tn-gold),#d9a441);color:#241c12;font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
   box-shadow:0 10px 30px rgba(255,217,138,.28);transition:transform .12s ease,filter .2s ease}
 .premCta:hover{filter:brightness(1.05)}
 .premCta:active{transform:scale(.97)}
-.premCancelNote{font-family:'Outfit',system-ui,sans-serif;font-size:11px;color:var(--tn-soft);opacity:.85;letter-spacing:.02em;text-align:center;margin:11px 0 18px}
-.premCtaGhost{width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(243,239,228,.25);color:var(--tn-soft);
+.premCta .premCancelNote{font-weight:500;font-size:9.5px;letter-spacing:.03em;text-transform:none;opacity:.7;color:#241c12}
+.premCtaGhost{width:100%;margin-top:12px;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(243,239,228,.25);color:var(--tn-soft);
   font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
 .premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--tn-ink);border-color:rgba(243,239,228,.4)}
 </style>
@@ -1240,8 +1254,10 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
           </div>
         </div>
         <div id="premiumModalFooter">
-          <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">Unlock Premium for $4.99/month</a>
-          <p class="premCancelNote">Cancel anytime!</p>
+          <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
+            <span>Get Premium for $4.99/month</span>
+            <span class="premCancelNote">Cancel anytime!</span>
+          </a>
           <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
         </div>
       </div>
@@ -1257,7 +1273,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
       </button>
       <div id="menuPanel" role="menu">
         <button id="getPremiumMenuBtn" type="button">
-          <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Unlock Premium
+          <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
         </button>
         <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
           <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
@@ -1350,7 +1366,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
     <button id="logBtn" title="Food log">
       <img src="images/logbook.png" alt="Food log"> <span id="logBtnLbl" style="display:none">Log</span>
     </button>
-    <button type="button" class="premSyncBadge" id="logBtnSyncBadge" title="Unlock Premium to sync your log across devices" style="display:none">
+    <button type="button" class="premSyncBadge" id="logBtnSyncBadge" title="Get Premium to sync your log across devices" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
       Sync
     </button>
@@ -1379,7 +1395,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
       <button id="logBtnHabits" title="Bad habits log" style="width:100%;margin:0">
         <img src="images/logbook.png" alt="Bad habits log">
       </button>
-      <button type="button" class="premSyncBadge" id="logBtnHabitsSyncBadge" title="Unlock Premium to sync your log across devices" style="display:none">
+      <button type="button" class="premSyncBadge" id="logBtnHabitsSyncBadge" title="Get Premium to sync your log across devices" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
         Sync
       </button>
@@ -1474,7 +1490,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
     <p class="log-header-meta" id="logModalMeta">A record of everything logged with Clean Plates.</p>
     <div id="logSyncBanner">
       <span><b>Sync across devices</b> with Premium — right now this log is only saved on this device.</span>
-      <button id="logSyncBannerBtn" type="button">Unlock Premium</button>
+      <button id="logSyncBannerBtn" type="button">Get Premium</button>
     </div>
     <div id="logTableWrap" style="position:relative">
       <div id="logSideBar">
@@ -2912,8 +2928,8 @@ const LOG_STR = {
   syncedDown:{en:'Your saved log was synced from the cloud.', sv:'Din sparade logg synkades fr\u00e5n molnet.'},
   bannerText:{en:'<b>Sync across devices</b> with Premium — right now this log is only saved on this device.',
               sv:'<b>Synka mellan enheter</b> med Premium — just nu sparas den h\u00e4r loggen bara p\u00e5 den h\u00e4r enheten.'},
-  bannerBtn:{en:'Unlock Premium', sv:'Skaffa Premium'},
-  syncBadgeTitle:{en:'Unlock Premium to sync your log across devices', sv:'Skaffa Premium f\u00f6r att synka loggen mellan enheter'}
+  bannerBtn:{en:'Get Premium', sv:'Skaffa Premium'},
+  syncBadgeTitle:{en:'Get Premium to sync your log across devices', sv:'Skaffa Premium f\u00f6r att synka loggen mellan enheter'}
 };
 
 function isSyncActive(){
@@ -3678,7 +3694,7 @@ registerVisit();
 (function(){
   const $=id=>document.getElementById(id);
 
-  /* hamburger menu: toggles the panel holding Login + Unlock Premium + Contact */
+  /* hamburger menu: toggles the panel holding Login + Get Premium + Contact */
   (function(){
     const mBtn=$('menuBtn'), mPanel=$('menuPanel');
     const closeMenu=function(){ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
@@ -3689,7 +3705,7 @@ registerVisit();
       document.addEventListener('click',function(e){ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
       document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeMenu(); });
     }
-    /* "Login" and "Unlock Premium" in the menu just trigger the same header
+    /* "Login" and "Get Premium" in the menu just trigger the same header
        buttons (built by auth.js) and close this menu. */
     const loginMenuBtn=$('loginMenuBtn');
     if(loginMenuBtn){
@@ -3755,6 +3771,72 @@ registerVisit();
     document.addEventListener('click',function(e){ if(cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hide(); });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape')hide(); });
     addEventListener('resize',function(){ if(cBtn.classList.contains('open'))updateContactMaxWidth(); });
+  })();
+
+  /* golden frame linking the active tab to the title bar below it — see
+     #activeTabFrame CSS above. Built as an SVG path because the tab and the
+     title bar have different widths/edges, so a plain CSS border can't
+     trace both in one continuous outline. */
+  (function(){
+    const svgNS='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(svgNS,'svg');
+    svg.id='activeTabFrame'; svg.setAttribute('aria-hidden','true');
+    const defs=document.createElementNS(svgNS,'defs');
+    const grad=document.createElementNS(svgNS,'linearGradient');
+    grad.id='activeTabFrameGrad';
+    grad.setAttribute('x1','0%');grad.setAttribute('y1','0%');grad.setAttribute('x2','100%');grad.setAttribute('y2','0%');
+    [['0%','#ffd98a'],['50%','#c9a8ff'],['100%','#ffd98a']].forEach(function(s){
+      const stop=document.createElementNS(svgNS,'stop');
+      stop.setAttribute('offset',s[0]); stop.setAttribute('stop-color',s[1]);
+      grad.appendChild(stop);
+    });
+    defs.appendChild(grad); svg.appendChild(defs);
+    const path=document.createElementNS(svgNS,'path');
+    svg.appendChild(path);
+    document.body.appendChild(svg);
+
+    function buildPath(tabRect,frameRect){
+      const tr=10;   // rounded top corners on the tab
+      const fr=22;   // rounded bottom corners on the title bar (matches its CSS radius)
+      const flare=Math.max(16,(frameRect.top-tabRect.bottom)*0.7);
+      const x1t=tabRect.left, x2t=tabRect.right, y1t=tabRect.top, y2t=tabRect.bottom;
+      const x1f=frameRect.left, x2f=frameRect.right, y1f=frameRect.top, y2f=frameRect.bottom;
+      return [
+        'M',x1t,y1t+tr,
+        'Q',x1t,y1t,x1t+tr,y1t,
+        'L',x2t-tr,y1t,
+        'Q',x2t,y1t,x2t,y1t+tr,
+        'L',x2t,y2t,
+        'C',x2t,y2t+flare*0.5, x2f,y1f-flare*0.5, x2f,y1f,
+        'L',x2f,y2f-fr,
+        'Q',x2f,y2f, x2f-fr,y2f,
+        'L',x1f+fr,y2f,
+        'Q',x1f,y2f, x1f,y2f-fr,
+        'L',x1f,y1f,
+        'C',x1f,y1f-flare*0.5, x1t,y2t+flare*0.5, x1t,y2t,
+        'Z'
+      ].join(' ');
+    }
+
+    function update(){
+      const tab=document.querySelector('#topTabs .tab.active');
+      const frame=document.querySelector('.h1-frame');
+      if(!tab||!frame){ svg.classList.remove('show'); return; }
+      const tabRect=tab.getBoundingClientRect();
+      const frameRect=frame.getBoundingClientRect();
+      if(!tabRect.width||!frameRect.width||frameRect.top<tabRect.bottom-4){ svg.classList.remove('show'); return; }
+      svg.setAttribute('viewBox','0 0 '+innerWidth+' '+innerHeight);
+      path.setAttribute('d',buildPath(tabRect,frameRect));
+      svg.classList.add('show');
+    }
+
+    let ticking=false;
+    function requestUpdate(){ if(ticking)return; ticking=true; requestAnimationFrame(function(){ update(); ticking=false; }); }
+    window.addEventListener('resize',requestUpdate);
+    window.addEventListener('scroll',requestUpdate,{passive:true});
+    window.addEventListener('load',update);
+    requestAnimationFrame(update);
+    setTimeout(update,300); // catch layout shift once web fonts finish loading
   })();
 })();
 
