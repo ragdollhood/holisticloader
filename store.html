@@ -136,7 +136,7 @@
   #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
   #contactBtn .ctext:hover{text-decoration:underline}
   #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
-  /* "Login" and "Unlock Premium" are plain rows sharing the #menuPanel background
+  /* "Login" and "Get Premium" are plain rows sharing the #menuPanel background
      (no individual pill/border per item). */
   #loginMenuBtn,#getPremiumMenuBtn{
     display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
@@ -233,8 +233,12 @@ text-decoration:none;
   #premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
   .premBadge{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
     color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,var(--gold-soft));padding:6px 14px;border-radius:999px;margin-bottom:20px;
-    box-shadow:0 4px 14px rgba(255,217,138,.3)}
+    box-shadow:0 4px 14px rgba(255,217,138,.3);animation:premGlow 2.4s ease-in-out infinite;transition:transform .15s ease}
   .premBadge svg{width:11px;height:11px;flex:0 0 auto}
+  @keyframes premGlow{
+    0%,100%{box-shadow:0 4px 14px rgba(255,217,138,.3),0 0 0 0 rgba(255,217,138,.6);}
+    50%{box-shadow:0 4px 14px rgba(255,217,138,.3),0 0 0 6px rgba(255,217,138,0);}
+  }
   #premiumModalCard h2{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(23px,5vw,29px);letter-spacing:.01em;color:var(--ink);margin-bottom:9px}
   #premiumModalCard .premSub{font-family:var(--ui);font-size:12.5px;color:var(--soft);letter-spacing:.02em;line-height:1.55;margin-bottom:28px;padding:0 4px}
   #premiumModalSections{margin-bottom:8px}
@@ -250,12 +254,12 @@ text-decoration:none;
   .premTxt{display:flex;flex-direction:column;gap:4px;min-width:0;font-family:var(--ui)}
   .premHead{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);line-height:1.3}
   .premDetail{font-size:12px;color:var(--soft);line-height:1.5;letter-spacing:.01em}
-  .premCta{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border-radius:999px;background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#241c12;font-family:var(--ui);font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+  .premCta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;padding:12px 14px 11px;border-radius:20px;background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#241c12;font-family:var(--ui);font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
     text-decoration:none;box-sizing:border-box;box-shadow:0 10px 30px rgba(255,217,138,.28);transition:transform .12s ease,filter .2s ease}
   .premCta:hover{filter:brightness(1.05)}
   .premCta:active{transform:scale(.97)}
-  .premCancelNote{font-family:var(--ui);font-size:11px;color:var(--soft);opacity:.85;letter-spacing:.02em;text-align:center;margin:11px 0 18px}
-  .premCtaGhost{width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(243,239,228,.25);color:var(--soft);
+  .premCta .premCancelNote{font-weight:500;font-size:9.5px;letter-spacing:.03em;text-transform:none;opacity:.7;color:#241c12}
+  .premCtaGhost{width:100%;margin-top:12px;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(243,239,228,.25);color:var(--soft);
     font-family:var(--ui);font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
   .premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--ink);border-color:rgba(243,239,228,.4)}
 </style>
@@ -293,8 +297,10 @@ text-decoration:none;
       </div>
     </div>
     <div id="premiumModalFooter">
-        <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">Unlock Premium for $4.99/month</a>
-      <p class="premCancelNote">Cancel anytime!</p>
+        <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
+          <span>Get Premium for $4.99/month</span>
+          <span class="premCancelNote">Cancel anytime!</span>
+        </a>
       <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
     </div>
   </div>
@@ -306,7 +312,7 @@ text-decoration:none;
   </button>
   <div id="menuPanel" role="menu">
     <button id="getPremiumMenuBtn" type="button">
-      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Unlock Premium
+      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
     </button>
     <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
       <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
@@ -340,7 +346,7 @@ text-decoration:none;
 (function(){
   const $=id=>document.getElementById(id);
 
-  /* hamburger menu: toggles the panel holding Login + Unlock Premium + Contact */
+  /* hamburger menu: toggles the panel holding Login + Get Premium + Contact */
   (function(){
     const mBtn=$('menuBtn'), mPanel=$('menuPanel');
     const closeMenu=function(){ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
@@ -356,7 +362,7 @@ text-decoration:none;
       document.addEventListener('click',function(e){ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
       document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeMenu(); });
     }
-    /* "Login" and "Unlock Premium" in the menu just trigger the same header
+    /* "Login" and "Get Premium" in the menu just trigger the same header
        buttons (built by auth.js) and close this menu. */
     const loginMenuBtn=$('loginMenuBtn');
     if(loginMenuBtn){
