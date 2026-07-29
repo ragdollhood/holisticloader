@@ -185,7 +185,7 @@ body.preset-active .h1-frame{display:none}
   .h1-frame{
     top:max(42px,calc(env(safe-area-inset-top) + 28px));
     width:74vw;
-    padding:11px 14px 5px;
+    padding:6px 14px 4px;
     border-radius:0 0 18px 18px;
   }
 }
@@ -2174,16 +2174,31 @@ function positionOrb(){
   ow.style.marginTop=mt+'px';
   updateLensGeom();
 }
+/* on mobile, stretch the title flik (.h1-frame) to exactly match the
+   width of the tab row above it, so its left/right edges line up flush
+   with the outer tabs instead of floating narrower/wider than them. */
+const h1FrameEl=document.querySelector('.h1-frame');
+function syncH1FrameWidth(){
+  if(!h1FrameEl) return;
+  const tabs=$('topTabs'); if(!tabs) return;
+  if(innerWidth<=560){
+    const w=tabs.getBoundingClientRect().width;
+    if(w>0) h1FrameEl.style.width=w+'px';
+  }else{
+    h1FrameEl.style.width='';
+  }
+}
 function positionBrand(){
   /* contactBtn now lives fixed in the top-left corner, detached from the
      content flow, so #brand keeps its static CSS position instead of
      being pushed down below it. */
 }
-function onLayout(){ closeSoundSub(); updateCues(); positionBrand(); if(S.running) updateLensGeom(); else positionOrb(); }
+function onLayout(){ closeSoundSub(); updateCues(); positionBrand(); syncH1FrameWidth(); if(S.running) updateLensGeom(); else positionOrb(); }
 addEventListener('resize',onLayout);
 addEventListener('orientationchange',()=>setTimeout(onLayout,60));
 if(window.visualViewport){visualViewport.addEventListener('resize',onLayout);visualViewport.addEventListener('scroll',onLayout);}
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{positionBrand();positionOrb();});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{positionBrand();positionOrb();syncH1FrameWidth();});
+syncH1FrameWidth();
 
 /* soft drifting light-glares that caress the scene and dissolve in/out */
 const glares=[...document.querySelectorAll('.glare')];
@@ -2388,8 +2403,8 @@ setBackground(IMAGES[0].id,true);
 $('timerReadout').textContent=fmt(S.timerMin*60);
 positionBrand();
 positionOrb();
-requestAnimationFrame(()=>{positionBrand();positionOrb();updateCues();});
-setTimeout(()=>{positionBrand();positionOrb();},400);
+requestAnimationFrame(()=>{positionBrand();positionOrb();updateCues();syncH1FrameWidth();});
+setTimeout(()=>{positionBrand();positionOrb();syncH1FrameWidth();},400);
 setTimeout(positionOrb,1200);
 
 /* Re-render locked content live the instant premium status changes
