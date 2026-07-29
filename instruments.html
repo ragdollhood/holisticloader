@@ -553,20 +553,20 @@
   #contactBtn .ctext:hover{text-decoration:underline}
   #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
   #contactBtn.hidden{display:none}
-  /* "Login", "Get Premium" and "How to use" are plain rows sharing the
+  /* "Get Premium" and "How to use" are plain rows sharing the
      #menuPanel background (no individual pill/border per item). */
-  #loginMenuBtn,#getPremiumMenuBtn,#howToBtn{
+  #getPremiumMenuBtn,#howToBtn{
     display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
     width:100%;box-sizing:border-box;
     font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);
     background:transparent;border:none;border-radius:8px;
     padding:9px 10px;cursor:pointer;transition:background .15s ease;
   }
-  #loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+  #getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
   #getPremiumMenuBtn{color:var(--gold);font-weight:600}
   #getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
-  #loginMenuBtn:hover,#getPremiumMenuBtn:hover,#howToBtn:hover{background:rgba(244,241,234,.1)}
-  #loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active{background:rgba(244,241,234,.16)}
+  #getPremiumMenuBtn:hover,#howToBtn:hover{background:rgba(244,241,234,.1)}
+  #getPremiumMenuBtn:active,#howToBtn:active{background:rgba(244,241,234,.16)}
   /* info box, hidden until "How to use" is tapped — position set by JS to track the button.
      Desktop: capped height with its own scrollbar so the guide is always fully reachable.
      Mobile override is placed AFTER this rule on purpose — same-specificity CSS rules are
@@ -1048,9 +1048,6 @@
     <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
   </button>
   <div id="menuPanel" role="menu">
-    <button id="loginMenuBtn" type="button">
-      <svg class="lgn-ic" viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>Login
-    </button>
     <button id="getPremiumMenuBtn" type="button">
       <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
     </button>
@@ -1070,7 +1067,7 @@
     <a href="index.html" class="tab">Breathing</a>
     <a href="instruments.html" class="tab active" aria-current="page">Sound Healing</a>
     <a href="nutriloader.html" class="tab">Nutrition</a>
-    <a href="store.html" class="tab">Shop</a>
+    <a href="store.html" class="tab">Store</a>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
@@ -1458,15 +1455,8 @@
       document.addEventListener('click',function(e){ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
       document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeMenu(); });
     }
-    /* "Login" and "Get Premium" in the menu just trigger the same header
-       buttons (built by auth.js) and close this menu. */
-    const loginMenuBtn=$('loginMenuBtn');
-    if(loginMenuBtn){
-      loginMenuBtn.addEventListener('click',function(e){ e.stopPropagation();
-        closeMenu();
-        const headerLoginBtn=$('loginBtn'); if(headerLoginBtn)headerLoginBtn.click();
-      });
-    }
+    /* "Get Premium" in the menu just triggers the same header button
+       (built by auth.js) and closes this menu. */
     const getPremiumMenuBtn=$('getPremiumMenuBtn');
     if(getPremiumMenuBtn){
       getPremiumMenuBtn.addEventListener('click',function(e){ e.stopPropagation();
