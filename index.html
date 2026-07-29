@@ -93,7 +93,7 @@
 <style>
 :root{
   --bg:#0c0e13; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
-  --gold:#e7c9a2; --gold-soft:#d9b98a;
+  --gold:#e7c9a2; --gold-soft:#d9b98a; --soft:#b3a98f; --violet:#c9a8ff;
   --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(244,241,234,.15);
   --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
@@ -154,71 +154,34 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
   font-size:clamp(22px,5vw,42px);line-height:1;color:#f4f1ea}
 
-/* ===== Left-edge sidebar navigation (photo tabs) =====
-   Desktop: fixed, always visible, pushes #brand to the right.
-   Mobile: same sidebar, but collapsed off-screen as a drawer; a small
-   floating handle with bouncing colored dots opens/closes it. */
-:root{--sidebar-w:clamp(230px,30vw,330px)}
-#topNavDesktop{position:fixed;top:0;left:0;right:0;z-index:40;pointer-events:none}
-#topTabsDesktop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(22px,3.4vw,42px);
-  pointer-events:auto;position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);
-  z-index:41;padding:32px 18px;background:linear-gradient(180deg,rgba(10,12,17,.88),rgba(13,15,21,.82) 50%,rgba(10,12,17,.88));
-  border-right:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:14px 0 40px rgba(0,0,0,.45);transition:transform .38s cubic-bezier(.22,.9,.32,1)}
-#topTabsDesktop::after{content:'';position:absolute;top:0;right:-1px;bottom:0;width:2px;pointer-events:none;
-  background:linear-gradient(180deg,transparent,var(--gold-soft) 12%,var(--gold) 50%,var(--gold-soft) 88%,transparent);
-  opacity:.6}
-#topTabsDesktop .tabImg{display:block;width:clamp(192px,26vw,276px);height:clamp(192px,26vw,276px);border-radius:26px;overflow:hidden;
-  position:relative;border:1px solid var(--line);background:var(--glass-strong);
-  box-shadow:0 10px 28px rgba(0,0,0,.4);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
-#topTabsDesktop .tabImg picture,#topTabsDesktop .tabImg img{display:block;width:100%;height:100%;object-fit:cover}
-#topTabsDesktop .tabImg:hover{transform:translateX(3px) scale(1.02)}
-#topTabsDesktop .tabImg:active{transform:translateX(0) scale(.97)}
-#topTabsDesktop .tabImg.active{border-color:var(--gold);
-  box-shadow:0 0 0 2px var(--gold),0 0 24px rgba(231,201,162,.55),0 14px 32px rgba(0,0,0,.45)}
-body.immersive #topNavDesktop{opacity:0;pointer-events:none;transition:opacity .5s ease}
-/* shift the ENTIRE scene (background, orb, instrument reel, front controls,
-   images) clear of the left sidebar on desktop — not just the logo — so
-   nothing sits hidden underneath the panel */
-#stage{left:var(--sidebar-w)}
-body.preset-active #topTabsDesktop{display:none}
-body.preset-active #stage{left:0}
-
-/* darkened backdrop shown behind the drawer on mobile while it's open */
-#navBackdrop{position:fixed;inset:0;z-index:39;background:rgba(6,7,10,.55);opacity:0;pointer-events:none;
-  transition:opacity .3s ease}
-
-/* floating handle: chevron arrows + "More" label hinting the drawer can be
-   opened. Hidden on desktop; only shown on mobile below. Vertical position
-   is set from JS (positionOrb) to line up with the Start button. */
-#navHandle{display:none;position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:42;
-  width:40px;height:64px;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  border-radius:0 18px 18px 0;background:var(--glass-strong);border:1px solid var(--line);border-left:none;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:6px 8px 22px rgba(0,0,0,.4);
-  transition:opacity .25s ease,transform .25s ease}
-#navHandle .nav-chev{width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:2.1;animation:navChevBounce 1.1s ease-in-out infinite}
-#navHandle .nav-more{font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:8.5px;letter-spacing:.14em;color:var(--muted)}
-@keyframes navChevBounce{0%,60%,100%{transform:translateX(0)}30%{transform:translateX(4px)}}
-body.nav-open #navHandle{opacity:0;pointer-events:none;transform:translateY(-50%) translateX(-10px)}
+/* ===== shared tab navigation (same system as instruments.html) ===== */
+#topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
+  padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
+#topTabs{display:flex;pointer-events:auto}
+#topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
+  padding:9px 20px;color:var(--soft);text-decoration:none;white-space:nowrap;
+  background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
+  border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
+#topTabs .tab:hover{color:var(--ink)}
+#topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
+#topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
+  opacity:.55}
+body.immersive #topNav{opacity:0;pointer-events:none;transition:opacity .5s ease}
+body.preset-active #topNav{display:none}
 
 @media(max-width:560px){
   #frontMeta{top:max(96px,calc(env(safe-area-inset-top) + 84px));left:16px;right:16px;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:14px}
   /* logo moved up a bit and enlarged — the Start button follows automatically
      since positionOrb() places it relative to #brand's live bounding box */
-  #stage{left:0}
   #brand{top:max(69px,calc(env(safe-area-inset-top) + 59px))}
   #brandLogo{max-height:clamp(120px,24vw,216px)}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
-  /* sidebar becomes a collapsed drawer, off-screen until opened */
-  #topTabsDesktop{width:clamp(150px,46vw,190px);padding:24px 14px;gap:16px;transform:translateX(-100%)}
-  body.nav-open #topTabsDesktop{transform:translateX(0)}
-  #topTabsDesktop .tabImg{width:clamp(120px,38vw,168px);height:clamp(120px,38vw,168px);border-radius:18px}
-  #navHandle{display:flex}
-  body.nav-open #navBackdrop{opacity:1;pointer-events:auto}
-  /* preset active: hide the drawer/handle while a preset session is running */
-  body.preset-active #navHandle{display:none}
+  #topTabs .tab{padding:8px 13px;font-size:11px}
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #noscriptMsg{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6}
@@ -739,41 +702,15 @@ body.immersive #howToBox{display:none}
   </div>
 </div>
 
-<div id="authRoot"></div>
-
-<div id="navBackdrop"></div>
-<button id="navHandle" aria-label="Open menu" aria-expanded="false" aria-controls="topTabsDesktop">
-  <svg class="nav-chev" viewBox="0 0 24 24"><path d="M7 5l6 7-6 7"/><path d="M13 5l6 7-6 7"/></svg>
-  <span class="nav-more">MORE</span>
-</button>
-
-<header id="topNavDesktop">
-  <nav id="topTabsDesktop" aria-label="Main sections">
-    <a href="index.html" class="tabImg active" aria-current="page" aria-label="Breathing">
-      <picture>
-        <source srcset="images/btn-breathe.webp" type="image/webp">
-        <img src="images/btn-breathe.jpg" alt="Breathing" width="170" height="170" loading="eager">
-      </picture>
-    </a>
-    <a href="instruments.html" class="tabImg" aria-label="Sound Healing">
-      <picture>
-        <source srcset="images/btn-instru.webp" type="image/webp">
-        <img src="images/btn-instru.jpg" alt="Sound Healing" width="170" height="170" loading="lazy">
-      </picture>
-    </a>
-    <a href="nutriloader.html" class="tabImg" aria-label="Nutrition">
-      <picture>
-        <source srcset="images/btn-nutri.webp" type="image/webp">
-        <img src="images/btn-nutri.jpg" alt="Nutrition" width="170" height="170" loading="lazy">
-      </picture>
-    </a>
-    <a href="store.html" class="tabImg" aria-label="Store">
-      <picture>
-        <source srcset="images/btn-store.webp" type="image/webp">
-        <img src="images/btn-store.jpg" alt="Store" width="170" height="170" loading="lazy">
-      </picture>
-    </a>
+<header id="topNav">
+  <nav id="topTabs" aria-label="Main sections">
+    <a href="index.html" class="tab active" aria-current="page">Breathing</a>
+    <a href="instruments.html" class="tab">Sound Healing</a>
+    <a href="nutriloader.html" class="tab">Nutrition</a>
+    <a href="store.html" class="tab">Store</a>
   </nav>
+  <div id="authRoot"></div>
+  <div id="topNavLine"></div>
 </header>
 
 <div id="howToBox">
@@ -2205,9 +2142,6 @@ function positionOrb(){
   const mobileOffset=innerWidth<=560?21:0;
   const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38 + mobileOffset);
   ow.style.marginTop=mt+'px';
-  /* keep the mobile drawer handle lined up with the Start button's height */
-  const nh=$('navHandle');
-  if(nh&&innerWidth<=560)nh.style.top=(mt+oh/2)+'px';
   updateLensGeom();
 }
 function positionBrand(){
@@ -2418,18 +2352,6 @@ $('btnCueTgl').onclick=()=>setShowCue(!S.showCue);
 $('btnAgain').onclick =()=>{resetToFront();startSession();};
 
 /* init */
-/* ===== Mobile nav drawer (collapsed sidebar) ===== */
-(function(){
-  const handle=$('navHandle'),backdrop=$('navBackdrop');
-  if(!handle||!backdrop)return;
-  function setOpen(open){
-    document.body.classList.toggle('nav-open',open);
-    handle.setAttribute('aria-expanded',open?'true':'false');
-  }
-  handle.addEventListener('click',()=>setOpen(!document.body.classList.contains('nav-open')));
-  backdrop.addEventListener('click',()=>setOpen(false));
-  document.querySelectorAll('#topTabsDesktop .tabImg').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
-})();
 renderReel();renderSounds(true);updateFreq();renderBreathPresets();renderTimers();renderPresets();applyTempoFollow();
 renderCtrlTabs();syncCtrlSlider();renderBreathSubtabs();
 setBackground(IMAGES[0].id,true);
