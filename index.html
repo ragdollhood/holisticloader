@@ -452,14 +452,14 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   0%,100%{box-shadow:0 0 0 0 rgba(255,217,138,.6),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
   50%{box-shadow:0 0 0 6px rgba(255,217,138,0),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
 }
-/* ===== Premium features modal ===== */
+/* ===== Premium features modal (matches instruments.html) ===== */
 #premiumModal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:rgba(6,7,10,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  background:rgba(5,3,9,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   opacity:0;pointer-events:none;transition:opacity .3s ease}
 #premiumModal.show{opacity:1;pointer-events:auto}
 #premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
-  background:var(--glass-strong);border:1px solid var(--line);border-radius:24px;padding:0;
-  box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(231,201,162,.08) inset;
+  background:linear-gradient(180deg,rgba(24,17,32,.94),rgba(14,10,20,.96));border:1px solid var(--line);border-radius:24px;padding:0;
+  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,217,138,.08) inset;
   transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1),width .2s ease;text-align:center;
   -webkit-user-select:text;user-select:text}
 #premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
@@ -472,47 +472,49 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 }
 #premiumModalScroll{position:relative;overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
 #premiumModalScroll::-webkit-scrollbar{width:7px}#premiumModalScroll::-webkit-scrollbar-thumb{background:rgba(244,241,234,.2);border-radius:7px}
-#premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(13,15,21,0),var(--glass-strong) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
+#premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(14,10,20,0),rgba(14,10,20,.96) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
 #premiumScrollHint{display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);pointer-events:none;
   align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
-  background:rgba(231,201,162,.14);border:1px solid rgba(231,201,162,.35);
+  background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.35);
   opacity:1;transition:opacity .25s ease;animation:premScrollBounce 1.6s ease-in-out infinite}
 #premiumScrollHint svg{width:13px;height:13px;stroke:var(--gold);fill:none;stroke-width:2.4}
 #premiumScrollHint.hide{opacity:0}
 @media(max-width:560px){ #premiumScrollHint{display:flex} }
 @keyframes premScrollBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
 #premiumModalClose{position:absolute;top:16px;right:16px;z-index:2;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
-  color:var(--muted);background:rgba(244,241,234,.06);transition:background .2s ease,color .2s ease}
+  color:var(--soft);background:rgba(244,241,234,.06);border:none;cursor:pointer;transition:background .2s ease,color .2s ease}
 #premiumModalClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
 #premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-.premBadge{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-  color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,var(--gold-soft));padding:6px 14px;border-radius:999px;margin-bottom:20px;
-  box-shadow:0 4px 14px rgba(231,201,162,.3)}
-.premBadge svg{width:11px;height:11px;flex:0 0 auto}
-#premiumModalCard h2{font-family:var(--display);font-weight:400;font-style:italic;font-size:clamp(23px,5vw,29px);letter-spacing:.01em;color:var(--ink);margin-bottom:9px}
-#premiumModalCard .premSub{font-size:12.5px;color:var(--muted);letter-spacing:.02em;line-height:1.55;margin-bottom:28px;padding:0 4px}
+.premBadge{display:inline-flex;align-items:center;gap:5px;font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,#d9a441);padding:6px 12px;border-radius:999px;white-space:nowrap;
+  animation:premGlow 2.4s ease-in-out infinite;transition:transform .15s ease}
+.premBadge svg{width:10px;height:10px;display:block;flex:0 0 auto}
+#premiumModalCard .premBadge{margin-bottom:20px}
+#premiumModalCard h2{font-family:Georgia,serif;font-weight:600;font-size:clamp(21px,5vw,26px);letter-spacing:.02em;margin-bottom:9px;
+  background:linear-gradient(90deg,var(--gold),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+#premiumModalCard .premSub{font-family:var(--ui);font-size:12.5px;color:var(--soft);letter-spacing:.02em;line-height:1.55;margin-bottom:28px;padding:0 4px}
 #premiumModalSections{margin-bottom:8px}
 .premSection{margin-bottom:26px}
 .premSection:last-child{margin-bottom:22px}
-.premSectionTitle{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:15px;text-align:left}
-.premSectionTitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(231,201,162,.5),transparent)}
+.premSectionTitle{display:flex;align-items:center;gap:10px;font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:15px;text-align:left}
+.premSectionTitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,217,138,.5),transparent)}
 .premList{display:flex;flex-direction:column;gap:16px;text-align:left}
 .premList li{display:flex;align-items:flex-start;gap:12px}
 .premList .premCheck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-top:1px;
-  background:rgba(231,201,162,.14);border:1px solid rgba(231,201,162,.4)}
+  background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.4)}
 .premList .premCheck svg{width:11px;height:11px;stroke:var(--gold);fill:none;stroke-width:2.6}
-.premTxt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.premTxt{display:flex;flex-direction:column;gap:4px;min-width:0;font-family:var(--ui)}
 .premHead{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);line-height:1.3}
-.premDetail{font-size:12px;color:var(--muted);line-height:1.5;letter-spacing:.01em}
-.premFoot{font-size:10.5px;color:var(--faint);letter-spacing:.04em;line-height:1.5;margin-bottom:20px}
-.premCta{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border-radius:999px;background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#241c12;font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
-  text-decoration:none;box-sizing:border-box;box-shadow:0 10px 30px rgba(231,201,162,.28);transition:transform .12s ease,filter .2s ease}
+.premDetail{font-size:12px;color:var(--soft);line-height:1.5;letter-spacing:.01em}
+.premFoot{font-family:var(--ui);font-size:10.5px;color:var(--soft);opacity:.75;letter-spacing:.04em;line-height:1.5;margin-bottom:20px}
+.premCta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;padding:12px 14px 11px;border-radius:20px;border:none;cursor:pointer;text-decoration:none;box-sizing:border-box;background:linear-gradient(180deg,var(--gold),#d9a441);color:#241c12;font-family:var(--ui);font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+  box-shadow:0 10px 30px rgba(255,217,138,.28);transition:transform .12s ease,filter .2s ease}
 .premCta:hover{filter:brightness(1.05)}
 .premCta:active{transform:scale(.97)}
-.premCancelNote{font-size:11px;color:var(--muted);letter-spacing:.02em;text-align:center;margin:11px 0 18px}
-.premCtaGhost{width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid var(--line);color:var(--muted);
-  font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
-.premCtaGhost:hover{background:rgba(244,241,234,.08);color:var(--ink);border-color:rgba(244,241,234,.35)}
+.premCta .premCancelNote{font-weight:500;font-size:9.5px;letter-spacing:.03em;text-transform:none;opacity:.7;color:#241c12}
+.premCtaGhost{width:100%;margin-top:12px;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(244,241,234,.25);color:var(--soft);
+  font-family:var(--ui);font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.premCtaGhost:hover{background:rgba(244,241,234,.08);color:var(--ink);border-color:rgba(244,241,234,.4)}
 #frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
 #donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
 @supports(padding:max(0px)){
@@ -722,7 +724,7 @@ body.immersive #howToBox{display:none}
   </button>
   <div id="menuPanel" role="menu">
     <button id="getPremiumMenuBtn" type="button">
-      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
+      ⭐ Unlock Premium
     </button>
     <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
       <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
@@ -805,8 +807,10 @@ body.immersive #howToBox{display:none}
       </div>
     </div>
     <div id="premiumModalFooter">
-      <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">Get Premium for $4.99/month</a>
-      <p class="premCancelNote">Cancel anytime!</p>
+      <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
+        <span>Get Premium for $4.99/month</span>
+        <span class="premCancelNote">Cancel anytime!</span>
+      </a>
       <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
     </div>
   </div>
