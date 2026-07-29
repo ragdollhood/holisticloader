@@ -25,14 +25,16 @@
 }
 #authButtons{ display:flex; align-items:center; gap:8px; }
 
-/* Login / Get Premium no longer show as header buttons — they only live
-   in the hamburger menu (#loginMenuBtn / #getPremiumMenuBtn), which
-   forwards its clicks to these hidden buttons via .click(). */
-#loginBtn, #registerBtn{ display:none !important; }
+/* "Get Premium" no longer shows as a header button — it only lives in
+   the hamburger menu (#getPremiumMenuBtn), which forwards its click to
+   this hidden button via .click(). */
+#registerBtn{ display:none !important; }
 
 /* ---------- Account icon + dropdown ----------
-   Only rendered/shown once the user is logged in (see renderAuthUI()
-   in auth.js), which replaces the old inline email/logout row. */
+   Always visible in the header now, logged in or out (see renderAuthUI()
+   in auth.js). Logged out, clicking it opens the login modal directly.
+   Logged in, it opens this dropdown (email + logout) and gets a subtle
+   gold ring so it's clear at a glance which state you're in. */
 #accountRoot{ position:relative; display:inline-flex; }
 
 #accountBtn{
@@ -40,11 +42,14 @@
   width:34px; height:34px; padding:0; cursor:pointer;
   color:var(--ink); background:var(--glass); border:1px solid var(--line);
   border-radius:50%; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  transition:background .2s ease, border-color .2s ease;
+  transition:background .2s ease, border-color .2s ease, color .2s ease;
 }
 #accountBtn:hover, #accountBtn[aria-expanded="true"]{
   background:var(--glass-strong); border-color:var(--gold);
 }
+/* logged-in state: gold ring + gold icon, so the same icon reads
+   differently depending on whether you're signed in or not */
+#accountRoot.loggedIn #accountBtn{ border-color:var(--gold); color:var(--gold); }
 #accountBtn svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
 
 #accountMenu{

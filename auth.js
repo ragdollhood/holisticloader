@@ -25,8 +25,9 @@
         (NO magic links, NO OTP). There is no self-serve "Register" UI —
         accounts are only created on thank-you.html after a successful
         Stripe purchase, which calls registerUser() itself. The header
-        only shows "Login" (for returning customers) and "Get Premium"
-        (which opens the premium popup that starts Stripe Checkout).
+        always shows one account icon: logged out it opens the login
+        modal directly, logged in it opens the account dropdown. "Get
+        Premium" opens the premium popup that starts Stripe Checkout.
      3. Restores the session automatically on page refresh
         (Supabase JS keeps the session in localStorage — this is just the
         auth token, NOT the premium flag, so it satisfies "premium must
@@ -36,10 +37,11 @@
         from Supabase (source of truth).
      6. Maintains a global `isPremium` boolean and a global `currentUser`
         object that the rest of your site can read.
-     7. Renders the header UI (Login / Get Premium / Logout buttons,
-        "Logged in as: ..." text) and the login modal. The modal itself is
-        appended directly to <body> (not left inside the header's DOM),
-        so a transformed/filtered header never traps its fixed positioning.
+     7. Renders the header UI (one always-visible account icon, plus the
+        "Logged in as: ..." dropdown once logged in) and the login modal.
+        The modal itself is appended directly to <body> (not left inside
+        the header's DOM), so a transformed/filtered header never traps
+        its fixed positioning.
      8. Exposes a "Forgot password?" link inside the login modal, which
         calls sb.auth.resetPasswordForEmail() and redirects the emailed
         link to reset-password.html (which must exist at your site root
@@ -263,10 +265,9 @@ function _buildAuthDom() {
   // always relative to the real viewport.
   root.innerHTML = `
     <div id="authButtons">
-      <button id="loginBtn" type="button">Login</button>
-      <button id="registerBtn" type="button">Get Premium</button>
-      <div id="accountRoot" style="display:none">
-        <button id="accountBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+      <button id="registerBtn" type="button" style="display:none">Get Premium</button>
+      <div id="accountRoot">
+        <button id="accountBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account">
           <svg viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>
         </button>
         <div id="accountMenu" role="menu">
@@ -315,7 +316,6 @@ function _buildAuthDom() {
    registerUser() itself once payment is confirmed). This modal is
    login-only for existing customers. */
 function _wireAuthDom() {
-  const loginBtn = document.getElementById("loginBtn");
   const registerBtn = document.getElementById("registerBtn");
   const logoutBtn = document.getElementById("logoutBtn");
   const manageSubBtn = document.getElementById("manageSubBtn");
@@ -345,6 +345,9 @@ function _wireAuthDom() {
   }
 
   function openAccountMenu() {
+    // Close the hamburger menu (if the page built one) before opening
+    // this one, so only one menu is ever open at a time.
+    if (typeof window.closeHamburgerMenu === "function") window.closeHamburgerMenu();
     accountMenu.classList.add("show");
     accountBtn.setAttribute("aria-expanded", "true");
   }
@@ -352,6 +355,8 @@ function _wireAuthDom() {
     accountMenu.classList.remove("show");
     accountBtn.setAttribute("aria-expanded", "false");
   }
+  // Exposed so the page's hamburger menu can close this one when it opens.
+  window.closeAccountMenu = closeAccountMenu;
   function toggleAccountMenu() {
     if (accountMenu.classList.contains("show")) closeAccountMenu();
     else openAccountMenu();
@@ -359,7 +364,8 @@ function _wireAuthDom() {
 
   accountBtn.onclick = (e) => {
     e.stopPropagation();
-    toggleAccountMenu();
+    if (currentUser) toggleAccountMenu();
+    else openModal();
   };
   document.addEventListener("click", (e) => {
     if (!accountRoot.contains(e.target)) closeAccountMenu();
@@ -368,7 +374,6 @@ function _wireAuthDom() {
     if (e.key === "Escape") closeAccountMenu();
   });
 
-  loginBtn.onclick = () => openModal();
   registerBtn.onclick = () => {
     // Opens the same "premium locked content" popup used elsewhere on the
     // page (defined per-page as window.openPremiumModal). That popup now
@@ -461,38 +466,35 @@ function _wireAuthDom() {
   };
 }
 
-/* Shows/hides the account icon and the "Logged in as" label.
-   Login/Get Premium are never shown as header buttons — they only live
-   in the hamburger menu (#loginMenuBtn / #getPremiumMenuBtn), which
-   forwards its clicks to the hidden #loginBtn / #registerBtn below. */
+/* The account icon in the header is now always visible: logged out it
+   opens the login modal directly on click, logged in it opens the
+   account dropdown (email + logout). "Get Premium" still also lives in
+   the hamburger menu (#getPremiumMenuBtn), which forwards its click to
+   the hidden #registerBtn below — guarded since not every page has it. */
 function renderAuthUI() {
   const accountRoot = document.getElementById("accountRoot");
   const accountMenu = document.getElementById("accountMenu");
   const accountBtn = document.getElementById("accountBtn");
   const emailLabel = document.getElementById("accountEmailLabel");
   const manageSubBtn = document.getElementById("manageSubBtn");
-  // Optional: the "Login" / "Get Premium" entries in the hamburger menu
-  // (indextest.html / instrumentstest.html). Not every page has them,
-  // so guard for null.
-  const loginMenuBtn = document.getElementById("loginMenuBtn");
   const getPremiumMenuBtn = document.getElementById("getPremiumMenuBtn");
   if (!accountRoot) return; // DOM not built yet
 
   if (currentUser) {
-    accountRoot.style.display = "inline-flex";
+    accountRoot.classList.add("loggedIn");
+    accountBtn.setAttribute("aria-label", "Account menu");
     emailLabel.textContent = "Logged in as: " + currentUser.email;
     // Only premium users have a Stripe subscription to manage.
     manageSubBtn.style.display = isPremium ? "" : "none";
-    if (loginMenuBtn) loginMenuBtn.style.display = "none";
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "none";
   } else {
-    accountRoot.style.display = "none";
+    accountRoot.classList.remove("loggedIn");
+    accountBtn.setAttribute("aria-label", "Log in");
     emailLabel.textContent = "";
     manageSubBtn.style.display = "none";
     // Logged out (or logging out) — always collapse the menu.
     accountMenu.classList.remove("show");
     accountBtn.setAttribute("aria-expanded", "false");
-    if (loginMenuBtn) loginMenuBtn.style.display = "";
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "";
   }
 }
