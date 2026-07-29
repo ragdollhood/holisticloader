@@ -298,8 +298,8 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
 /* ---- rubrikflik: samma stil som på instruments-sidan, en nedfälld flik under navigationen ---- */
 .h1-frame{
   position:sticky;
-  top:max(46px,calc(env(safe-area-inset-top) + 34px));
-  margin:-46px auto 0;
+  top:max(52px,calc(env(safe-area-inset-top) + 40px));
+  margin:-52px auto 0;
   z-index:30;
   width:min(94vw,820px);
   padding:8px 24px;
@@ -321,13 +321,13 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
 }
 @media (max-width:560px){
   .h1-frame{
-    top:max(42px,calc(env(safe-area-inset-top) + 28px));
-    margin-top:-32px;
+    top:max(48px,calc(env(safe-area-inset-top) + 34px));
+    margin-top:-38px;
     width:92vw;
     padding:7px 14px;
     border-radius:0 0 18px 18px;
   }
-  .body-col{top:calc(max(42px,calc(env(safe-area-inset-top) + 28px)) + 44px);}
+  .body-col{top:calc(max(48px,calc(env(safe-area-inset-top) + 34px)) + 44px);}
 }
 header{position:relative;text-align:center;padding:10px 70px 8px}
 header h1{
@@ -368,7 +368,7 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
 .layout{
   display:grid;grid-template-columns:1.15fr 1fr;gap:22px;
   max-width:1280px;margin:26px auto 0;padding:0 22px;align-items:start}
-.body-col{position:sticky;top:calc(max(46px,calc(env(safe-area-inset-top) + 34px)) + 50px);}
+.body-col{position:sticky;top:calc(max(52px,calc(env(safe-area-inset-top) + 40px)) + 50px);}
 .leftcol{display:flex;flex-direction:column;gap:22px;min-width:0}
 #nutriSection{max-width:1280px;margin:22px auto 0;padding:0 22px;position:relative;z-index:1}
 #nutriWide{width:100%}
@@ -968,7 +968,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,4,9,.85) 0%,rgba(6,4,9,.5) 65%,transparent 100%)}
 #topTabs{display:flex;pointer-events:auto}
-#topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
+#topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;line-height:normal;
   padding:9px 20px;color:rgba(255,255,255,.7);text-decoration:none;white-space:nowrap;
   background:rgba(6,4,9,.55);border:1px solid var(--tn-line);border-bottom:none;
   border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
@@ -1196,8 +1196,6 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 #authRoot{transform:translateY(-6px)}
 @media(max-width:560px){ #authRoot{transform:none} }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="auth.js"></script>
 
 <div id="bgFood" aria-hidden="true"></div>
   
@@ -3826,5 +3824,8 @@ registerVisit();
   window.openPremiumModal=openPremiumModal;
 })();
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
 </body>
 </html>
