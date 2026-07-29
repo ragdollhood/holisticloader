@@ -154,6 +154,42 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
   font-family:'Outfit',system-ui,sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
   font-size:clamp(22px,5vw,42px);line-height:1;color:#f4f1ea}
 
+/* ===== title plaque: same colors/style as instruments.html's .h1-frame
+   "dropped tab" under the nav, adapted to fixed positioning since this
+   page is a single fixed screen (body has overflow:hidden, no scroll —
+   sticky wouldn't have anything to stick to here). ===== */
+.h1-frame{
+  position:fixed;
+  top:max(46px,calc(env(safe-area-inset-top) + 34px));
+  left:50%;
+  transform:translateX(-50%);
+  z-index:30;
+  width:min(75vw,656px);
+  padding:9px 24px 9px;
+  border:1.5px solid var(--gold);
+  border-top:none;
+  border-radius:0 0 30px 30px;
+  background:linear-gradient(180deg, rgba(20,14,28,.74) 0%, rgba(14,10,20,.62) 100%);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
+}
+.h1-frame-title{
+  font-family:Georgia,serif;font-size:clamp(15px,4.2vw,20px);font-weight:600;
+  letter-spacing:.14em;text-align:center;line-height:1.4;max-width:94vw;margin:0 auto;
+  background:linear-gradient(90deg,var(--gold),var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+body.immersive .h1-frame{opacity:0;pointer-events:none;transition:opacity .5s ease}
+body.preset-active .h1-frame{display:none}
+@media (max-width:560px){
+  .h1-frame{
+    top:max(42px,calc(env(safe-area-inset-top) + 28px));
+    width:74vw;
+    padding:11px 14px 5px;
+    border-radius:0 0 18px 18px;
+  }
+}
+
 /* ===== shared tab navigation (same system as instruments.html) ===== */
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
@@ -587,22 +623,22 @@ body.immersive #brand{opacity:0}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
 #contactBtn.hidden{display:none}
 
-/* "Login", "Get Premium" and "How to use" are now plain rows inside the
-   shared #menuPanel background (no individual pill/border per item). */
-#loginMenuBtn,#getPremiumMenuBtn,#howToBtn{
+/* "Get Premium" and "How to use" are plain rows inside the shared
+   #menuPanel background (no individual pill/border per item). */
+#getPremiumMenuBtn,#howToBtn{
   display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
   width:100%;box-sizing:border-box;
   font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);
   background:transparent;border:none;border-radius:8px;
   padding:9px 10px;cursor:pointer;transition:background .15s ease;
 }
-#loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
 #getPremiumMenuBtn{color:var(--gold);font-weight:600}
 #getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
-#loginMenuBtn:hover,#getPremiumMenuBtn:hover,#howToBtn:hover{background:rgba(244,241,234,.1)}
-#loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active{background:rgba(244,241,234,.16)}
-#loginMenuBtn.hidden,#getPremiumMenuBtn.hidden,#howToBtn.hidden{display:none}
-body.immersive #loginMenuBtn,body.immersive #getPremiumMenuBtn,body.immersive #howToBtn{opacity:0;pointer-events:none}
+#getPremiumMenuBtn:hover,#howToBtn:hover{background:rgba(244,241,234,.1)}
+#getPremiumMenuBtn:active,#howToBtn:active{background:rgba(244,241,234,.16)}
+#getPremiumMenuBtn.hidden,#howToBtn.hidden{display:none}
+body.immersive #getPremiumMenuBtn,body.immersive #howToBtn{opacity:0;pointer-events:none}
 
 /* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button.
    Desktop: wide enough that everything fits without a scrollbar. Mobile: fills the screen and scrolls (see media query below, which is placed AFTER this rule on purpose — same-specificity CSS rules are resolved by source order, and the mobile override must win). */
@@ -685,9 +721,6 @@ body.immersive #howToBox{display:none}
     <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
   </button>
   <div id="menuPanel" role="menu">
-    <button id="loginMenuBtn" type="button">
-      <svg class="lgn-ic" viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>Login
-    </button>
     <button id="getPremiumMenuBtn" type="button">
       <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
     </button>
@@ -707,11 +740,15 @@ body.immersive #howToBox{display:none}
     <a href="index.html" class="tab active" aria-current="page">Breathing</a>
     <a href="instruments.html" class="tab">Sound Healing</a>
     <a href="nutriloader.html" class="tab">Nutrition</a>
-    <a href="store.html" class="tab">Shop</a>
+    <a href="store.html" class="tab">Store</a>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
 </header>
+
+<div class="h1-frame">
+  <p class="h1-frame-title">GUIDED BREATHING</p>
+</div>
 
 <div id="howToBox">
   <button id="howToClose" type="button" aria-label="Close">
@@ -1558,15 +1595,8 @@ function setSound(on){S.soundOn=on;
     document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
   }
-  /* "Login" and "Get Premium" in the menu just trigger the same header
-     buttons (built by auth.js) and close this menu. */
-  const loginMenuBtn=$('loginMenuBtn');
-  if(loginMenuBtn){
-    loginMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
-      closeMenu();
-      const headerLoginBtn=$('loginBtn'); if(headerLoginBtn)headerLoginBtn.click();
-    });
-  }
+  /* "Get Premium" in the menu just triggers the same header button
+     (built by auth.js) and closes this menu. */
   const getPremiumMenuBtn=$('getPremiumMenuBtn');
   if(getPremiumMenuBtn){
     getPremiumMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
