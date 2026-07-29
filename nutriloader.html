@@ -411,10 +411,10 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
   z-index:1;pointer-events:none;
   filter:drop-shadow(0 16px 22px rgba(60,40,20,.45)) drop-shadow(0 4px 8px rgba(60,40,20,.3))}
 #plateItems{position:absolute;inset:0;z-index:2;pointer-events:none;}
-#plateEmpty{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);z-index:1;
-  width:min(220px,70%);text-align:center;pointer-events:none;
-  font-family:'Outfit',system-ui,sans-serif;font-size:12.5px;font-weight:500;letter-spacing:.02em;
-  line-height:1.5;color:var(--tn-soft);text-shadow:0 1px 4px rgba(0,0,0,.5);}
+#plateEmpty{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;
+  padding:0 14%;text-align:center;pointer-events:none;
+  font-family:'Outfit',system-ui,sans-serif;font-size:17px;font-weight:600;letter-spacing:.01em;
+  line-height:1.45;color:var(--tn-ink);text-shadow:0 1px 2px rgba(0,0,0,.7);}
 #plateItems .plate-item{pointer-events:auto;}
 #plateItems .plate-item *{pointer-events:auto;}
 .plate-item{
@@ -1348,7 +1348,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
     <div id="plateZone">
       <div id="plateZoneBg"></div>
       <img class="plate-photo" src="images/tallrik-vit.png" alt="">
-      <div id="plateEmpty" data-i18n="plateEmpty">Drag food from the Pantry to start your plate</div>
+      <div id="plateEmpty" data-i18n="plateEmpty">Drag food from the pantry to start your plate</div>
       <div id="plateItems"></div>
     </div>
   </section>
@@ -1698,7 +1698,7 @@ const I18N = {
   serving:{en:'serving',sv:'portion'},
   eatBtn:{en:'EAT',sv:'ÄT'},
   eatenBtn:{en:'EATEN',sv:'ÄTIT'},
-  plateFor:{en:'Drag food from the Pantry for your {m}',sv:'Dra mat från skafferiet till din {m}'},
+  plateFor:{en:'Drag food from the pantry to your {m} plate',sv:'Dra mat från skafferiet till din {m}'},
   qtyUpToast:{en:'More {f}! Amount is now {m}',sv:'Mer {f}! Mängden är nu {m}'},
   mwTitle:{en:'Microwave — ready meal? Enter it from the label',sv:'Mikron — färdigmat? Fyll i från etiketten'},
   mwName:{en:'Name of the dish…',sv:'Rättens namn…'},
@@ -2051,9 +2051,10 @@ function renderPlate(){
   const box=$('#plateItems'); box.innerHTML='';
   const mealItems=items.filter(it=>it.meal===activeMeal);
   const mealName=MEALS.find(m=>m.id===activeMeal)[lang];
+  const mealNameLower=mealName.charAt(0).toLowerCase()+mealName.slice(1);
   const empt=$('#plateEmpty');
   empt.style.display = mealItems.length?'none':'block';
-  empt.textContent = t('plateFor').replace('{m}',mealName);
+  empt.textContent = t('plateFor').replace('{m}',mealNameLower);
   const z=document.getElementById('plateZone');
   const w=z.clientWidth||360, h=z.clientHeight||520;
   const isMobile = w < 400;
