@@ -168,14 +168,27 @@ html.lite *{backdrop-filter:none !important;-webkit-backdrop-filter:none !import
 #topTabsDesktop::after{content:'';position:absolute;top:0;right:-1px;bottom:0;width:2px;pointer-events:none;
   background:linear-gradient(180deg,transparent,var(--gold-soft) 12%,var(--gold) 50%,var(--gold-soft) 88%,transparent);
   opacity:.6}
-#topTabsDesktop .tabImg{display:block;width:clamp(192px,26vw,276px);height:clamp(192px,26vw,276px);border-radius:26px;overflow:hidden;
+#topTabsDesktop .tabImg{display:flex;flex-direction:column;align-items:center;gap:10px;width:clamp(192px,26vw,276px)}
+#topTabsDesktop .tabImg picture{display:block;width:100%;height:clamp(192px,26vw,276px);border-radius:26px;overflow:hidden;
   position:relative;border:1px solid var(--line);background:var(--glass-strong);
   box-shadow:0 10px 28px rgba(0,0,0,.4);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
 #topTabsDesktop .tabImg picture,#topTabsDesktop .tabImg img{display:block;width:100%;height:100%;object-fit:cover}
-#topTabsDesktop .tabImg:hover{transform:translateX(3px) scale(1.02)}
-#topTabsDesktop .tabImg:active{transform:translateX(0) scale(.97)}
-#topTabsDesktop .tabImg.active{border-color:var(--gold);
+#topTabsDesktop .tabImg:hover picture{transform:translateX(3px) scale(1.02)}
+#topTabsDesktop .tabImg:active picture{transform:translateX(0) scale(.97)}
+#topTabsDesktop .tabImg.active picture{border-color:var(--gold);
   box-shadow:0 0 0 2px var(--gold),0 0 24px rgba(231,201,162,.55),0 14px 32px rgba(0,0,0,.45)}
+/* clear text label under every tab photo — this is what the drawer was
+   missing, so on a quick glance you knew what each picture actually opens */
+#topTabsDesktop .tabLabel{font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:12.5px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--muted);transition:color .2s ease}
+#topTabsDesktop .tabImg.active .tabLabel{color:var(--gold)}
+#topTabsDesktop .tabImg:hover .tabLabel{color:var(--ink)}
+/* desktop-only sidebar title, echoes the mobile drawer's header so both
+   states read the same way ("this column = site navigation") */
+#navDrawerHead{display:flex;align-items:center;justify-content:center;width:100%;margin-bottom:6px}
+#navDrawerHead .ndh-title{font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:10.5px;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+#navDrawerClose{display:none}
 body.immersive #topNavDesktop{opacity:0;pointer-events:none;transition:opacity .5s ease}
 /* shift the ENTIRE scene (background, orb, instrument reel, front controls,
    images) clear of the left sidebar on desktop — not just the logo — so
@@ -212,9 +225,19 @@ body.nav-open #navHandle{opacity:0;pointer-events:none;transform:translateY(-50%
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
   /* sidebar becomes a collapsed drawer, off-screen until opened */
-  #topTabsDesktop{width:clamp(150px,46vw,190px);padding:24px 14px;gap:16px;transform:translateX(-100%)}
+  #topTabsDesktop{width:clamp(168px,58vw,220px);padding:max(20px,env(safe-area-inset-top)) 16px 20px;gap:14px;transform:translateX(-100%)}
   body.nav-open #topTabsDesktop{transform:translateX(0)}
-  #topTabsDesktop .tabImg{width:clamp(120px,38vw,168px);height:clamp(120px,38vw,168px);border-radius:18px}
+  #topTabsDesktop .tabImg{width:clamp(108px,34vw,150px)}
+  #topTabsDesktop .tabImg picture{height:clamp(108px,34vw,150px);border-radius:18px}
+  #topTabsDesktop .tabLabel{font-size:11.5px}
+  /* on mobile the drawer gets a real header: a title plus an explicit close
+     (X), so it reads as its own panel instead of a strip of loose photos */
+  #navDrawerHead{justify-content:space-between;padding-bottom:12px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+  #navDrawerHead .ndh-title{font-size:12px;letter-spacing:.18em;color:var(--muted)}
+  #navDrawerClose{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+    color:var(--muted);background:rgba(244,241,234,.06);border:1px solid var(--line)}
+  #navDrawerClose:active{background:rgba(244,241,234,.14);color:var(--ink)}
+  #navDrawerClose svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
   #navHandle{display:flex}
   body.nav-open #navBackdrop{opacity:1;pointer-events:auto}
   /* preset active: hide the drawer/handle while a preset session is running */
@@ -749,29 +772,39 @@ body.immersive #howToBox{display:none}
 
 <header id="topNavDesktop">
   <nav id="topTabsDesktop" aria-label="Main sections">
+    <div id="navDrawerHead">
+      <span class="ndh-title">Menu</span>
+      <button id="navDrawerClose" type="button" aria-label="Close menu">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
     <a href="index.html" class="tabImg active" aria-current="page" aria-label="Breathing">
       <picture>
         <source srcset="images/btn-breathe.webp" type="image/webp">
         <img src="images/btn-breathe.jpg" alt="Breathing" width="170" height="170" loading="eager">
       </picture>
+      <span class="tabLabel">Breathe</span>
     </a>
     <a href="instruments.html" class="tabImg" aria-label="Sound Healing">
       <picture>
         <source srcset="images/btn-instru.webp" type="image/webp">
         <img src="images/btn-instru.jpg" alt="Sound Healing" width="170" height="170" loading="lazy">
       </picture>
+      <span class="tabLabel">Sound Healing</span>
     </a>
     <a href="nutriloader.html" class="tabImg" aria-label="Nutrition">
       <picture>
         <source srcset="images/btn-nutri.webp" type="image/webp">
         <img src="images/btn-nutri.jpg" alt="Nutrition" width="170" height="170" loading="lazy">
       </picture>
+      <span class="tabLabel">Nutrition</span>
     </a>
     <a href="store.html" class="tabImg" aria-label="Store">
       <picture>
         <source srcset="images/btn-store.webp" type="image/webp">
         <img src="images/btn-store.jpg" alt="Store" width="170" height="170" loading="lazy">
       </picture>
+      <span class="tabLabel">Store</span>
     </a>
   </nav>
 </header>
@@ -2420,7 +2453,7 @@ $('btnAgain').onclick =()=>{resetToFront();startSession();};
 /* init */
 /* ===== Mobile nav drawer (collapsed sidebar) ===== */
 (function(){
-  const handle=$('navHandle'),backdrop=$('navBackdrop');
+  const handle=$('navHandle'),backdrop=$('navBackdrop'),closeBtn=$('navDrawerClose');
   if(!handle||!backdrop)return;
   function setOpen(open){
     document.body.classList.toggle('nav-open',open);
@@ -2428,6 +2461,7 @@ $('btnAgain').onclick =()=>{resetToFront();startSession();};
   }
   handle.addEventListener('click',()=>setOpen(!document.body.classList.contains('nav-open')));
   backdrop.addEventListener('click',()=>setOpen(false));
+  if(closeBtn)closeBtn.addEventListener('click',()=>setOpen(false));
   document.querySelectorAll('#topTabsDesktop .tabImg').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
 })();
 renderReel();renderSounds(true);updateFreq();renderBreathPresets();renderTimers();renderPresets();applyTempoFollow();
