@@ -1004,7 +1004,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
 #menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
-/* "Login", "Get Premium", "How to use" and "Contact" are plain rows sharing
+/* "Login", "Unlock Premium", "How to use" and "Contact" are plain rows sharing
    the #menuPanel background (no individual pill/border per item). */
 #contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
   border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--tn-ink);cursor:pointer;
@@ -1250,7 +1250,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
         </div>
         <div id="premiumModalFooter">
           <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
-            <span>Get Premium for $4.99/month</span>
+            <span>Unlock Premium for $4.99/month</span>
             <span class="premCancelNote">Cancel anytime!</span>
           </a>
           <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
@@ -1268,7 +1268,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
       </button>
       <div id="menuPanel" role="menu">
         <button id="getPremiumMenuBtn" type="button">
-          <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Get Premium
+          <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Unlock Premium
         </button>
         <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
           <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
@@ -1361,7 +1361,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
     <button id="logBtn" title="Food log">
       <img src="images/logbook.png" alt="Food log"> <span id="logBtnLbl" style="display:none">Log</span>
     </button>
-    <button type="button" class="premSyncBadge" id="logBtnSyncBadge" title="Get Premium to sync your log across devices" style="display:none">
+    <button type="button" class="premSyncBadge" id="logBtnSyncBadge" title="Unlock Premium to sync your log across devices" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
       Sync
     </button>
@@ -1390,7 +1390,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
       <button id="logBtnHabits" title="Bad habits log" style="width:100%;margin:0">
         <img src="images/logbook.png" alt="Bad habits log">
       </button>
-      <button type="button" class="premSyncBadge" id="logBtnHabitsSyncBadge" title="Get Premium to sync your log across devices" style="display:none">
+      <button type="button" class="premSyncBadge" id="logBtnHabitsSyncBadge" title="Unlock Premium to sync your log across devices" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
         Sync
       </button>
@@ -1485,7 +1485,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
     <p class="log-header-meta" id="logModalMeta">A record of everything logged with Clean Plates.</p>
     <div id="logSyncBanner">
       <span><b>Sync across devices</b> with Premium — right now this log is only saved on this device.</span>
-      <button id="logSyncBannerBtn" type="button">Get Premium</button>
+      <button id="logSyncBannerBtn" type="button">Unlock Premium</button>
     </div>
     <div id="logTableWrap" style="position:relative">
       <div id="logSideBar">
@@ -2928,8 +2928,8 @@ const LOG_STR = {
   syncedDown:{en:'Your saved log was synced from the cloud.', sv:'Din sparade logg synkades fr\u00e5n molnet.'},
   bannerText:{en:'<b>Sync across devices</b> with Premium — right now this log is only saved on this device.',
               sv:'<b>Synka mellan enheter</b> med Premium — just nu sparas den h\u00e4r loggen bara p\u00e5 den h\u00e4r enheten.'},
-  bannerBtn:{en:'Get Premium', sv:'Skaffa Premium'},
-  syncBadgeTitle:{en:'Get Premium to sync your log across devices', sv:'Skaffa Premium f\u00f6r att synka loggen mellan enheter'}
+  bannerBtn:{en:'Unlock Premium', sv:'Skaffa Premium'},
+  syncBadgeTitle:{en:'Unlock Premium to sync your log across devices', sv:'Skaffa Premium f\u00f6r att synka loggen mellan enheter'}
 };
 
 function isSyncActive(){
@@ -3694,7 +3694,7 @@ registerVisit();
 (function(){
   const $=id=>document.getElementById(id);
 
-  /* hamburger menu: toggles the panel holding Login + Get Premium + Contact */
+  /* hamburger menu: toggles the panel holding Login + Unlock Premium + Contact */
   (function(){
     const mBtn=$('menuBtn'), mPanel=$('menuPanel');
     const closeMenu=function(){ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
@@ -3705,7 +3705,7 @@ registerVisit();
       document.addEventListener('click',function(e){ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
       document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeMenu(); });
     }
-    /* "Login" and "Get Premium" in the menu just trigger the same header
+    /* "Login" and "Unlock Premium" in the menu just trigger the same header
        buttons (built by auth.js) and close this menu. */
     const loginMenuBtn=$('loginMenuBtn');
     if(loginMenuBtn){
