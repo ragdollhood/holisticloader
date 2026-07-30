@@ -1292,7 +1292,7 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
     const locked=!isPremium && !OPEN_SOUND_IDS.has(s.id);
     const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.sndid=s.id;
     b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`+(locked?lockBadgeHTML:'');
-    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{switchSound(s.id);renderSounds();preview();});
+    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{switchSound(s.id);renderSounds(true);preview();});
     if(s.id===S.sound)activeEl=b;w.appendChild(b);
   });
   /* ambience "instruments" continue the same row, after the tuned instruments */
@@ -1300,10 +1300,10 @@ function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scro
     const locked=isAmbLocked(a.id);
     const b=document.createElement('button');b.className='itile'+(a.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.ambid=a.id;
     b.innerHTML=`<span class="iimg" style="background-image:url(${a.img})"></span><span class="ilbl">${a.label}</span>`+(locked?lockBadgeHTML:'');
-    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{switchAmbSound(a);renderSounds();});
+    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{switchAmbSound(a);renderSounds(true);});
     if(a.id===S.sound)activeEl=b;w.appendChild(b);
   });
-  if(center&&activeEl){requestAnimationFrame(()=>{w.scrollLeft=activeEl.offsetLeft-w.clientWidth/2+activeEl.offsetWidth/2;});}
+  if(center&&activeEl){requestAnimationFrame(()=>{w.scrollTo({left:activeEl.offsetLeft-w.clientWidth/2+activeEl.offsetWidth/2,behavior:'smooth'});});}
   else{w.scrollLeft=sx;}
 }
 function updateSoundActiveStates(){
