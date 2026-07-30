@@ -2459,8 +2459,8 @@ setTimeout(positionOrb,1200);
 /* Re-render locked content live the instant premium status changes
    (login, logout, or a fresh isPremium check on page load) */
 onPremiumStatusChange(()=>{
-  renderReel();
-  renderSounds();
+  renderReel();centerReelOnce();
+  renderSounds(true);
   renderPresets();
 });
 </script>
