@@ -298,8 +298,8 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
 /* ---- rubrikflik: samma stil som på instruments-sidan, en nedfälld flik under navigationen ---- */
 .h1-frame{
   position:sticky;
-  top:max(46px,calc(env(safe-area-inset-top) + 34px));
-  margin:-46px auto 0;
+  top:max(118px,calc(env(safe-area-inset-top) + 106px));
+  margin:-118px auto 0;
   z-index:30;
   width:min(94vw,820px);
   padding:8px 24px;
@@ -319,15 +319,22 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
   filter:saturate(1.35) brightness(1.08);
   text-shadow:0 0 14px rgba(255,217,138,.28);
 }
+/* ---- title logo: sits above the nav tabs, at the very top of the page ---- */
+#brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px;pointer-events:none}
+#brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
+  filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
+@media (max-width:560px){
+  #brandLogo{max-height:clamp(46px,12vw,84px)}
+}
 @media (max-width:560px){
   .h1-frame{
-    top:max(42px,calc(env(safe-area-inset-top) + 28px));
-    margin-top:-32px;
+    top:max(121px,calc(env(safe-area-inset-top) + 105px));
+    margin-top:-121px;
     width:92vw;
     padding:7px 14px;
     border-radius:0 0 18px 18px;
   }
-  .body-col{top:calc(max(42px,calc(env(safe-area-inset-top) + 28px)) + 44px);}
+  .body-col{top:calc(max(121px,calc(env(safe-area-inset-top) + 105px)) + 44px);}
 }
 header{position:relative;text-align:center;padding:10px 70px 8px}
 header h1{
@@ -368,7 +375,7 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
 .layout{
   display:grid;grid-template-columns:1.15fr 1fr;gap:22px;
   max-width:1280px;margin:26px auto 0;padding:0 22px;align-items:start}
-.body-col{position:sticky;top:calc(max(46px,calc(env(safe-area-inset-top) + 34px)) + 50px);}
+.body-col{position:sticky;top:calc(max(118px,calc(env(safe-area-inset-top) + 106px)) + 50px);}
 .leftcol{display:flex;flex-direction:column;gap:22px;min-width:0}
 #nutriSection{max-width:1280px;margin:22px auto 0;padding:0 22px;position:relative;z-index:1}
 #nutriWide{width:100%}
@@ -967,7 +974,7 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
   --glass-strong:rgba(18,12,26,.78);
   --gold-soft:#e6c179;
 }
-body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
+body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,4,9,.85) 0%,rgba(6,4,9,.5) 65%,transparent 100%)}
@@ -1086,7 +1093,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
   }
   #menuBtn{width:30px;height:30px}
   /* pull page content up much closer to the gold line under the tabs */
-  body{padding-top:max(74px,calc(env(safe-area-inset-top) + 58px))}
+  body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}
   header{padding-top:0}
   /* how to use: fills the whole screen and only scrolls vertically, never sideways */
   #howToBox{
@@ -1319,6 +1326,7 @@ body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
     </div>
 
     <header id="topNav">
+      <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
       <nav id="topTabs" aria-label="Main sections">
         <a href="index.html" class="tab">Breathing</a>
         <a href="instruments.html" class="tab">Sound Healing</a>
