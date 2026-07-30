@@ -954,6 +954,10 @@ body.immersive #howToBox{display:none}
           <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe in</span>
           <button class="swtoggle on" id="soundInBtn" aria-pressed="true" aria-label="Sound on breathe in"><span class="sw-knob"></span></button>
         </div>
+        <div class="sti" id="stiHold">
+          <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Hold</span>
+          <button class="swtoggle on" id="soundHoldBtn" aria-pressed="true" aria-label="Sound on hold"><span class="sw-knob"></span></button>
+        </div>
         <div class="sti" id="stiBreatheOut">
           <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe out</span>
           <button class="swtoggle on" id="soundOutBtn" aria-pressed="true" aria-label="Sound on breathe out"><span class="sw-knob"></span></button>
@@ -1055,7 +1059,7 @@ const INSTRUMENT_ICONS = {"crystal_bowl": `images/crystal_bowl.${_iext}`, "quart
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
 const S = {bg:'bergen', sound:'gong', freq:80, tempo:12, tempoFollow:true,
-  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false,
+  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundHold:true, soundBreathOut:true, running:false, ended:false, advanced:false,
   amb:{wave:0,greennoise:0,whitenoise:0,pinknoise:0,brownnoise:0,blue:0,violet:0,gray:0,black:0}};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
@@ -1570,9 +1574,11 @@ function syncTempoUI(){
 function syncSoundSubtabs(){
   const f=$('soundFollowBtn'); if(f){f.classList.toggle('on',S.tempoFollow);f.setAttribute('aria-pressed',S.tempoFollow?'true':'false');}
   const i=$('soundInBtn'); if(i){i.classList.toggle('on',S.soundBreathIn);i.setAttribute('aria-pressed',S.soundBreathIn?'true':'false');}
+  const h=$('soundHoldBtn'); if(h){h.classList.toggle('on',S.soundHold);h.setAttribute('aria-pressed',S.soundHold?'true':'false');}
   const o=$('soundOutBtn'); if(o){o.classList.toggle('on',S.soundBreathOut);o.setAttribute('aria-pressed',S.soundBreathOut?'true':'false');}
-  /* Breathe in / Breathe out toggles only show while "sound follows breathing" is ON */
+  /* Breathe in / Hold / Breathe out toggles only show while "sound follows breathing" is ON */
   const stiIn=$('stiBreatheIn'); if(stiIn)stiIn.classList.toggle('hidden',!S.tempoFollow);
+  const stiHold=$('stiHold'); if(stiHold)stiHold.classList.toggle('hidden',!S.tempoFollow);
   const stiOut=$('stiBreatheOut'); if(stiOut)stiOut.classList.toggle('hidden',!S.tempoFollow);
   /* The tempo slider is irrelevant while sound follows the breath, so hide it in that case */
   const ff=$('freqFrontWrap'); if(ff)ff.classList.toggle('hidden', ctrlTab==='length' || (ctrlTab==='soundtempo' && S.tempoFollow));
@@ -1583,6 +1589,7 @@ $('soundFollowBtn').onclick=()=>{S.tempoFollow=!S.tempoFollow;clearPreset();
   applyTempoFollow();syncSoundSubtabs();
   if(S.running)startScheduler();};
 $('soundInBtn').onclick=()=>{S.soundBreathIn=!S.soundBreathIn;syncSoundSubtabs();};
+$('soundHoldBtn').onclick=()=>{S.soundHold=!S.soundHold;syncSoundSubtabs();};
 $('soundOutBtn').onclick=()=>{S.soundBreathOut=!S.soundBreathOut;syncSoundSubtabs();};
 
 /* breathing rhythm */
@@ -2168,7 +2175,7 @@ let schedTimer=null,nextToneTime=0;
 function soundPhaseAllowed(){
   const cyc=S.inhale+S.hold+S.exhale,p=breathClock%cyc;
   if(p<S.inhale)return S.soundBreathIn;
-  if(p<S.inhale+S.hold)return true;
+  if(p<S.inhale+S.hold)return S.soundHold;
   return S.soundBreathOut;
 }
 function startScheduler(){
@@ -2287,7 +2294,7 @@ function loop(ts){requestAnimationFrame(loop);
     if(S.running&&S.tempoFollow&&audio.ctx){
       const ph=cue==='Breathe in'?'in':cue==='Hold'?'hold':'out';
       if(ph!==lastBreathPhase){lastBreathPhase=ph;
-        const allowed=ph==='in'?S.soundBreathIn:ph==='hold'?true:S.soundBreathOut;
+        const allowed=ph==='in'?S.soundBreathIn:ph==='hold'?S.soundHold:S.soundBreathOut;
         if(S.soundOn&&allowed)playVoice(S.sound,S.freq,audio.ctx.currentTime+.03);}
     }
   }else{const cyc=Math.max(2,S.tempo),u=(breathClock%cyc)/cyc;phase=(1-Math.cos(2*Math.PI*u))/2;cue=u<.5?'Breathe in':'Breathe out';}
