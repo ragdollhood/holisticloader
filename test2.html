@@ -459,7 +459,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .reelCol{min-width:0}
   #reelWrap,#soundRowWrap{perspective:1100px}
   #reel,#soundScrollFront{padding-top:16px;padding-bottom:8px;gap:8px}
-  .reel-item,.itile{transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .35s ease}
+  .reel-item,.itile{position:relative;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .35s ease}
   #reel .reel-item,#soundScrollFront .itile{width:244px}
   #reel .reel-item .pic,#soundScrollFront .iimg{width:244px;height:160px}
   #reel .reel-item .cap,#soundScrollFront .ilbl{max-width:244px}
@@ -2209,7 +2209,7 @@ function positionOrb(){
   const b=anchor.getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
   if(!r.height) return;
   const oh=ow.offsetHeight;
-  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2);
+  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 60);
   ow.style.marginTop=mt+'px';
   updateLensGeom();
 }
@@ -2515,7 +2515,7 @@ onPremiumStatusChange(()=>{
     }
     function updateTransforms(){
       if(!mq.matches){
-        Array.prototype.forEach.call(scroller.children,function(el){el.style.transform='';el.style.opacity=''});
+        Array.prototype.forEach.call(scroller.children,function(el){el.style.transform='';el.style.opacity='';el.style.zIndex=''});
         return;
       }
       var cRect=scroller.getBoundingClientRect(); if(!cRect.width) return;
@@ -2524,12 +2524,16 @@ onPremiumStatusChange(()=>{
         var r=el.getBoundingClientRect(); if(!r.width) return;
         var delta=(r.left+r.width/2)-cCenter;
         var t=Math.max(-1,Math.min(1,delta/(cRect.width/2.6)));
+        var isActive=el.classList.contains('active');
         var scale=1.12-Math.abs(t)*0.32;
+        if(isActive) scale=Math.max(scale,1.12)*1.1;   // the selected image/sound is always bigger than its neighbours
         var rot=t*-14;
         var ty=Math.abs(t)*10;
         var op=Math.max(.28,1-Math.abs(t)*0.55);
         el.style.transform='translateY('+ty+'px) rotateY('+rot+'deg) scale('+scale+')';
         el.style.opacity=op;
+        // the selected tile always sits on top; the rest stack by how close they are to the centre
+        el.style.zIndex=isActive?50:Math.round((1-Math.abs(t))*40);
       });
       updateEdges();
     }
