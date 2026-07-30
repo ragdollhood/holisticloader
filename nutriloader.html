@@ -3870,11 +3870,21 @@ registerVisit();
     var navBottom=nav.getBoundingClientRect().bottom;
     if(navBottom>0) h1FrameEl.style.top=(navBottom-1)+'px';
   }
-  syncH1FrameTop();
+  /* hide the frame until it has been measured against the *final* tab
+     font (webfonts often aren't ready on the very first layout pass,
+     which used to make the frame render too wide for an instant and
+     then visibly snap to its correct, narrower size once the font
+     swapped in) */
+  h1FrameEl.style.visibility='hidden';
+  function firstSync(){
+    syncH1FrameTop();
+    h1FrameEl.style.visibility='';
+  }
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(firstSync);
+  else firstSync();
   addEventListener('resize',syncH1FrameTop);
   addEventListener('orientationchange',function(){setTimeout(syncH1FrameTop,60);});
   if(window.visualViewport) visualViewport.addEventListener('resize',syncH1FrameTop);
-  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(syncH1FrameTop);
 })();
 </script>
 
