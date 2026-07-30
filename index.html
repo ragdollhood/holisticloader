@@ -459,7 +459,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .reelCol{min-width:0}
   #reelWrap,#soundRowWrap{perspective:1100px}
   #reel,#soundScrollFront{padding-top:16px;padding-bottom:8px;gap:8px}
-  .reel-item,.itile{position:relative;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .35s ease}
+  .reel-item,.itile{position:relative;transition:none}
   #reel .reel-item,#soundScrollFront .itile{width:244px}
   #reel .reel-item .pic,#soundScrollFront .iimg{width:244px;height:160px}
   #reel .reel-item .cap,#soundScrollFront .ilbl{max-width:244px}
@@ -1139,7 +1139,7 @@ function renderReel(){
     const it=document.createElement('button');
     it.className='reel-item'+(img.id===S.bg?' active':'')+(locked?' reel-locked':''); it.dataset.bgid=img.id;
     it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`+(locked?lockBadgeHTML:'');
-    it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{setBackground(img.id);});
+    it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{setBackground(img.id);it.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});});
     r.appendChild(it);
   });
   const add=document.createElement('button'); add.className='reel-item add'+(isPremium?'':' reel-locked');
