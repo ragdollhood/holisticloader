@@ -194,7 +194,12 @@
     background:linear-gradient(180deg, rgba(20,14,28,.74) 0%, rgba(14,10,20,.62) 100%);
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
     box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
+    /* hidden from the very first paint (via CSS, not a script that runs
+       later) so it can never flash at its default width before JS has
+       measured and sized it — see .h1-frame.h1-ready below */
+    visibility:hidden;
   }
+  .h1-frame.h1-ready{visibility:visible}
   .h1-frame h1{max-width:none;margin:0;white-space:nowrap}
   @media (max-width:560px){
     .h1-frame{
@@ -667,6 +672,13 @@
       pointer-events:none;
     }
     #tsPanelGutter #tsPanel{pointer-events:auto}
+    /* hidden from the very first paint so it can never visibly jump from
+       its default 280px-centered position to its final measured position
+       once the page (and any late-loading images) has settled — see
+       #tsPanelGutter.ts-ready below and the reveal script near the end
+       of the file */
+    #tsPanelGutter{visibility:hidden}
+    #tsPanelGutter.ts-ready{visibility:visible}
 
     #tsPanel{
       position:relative;
@@ -3985,9 +3997,14 @@ registerVisit();
     var gap=stage.getBoundingClientRect().left;
     gutter.style.width=(gap>minW?gap:minW)+'px';
   }
+  function revealTsPanel(){
+    centerTsPanel();
+    gutter.classList.add('ts-ready');
+  }
   centerTsPanel();
   window.addEventListener('resize',centerTsPanel);
-  window.addEventListener('load',centerTsPanel);
+  if(document.readyState==='complete') revealTsPanel();
+  else window.addEventListener('load',revealTsPanel);
 })();
 
 (function(){
@@ -4188,15 +4205,13 @@ registerVisit();
     var navBottom=nav.getBoundingClientRect().bottom;
     if(navBottom>0) h1FrameEl.style.top=(navBottom-1)+'px';
   }
-  /* hide the frame until it has been measured against the *final* tab
-     font (webfonts often aren't ready on the very first layout pass,
-     which used to make the frame render too wide for an instant and
-     then visibly snap to its correct, narrower size once the font
-     swapped in) */
-  h1FrameEl.style.visibility='hidden';
+  /* the frame starts hidden via CSS (.h1-frame{visibility:hidden}) so it
+     can never flash at its default width before webfonts are ready; we
+     only reveal it (by adding .h1-ready) once it's been measured against
+     the *final* tab font and sized/positioned correctly */
   function firstSync(){
     syncH1FrameTop();
-    h1FrameEl.style.visibility='';
+    h1FrameEl.classList.add('h1-ready');
   }
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(firstSync);
   else firstSync();
