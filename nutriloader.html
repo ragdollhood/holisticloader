@@ -3856,6 +3856,13 @@ registerVisit();
   if(!h1FrameEl) return;
   function syncH1FrameTop(){
     var nav=document.getElementById('topNav'); if(!nav) return;
+    var tabs=document.getElementById('topTabs');
+    if(tabs && innerWidth<=560){
+      var w=tabs.getBoundingClientRect().width;
+      if(w>0) h1FrameEl.style.width=w+'px';
+    } else {
+      h1FrameEl.style.width='';
+    }
     var navBottom=nav.getBoundingClientRect().bottom;
     if(navBottom>0) h1FrameEl.style.top=(navBottom-1)+'px';
   }
