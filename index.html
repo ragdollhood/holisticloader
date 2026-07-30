@@ -1129,6 +1129,14 @@ function repositionOpen(){ if(openGroup){const g=GROUPS.find(x=>x.id===openGroup
    the rest are locked behind premium. The centre is fixed at 'bergen' so the
    free window doesn't shift around as the person picks a different image. */
 const REEL_CENTER_ID='bergen';
+/* scrollIntoView can be unreliable inside a scroll-snap-type:mandatory
+   container (some browsers fight the snap and land off-centre), so we
+   compute the exact scrollLeft needed to put a tile dead-centre instead. */
+function centerTileInScroller(scroller,el){
+  if(!scroller||!el) return;
+  const target=el.offsetLeft-(scroller.clientWidth-el.offsetWidth)/2;
+  scroller.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
 function renderReel(){
   const r=$('reel'); r.innerHTML='';
   const list=allImages();
@@ -1139,7 +1147,7 @@ function renderReel(){
     const it=document.createElement('button');
     it.className='reel-item'+(img.id===S.bg?' active':'')+(locked?' reel-locked':''); it.dataset.bgid=img.id;
     it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`+(locked?lockBadgeHTML:'');
-    it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{setBackground(img.id);it.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});});
+    it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{setBackground(img.id);centerTileInScroller(r,it);});
     r.appendChild(it);
   });
   const add=document.createElement('button'); add.className='reel-item add'+(isPremium?'':' reel-locked');
@@ -2508,7 +2516,7 @@ onPremiumStatusChange(()=>{
       if(!items.length) return;
       var idx=centeredIndex(items);
       var target=items[Math.max(0,Math.min(items.length-1,idx+dir))];
-      if(target) target.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+      if(target) centerTileInScroller(scroller,target);
     }
     function updateEdges(){
       if(!arrowsOn) return;
