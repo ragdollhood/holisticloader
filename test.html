@@ -4173,5 +4173,26 @@ registerVisit();
   }
 })();
 </script>
+
+<script>
+/* keep the .h1-frame tab flush under #topNav's bottom edge at every window
+   size — the logo scales continuously with vw, so #topNav's height isn't
+   fixed; measure it live instead of relying on the two CSS breakpoints
+   (same technique as index.html's syncH1FrameWidth). */
+(function(){
+  var h1FrameEl=document.querySelector('.h1-frame');
+  if(!h1FrameEl) return;
+  function syncH1FrameTop(){
+    var nav=document.getElementById('topNav'); if(!nav) return;
+    var navBottom=nav.getBoundingClientRect().bottom;
+    if(navBottom>0) h1FrameEl.style.top=(navBottom-1)+'px';
+  }
+  syncH1FrameTop();
+  addEventListener('resize',syncH1FrameTop);
+  addEventListener('orientationchange',function(){setTimeout(syncH1FrameTop,60);});
+  if(window.visualViewport) visualViewport.addEventListener('resize',syncH1FrameTop);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(syncH1FrameTop);
+})();
+</script>
 </body>
 </html>
