@@ -463,12 +463,17 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
    Below 900px the reels stay exactly as before (plain horizontal scroll strip) —
    this block only changes anything once the media query matches. */
 @media (min-width:900px){
+  #reelsRow{display:grid;grid-template-columns:1fr 1fr;gap:8px 36px;align-items:start}
+  .reelCol{min-width:0}
   #reelWrap,#soundRowWrap{perspective:1100px}
-  #reel,#soundScrollFront{padding-top:16px;padding-bottom:8px}
+  #reel,#soundScrollFront{padding-top:16px;padding-bottom:8px;gap:8px}
   .reel-item,.itile{transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .35s ease}
+  #reel .reel-item,#soundScrollFront .itile{width:244px}
+  #reel .reel-item .pic,#soundScrollFront .iimg{width:244px;height:160px}
+  #reel .reel-item .cap,#soundScrollFront .ilbl{max-width:244px}
   #reelWrap::before,#reelWrap::after{display:none}
   #placeCue,#soundCue{display:none}
-  .coverflow-arrow{position:absolute;top:44px;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
+  .coverflow-arrow{position:absolute;top:96px;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;z-index:5;cursor:pointer;
     background:rgba(15,12,20,.6);border:1px solid var(--line);color:var(--ink);
     backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:background .2s ease,opacity .2s ease,transform .2s ease}
@@ -478,6 +483,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .coverflow-arrow.next{right:-8px}
   .coverflow-arrow svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
   .coverflow-arrow.edge{opacity:.3;pointer-events:none}
+}
+@media (min-width:900px) and (max-width:1180px){
+  #reelsRow{grid-template-columns:1fr;gap:28px 0}
 }
 /* ===== Premium features modal (matches instruments.html) ===== */
 #premiumModal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;
@@ -875,14 +883,20 @@ body.immersive #howToBox{display:none}
 
   <!-- FRONT PAGE -->
   <div id="front">
-    <div class="reel-label" id="reelLabel"><span class="kw">My place</span></div>
-    <div id="reelWrap"><div id="reel"></div><div id="subReel"></div><svg class="scrollcue" id="placeCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
-    <input type="file" id="fileInput" accept="image/*" class="hidden" multiple>
-    <div class="reel-label" id="soundLabelFront"><span class="kw">My sound</span></div>
-    <div class="soundrow" id="soundRowWrap">
-      <div class="iscroll" id="soundScrollFront"></div>
-      <svg class="scrollcue" id="soundCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+    <div id="reelsRow">
+      <div class="reelCol">
+        <div class="reel-label" id="reelLabel"><span class="kw">My place</span></div>
+        <div id="reelWrap"><div id="reel"></div><div id="subReel"></div><svg class="scrollcue" id="placeCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="reelCol">
+        <div class="reel-label" id="soundLabelFront"><span class="kw">My sound</span></div>
+        <div class="soundrow" id="soundRowWrap">
+          <div class="iscroll" id="soundScrollFront"></div>
+          <svg class="scrollcue" id="soundCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </div>
     </div>
+    <input type="file" id="fileInput" accept="image/*" class="hidden" multiple>
     <div id="ambInfo" class="hidden"></div>
     <div class="reel-label" id="freqLabelFront"><span class="kw" id="ctrlKw">My frequency</span><span class="kw-val" id="ctrlKwVal"></span></div>
     <div id="ctrlTabs" role="tablist" aria-label="Sound &amp; breath controls">
