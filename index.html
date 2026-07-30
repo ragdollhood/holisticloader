@@ -2488,10 +2488,17 @@ onPremiumStatusChange(()=>{
       if(!arrowsOn) return; arrowsOn=false;
       if(prevBtn) prevBtn.remove(); if(nextBtn) nextBtn.remove(); prevBtn=nextBtn=null;
     }
-    function centeredIndex(items,cCenter){
+    function centerOffset(el){
+      // position relative to the scroller's own centre, using layout metrics
+      // that are NOT affected by the transform (scale/rotate) we apply below —
+      // reading getBoundingClientRect() here would feed the applied transform
+      // back into the next frame's calculation and cause a flicker loop.
+      return (el.offsetLeft+el.offsetWidth/2)-scroller.scrollLeft-scroller.clientWidth/2;
+    }
+    function centeredIndex(items){
       var idx=0,best=Infinity;
       items.forEach(function(el,i){
-        var r=el.getBoundingClientRect(), d=Math.abs((r.left+r.width/2)-cCenter);
+        var d=Math.abs(centerOffset(el));
         if(d<best){best=d;idx=i;}
       });
       return idx;
@@ -2499,8 +2506,7 @@ onPremiumStatusChange(()=>{
     function step(dir){
       var items=Array.prototype.filter.call(scroller.children,function(el){return el.offsetWidth>0});
       if(!items.length) return;
-      var cRect=scroller.getBoundingClientRect(), cCenter=cRect.left+cRect.width/2;
-      var idx=centeredIndex(items,cCenter);
+      var idx=centeredIndex(items);
       var target=items[Math.max(0,Math.min(items.length-1,idx+dir))];
       if(target) target.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
     }
@@ -2508,8 +2514,7 @@ onPremiumStatusChange(()=>{
       if(!arrowsOn) return;
       var items=Array.prototype.filter.call(scroller.children,function(el){return el.offsetWidth>0});
       if(!items.length) return;
-      var cRect=scroller.getBoundingClientRect(), cCenter=cRect.left+cRect.width/2;
-      var idx=centeredIndex(items,cCenter);
+      var idx=centeredIndex(items);
       prevBtn&&prevBtn.classList.toggle('edge',idx<=0);
       nextBtn&&nextBtn.classList.toggle('edge',idx>=items.length-1);
     }
@@ -2518,12 +2523,12 @@ onPremiumStatusChange(()=>{
         Array.prototype.forEach.call(scroller.children,function(el){el.style.transform='';el.style.opacity='';el.style.zIndex=''});
         return;
       }
-      var cRect=scroller.getBoundingClientRect(); if(!cRect.width) return;
-      var cCenter=cRect.left+cRect.width/2;
+      if(!scroller.clientWidth) return;
+      var half=scroller.clientWidth/2.6;
       Array.prototype.forEach.call(scroller.children,function(el){
-        var r=el.getBoundingClientRect(); if(!r.width) return;
-        var delta=(r.left+r.width/2)-cCenter;
-        var t=Math.max(-1,Math.min(1,delta/(cRect.width/2.6)));
+        if(!el.offsetWidth) return;
+        var delta=centerOffset(el);
+        var t=Math.max(-1,Math.min(1,delta/half));
         var scale=1.12-Math.abs(t)*0.32;
         var rot=t*-14;
         var ty=Math.abs(t)*10;
