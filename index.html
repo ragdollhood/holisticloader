@@ -235,18 +235,10 @@ body.preset-active #topNav{display:none}
 #btnPause.paused .ic-play{display:block}
 
 #center{position:absolute;inset:0;display:grid;place-items:start center;z-index:4;pointer-events:none}
-#orbWrap{position:relative;display:grid;place-items:center;width:min(62vw,320px);height:min(62vw,320px);margin-top:120px}
-#orbGlow{position:absolute;width:150%;height:150%;border-radius:50%;opacity:.12;will-change:transform,opacity;
-  background:radial-gradient(circle,rgba(231,201,162,.26),rgba(231,201,162,.04) 52%,transparent 72%);filter:blur(14px)}
-#orb{position:absolute;width:62%;height:62%;border-radius:50%;will-change:transform;
-  box-shadow:0 0 44px 8px rgba(0,0,0,.18),0 0 60px 18px rgba(231,201,162,.10)}
-#center.live #orb{box-shadow:0 0 50px 10px rgba(0,0,0,.22),0 0 70px 22px rgba(231,201,162,.14)}
-/* remove the soft glow ring around the Start button — mobile only */
-@media(max-width:560px){
-  #orbGlow{display:none}
-  #orb{box-shadow:none}
-  #center.live #orb{box-shadow:none}
-}
+#orbWrap{position:relative;display:grid;place-items:center;width:min(62vw,320px);height:min(62vw,320px);margin-top:60px}
+#orbGlow{position:absolute;width:150%;height:150%;border-radius:50%;opacity:.12;will-change:transform,opacity;display:none}
+#orb{position:absolute;width:62%;height:62%;border-radius:50%;will-change:transform;box-shadow:none}
+#center.live #orb{box-shadow:none}
 #orbStart{position:absolute;z-index:5;width:56%;height:56%;border-radius:50%;display:grid;place-items:center;pointer-events:auto;
   background:none;border:none;padding:0;transition:opacity .4s ease,transform .15s ease}
 #orbStart img{width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
@@ -308,7 +300,7 @@ body.preset-active #topNav{display:none}
 .sst-desc{font-size:11.5px;line-height:1.5;color:var(--muted);text-align:center;margin:0 0 4px}
 .sti-row{display:flex;justify-content:center;gap:10px}
 .sti{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px}
-.sti-lbl{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;min-height:2.6em}
+.sti-lbl{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3;height:46px}
 .sti-ic{width:14px;height:14px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8}
 
 /* (ambience is now selected as items in the instrument row — see .itile) */
@@ -458,6 +450,34 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @keyframes premGlow{
   0%,100%{box-shadow:0 0 0 0 rgba(255,217,138,.6),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
   50%{box-shadow:0 0 0 6px rgba(255,217,138,0),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
+}
+/* ===== laptop: "spin" coverflow presentation for the place & sound reels =====
+   Below 900px the reels stay exactly as before (plain horizontal scroll strip) —
+   this block only changes anything once the media query matches. */
+@media (min-width:900px){
+  #reelsRow{display:grid;grid-template-columns:1fr;gap:28px 0;align-items:start}
+  .reelCol{min-width:0}
+  #reelWrap,#soundRowWrap{perspective:1100px}
+  #reel,#soundScrollFront{padding-top:16px;padding-bottom:8px;gap:8px}
+  .reel-item,.itile{position:relative;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .35s ease}
+  #reel .reel-item,#soundScrollFront .itile{width:244px}
+  #reel .reel-item .pic,#soundScrollFront .iimg{width:244px;height:160px}
+  #reel .reel-item .cap,#soundScrollFront .ilbl{max-width:244px}
+  #reelWrap::before,#reelWrap::after{display:none}
+  #placeCue,#soundCue{display:none}
+  .coverflow-arrow{position:absolute;top:96px;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;z-index:5;cursor:pointer;
+    background:rgba(15,12,20,.6);border:1px solid var(--line);color:var(--ink);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:background .2s ease,opacity .2s ease,transform .2s ease}
+  .coverflow-arrow:hover{background:rgba(244,241,234,.16)}
+  .coverflow-arrow:active{transform:translateY(-50%) scale(.92)}
+  .coverflow-arrow.prev{left:-8px}
+  .coverflow-arrow.next{right:-8px}
+  .coverflow-arrow svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+  .coverflow-arrow.edge{opacity:.3;pointer-events:none}
+}
+@media (min-width:900px) and (max-width:1180px){
+  #reelsRow{grid-template-columns:1fr;gap:28px 0}
 }
 /* ===== Premium features modal (matches instruments.html) ===== */
 #premiumModal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;
@@ -855,14 +875,20 @@ body.immersive #howToBox{display:none}
 
   <!-- FRONT PAGE -->
   <div id="front">
-    <div class="reel-label" id="reelLabel"><span class="kw">My place</span></div>
-    <div id="reelWrap"><div id="reel"></div><div id="subReel"></div><svg class="scrollcue" id="placeCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
-    <input type="file" id="fileInput" accept="image/*" class="hidden" multiple>
-    <div class="reel-label" id="soundLabelFront"><span class="kw">My sound</span></div>
-    <div class="soundrow">
-      <div class="iscroll" id="soundScrollFront"></div>
-      <svg class="scrollcue" id="soundCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+    <div id="reelsRow">
+      <div class="reelCol">
+        <div class="reel-label" id="reelLabel"><span class="kw">My place</span></div>
+        <div id="reelWrap"><div id="reel"></div><div id="subReel"></div><svg class="scrollcue" id="placeCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="reelCol">
+        <div class="reel-label" id="soundLabelFront"><span class="kw">My sound</span></div>
+        <div class="soundrow" id="soundRowWrap">
+          <div class="iscroll" id="soundScrollFront"></div>
+          <svg class="scrollcue" id="soundCue" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </div>
     </div>
+    <input type="file" id="fileInput" accept="image/*" class="hidden" multiple>
     <div id="ambInfo" class="hidden"></div>
     <div class="reel-label" id="freqLabelFront"><span class="kw" id="ctrlKw">My frequency</span><span class="kw-val" id="ctrlKwVal"></span></div>
     <div id="ctrlTabs" role="tablist" aria-label="Sound &amp; breath controls">
@@ -918,6 +944,10 @@ body.immersive #howToBox{display:none}
         <div class="sti" id="stiBreatheIn">
           <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe in</span>
           <button class="swtoggle on" id="soundInBtn" aria-pressed="true" aria-label="Sound on breathe in"><span class="sw-knob"></span></button>
+        </div>
+        <div class="sti" id="stiHold">
+          <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Hold</span>
+          <button class="swtoggle on" id="soundHoldBtn" aria-pressed="true" aria-label="Sound on hold"><span class="sw-knob"></span></button>
         </div>
         <div class="sti" id="stiBreatheOut">
           <span class="sti-lbl"><svg class="sti-ic" viewBox="0 0 24 24"><path d="M4 14V10h3l4-4v12l-4-4H4Z"/><path d="M15 9.2a4 4 0 0 1 0 5.6"/><path d="M17.6 7a7 7 0 0 1 0 10"/></svg>Breathe out</span>
@@ -1003,7 +1033,7 @@ body.immersive #howToBox{display:none}
 <script src="auth.js"></script>
 
 <script>
-const IMAGES = [{"thumb": "images/thumbs/bergen.jpg", "id": "bergen", "label": "Mountain lake", "data": "images/bergen.jpg"}, {"thumb": "images/thumbs/breathe-place-meadow1.jpg", "id": "ang", "label": "Wildflower meadow", "data": "images/breathe-place-meadow1.jpg"}, {"thumb": "images/thumbs/hage.jpg", "id": "hage", "label": "Misty pasture", "data": "images/hage.jpg"}, {"thumb": "images/thumbs/breathe-place-beach1.jpg", "id": "strand", "label": "Tropical beach", "data": "images/breathe-place-beach1.jpg"}, {"thumb": "images/thumbs/sagoskog.jpg", "id": "sagoskog", "label": "Enchanted forest", "data": "images/sagoskog.jpg"}, {"thumb": "images/thumbs/skog3.jpg", "id": "skog3", "label": "Birch forest", "data": "images/skog3.jpg"}, {"thumb": "images/thumbs/korallrev.jpg", "id": "korallrev", "label": "Coral reef", "data": "images/korallrev.jpg"}, {"thumb": "images/thumbs/breathe-place-clouds1.jpg", "id": "moln", "label": "Above the clouds", "data": "images/breathe-place-clouds1.jpg"}, {"thumb": "images/thumbs/norrsken.jpg", "id": "norrsken", "label": "Northern lights", "data": "images/norrsken.jpg"}, {"thumb": "images/thumbs/rymden.jpg", "id": "rymden", "label": "Galaxy", "data": "images/rymden.jpg"}, {"thumb": "images/thumbs/fro.jpg", "id": "fro", "label": "Sprouting seed", "data": "images/fro.jpg"}, {"thumb": "images/thumbs/ljusterapi.jpg", "id": "ljusterapi", "label": "Light therapy room", "data": "images/ljusterapi.jpg"}, {"thumb": "images/thumbs/pals.jpg", "id": "pals", "label": "Soft fur", "data": "images/pals.jpg"}, {"thumb": "images/thumbs/rymd2.jpg", "id": "rymd2", "label": "Milky Way", "data": "images/rymd2.jpg"}, {"thumb": "images/thumbs/universum.jpg", "id": "universum", "label": "Cosmos", "data": "images/universum.jpg"}, {"thumb": "images/thumbs/skog2.jpg", "id": "skog2", "label": "Sunlit forest", "data": "images/skog2.jpg"}, {"thumb": "images/thumbs/bergen2.jpg", "id": "bergen2", "label": "Mountain peak", "data": "images/bergen2.jpg"}, {"thumb": "images/thumbs/bergen3.jpg", "id": "bergen3", "label": "Tundra lake", "data": "images/bergen3.jpg"}, {"thumb": "images/thumbs/breathe-place-meadow2.jpg", "id": "meadow2", "label": "Golden meadow", "data": "images/breathe-place-meadow2.jpg"}, {"thumb": "images/thumbs/breathe-place-beach2.jpg", "id": "beach2", "label": "Misty shore", "data": "images/breathe-place-beach2.jpg"}, {"thumb": "images/thumbs/fantasy2.jpg", "id": "fantasy2", "label": "Fairy lake", "data": "images/fantasy2.jpg"}, {"thumb": "images/thumbs/fantasy3.jpg", "id": "fantasy3", "label": "Fairy village", "data": "images/fantasy3.jpg"}, {"thumb": "images/thumbs/pasture2.jpg", "id": "pasture2", "label": "Red barn", "data": "images/pasture2.jpg"}, {"thumb": "images/thumbs/pasture3.jpg", "id": "pasture3", "label": "Country road", "data": "images/pasture3.jpg"}, {"thumb": "images/thumbs/coral2.jpg", "id": "coral2", "label": "Reef garden", "data": "images/coral2.jpg"}, {"thumb": "images/thumbs/coral3.jpg", "id": "coral3", "label": "Sunlit shallows", "data": "images/coral3.jpg"}];
+const IMAGES = [{"thumb": "images/thumbs/rymd2.jpg", "id": "rymd2", "label": "Milky Way", "data": "images/rymd2.jpg"}, {"thumb": "images/thumbs/universum.jpg", "id": "universum", "label": "Cosmos", "data": "images/universum.jpg"}, {"thumb": "images/thumbs/skog2.jpg", "id": "skog2", "label": "Sunlit forest", "data": "images/skog2.jpg"}, {"thumb": "images/thumbs/bergen2.jpg", "id": "bergen2", "label": "Mountain peak", "data": "images/bergen2.jpg"}, {"thumb": "images/thumbs/bergen3.jpg", "id": "bergen3", "label": "Tundra lake", "data": "images/bergen3.jpg"}, {"thumb": "images/thumbs/breathe-place-meadow2.jpg", "id": "meadow2", "label": "Golden meadow", "data": "images/breathe-place-meadow2.jpg"}, {"thumb": "images/thumbs/breathe-place-beach2.jpg", "id": "beach2", "label": "Misty shore", "data": "images/breathe-place-beach2.jpg"}, {"thumb": "images/thumbs/fantasy2.jpg", "id": "fantasy2", "label": "Fairy lake", "data": "images/fantasy2.jpg"}, {"thumb": "images/thumbs/fantasy3.jpg", "id": "fantasy3", "label": "Fairy village", "data": "images/fantasy3.jpg"}, {"thumb": "images/thumbs/pasture2.jpg", "id": "pasture2", "label": "Red barn", "data": "images/pasture2.jpg"}, {"thumb": "images/thumbs/pasture3.jpg", "id": "pasture3", "label": "Country road", "data": "images/pasture3.jpg"}, {"thumb": "images/thumbs/coral2.jpg", "id": "coral2", "label": "Reef garden", "data": "images/coral2.jpg"}, {"thumb": "images/thumbs/coral3.jpg", "id": "coral3", "label": "Sunlit shallows", "data": "images/coral3.jpg"}, {"thumb": "images/thumbs/bergen.jpg", "id": "bergen", "label": "Mountain lake", "data": "images/bergen.jpg"}, {"thumb": "images/thumbs/breathe-place-meadow1.jpg", "id": "ang", "label": "Wildflower meadow", "data": "images/breathe-place-meadow1.jpg"}, {"thumb": "images/thumbs/hage.jpg", "id": "hage", "label": "Misty pasture", "data": "images/hage.jpg"}, {"thumb": "images/thumbs/breathe-place-beach1.jpg", "id": "strand", "label": "Tropical beach", "data": "images/breathe-place-beach1.jpg"}, {"thumb": "images/thumbs/sagoskog.jpg", "id": "sagoskog", "label": "Enchanted forest", "data": "images/sagoskog.jpg"}, {"thumb": "images/thumbs/skog3.jpg", "id": "skog3", "label": "Birch forest", "data": "images/skog3.jpg"}, {"thumb": "images/thumbs/korallrev.jpg", "id": "korallrev", "label": "Coral reef", "data": "images/korallrev.jpg"}, {"thumb": "images/thumbs/breathe-place-clouds1.jpg", "id": "moln", "label": "Above the clouds", "data": "images/breathe-place-clouds1.jpg"}, {"thumb": "images/thumbs/norrsken.jpg", "id": "norrsken", "label": "Northern lights", "data": "images/norrsken.jpg"}, {"thumb": "images/thumbs/rymden.jpg", "id": "rymden", "label": "Galaxy", "data": "images/rymden.jpg"}, {"thumb": "images/thumbs/fro.jpg", "id": "fro", "label": "Sprouting seed", "data": "images/fro.jpg"}, {"thumb": "images/thumbs/ljusterapi.jpg", "id": "ljusterapi", "label": "Light therapy room", "data": "images/ljusterapi.jpg"}, {"thumb": "images/thumbs/pals.jpg", "id": "pals", "label": "Soft fur", "data": "images/pals.jpg"}];
 const PRESET_ICONS = {"gongbath": "images/gongbath.jpg", "earthom": "images/earthom.jpg", "moonsleep": "images/moonsleep.jpg", "sunrise": "images/sunrise.jpg", "heart": "images/heart.jpg", "crystal": "images/crystal.jpg", "saturn": "images/saturn.jpg", "forest": "images/forest.jpg"};
 // Enkel engångskoll om webbläsaren klarar WebP (nästan alla gör det idag).
 // Bygger instrument-ikonernas URL:er utifrån resultatet: .webp där det stöds,
@@ -1019,8 +1049,8 @@ const _iext = _webpOK ? 'webp' : 'jpg';
 const INSTRUMENT_ICONS = {"crystal_bowl": `images/crystal_bowl.${_iext}`, "quartz_bowl": `images/quartz_bowl.${_iext}`, "tibetan_bowl": `images/tibetan_bowl.${_iext}`, "gong": `images/gong.${_iext}`, "tibetansk_gong": `images/tibetansk_gong.${_iext}`, "tam-tam_drum": `images/tam-tam_drum.${_iext}`, "handpan": `images/handpan.${_iext}`, "tonguedrum": `images/tonguedrum.${_iext}`, "sansula": `images/sansula.${_iext}`, "harpa": `images/harpa.${_iext}`, "monochord": `images/monochord.${_iext}`, "panflute": `images/panflute.${_iext}`, "native_american_fluit": `images/native_american_fluit.${_iext}`, "chime": `images/chimes.${_iext}`, "triangle": "images/triangle.jpg", "djembe": `images/djembe.${_iext}`, "shaman_drum": `images/shaman_drum.${_iext}`, "thunder_drum": `images/thunder_drum.${_iext}`, "ocean_drum": `images/ocean_drum.${_iext}`, "rainstick": `images/rainstick.${_iext}`};
 const $ = id => document.getElementById(id);
 const MASTER = 0.82;
-const S = {bg:IMAGES[0].id, sound:'quartz_bowl', freq:432, tempo:12, tempoFollow:true,
-  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundBreathOut:true, running:false, ended:false, advanced:false,
+const S = {bg:'bergen', sound:'gong', freq:80, tempo:12, tempoFollow:true,
+  animMode:'breath', inhale:4, hold:4, exhale:4, resonance:55, timerMin:10, preset:null, showCircle:true, showCue:true, soundOn:true, soundBreathIn:true, soundHold:true, soundBreathOut:true, running:false, ended:false, advanced:false,
   amb:{wave:0,greennoise:0,whitenoise:0,pinknoise:0,brownnoise:0,blue:0,violet:0,gray:0,black:0}};
 const userImages = [];
 function clearPreset(){if(S.preset){S.preset=null;renderPresets();}}
@@ -1094,34 +1124,33 @@ function onGroupTap(g){
   renderSub(g);
 }
 function repositionOpen(){ if(openGroup){const g=GROUPS.find(x=>x.id===openGroup); if(g) positionSub(g);} }
+/* All images sit directly in the reel now (no group covers / sub-menus).
+   The 5 images nearest the centre (the centre one + 2 left + 2 right) are open;
+   the rest are locked behind premium. The centre is fixed at 'bergen' so the
+   free window doesn't shift around as the person picks a different image. */
+const REEL_CENTER_ID='bergen';
 function renderReel(){
-  const r=$('reel'); r.innerHTML=''; const done={};
-  allImages().forEach(img=>{
-    const g=groupOf(img.id);
-    if(g){
-      if(done[g.id]) return; done[g.id]=true;
-      const locked=!isPremium && !FREE_BG_GROUPS.includes(g.id);
-      const act=g.members.includes(S.bg);
-      const showId=act?S.bg:g.cover, shImg=imgById(showId)||imgById(g.cover)||img;
-      const showLbl=act?((imgById(showId)&&imgById(showId).label)||g.label):g.label;
-      const it=document.createElement('button');
-      it.className='reel-item group'+(act?' active':'')+(locked?' reel-locked':''); it.dataset.group=g.id;
-      it.innerHTML=`<div class="pic" style="background-image:url(${shImg.thumb||shImg.data})"><span class="gbadge"><i></i><i></i><i></i></span></div><div class="cap">${showLbl}</div>`+(locked?lockBadgeHTML:'');
-      it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>onGroupTap(g));
-      r.appendChild(it);
-    } else {
-      const locked=!isPremium && IMAGES.some(i=>i.id===img.id)&&isBgLocked(img.id);
-      const it=document.createElement('button');
-      it.className='reel-item'+(img.id===S.bg?' active':'')+(locked?' reel-locked':''); it.dataset.bgid=img.id;
-      it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`+(locked?lockBadgeHTML:'');
-      it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();setBackground(img.id);});
-      r.appendChild(it);
-    }
+  const r=$('reel'); r.innerHTML='';
+  const list=allImages();
+  const centerIdx=list.findIndex(i=>i.id===REEL_CENTER_ID);
+  list.forEach((img,i)=>{
+    const isUser=userImages.some(u=>u.id===img.id);
+    const locked=!isPremium && !isUser && Math.abs(i-centerIdx)>2;
+    const it=document.createElement('button');
+    it.className='reel-item'+(img.id===S.bg?' active':'')+(locked?' reel-locked':''); it.dataset.bgid=img.id;
+    it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`+(locked?lockBadgeHTML:'');
+    it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{setBackground(img.id);});
+    r.appendChild(it);
   });
   const add=document.createElement('button'); add.className='reel-item add'+(isPremium?'':' reel-locked');
   add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>'+(isPremium?'':lockBadgeHTML);
   add.onclick=isPremium?(()=>$('fileInput').click()):(()=>openPremiumModal('breathing'));
   r.appendChild(add);
+}
+/* centre the reel on the currently selected image once, after first render */
+function centerReelOnce(){
+  const r=$('reel'); const el=r&&r.querySelector('.reel-item[data-bgid="'+S.bg+'"]');
+  if(r&&el) requestAnimationFrame(()=>{r.scrollLeft=el.offsetLeft-r.clientWidth/2+el.offsetWidth/2;});
 }
 $('fileInput').addEventListener('change',e=>{
   [...e.target.files].forEach((file,i)=>{const rd=new FileReader();
@@ -1134,13 +1163,15 @@ $('fileInput').addEventListener('change',e=>{
 
 /* sound type + preview */
 const SOUNDS=[
-  {id:'quartz_bowl',label:'Quartz bowl'},{id:'crystal_bowl',label:'Crystal bowl'},{id:'tibetan_bowl',label:'Tibetan bowl'},
-  {id:'gong',label:'Gong'},{id:'tibetansk_gong',label:'Tibetan gong'},{id:'tam-tam_drum',label:'Tam-tam'},
-  {id:'handpan',label:'Handpan'},{id:'tonguedrum',label:'Tongue drum'},{id:'sansula',label:'Sansula'},
-  {id:'harpa',label:'Harp'},{id:'monochord',label:'Monochord'},{id:'panflute',label:'Pan flute'},
-  {id:'native_american_fluit',label:'Native flute'},{id:'chime',label:'Wind chimes'},{id:'triangle',label:'Triangle'},{id:'djembe',label:'Djembe'},
+  {id:'triangle',label:'Triangle'},{id:'djembe',label:'Djembe'},
   {id:'shaman_drum',label:'Shaman drum'},{id:'thunder_drum',label:'Thunder drum'},{id:'ocean_drum',label:'Ocean drum'},
   {id:'rainstick',label:'Rainstick'},
+  {id:'handpan',label:'Handpan'},{id:'tonguedrum',label:'Tongue drum'},{id:'sansula',label:'Sansula'},
+  {id:'harpa',label:'Harp'},{id:'monochord',label:'Monochord'},{id:'panflute',label:'Pan flute'},
+  {id:'native_american_fluit',label:'Native flute'},
+  {id:'chime',label:'Wind chimes'},{id:'crystal_bowl',label:'Crystal bowl'},{id:'tibetan_bowl',label:'Tibetan bowl'},
+  {id:'quartz_bowl',label:'Quartz bowl'},
+  {id:'gong',label:'Gong'},{id:'tibetansk_gong',label:'Tibetan gong'},{id:'tam-tam_drum',label:'Tam-tam'},
 ];
 const SGROUPS=[
   {id:'bowl', label:'Bowl',  cover:'quartz_bowl', members:['quartz_bowl','crystal_bowl','tibetan_bowl']},
@@ -1245,32 +1276,23 @@ function isSoundLocked(id){return !isPremium && !FREE_SOUND_IDS.has(id);}
 const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
 
 function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);updateAmbInfo();}
-function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scrollLeft;w.innerHTML='';let activeEl=null;const done={};
+/* All instruments sit directly in the row now (no group covers / sub-menus).
+   Every gong and every bowl is open; everything else is locked behind premium. */
+const OPEN_SOUND_IDS=new Set(['quartz_bowl','crystal_bowl','tibetan_bowl','gong','tibetansk_gong','tam-tam_drum']);
+function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scrollLeft;w.innerHTML='';let activeEl=null;
   SOUNDS.forEach(s=>{
-    const g=sgroupOf(s.id);
-    if(g){
-      if(done[g.id])return; done[g.id]=true;
-      const locked=!isPremium && !FREE_SOUND_GROUPS.includes(g.id);
-      const act=g.members.includes(S.sound);
-      const showId=act?S.sound:g.cover, showLbl=act?sndLabel(S.sound):g.label;
-      const b=document.createElement('button');b.className='itile group'+(act?' active':'')+(locked?' itile-locked':'');b.dataset.sgroup=g.id;
-      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[showId]||''})"><span class="gbadge"><i></i><i></i><i></i></span></span><span class="ilbl">${showLbl}</span>`+(locked?lockBadgeHTML:'');
-      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>onSoundGroupTap(g,b));
-      if(act)activeEl=b;w.appendChild(b);
-    } else {
-      const locked=isSoundLocked(s.id);
-      const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.sndid=s.id;
-      b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`+(locked?lockBadgeHTML:'');
-      b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();switchSound(s.id);renderSounds();preview();});
-      if(s.id===S.sound)activeEl=b;w.appendChild(b);
-    }
+    const locked=!isPremium && !OPEN_SOUND_IDS.has(s.id);
+    const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.sndid=s.id;
+    b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`+(locked?lockBadgeHTML:'');
+    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{switchSound(s.id);renderSounds();preview();});
+    if(s.id===S.sound)activeEl=b;w.appendChild(b);
   });
   /* ambience "instruments" continue the same row, after the tuned instruments */
   AMB_SOUNDS.forEach(a=>{
     const locked=isAmbLocked(a.id);
     const b=document.createElement('button');b.className='itile'+(a.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.ambid=a.id;
     b.innerHTML=`<span class="iimg" style="background-image:url(${a.img})"></span><span class="ilbl">${a.label}</span>`+(locked?lockBadgeHTML:'');
-    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{closeSub();closeSoundSub();switchAmbSound(a);renderSounds();});
+    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{switchAmbSound(a);renderSounds();});
     if(a.id===S.sound)activeEl=b;w.appendChild(b);
   });
   if(center&&activeEl){requestAnimationFrame(()=>{w.scrollLeft=activeEl.offsetLeft-w.clientWidth/2+activeEl.offsetWidth/2;});}
@@ -1543,9 +1565,11 @@ function syncTempoUI(){
 function syncSoundSubtabs(){
   const f=$('soundFollowBtn'); if(f){f.classList.toggle('on',S.tempoFollow);f.setAttribute('aria-pressed',S.tempoFollow?'true':'false');}
   const i=$('soundInBtn'); if(i){i.classList.toggle('on',S.soundBreathIn);i.setAttribute('aria-pressed',S.soundBreathIn?'true':'false');}
+  const h=$('soundHoldBtn'); if(h){h.classList.toggle('on',S.soundHold);h.setAttribute('aria-pressed',S.soundHold?'true':'false');}
   const o=$('soundOutBtn'); if(o){o.classList.toggle('on',S.soundBreathOut);o.setAttribute('aria-pressed',S.soundBreathOut?'true':'false');}
-  /* Breathe in / Breathe out toggles only show while "sound follows breathing" is ON */
+  /* Breathe in / Hold / Breathe out toggles only show while "sound follows breathing" is ON */
   const stiIn=$('stiBreatheIn'); if(stiIn)stiIn.classList.toggle('hidden',!S.tempoFollow);
+  const stiHold=$('stiHold'); if(stiHold)stiHold.classList.toggle('hidden',!S.tempoFollow);
   const stiOut=$('stiBreatheOut'); if(stiOut)stiOut.classList.toggle('hidden',!S.tempoFollow);
   /* The tempo slider is irrelevant while sound follows the breath, so hide it in that case */
   const ff=$('freqFrontWrap'); if(ff)ff.classList.toggle('hidden', ctrlTab==='length' || (ctrlTab==='soundtempo' && S.tempoFollow));
@@ -1556,6 +1580,7 @@ $('soundFollowBtn').onclick=()=>{S.tempoFollow=!S.tempoFollow;clearPreset();
   applyTempoFollow();syncSoundSubtabs();
   if(S.running)startScheduler();};
 $('soundInBtn').onclick=()=>{S.soundBreathIn=!S.soundBreathIn;syncSoundSubtabs();};
+$('soundHoldBtn').onclick=()=>{S.soundHold=!S.soundHold;syncSoundSubtabs();};
 $('soundOutBtn').onclick=()=>{S.soundBreathOut=!S.soundBreathOut;syncSoundSubtabs();};
 
 /* breathing rhythm */
@@ -2141,7 +2166,7 @@ let schedTimer=null,nextToneTime=0;
 function soundPhaseAllowed(){
   const cyc=S.inhale+S.hold+S.exhale,p=breathClock%cyc;
   if(p<S.inhale)return S.soundBreathIn;
-  if(p<S.inhale+S.hold)return true;
+  if(p<S.inhale+S.hold)return S.soundHold;
   return S.soundBreathOut;
 }
 function startScheduler(){
@@ -2184,8 +2209,7 @@ function positionOrb(){
   const b=anchor.getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
   if(!r.height) return;
   const oh=ow.offsetHeight;
-  const mobileOffset=innerWidth<=560?36:0;
-  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38 + mobileOffset);
+  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 15);
   ow.style.marginTop=mt+'px';
   updateLensGeom();
 }
@@ -2260,7 +2284,7 @@ function loop(ts){requestAnimationFrame(loop);
     if(S.running&&S.tempoFollow&&audio.ctx){
       const ph=cue==='Breathe in'?'in':cue==='Hold'?'hold':'out';
       if(ph!==lastBreathPhase){lastBreathPhase=ph;
-        const allowed=ph==='in'?S.soundBreathIn:ph==='hold'?true:S.soundBreathOut;
+        const allowed=ph==='in'?S.soundBreathIn:ph==='hold'?S.soundHold:S.soundBreathOut;
         if(S.soundOn&&allowed)playVoice(S.sound,S.freq,audio.ctx.currentTime+.03);}
     }
   }else{const cyc=Math.max(2,S.tempo),u=(breathClock%cyc)/cyc;phase=(1-Math.cos(2*Math.PI*u))/2;cue=u<.5?'Breathe in':'Breathe out';}
@@ -2414,9 +2438,9 @@ $('btnCueTgl').onclick=()=>setShowCue(!S.showCue);
 $('btnAgain').onclick =()=>{resetToFront();startSession();};
 
 /* init */
-renderReel();renderSounds(true);updateFreq();renderBreathPresets();renderTimers();renderPresets();applyTempoFollow();
+renderReel();centerReelOnce();renderSounds(true);updateFreq();renderBreathPresets();renderTimers();renderPresets();applyTempoFollow();
 renderCtrlTabs();syncCtrlSlider();renderBreathSubtabs();
-setBackground(IMAGES[0].id,true);
+setBackground('bergen',true);
 $('timerReadout').textContent=fmt(S.timerMin*60);
 positionBrand();
 positionOrb();
@@ -2431,6 +2455,100 @@ onPremiumStatusChange(()=>{
   renderSounds();
   renderPresets();
 });
+</script>
+
+<script>
+/* ===== laptop-only "spin" coverflow for the place & sound reels =====
+   Purely a presentation layer on top of the existing #reel / #soundScrollFront
+   elements: it reads what renderReel()/renderSoundInto() already put there
+   (including groups, locked tiles, the add-tile) and just scales/fades/tilts
+   each tile by its distance from the row's centre as you scroll, plus adds
+   prev/next arrows that step one tile at a time. Below 900px it does nothing —
+   mobile keeps the original plain scroll strip. */
+(function(){
+  function setupCoverflow(scrollId,wrapId){
+    var scroller=document.getElementById(scrollId), wrap=document.getElementById(wrapId);
+    if(!scroller||!wrap) return;
+    var mq=window.matchMedia('(min-width:900px)');
+    var raf=null, arrowsOn=false, prevBtn=null, nextBtn=null;
+
+    function addArrows(){
+      if(arrowsOn) return; arrowsOn=true;
+      prevBtn=document.createElement('button');
+      prevBtn.type='button';prevBtn.className='coverflow-arrow prev';prevBtn.setAttribute('aria-label','Show previous');
+      prevBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+      nextBtn=document.createElement('button');
+      nextBtn.type='button';nextBtn.className='coverflow-arrow next';nextBtn.setAttribute('aria-label','Show next');
+      nextBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
+      prevBtn.addEventListener('click',function(){step(-1)});
+      nextBtn.addEventListener('click',function(){step(1)});
+      wrap.appendChild(prevBtn); wrap.appendChild(nextBtn);
+    }
+    function removeArrows(){
+      if(!arrowsOn) return; arrowsOn=false;
+      if(prevBtn) prevBtn.remove(); if(nextBtn) nextBtn.remove(); prevBtn=nextBtn=null;
+    }
+    function centeredIndex(items,cCenter){
+      var idx=0,best=Infinity;
+      items.forEach(function(el,i){
+        var r=el.getBoundingClientRect(), d=Math.abs((r.left+r.width/2)-cCenter);
+        if(d<best){best=d;idx=i;}
+      });
+      return idx;
+    }
+    function step(dir){
+      var items=Array.prototype.filter.call(scroller.children,function(el){return el.offsetWidth>0});
+      if(!items.length) return;
+      var cRect=scroller.getBoundingClientRect(), cCenter=cRect.left+cRect.width/2;
+      var idx=centeredIndex(items,cCenter);
+      var target=items[Math.max(0,Math.min(items.length-1,idx+dir))];
+      if(target) target.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+    }
+    function updateEdges(){
+      if(!arrowsOn) return;
+      var items=Array.prototype.filter.call(scroller.children,function(el){return el.offsetWidth>0});
+      if(!items.length) return;
+      var cRect=scroller.getBoundingClientRect(), cCenter=cRect.left+cRect.width/2;
+      var idx=centeredIndex(items,cCenter);
+      prevBtn&&prevBtn.classList.toggle('edge',idx<=0);
+      nextBtn&&nextBtn.classList.toggle('edge',idx>=items.length-1);
+    }
+    function updateTransforms(){
+      if(!mq.matches){
+        Array.prototype.forEach.call(scroller.children,function(el){el.style.transform='';el.style.opacity='';el.style.zIndex=''});
+        return;
+      }
+      var cRect=scroller.getBoundingClientRect(); if(!cRect.width) return;
+      var cCenter=cRect.left+cRect.width/2;
+      Array.prototype.forEach.call(scroller.children,function(el){
+        var r=el.getBoundingClientRect(); if(!r.width) return;
+        var delta=(r.left+r.width/2)-cCenter;
+        var t=Math.max(-1,Math.min(1,delta/(cRect.width/2.6)));
+        var scale=1.12-Math.abs(t)*0.32;
+        var rot=t*-14;
+        var ty=Math.abs(t)*10;
+        var op=Math.max(.28,1-Math.abs(t)*0.55);
+        el.style.transform='translateY('+ty+'px) rotateY('+rot+'deg) scale('+scale+')';
+        el.style.opacity=op;
+        // whichever tile is closest to the centre is bigger and sits on top, uncovered by its neighbours
+        el.style.zIndex=Math.round((1-Math.abs(t))*100);
+      });
+      updateEdges();
+    }
+    function onScroll(){ if(raf) return; raf=requestAnimationFrame(function(){raf=null;updateTransforms()}); }
+    function applyMode(){
+      if(mq.matches) addArrows(); else removeArrows();
+      updateTransforms();
+    }
+    scroller.addEventListener('scroll',onScroll,{passive:true});
+    window.addEventListener('resize',onScroll);
+    if(mq.addEventListener) mq.addEventListener('change',applyMode); else mq.addListener(applyMode);
+    new MutationObserver(function(){requestAnimationFrame(updateTransforms)}).observe(scroller,{childList:true});
+    applyMode();
+  }
+  setupCoverflow('reel','reelWrap');
+  setupCoverflow('soundScrollFront','soundRowWrap');
+})();
 </script>
 
 <script>
