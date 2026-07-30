@@ -209,6 +209,10 @@ body.preset-active #topNav{display:none}
      Start button follows automatically since positionOrb() places it
      relative to #brand's live bounding box */
   #brandLogo{max-height:clamp(46px,12vw,84px)}
+  /* remove the soft glow ring around the Start button — mobile only */
+  #orbGlow{display:none}
+  #orb{box-shadow:none}
+  #center.live #orb{box-shadow:none}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
