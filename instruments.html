@@ -148,7 +148,7 @@
     color:var(--ink);
     font-family:-apple-system,system-ui,'Segoe UI',sans-serif;
     display:flex;flex-direction:column;align-items:center;
-    padding:max(92px,calc(env(safe-area-inset-top) + 76px)) 16px 48px;
+    padding:max(164px,calc(env(safe-area-inset-top) + 148px)) 16px 48px;
     background:
       radial-gradient(ellipse 110% 55% at 85% -8%, rgba(120,60,30,.32), transparent 60%),
       radial-gradient(ellipse 100% 55% at 8% 108%, rgba(90,50,140,.3), transparent 60%),
@@ -181,8 +181,8 @@
      (padding-bottom + .stage margin-top), så rubriken hamnar visuellt centrerad */
   .h1-frame{
     position:sticky;
-    top:max(46px,calc(env(safe-area-inset-top) + 34px));
-    margin:-46px auto 0;
+    top:max(118px,calc(env(safe-area-inset-top) + 106px));
+    margin:-118px auto 0;
     z-index:30;
     width:min(94vw,820px);
     padding:9px 24px 9px;
@@ -196,12 +196,19 @@
   .h1-frame h1{max-width:none;margin:0}
   @media (max-width:560px){
     .h1-frame{
-      top:max(42px,calc(env(safe-area-inset-top) + 28px));
-      margin-top:-32px;
+      top:max(89px,calc(env(safe-area-inset-top) + 75px));
+      margin-top:-79px;
       width:92vw;
       padding:11px 14px 5px;
       border-radius:0 0 18px 18px;
     }
+  }
+  /* ---- title logo: sits above the nav tabs, at the very top of the page ---- */
+  #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px;pointer-events:none}
+  #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
+    filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
+  @media (max-width:560px){
+    #brandLogo{max-height:clamp(46px,12vw,84px)}
   }
   .sub{font-size:12.5px;color:var(--soft);margin-top:6px;text-align:center;letter-spacing:.08em}
   .h1-desktop{display:none}
@@ -626,7 +633,7 @@
     /* menuBtn should never stand taller than the tabs beside it */
     #menuBtn{width:30px;height:30px}
     /* pull the h1 up closer to the gold line under the tabs on mobile */
-    body{padding-top:max(74px,calc(env(safe-area-inset-top) + 58px))}
+    body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}
     /* how-to-use fills the whole screen and only scrolls vertically, never sideways */
     #howToBox{
       inset:0;top:0;left:0;right:0;bottom:0;width:100%;height:100%;
@@ -1063,6 +1070,7 @@
 </div>
 
 <header id="topNav">
+  <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
   <nav id="topTabs" aria-label="Main sections">
     <a href="index.html" class="tab">Breathing</a>
     <a href="instruments.html" class="tab active" aria-current="page">Sound Healing</a>
