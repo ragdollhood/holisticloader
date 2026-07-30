@@ -209,10 +209,6 @@ body.preset-active #topNav{display:none}
      Start button follows automatically since positionOrb() places it
      relative to #brand's live bounding box */
   #brandLogo{max-height:clamp(46px,12vw,84px)}
-  /* remove the soft glow ring around the Start button — mobile only */
-  #orbGlow{display:none}
-  #orb{box-shadow:none}
-  #center.live #orb{box-shadow:none}
   /* ---- mobile icon rearrangement ---- */
   /* tighten the tab bar so six icon tabs fit comfortably */
   .ctrl-tab{padding:9px 3px}
@@ -239,6 +235,12 @@ body.preset-active #topNav{display:none}
 #orb{position:absolute;width:62%;height:62%;border-radius:50%;will-change:transform;
   box-shadow:0 0 44px 8px rgba(0,0,0,.18),0 0 60px 18px rgba(231,201,162,.10)}
 #center.live #orb{box-shadow:0 0 50px 10px rgba(0,0,0,.22),0 0 70px 22px rgba(231,201,162,.14)}
+/* remove the soft glow ring around the Start button — mobile only */
+@media(max-width:560px){
+  #orbGlow{display:none}
+  #orb{box-shadow:none}
+  #center.live #orb{box-shadow:none}
+}
 #orbStart{position:absolute;z-index:5;width:56%;height:56%;border-radius:50%;display:grid;place-items:center;pointer-events:auto;
   background:none;border:none;padding:0;transition:opacity .4s ease,transform .15s ease}
 #orbStart img{width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
