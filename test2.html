@@ -2209,7 +2209,7 @@ function positionOrb(){
   const b=anchor.getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
   if(!r.height) return;
   const oh=ow.offsetHeight;
-  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 60);
+  const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 15);
   ow.style.marginTop=mt+'px';
   updateLensGeom();
 }
@@ -2524,16 +2524,14 @@ onPremiumStatusChange(()=>{
         var r=el.getBoundingClientRect(); if(!r.width) return;
         var delta=(r.left+r.width/2)-cCenter;
         var t=Math.max(-1,Math.min(1,delta/(cRect.width/2.6)));
-        var isActive=el.classList.contains('active');
         var scale=1.12-Math.abs(t)*0.32;
-        if(isActive) scale=Math.max(scale,1.12)*1.1;   // the selected image/sound is always bigger than its neighbours
         var rot=t*-14;
         var ty=Math.abs(t)*10;
         var op=Math.max(.28,1-Math.abs(t)*0.55);
         el.style.transform='translateY('+ty+'px) rotateY('+rot+'deg) scale('+scale+')';
         el.style.opacity=op;
-        // the selected tile always sits on top; the rest stack by how close they are to the centre
-        el.style.zIndex=isActive?50:Math.round((1-Math.abs(t))*40);
+        // whichever tile is closest to the centre is bigger and sits on top, uncovered by its neighbours
+        el.style.zIndex=Math.round((1-Math.abs(t))*100);
       });
       updateEdges();
     }
