@@ -2160,14 +2160,19 @@ function updateLensGeom(){
   const lens=$('lens'); lens.style.maskImage=m; lens.style.webkitMaskImage=m;
   $('lensImg').style.transformOrigin=`${LX.cx}px ${LX.cy}px`;
 }
-/* place the Start circle midway between the title and the "place" images */
+/* place the Start circle midway between the title and the "place" images.
+   Anchored to .h1-frame's bottom edge (not #brand) — now that the logo
+   lives up in the header strip, #brand sits high and small, so anchoring
+   to it made the orb ride up into the tab/plaque area, especially on
+   mobile. .h1-frame is the true bottom edge of the header block. */
 function positionOrb(){
   if(S.running) return;
   const ow=$('orbWrap'); if(!ow) return;
-  const b=$('brand').getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
+  const anchor=h1FrameEl&&h1FrameEl.getBoundingClientRect().height?h1FrameEl:$('brand');
+  const b=anchor.getBoundingClientRect(), r=$('reelWrap').getBoundingClientRect();
   if(!r.height) return;
   const oh=ow.offsetHeight;
-  const mobileOffset=innerWidth<=560?21:0;
+  const mobileOffset=innerWidth<=560?36:0;
   const mt=Math.max(8,(b.bottom+r.top)/2 - oh/2 - 38 + mobileOffset);
   ow.style.marginTop=mt+'px';
   updateLensGeom();
