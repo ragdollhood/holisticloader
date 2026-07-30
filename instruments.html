@@ -3673,6 +3673,8 @@
 
   const gongImgEl=document.querySelector('#gongWrap img');
   const bowlImgEl=document.querySelector('#bowlWrap img');
+  const gongSourceEl=document.querySelector('#gongWrap source');
+  const bowlSourceEl=document.querySelector('#bowlWrap source');
   // gongImgEl.src/bowlImgEl.src speglar redan vilket format <picture>
   // valde vid sidladdning (webp om webbläsaren stödjer det, annars jpg).
   // För röstbytena nedan (som sätter .src direkt, utanför <picture>) gör
@@ -3699,6 +3701,7 @@
     b.addEventListener('click',function(){
       gongVoice=b.dataset.v;
       gongImgEl.src=GONG_IMGS[gongVoice];
+      if(gongSourceEl){ gongSourceEl.removeAttribute('type'); gongSourceEl.srcset=GONG_IMGS[gongVoice]; }
       document.querySelectorAll('#gongVoices button').forEach(function(x){x.classList.remove('sel')});
       b.classList.add('sel');
     });
@@ -3707,6 +3710,7 @@
     b.addEventListener('click',function(){
       bowlVoice=b.dataset.v;
       bowlImgEl.src=BOWL_IMGS[bowlVoice];
+      if(bowlSourceEl){ bowlSourceEl.removeAttribute('type'); bowlSourceEl.srcset=BOWL_IMGS[bowlVoice]; }
       document.querySelectorAll('#bowlVoices button').forEach(function(x){x.classList.remove('sel')});
       b.classList.add('sel');
       retune();
