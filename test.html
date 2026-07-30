@@ -208,7 +208,6 @@
       padding:11px 14px 5px;
       border-radius:0 0 18px 18px;
     }
-    .stage{margin-top:20px;}
   }
   /* ---- title logo: sits above the nav tabs, at the very top of the page ---- */
   #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px;pointer-events:none}
@@ -230,6 +229,9 @@
     width:min(94vw,460px);
     margin-top:100px;
     display:flex;flex-direction:column;align-items:center;gap:4px;
+  }
+  @media (max-width:560px){
+    .stage{margin-top:12px;}
   }
   #fx{position:absolute;inset:0;pointer-events:none;z-index:5}
   .instr{display:flex;flex-direction:column;align-items:center;width:100%}
