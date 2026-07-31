@@ -146,16 +146,21 @@
 
 /* ---------- Unlock Premium button + "Read more" link, shown under the
    Log in button inside the same modal card ---------- */
-#unlockPremiumBtn{
+#unlockPremiumBtn, #startTrialBtn{
   margin-top:14px; width:100%; display:flex; align-items:center; justify-content:center;
   gap:8px; font-size:13px; font-weight:600; letter-spacing:.02em;
   color:var(--gold); background:transparent; border:1px solid var(--gold);
   border-radius:999px; padding:11px 12px; cursor:pointer;
   transition:background .2s ease, color .2s ease;
 }
-#unlockPremiumBtn:hover{ background:var(--gold); color:var(--bg); }
-#unlockPremiumBtn svg{ width:15px; height:15px; flex:0 0 auto; fill:var(--gold); stroke:none; }
-#unlockPremiumBtn:hover svg{ fill:var(--bg); }
+#unlockPremiumBtn:hover, #startTrialBtn:hover{ background:var(--gold); color:var(--bg); }
+#unlockPremiumBtn svg, #startTrialBtn svg{ width:15px; height:15px; flex:0 0 auto; fill:var(--gold); stroke:none; }
+#unlockPremiumBtn:hover svg, #startTrialBtn:hover svg{ fill:var(--bg); }
+
+/* Free Trial button sits above Unlock Premium, so its own top margin
+   is a bit smaller than the shared 14px (it's not first in the stack). */
+#startTrialBtn{ margin-top:14px; }
+#unlockPremiumBtn{ margin-top:10px; }
 
 #readMorePremiumBtn{
   display:block; width:100%; text-align:center; margin-top:10px;
@@ -164,3 +169,11 @@
   text-decoration:underline; text-underline-offset:2px;
 }
 #readMorePremiumBtn:hover{ color:var(--ink); }
+
+/* ---------- Trial banner ---------- */
+#trialBanner{
+  position:fixed; top:0; left:0; right:0; z-index:60;
+  text-align:center; font-size:12.5px; font-weight:600; letter-spacing:.02em;
+  color:var(--bg); background:var(--gold);
+  padding:8px 12px;
+}

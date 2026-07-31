@@ -22,21 +22,26 @@
    WHAT THIS FILE DOES:
      1. Creates one shared Supabase client (using your existing project).
      2. Exposes register / login / logout functions using email+password
-        (NO magic links, NO OTP). There is no self-serve "Register" UI —
-        accounts are only created on thank-you.html after a successful
-        Stripe purchase, which calls registerUser() itself. The header
-        always shows one account icon: logged out it opens the login
-        modal directly, logged in it opens the account dropdown. "Get
-        Premium" opens the premium popup that starts Stripe Checkout.
+        (NO magic links, NO OTP). Accounts get created in TWO ways now:
+        (a) self-serve, via the "Free Trial (14 Days)" button in the
+        login modal (or the matching button in the premium popup) — no
+        payment, starts a 14-day trial from created_at; (b) on
+        thank-you.html after a successful Stripe purchase, which also
+        calls registerUser() itself. The header always shows one account
+        icon: logged out it opens the login modal directly, logged in it
+        opens the account dropdown. "Get Premium" opens the premium
+        popup that starts Stripe Checkout.
      3. Restores the session automatically on page refresh
         (Supabase JS keeps the session in localStorage — this is just the
         auth token, NOT the premium flag, so it satisfies "premium must
         come from Supabase" — see isPremiumUser() below).
      4. On register, creates a matching row in the `profiles` table.
-     5. Exposes isPremiumUser() which reads profiles.premium fresh
-        from Supabase (source of truth).
-     6. Maintains a global `isPremium` boolean and a global `currentUser`
-        object that the rest of your site can read.
+     5. Exposes isPremiumUser() which reads profiles.premium fresh from
+        Supabase and combines it with the 14-day trial window (see
+        hasPremiumAccess() below) to decide real premium access.
+     6. Maintains a global `isPremium` boolean (paid OR trial access), a
+        global `isPaidPremium` boolean (paying customers only), and a
+        global `currentUser` object that the rest of your site can read.
      7. Renders the header UI (one always-visible account icon, plus the
         "Logged in as: ..." dropdown once logged in) and the login modal.
         The modal itself is appended directly to <body> (not left inside
@@ -46,6 +51,15 @@
         calls sb.auth.resetPasswordForEmail() and redirects the emailed
         link to reset-password.html (which must exist at your site root
         and use the SAME Supabase project's URL/anon key).
+
+     FREE TRIAL FLOW (Free Trial button -> non-paying trial user):
+       Click "Free Trial (14 Days)" (login modal or premium popup)
+         -> the same email/password form switches to register mode
+         -> submit -> registerUser() creates the auth user (Postgres
+            trigger creates their profiles row with premium=false)
+         -> hasPremiumAccess() gives them full access for 14 days from
+            their account's created_at, no payment involved
+         -> after 14 days, access falls back to guest-level automatically
 
      PURCHASE FLOW (Get Premium -> paying customer):
        Click "Get Premium" (header or locked content)
@@ -85,8 +99,9 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
    updated to check `isPremium` — see the integration notes at the
    bottom of this file and the separate PATCH NOTES doc.
 ----------------------------------------------------------------------- */
-let isPremium = false;
-let currentUser = null; // Supabase auth user object, or null when logged out
+let isPremium = false;      // true if user has ANY premium access (paid OR active trial)
+let isPaidPremium = false;  // true ONLY for actual paying customers (profiles.premium === true)
+let currentUser = null;     // Supabase auth user object, or null when logged out
 
 /* Callbacks other page scripts can register to be notified whenever
    premium status changes (e.g. so they can re-render locked grids). */
@@ -103,8 +118,30 @@ function _firePremiumChangeListeners() {
 /* -----------------------------------------------------------------------
    3. PREMIUM DETECTION (source of truth = Supabase, not localStorage)
 ----------------------------------------------------------------------- */
+/* Central access rule: paying customers always have access. Everyone
+   else gets a 14-day free trial starting from their account's
+   created_at (Supabase Auth user.created_at). */
+function hasPremiumAccess(user, profileData) {
+  if (profileData && profileData.premium) return true;
+  if (!user || !user.created_at) return false;
+  const createdAt = new Date(user.created_at).getTime();
+  const trialEnds = createdAt + (14 * 24 * 60 * 60 * 1000);
+  return Date.now() < trialEnds;
+}
+
+/* Whole days left of the trial, for the banner. Returns 0 once the
+   trial has ended or for users without a created_at (logged out). */
+function getTrialDaysRemaining(user) {
+  if (!user || !user.created_at) return 0;
+  const createdAt = new Date(user.created_at).getTime();
+  const trialEnds = createdAt + (14 * 24 * 60 * 60 * 1000);
+  const msLeft = trialEnds - Date.now();
+  if (msLeft <= 0) return 0;
+  return Math.ceil(msLeft / (24 * 60 * 60 * 1000));
+}
+
 async function isPremiumUser() {
-  if (!currentUser) return false;
+  if (!currentUser) { isPaidPremium = false; return false; }
   const { data, error } = await sb
     .from("profiles")
     .select("premium")
@@ -113,16 +150,37 @@ async function isPremiumUser() {
 
   if (error) {
     console.error("isPremiumUser() error:", error.message);
+    isPaidPremium = false;
     return false;
   }
-  return !!(data && data.premium);
+  isPaidPremium = !!(data && data.premium); // real paying customer, no trial involved
+  return hasPremiumAccess(currentUser, data);
 }
 
 async function refreshPremiumStatus() {
   isPremium = await isPremiumUser();
   _firePremiumChangeListeners();
   renderAuthUI();
+  renderTrialBanner();
   return isPremium;
+}
+
+/* Shows "X days left of your trial" only for logged-in, non-paying
+   users who currently have access via the trial, with 4 days or less
+   remaining. Paying customers and expired/no-trial users never see it. */
+function renderTrialBanner() {
+  const banner = document.getElementById("trialBanner");
+  if (!banner) return;
+
+  if (currentUser && !isPaidPremium && isPremium) {
+    const daysLeft = getTrialDaysRemaining(currentUser);
+    if (daysLeft > 0 && daysLeft <= 4) {
+      banner.textContent = "⭐ Du har " + daysLeft + " dag" + (daysLeft === 1 ? "" : "ar") + " kvar av din Premium-testperiod.";
+      banner.style.display = "";
+      return;
+    }
+  }
+  banner.style.display = "none";
 }
 
 /* -----------------------------------------------------------------------
@@ -303,6 +361,10 @@ function _buildAuthDom() {
           <p id="authMessage" role="alert"></p>
           <button id="authSubmit" type="submit">Log in</button>
         </form>
+        <button id="startTrialBtn" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.06 6.6.87-4.85 4.6 1.2 6.6L12 17.4l-5.85 3.23 1.2-6.6L2.5 9.43l6.6-.87L12 2.5z"/></svg>
+          <span>Free Trial (14 Days)</span>
+        </button>
         <button id="unlockPremiumBtn" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.06 6.6.87-4.85 4.6 1.2 6.6L12 17.4l-5.85 3.23 1.2-6.6L2.5 9.43l6.6-.87L12 2.5z"/></svg>
           <span>Unlock Premium ($4.99/month)</span>
@@ -313,13 +375,23 @@ function _buildAuthDom() {
     document.body.appendChild(modal);
   }
 
+  let trialBanner = document.getElementById("trialBanner");
+  if (!trialBanner) {
+    trialBanner = document.createElement("div");
+    trialBanner.id = "trialBanner";
+    trialBanner.style.display = "none";
+    document.body.appendChild(trialBanner);
+  }
+
   _wireAuthDom();
 }
 
 /* There is no self-serve registration anymore: accounts are only created
    after a successful Stripe purchase, on thank-you.html (which calls
-   registerUser() itself once payment is confirmed). This modal is
-   login-only for existing customers. */
+   registerUser() itself once payment is confirmed). The modal also lets
+   a NEW visitor start a free 14-day trial (self-serve, no payment) via
+   the "Free Trial (14 Days)" button, which toggles the same form into
+   register mode — see _setAuthMode() below. */
 function _wireAuthDom() {
   const registerBtn = document.getElementById("registerBtn");
   const logoutBtn = document.getElementById("logoutBtn");
@@ -332,21 +404,61 @@ function _wireAuthDom() {
   const form = document.getElementById("authForm");
   const messageEl = document.getElementById("authMessage");
   const forgotBtn = document.getElementById("forgotPasswordBtn");
+  const startTrialBtn = document.getElementById("startTrialBtn");
+
+  let _authMode = "login"; // "login" | "register" — which action authForm submits as
 
   function showAuthMessage(text, type) {
     messageEl.textContent = text;
     messageEl.className = type || "";
   }
 
-  function openModal() {
+  // Switches the SAME email/password form between "Log in" and
+  // "Start your free trial" (register) without duplicating any markup.
+  function _setAuthMode(mode) {
+    _authMode = mode;
+    const title = document.getElementById("authModalTitle");
+    const submitBtn = document.getElementById("authSubmit");
+    const forgotRow = document.getElementById("authRow");
+    const passwordInput = document.getElementById("authPassword");
+    const trialLabel = startTrialBtn ? startTrialBtn.querySelector("span") : null;
+
+    if (mode === "register") {
+      title.textContent = "Start your free trial";
+      submitBtn.textContent = "Start Free Trial";
+      if (trialLabel) trialLabel.textContent = "Back to Login";
+      if (forgotRow) forgotRow.style.display = "none";
+      passwordInput.setAttribute("autocomplete", "new-password");
+    } else {
+      title.textContent = "Log in";
+      submitBtn.textContent = "Log in";
+      if (trialLabel) trialLabel.textContent = "Free Trial (14 Days)";
+      if (forgotRow) forgotRow.style.display = "";
+      passwordInput.setAttribute("autocomplete", "current-password");
+    }
+  }
+
+  function openModal(mode) {
     showAuthMessage("", "");
     form.reset();
-    document.getElementById("authSubmit").textContent = "Log in";
+    _setAuthMode(mode || "login");
     modal.classList.add("show");
     document.getElementById("authEmail").focus();
   }
   function closeModal() {
     modal.classList.remove("show");
+  }
+
+  // Lets any other script (e.g. the premium modal's own "Free Trial"
+  // button, defined per-page in index.html/instruments.html/etc.) open
+  // this same modal directly in register mode.
+  window.openFreeTrialSignup = () => openModal("register");
+
+  if (startTrialBtn) {
+    startTrialBtn.onclick = () => {
+      showAuthMessage("", "");
+      _setAuthMode(_authMode === "register" ? "login" : "register");
+    };
   }
 
   // "Unlock Premium" goes straight to checkout, same destination as the
@@ -464,8 +576,25 @@ function _wireAuthDom() {
     submitBtn.disabled = true;
 
     try {
-      await loginUser(email, password);
-      closeModal();
+      if (_authMode === "register") {
+        const result = await registerUser(email, password);
+        if (result && result.session) {
+          // Email confirmation is OFF in Supabase — signUp already
+          // returned a session, so onAuthStateChange fires and the
+          // trial (based on the new account's created_at) is active
+          // right away.
+          showAuthMessage("Your free trial has started! Enjoy full Premium access for 14 days.", "success");
+          setTimeout(closeModal, 1400);
+        } else {
+          // Email confirmation is ON — there's no session yet. The
+          // trial still starts from created_at, but the user needs to
+          // confirm their email and log in before it's usable.
+          showAuthMessage("Almost there! Check your email to confirm your account, then log in to start your free trial.", "success");
+        }
+      } else {
+        await loginUser(email, password);
+        closeModal();
+      }
     } catch (err) {
       // Always log the full error object to the console so it can be
       // inspected (status code, error code, etc.) even when .message
@@ -503,8 +632,9 @@ function renderAuthUI() {
     accountRoot.classList.add("loggedIn");
     accountBtn.setAttribute("aria-label", "Account menu");
     emailLabel.textContent = "Logged in as: " + currentUser.email;
-    // Only premium users have a Stripe subscription to manage.
-    manageSubBtn.style.display = isPremium ? "" : "none";
+    // Only ACTUAL PAYING customers have a Stripe subscription to manage
+    // — trial users are premium (isPremium) but have nothing to manage.
+    manageSubBtn.style.display = isPaidPremium ? "" : "none";
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "none";
   } else {
     accountRoot.classList.remove("loggedIn");
