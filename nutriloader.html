@@ -1214,6 +1214,9 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
 .premCtaGhost{width:100%;margin-top:12px;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(243,239,228,.25);color:var(--tn-soft);
   font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
 .premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--tn-ink);border-color:rgba(243,239,228,.4)}
+.premCtaTrial{width:100%;margin-top:10px;padding:12px;border-radius:999px;background:transparent;border:1px solid var(--gold);color:var(--gold);
+  font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease}
+.premCtaTrial:hover{background:var(--gold);color:#241c12}
 </style>
 <link rel="stylesheet" href="auth-ui.css">
 <style>
@@ -1271,6 +1274,7 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
             <span>Unlock Premium for $4.99/month</span>
             <span class="premCancelNote">Cancel anytime!</span>
           </a>
+          <button class="premCtaTrial" id="premiumModalFreeTrial" type="button">Start Free 14-Day Trial — No Card Needed</button>
           <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
         </div>
       </div>
@@ -3848,9 +3852,10 @@ registerVisit();
   if(premScrollBox) premScrollBox.addEventListener('scroll',updatePremiumScrollHint);
   window.addEventListener('resize',updatePremiumScrollHint);
   function closePremiumModal(){ if(modal) modal.classList.remove('show'); }
-  var pClose=document.getElementById('premiumModalClose'), pCta=document.getElementById('premiumModalCta');
+  var pClose=document.getElementById('premiumModalClose'), pCta=document.getElementById('premiumModalCta'), pTrial=document.getElementById('premiumModalFreeTrial');
   if(pClose) pClose.onclick=closePremiumModal;
   if(pCta) pCta.onclick=closePremiumModal;
+  if(pTrial) pTrial.onclick=function(){ closePremiumModal(); if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); };
   if(modal) modal.addEventListener('click',function(e){ if(e.target===modal) closePremiumModal(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closePremiumModal(); });
   window.openPremiumModal=openPremiumModal;

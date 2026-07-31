@@ -544,6 +544,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .premCtaGhost{width:100%;margin-top:12px;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(244,241,234,.25);color:var(--soft);
   font-family:var(--ui);font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
 .premCtaGhost:hover{background:rgba(244,241,234,.08);color:var(--ink);border-color:rgba(244,241,234,.4)}
+.premCtaTrial{width:100%;margin-top:10px;padding:12px;border-radius:999px;background:transparent;border:1px solid var(--gold);color:var(--gold);
+  font-family:var(--ui);font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease}
+.premCtaTrial:hover{background:var(--gold);color:#241c12}
 #frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
 #donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
 @supports(padding:max(0px)){
@@ -842,6 +845,7 @@ body.immersive #howToBox{display:none}
         <span>Get Premium for $4.99/month</span>
         <span class="premCancelNote">Cancel anytime!</span>
       </a>
+      <button class="premCtaTrial" id="premiumModalFreeTrial" type="button">Start Free 14-Day Trial — No Card Needed</button>
       <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
     </div>
   </div>
@@ -1786,9 +1790,10 @@ if(premScrollBox) premScrollBox.addEventListener('scroll',updatePremiumScrollHin
 window.addEventListener('resize',updatePremiumScrollHint);
 function closePremiumModal(){ const m=$('premiumModal'); if(m)m.classList.remove('show'); }
 {
-  const pm=$('premiumModal'), pClose=$('premiumModalClose'), pCta=$('premiumModalCta');
+  const pm=$('premiumModal'), pClose=$('premiumModalClose'), pCta=$('premiumModalCta'), pTrial=$('premiumModalFreeTrial');
   if(pClose)pClose.onclick=closePremiumModal;
   if(pCta)pCta.onclick=closePremiumModal;
+  if(pTrial)pTrial.onclick=function(){ closePremiumModal(); if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); };
   if(pm)pm.addEventListener('click',e=>{ if(e.target===pm)closePremiumModal(); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape')closePremiumModal(); });
 }
