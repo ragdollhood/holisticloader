@@ -614,11 +614,12 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .end-card p{color:var(--muted);margin:12px 0 26px;font-weight:300;letter-spacing:.04em}
 body.immersive #brand{opacity:0}
 
-.sess-toggles{position:absolute;top:max(70px,calc(env(safe-area-inset-top) + 64px));left:18px;z-index:7;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-start}
+.sess-toggles{position:absolute;top:max(70px,calc(env(safe-area-inset-top) + 64px));left:18px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-start;touch-action:manipulation}
 #sessBtns{display:flex;flex-direction:column;align-items:center;gap:8px}
 .sess-toggles.collapsed #sessBtns{display:none}
 #btnToggleBtns{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;z-index:1}
 #btnToggleBtns:hover{background:rgba(244,241,234,.12)}#btnToggleBtns:active{transform:scale(.95)}
 /* "Show buttons" state: faint plate, same size as the hide state, a touch less transparent */
 #btnToggleBtns.off{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);box-shadow:none;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:.55}
@@ -2426,49 +2427,23 @@ function openPanel(name){document.querySelectorAll('.tabpane').forEach(p=>p.clas
   $('panelTitle').textContent=TITLES[name];$('panel').classList.add('open');
   if(name==='preset')document.body.classList.add('preset-active');}
 
-/* wire up
-   NOTE: session controls use addTapHandler() instead of plain .onclick.
-   On mobile, a plain "click" is really a synthetic event fired ~300ms
-   after touchend, retargeted at whatever element is under the finger at
-   that later moment. If anything on the page shifts/re-renders in that
-   window, the synthetic click can land on a different element than the
-   one the user actually touched (this is what was sending the "hide
-   buttons" eye-icon tap to the breathing orb underneath on phones).
-   addTapHandler() reacts to touchend directly — which is always targeted
-   at the element where the touch started — so mobile taps and desktop
-   clicks now behave identically. */
-function addTapHandler(el,handler){
-  if(!el) return;
-  let touched=false;
-  el.addEventListener('touchend',function(e){
-    touched=true;
-    e.preventDefault();   // stop the delayed synthetic click from also firing
-    e.stopPropagation();  // never let this tap bubble/retarget onto elements underneath
-    handler(e);
-    setTimeout(()=>{touched=false;},500);
-  },{passive:false});
-  el.addEventListener('click',function(e){
-    if(touched) return;   // already handled via touchend
-    e.stopPropagation();
-    handler(e);
-  });
-}
-addTapHandler($('orbStart'),()=>startSession());
+/* wire up */
+$('orbStart').onclick =()=>startSession();
 $('reel').addEventListener('scroll',repositionOpen,{passive:true});
 window.addEventListener('resize',repositionOpen);
-addTapHandler($('orbHit'),()=>endSession());
+$('orbHit').onclick   =()=>endSession();
 $('panelDone').onclick=()=>{$('panel').classList.remove('open');document.body.classList.remove('preset-active');renderCtrlTabs();};
-addTapHandler($('btnPause'),()=>{S.running?pauseSession():resumeSession();});
-addTapHandler($('btnEnd'),()=>endSession());
+$('btnPause').onclick =()=>{S.running?pauseSession():resumeSession();};
+$('btnEnd').onclick   =()=>endSession();
 let btnsHidden=false;
 function setButtonsHidden(h){btnsHidden=h;
   $('sessToggles').classList.toggle('collapsed',h);
   if(S.running)$('timerCluster').classList.toggle('hidden',h);
   const b=$('btnToggleBtns'); if(b)b.classList.toggle('off',h);
   const l=$('toggleBtnsLbl'); if(l)l.textContent=h?'Show buttons':'Hide buttons';}
-addTapHandler($('btnToggleBtns'),()=>setButtonsHidden(!btnsHidden));
-addTapHandler($('btnSoundTgl'),()=>setSound(!S.soundOn));
-addTapHandler($('btnCueTgl'),()=>setShowCue(!S.showCue));
+$('btnToggleBtns').onclick=(e)=>{e.preventDefault();e.stopPropagation();setButtonsHidden(!btnsHidden);};
+$('btnSoundTgl').onclick =()=>setSound(!S.soundOn);
+$('btnCueTgl').onclick=()=>setShowCue(!S.showCue);
 $('btnAgain').onclick =()=>{resetToFront();startSession();};
 
 /* init */
