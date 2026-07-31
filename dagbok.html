@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <!-- ============ SEO — update per page ============ -->
-<title>Dagbok — Holistic Loader</title>
-<meta name="description" content="Din personliga dagbok för tacksamhet, stolthet och dagliga vanor — del av Holistic Loader.">
+<title>Journal — Holistic Loader</title>
+<meta name="description" content="Your personal journal for gratitude, wins, and daily habits — part of the Holistic Loader family.">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="theme-color" content="#0c0e13">
 <meta name="application-name" content="Holistic Loader">
@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="canonical" href="https://holisticloader.com/dagbok.html">
+<link rel="canonical" href="https://holisticloader.com/journal.html">
 <link rel="icon" type="image/png" href="images/icon-holistic.png">
 <link rel="apple-touch-icon" href="images/icon-holistic.png">
 <link rel="shortcut icon" href="images/icon-holistic.png">
@@ -185,7 +185,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   padding:max(150px,calc(env(safe-area-inset-top) + 130px)) 20px 60px;
   display:flex;flex-direction:column;align-items:center;text-align:center}
 
-/* ===== Dagbok — journal / development page ===== */
+/* ===== Journal page ===== */
 #pageContent.dev-page{max-width:760px;margin:0 auto;width:100%;align-items:stretch;text-align:left;gap:20px}
 
 /* logged-out gate */
@@ -201,13 +201,39 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 .dev-card h3{font-family:var(--display);font-weight:500;font-size:17px;color:var(--ink);margin-bottom:14px;letter-spacing:.01em}
 .dev-card h3 .today-label{font-family:var(--ui);font-size:11px;font-weight:400;color:var(--muted);text-transform:capitalize;display:block;margin-top:3px;letter-spacing:.01em}
 
+/* welcome-back banner */
+#welcomeBanner{display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:16px;border:1px solid var(--line);
+  background:linear-gradient(120deg,rgba(231,201,162,.1),rgba(201,168,255,.07));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#welcomeBanner .wb-icon{flex:0 0 auto;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--gold),var(--violet));font-size:17px}
+#welcomeBanner .wb-title{font-family:var(--display);font-size:15.5px;color:var(--ink);margin-bottom:2px}
+#welcomeBanner .wb-sub{font-size:11.5px;color:var(--muted);line-height:1.5}
+
 /* stats strip */
 .stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.stat-card{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:16px 8px;text-align:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.stat-card{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:16px 8px;text-align:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative}
+.stat-card.streak-card{border-color:var(--gold)}
 .stat-num{display:block;font-family:var(--display);font-size:clamp(22px,5vw,28px);font-weight:600;
   background:linear-gradient(90deg,var(--gold),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
 .stat-label{display:block;font-size:9.5px;letter-spacing:.03em;color:var(--muted);margin-top:4px;line-height:1.4}
 @media(max-width:640px){.stats-strip{grid-template-columns:repeat(2,1fr)}}
+
+/* milestone note */
+#milestoneNote{display:none;align-items:center;gap:10px;padding:12px 16px;border-radius:14px;border:1px solid var(--gold);
+  background:rgba(231,201,162,.12);font-size:12.5px;color:var(--ink);line-height:1.5}
+#milestoneNote.show{display:flex}
+#milestoneNote .m-icon{flex:0 0 auto;font-size:16px}
+
+/* weekly recap */
+.recap-row{display:flex;gap:10px;flex-wrap:wrap}
+.recap-day{flex:1;min-width:38px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.recap-day .rd-label{font-size:9.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.04em}
+.recap-day .rd-dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);background:rgba(244,241,234,.04);
+  display:flex;align-items:center;justify-content:center}
+.recap-day .rd-dot.active{background:linear-gradient(135deg,var(--gold),var(--violet));border-color:transparent}
+.recap-day .rd-dot.active svg{width:12px;height:12px;stroke:#1b1420;stroke-width:3;fill:none}
+.recap-day.is-today .rd-label{color:var(--gold);font-weight:600}
+.recap-summary{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.6}
 
 /* daily check-in */
 .habit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:4px}
@@ -230,6 +256,11 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 #saveCheckinBtn:hover{background:var(--gold-soft)}
 #saveCheckinBtn:disabled{opacity:.6;cursor:not-allowed}
 #checkinMsg{min-height:14px;font-size:11.5px;color:#9ed7a7;margin-top:8px;text-align:center}
+
+/* prompt */
+.wall-prompt{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--soft);line-height:1.55;margin-bottom:12px;padding:10px 13px;
+  border-radius:12px;background:rgba(244,241,234,.03);border:1px solid var(--line)}
+.wall-prompt .wp-mark{flex:0 0 auto;color:var(--gold);font-family:var(--display);font-size:18px;line-height:1}
 
 /* gratitude / pride wall */
 .wall-tabs{display:flex;gap:8px;margin-bottom:14px}
@@ -293,7 +324,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="store.html" class="tab">Shop</a>
     <a href="motivation-loader.html" class="tab">Motivation</a>
-    <a href="dagbok.html" class="tab active" aria-current="page">Dagbok</a>
+    <a href="journal.html" class="tab active" aria-current="page">Journal</a>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
@@ -301,7 +332,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 
 <!-- hanging title plaque -->
 <div class="h1-frame">
-  <p class="h1-frame-title">DAGBOK</p>
+  <p class="h1-frame-title">JOURNAL</p>
 </div>
 
 <!-- "how to use" info box -->
@@ -310,7 +341,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
     <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
   </button>
   <h3>How to use</h3>
-  <p>Detta är din personliga sida. Kryssa i dagens vanor (t.ex. meditation, med hur många minuter), och skriv på väggen vad du är tacksam för eller stolt över idag. Statistiken högst upp visar din streak, dina totaler och de senaste 30 dagarnas aktivitet — så du kan följa din utveckling över tid.</p>
+  <p>This is your personal space. Check off today's habits (including how many minutes you meditated), and write on the wall what you're grateful for or proud of today. The stats up top track your streak and totals, the weekly recap shows your last 7 days at a glance, and the 30-day grid shows your activity over time — so you can watch your own progress build.</p>
 </div>
 
 <!-- premium modal -->
@@ -342,60 +373,83 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 
   <!-- logged-out gate -->
   <section id="loggedOutGate" class="gate">
-    <p class="gate-eyebrow">Din personliga logg</p>
-    <h2>Logga in för att öppna din dagbok</h2>
-    <p class="gate-copy">Spara dina tacksamhetsanteckningar, håll koll på dina dagliga vanor och se din utveckling över tid — allt sparas på ditt konto och finns kvar nästa gång du loggar in.</p>
-    <button id="gateLoginBtn" class="gate-cta" type="button">Logga in / Skapa konto</button>
+    <p class="gate-eyebrow">Your personal space</p>
+    <h2>Log in to open your journal</h2>
+    <p class="gate-copy">Save your gratitude notes, track your daily habits, and watch your progress build over time — everything stays on your account, exactly as you left it, whenever you're ready to come back.</p>
+    <button id="gateLoginBtn" class="gate-cta" type="button">Log in / Create account</button>
   </section>
 
   <!-- dashboard (only shown when logged in) -->
   <div id="devDashboard" class="hidden" style="display:flex;flex-direction:column;gap:20px">
 
+    <!-- welcome-back banner -->
+    <section id="welcomeBanner">
+      <div class="wb-icon" id="welcomeIcon">🌿</div>
+      <div>
+        <div class="wb-title" id="welcomeTitle">Welcome back</div>
+        <div class="wb-sub" id="welcomeSub">Good to see you again.</div>
+      </div>
+    </section>
+
     <!-- stats strip -->
-    <section class="stats-strip" aria-label="Din statistik">
-      <div class="stat-card"><span class="stat-num" id="streakCount">0</span><span class="stat-label">dagars streak</span></div>
-      <div class="stat-card"><span class="stat-num" id="gratitudeCount">0</span><span class="stat-label">tacksamhets-anteckningar</span></div>
-      <div class="stat-card"><span class="stat-num" id="proudCount">0</span><span class="stat-label">stolthets-anteckningar</span></div>
-      <div class="stat-card"><span class="stat-num" id="meditationTotal">0</span><span class="stat-label">minuter meditation totalt</span></div>
+    <section class="stats-strip" aria-label="Your stats">
+      <div class="stat-card streak-card"><span class="stat-num" id="streakCount">0</span><span class="stat-label">day streak</span></div>
+      <div class="stat-card"><span class="stat-num" id="gratitudeCount">0</span><span class="stat-label">gratitude notes</span></div>
+      <div class="stat-card"><span class="stat-num" id="proudCount">0</span><span class="stat-label">wins logged</span></div>
+      <div class="stat-card"><span class="stat-num" id="meditationTotal">0</span><span class="stat-label">minutes meditated</span></div>
+    </section>
+
+    <!-- milestone note -->
+    <div id="milestoneNote"><span class="m-icon">✨</span><span id="milestoneText"></span></div>
+
+    <!-- this week -->
+    <section class="dev-card">
+      <h3>This week</h3>
+      <div class="recap-row" id="recapRow"></div>
+      <p class="recap-summary" id="recapSummary"></p>
     </section>
 
     <!-- daily check-in -->
     <section class="dev-card">
-      <h3>Dagens check-in <span class="today-label" id="todayDate"></span></h3>
+      <h3>Today's check-in <span class="today-label" id="todayDate"></span></h3>
       <div class="habit-grid" id="habitGrid"></div>
       <div class="meditation-row hidden" id="meditationRow">
-        <label for="meditationMinutes">Hur många minuter mediterade du?</label>
+        <label for="meditationMinutes">How many minutes did you meditate?</label>
         <input type="number" id="meditationMinutes" min="0" step="1" inputmode="numeric" placeholder="0">
       </div>
-      <button id="saveCheckinBtn" type="button">Spara dagens check-in</button>
+      <button id="saveCheckinBtn" type="button">Save today's check-in</button>
       <p id="checkinMsg" role="status"></p>
     </section>
 
     <!-- gratitude / pride wall -->
     <section class="dev-card">
-      <h3>Väggen</h3>
+      <h3>The wall</h3>
       <div class="wall-tabs" role="tablist">
-        <button class="wall-tab active" type="button" data-type="gratitude" role="tab">🌿 Tacksam för</button>
-        <button class="wall-tab" type="button" data-type="proud" role="tab">⭐ Stolt över</button>
+        <button class="wall-tab active" type="button" data-type="gratitude" role="tab">🌿 Grateful for</button>
+        <button class="wall-tab" type="button" data-type="proud" role="tab">⭐ Proud of</button>
+      </div>
+      <div class="wall-prompt" id="wallPrompt">
+        <span class="wp-mark">"</span>
+        <span id="wallPromptText"></span>
       </div>
       <form id="wallForm">
-        <textarea id="wallInput" placeholder="Vad är du tacksam för idag?" required></textarea>
-        <button type="submit">Lägg till på väggen</button>
+        <textarea id="wallInput" placeholder="What are you grateful for today?" required></textarea>
+        <button type="submit">Add to the wall</button>
       </form>
       <div id="wallFeed" class="wall-feed"></div>
     </section>
 
     <!-- 30-day heatmap -->
     <section class="dev-card">
-      <h3>Senaste 30 dagarna</h3>
-      <div id="heatmapGrid" class="heatmap-grid" aria-label="Aktivitet senaste 30 dagarna"></div>
+      <h3>Last 30 days</h3>
+      <div id="heatmapGrid" class="heatmap-grid" aria-label="Activity over the last 30 days"></div>
       <div class="heat-legend">
-        <span>Mindre</span>
+        <span>Less</span>
         <span class="heat-cell" data-level="0"></span>
         <span class="heat-cell" data-level="1"></span>
         <span class="heat-cell" data-level="2"></span>
         <span class="heat-cell" data-level="3"></span>
-        <span>Mer</span>
+        <span>More</span>
       </div>
     </section>
 
@@ -499,20 +553,44 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncH1FrameWid
 syncH1FrameWidth();
 
 /* =======================================================================
-   DAGBOK — journal / habit-tracking logic
+   JOURNAL — habit-tracking / gratitude-wall logic
    Uses the shared Supabase client (`sb`) and `currentUser` global set up
    by auth.js. Requires two tables in the same Supabase project — see the
    SQL setup block at the very bottom of this script.
    ======================================================================= */
 
 const HABITS=[
-  {key:'meditation', label:'Mediterat'},
-  {key:'movement',   label:'Rört på kroppen'},
-  {key:'water',      label:'Druckit tillräckligt vatten'},
-  {key:'sleep',      label:'Sovit gott'},
-  {key:'outdoors',   label:'Varit ute i naturen'},
-  {key:'reading',    label:'Läst eller reflekterat'}
+  {key:'meditation', label:'Meditated'},
+  {key:'movement',   label:'Moved my body'},
+  {key:'water',      label:'Drank enough water'},
+  {key:'sleep',      label:'Slept well'},
+  {key:'outdoors',   label:'Spent time outdoors'},
+  {key:'reading',    label:'Read or reflected'}
 ];
+
+/* Rotating daily prompts — picked deterministically by day-of-year, so
+   the same prompt shows all day but changes tomorrow. Purely to make the
+   blank page easier to start writing on, nothing manipulative. */
+const PROMPTS={
+  gratitude:[
+    "Who made today a little easier?",
+    "What's something small that went right today?",
+    "What's a comfort you don't usually notice?",
+    "What did your body do for you today?",
+    "What's something you'd miss if it were gone tomorrow?",
+    "What made you smile today, even briefly?",
+    "What's a skill or ability you're thankful to have?"
+  ],
+  proud:[
+    "What did you follow through on today?",
+    "What's something you handled better than you expected?",
+    "What took courage today, even a little?",
+    "What's a habit you're building, one day at a time?",
+    "What would past-you be proud to see you doing now?",
+    "What did you finish, fix, or figure out today?",
+    "What's something you didn't give up on?"
+  ]
+};
 
 let _activeWallType='gratitude';
 let _checkins=[];
@@ -522,6 +600,10 @@ let _todayHabits=new Set();
 function todayStr(){
   const d=new Date();
   return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+}
+function dayOfYear(d){
+  const start=new Date(d.getFullYear(),0,0);
+  return Math.floor((d-start)/86400000);
 }
 function escapeHtml(str){
   const div=document.createElement('div');
@@ -562,6 +644,33 @@ function applyTodayHabitsToUI(){
   });
 }
 
+function updatePrompt(){
+  const list=PROMPTS[_activeWallType];
+  const idx=dayOfYear(new Date())%list.length;
+  $('wallPromptText').textContent=list[idx];
+  $('wallInput').placeholder=_activeWallType==='gratitude'?'What are you grateful for today?':'What are you proud of today?';
+}
+
+function updateWelcomeBanner(){
+  const hasAnyHistory=_checkins.length>0||_entries.length>0;
+  const t=todayStr();
+  const loggedToday=_checkins.some(c=>c.checkin_date===t)||_entries.some(e=>(e.created_at||'').slice(0,10)===t);
+  const icon=$('welcomeIcon'), title=$('welcomeTitle'), sub=$('welcomeSub');
+  if(!hasAnyHistory){
+    icon.textContent='🌱';
+    title.textContent='Welcome to your journal';
+    sub.textContent="Nothing here yet — today's a good day to start.";
+  }else if(loggedToday){
+    icon.textContent='✨';
+    title.textContent='You\u2019re all caught up today';
+    sub.textContent='Come back tomorrow to keep it going, or just browse what you\u2019ve written so far.';
+  }else{
+    icon.textContent='👋';
+    title.textContent='Welcome back';
+    sub.textContent="Take a minute for today's check-in and wall entry whenever you're ready.";
+  }
+}
+
 async function loadDashboard(){
   if(!currentUser) return;
   const since=new Date(Date.now()-60*24*60*60*1000);
@@ -582,9 +691,22 @@ async function loadDashboard(){
   applyTodayHabitsToUI();
   $('meditationMinutes').value=(todays&&todays.meditation_minutes)?todays.meditation_minutes:'';
 
+  updateWelcomeBanner();
   renderStats();
+  renderRecap();
   renderHeatmap();
   renderWallFeed();
+}
+
+const MILESTONES=[3,7,14,30,60,100,180,365];
+function renderMilestone(streak){
+  const note=$('milestoneNote');
+  if(MILESTONES.includes(streak)){
+    $('milestoneText').textContent=`${streak}-day streak — that's real consistency. Nicely done.`;
+    note.classList.add('show');
+  }else{
+    note.classList.remove('show');
+  }
 }
 
 function renderStats(){
@@ -607,6 +729,39 @@ function renderStats(){
   $('gratitudeCount').textContent=gratitudeCount;
   $('proudCount').textContent=proudCount;
   $('meditationTotal').textContent=meditationMinutes;
+  renderMilestone(streak);
+}
+
+function renderRecap(){
+  const row=$('recapRow');
+  if(!row) return;
+  const dateSet=new Set(_checkins.map(c=>c.checkin_date));
+  _entries.forEach(e=>dateSet.add((e.created_at||'').slice(0,10)));
+  const dayLabels=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const t=todayStr();
+  let activeDays=0;
+  let html='';
+  for(let i=6;i>=0;i--){
+    const d=new Date();
+    d.setDate(d.getDate()-i);
+    const ds=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    const active=dateSet.has(ds);
+    if(active) activeDays++;
+    const isToday=ds===t;
+    html+=`<div class="recap-day${isToday?' is-today':''}">
+      <span class="rd-label">${dayLabels[d.getDay()]}</span>
+      <span class="rd-dot${active?' active':''}">${active?'<svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg>':''}</span>
+    </div>`;
+  }
+  row.innerHTML=html;
+  const summary=$('recapSummary');
+  if(activeDays===0){
+    summary.textContent="No entries yet this week — any day is a good day to start.";
+  }else if(activeDays===7){
+    summary.textContent="Every day this week. That's a strong week.";
+  }else{
+    summary.textContent=`${activeDays} of the last 7 days logged.`;
+  }
 }
 
 function renderHeatmap(){
@@ -639,12 +794,12 @@ function renderWallFeed(){
   if(!feed) return;
   const filtered=_entries.filter(e=>e.type===_activeWallType);
   if(!filtered.length){
-    feed.innerHTML=`<p class="wall-empty">${_activeWallType==='gratitude'?'Inga tacksamhetsanteckningar ännu — skriv din första ovan.':'Inga stolthetsanteckningar ännu — skriv din första ovan.'}</p>`;
+    feed.innerHTML=`<p class="wall-empty">${_activeWallType==='gratitude'?'No gratitude notes yet — write your first one above.':'No wins logged yet — write your first one above.'}</p>`;
     return;
   }
   feed.innerHTML=filtered.map(e=>{
     const d=new Date(e.created_at);
-    const dateLabel=d.toLocaleDateString('sv-SE',{day:'numeric',month:'short',year:'numeric'});
+    const dateLabel=d.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'});
     return `<div class="wall-note">${escapeHtml(e.content)}<span class="note-date">${dateLabel}</span></div>`;
   }).join('');
 }
@@ -656,7 +811,7 @@ document.querySelectorAll('.wall-tab').forEach(btn=>{
     btn.classList.add('active');
     btn.setAttribute('aria-selected','true');
     _activeWallType=btn.dataset.type;
-    $('wallInput').placeholder=_activeWallType==='gratitude'?'Vad är du tacksam för idag?':'Vad är du stolt över idag?';
+    updatePrompt();
     renderWallFeed();
   });
 });
@@ -678,10 +833,12 @@ $('wallForm').addEventListener('submit',async e=>{
     $('wallInput').value='';
     renderWallFeed();
     renderStats();
+    renderRecap();
     renderHeatmap();
+    updateWelcomeBanner();
   }catch(err){
     console.error('journal_entries insert error:',err);
-    alert('Kunde inte spara just nu. Försök igen om en liten stund.');
+    alert('Couldn\u2019t save that just now. Please try again in a moment.');
   }finally{
     btn.disabled=false;
   }
@@ -704,12 +861,14 @@ $('saveCheckinBtn').addEventListener('click',async()=>{
     const idx=_checkins.findIndex(c=>c.checkin_date===t);
     if(idx>=0) _checkins[idx]=data; else _checkins.unshift(data);
     renderStats();
+    renderRecap();
     renderHeatmap();
-    $('checkinMsg').textContent='Sparat! Bra jobbat idag. ✨';
+    updateWelcomeBanner();
+    $('checkinMsg').textContent='Saved. Nicely done today. ✨';
     setTimeout(()=>{ $('checkinMsg').textContent=''; },2500);
   }catch(err){
     console.error('daily_checkins upsert error:',err);
-    $('checkinMsg').textContent='Kunde inte spara, försök igen.';
+    $('checkinMsg').textContent='Couldn\u2019t save — please try again.';
   }finally{
     btn.disabled=false;
   }
@@ -733,9 +892,10 @@ $('gateLoginBtn').addEventListener('click',()=>{
   if(btn) btn.click();
 });
 
-$('todayDate').textContent=new Date().toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'});
+$('todayDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'long'});
 
 buildHabitGrid();
+updatePrompt();
 onPremiumStatusChange(renderGate); // re-fires after every auth check, including on page load
 renderGate(); // initial paint before auth.js resolves the session
 
@@ -777,8 +937,11 @@ renderGate(); // initial paint before auth.js resolves the session
      using (auth.uid() = user_id)
      with check (auth.uid() = user_id);
 
-   Nothing else to configure — this page reuses the same `sb` client
-   and `currentUser` that auth.js already sets up.
+   If you already created journal_entries / daily_checkins under the
+   Swedish version of this page, you don't need to run this again — this
+   file uses the exact same table and column names, just with English UI.
+   Nothing else to configure — this page reuses the same `sb` client and
+   `currentUser` that auth.js already sets up.
 ----------------------------------------------------------------------- */
 </script>
 
@@ -838,7 +1001,7 @@ async function registerVisit() {
       },
       body: JSON.stringify({
         site: "holisticloader",
-        page: "dagbok",
+        page: "journal",
         page_url: window.location.pathname,
         visitor_id: visitorId,
         country: country
