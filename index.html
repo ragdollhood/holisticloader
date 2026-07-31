@@ -2426,23 +2426,49 @@ function openPanel(name){document.querySelectorAll('.tabpane').forEach(p=>p.clas
   $('panelTitle').textContent=TITLES[name];$('panel').classList.add('open');
   if(name==='preset')document.body.classList.add('preset-active');}
 
-/* wire up */
-$('orbStart').onclick =()=>startSession();
+/* wire up
+   NOTE: session controls use addTapHandler() instead of plain .onclick.
+   On mobile, a plain "click" is really a synthetic event fired ~300ms
+   after touchend, retargeted at whatever element is under the finger at
+   that later moment. If anything on the page shifts/re-renders in that
+   window, the synthetic click can land on a different element than the
+   one the user actually touched (this is what was sending the "hide
+   buttons" eye-icon tap to the breathing orb underneath on phones).
+   addTapHandler() reacts to touchend directly — which is always targeted
+   at the element where the touch started — so mobile taps and desktop
+   clicks now behave identically. */
+function addTapHandler(el,handler){
+  if(!el) return;
+  let touched=false;
+  el.addEventListener('touchend',function(e){
+    touched=true;
+    e.preventDefault();   // stop the delayed synthetic click from also firing
+    e.stopPropagation();  // never let this tap bubble/retarget onto elements underneath
+    handler(e);
+    setTimeout(()=>{touched=false;},500);
+  },{passive:false});
+  el.addEventListener('click',function(e){
+    if(touched) return;   // already handled via touchend
+    e.stopPropagation();
+    handler(e);
+  });
+}
+addTapHandler($('orbStart'),()=>startSession());
 $('reel').addEventListener('scroll',repositionOpen,{passive:true});
 window.addEventListener('resize',repositionOpen);
-$('orbHit').onclick   =()=>endSession();
+addTapHandler($('orbHit'),()=>endSession());
 $('panelDone').onclick=()=>{$('panel').classList.remove('open');document.body.classList.remove('preset-active');renderCtrlTabs();};
-$('btnPause').onclick =()=>{S.running?pauseSession():resumeSession();};
-$('btnEnd').onclick   =()=>endSession();
+addTapHandler($('btnPause'),()=>{S.running?pauseSession():resumeSession();});
+addTapHandler($('btnEnd'),()=>endSession());
 let btnsHidden=false;
 function setButtonsHidden(h){btnsHidden=h;
   $('sessToggles').classList.toggle('collapsed',h);
   if(S.running)$('timerCluster').classList.toggle('hidden',h);
   const b=$('btnToggleBtns'); if(b)b.classList.toggle('off',h);
   const l=$('toggleBtnsLbl'); if(l)l.textContent=h?'Show buttons':'Hide buttons';}
-$('btnToggleBtns').onclick=()=>setButtonsHidden(!btnsHidden);
-$('btnSoundTgl').onclick =()=>setSound(!S.soundOn);
-$('btnCueTgl').onclick=()=>setShowCue(!S.showCue);
+addTapHandler($('btnToggleBtns'),()=>setButtonsHidden(!btnsHidden));
+addTapHandler($('btnSoundTgl'),()=>setSound(!S.soundOn));
+addTapHandler($('btnCueTgl'),()=>setShowCue(!S.showCue));
 $('btnAgain').onclick =()=>{resetToFront();startSession();};
 
 /* init */
