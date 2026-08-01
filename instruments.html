@@ -969,23 +969,22 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
     <div id="premiumModalScroll">
-      <span class="premBadge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        Premium
-      </span>
-      <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
-      <p class="premSub">Everything Holistic Loader has to offer — for your yoga practice, your breathing and sound healing sessions and your nutrition tracking.</p>
+      <h2 id="premiumModalTitle">All-in-One Wellness Platform</h2>
       <div id="premiumModalSections"></div>
+      <p class="premTagline">Everything unlocked. One membership. Unlimited access. ✨</p>
       <div id="premiumScrollHint" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </div>
     </div>
     <div id="premiumModalFooter">
-      <a class="premCta" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
+      <button class="premCtaPrimary" id="premiumModalFreeTrial" type="button">
+        <span>Start Free 14-Day Trial</span>
+        <span class="premCtaSubnote">No card needed</span>
+      </button>
+      <a class="premCta premCtaSecondary" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
         <span>Get Premium for $4.99/month</span>
         <span class="premCancelNote">Cancel anytime!</span>
       </a>
-      <button class="premCtaTrial" id="premiumModalFreeTrial" type="button">Start Free 14-Day Trial — No Card Needed</button>
       <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
     </div>
   </div>
@@ -3984,41 +3983,10 @@ registerVisit();
 <script>
 (function(){
   var PREMIUM_SECTIONS=[
-    {
-      id:'yoga',
-      label:'Yoga',
-      items:[
-        {head:'7 Additional Guided Programs',detail:'Every goal-based program beyond Morning Energy — evening wind-down, stress & anxiety, better sleep, focus & balance, back pain relief, flexibility and energy & strength.'}
-      ]
-    },
-    {
-      id:'breathing',
-      label:'Breathing',
-      items:[
-        {head:'26 Background Scenes',detail:'21 additional scenes to choose from, so your background always matches your mood.'},
-        {head:'Your Own Background',detail:'Upload a photo of your own and use it as your personal background.'},
-        {head:'19 Instruments',detail:'13 additional instruments to layer and personalize your sound.'},
-        {head:'8 Noise Colors',detail:'4 additional noise colors to mix into your session, for 8 in total.'},
-        {head:'8 Guided Presets',detail:'6 additional complete journeys, ready to press play.'}
-      ]
-    },
-    {
-      id:'sound',
-      label:'Sound Healing',
-      items:[
-        {head:'16 Instruments',detail:'12 additional instruments to explore and combine.'},
-        {head:'Signal Generator',detail:'Full access to shape and play your own frequencies.'},
-        {head:'Record & Save',detail:'Record and save your own custom-designed sounds.'}
-      ]
-    },
-    {
-      id:'nutrition',
-      label:'Nutrition',
-      items:[
-        {head:'Daily Intake Log',detail:'Log your meals and daily habits, and see them summarized as clear statistics over time.'},
-        {head:'Synced Across Devices',detail:'Your log follows you — pick up right where you left off on your phone, tablet or computer.'}
-      ]
-    }
+    {id:'yoga',label:'🧘 Yoga',items:['8 Programs','6 Categories','8 Benefit Filters']},
+    {id:'breathing',label:'🌬️ Breathing',items:['26 Scenes','Personal Backgrounds','19 Instruments','8 Guided Journeys']},
+    {id:'sound',label:'🎵 Sound Healing',items:['16 Instruments','Signal Generator','Record & Save']},
+    {id:'nutrition',label:'🥗 Nutrition',items:['Daily Tracking','Cross-Device Sync']}
   ];
   var modal=document.getElementById('premiumModal'), sections=document.getElementById('premiumModalSections');
   var scrollBox=document.getElementById('premiumModalScroll'), scrollHint=document.getElementById('premiumScrollHint');
@@ -4032,9 +4000,9 @@ registerVisit();
     if(!modal||!sections) return;
     sections.innerHTML=PREMIUM_SECTIONS.map(function(sec){
       var items=sec.items.map(function(it){
-        return '<li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></span><span class="premTxt"><span class="premHead">'+it.head+'</span><span class="premDetail">'+it.detail+'</span></span></li>';
+        return '<li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">'+it+'</span></li>';
       }).join('');
-      return '<div class="premSection"><div class="premSectionTitle">'+sec.label+'</div><ul class="premList">'+items+'</ul></div>';
+      return '<div class="premSection" data-sec="'+sec.id+'"><div class="premSectionTitle">'+sec.label+'</div><ul class="premList">'+items+'</ul></div>';
     }).join('');
     modal.classList.add('show');
     if(scrollBox) scrollBox.scrollTop=0;
