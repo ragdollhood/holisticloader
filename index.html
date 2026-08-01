@@ -437,22 +437,10 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .itile.itile-locked,.reel-item.reel-locked{position:relative}
 .itile.itile-locked .iimg,.reel-item.reel-locked .pic{filter:grayscale(.72) brightness(.55)}
 .itile.itile-locked .ilbl,.reel-item.reel-locked .cap{opacity:.55}
-.lockBadge{
-  display:inline-flex;align-items:center;gap:4px;
-  font-family:var(--ui);font-weight:700;letter-spacing:.13em;text-transform:uppercase;
-  color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,var(--gold-soft));
-  border-radius:999px;white-space:nowrap;
-  animation:premGlow 2.4s ease-in-out infinite;
-}
-.lockBadge svg{display:block;flex:0 0 auto}
 .pcard .lockBadge{position:absolute;top:8px;right:8px;font-size:8.5px;padding:4px 9px}
 .pcard .lockBadge svg{width:10px;height:10px}
 .itile .lockBadge,.reel-item .lockBadge{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:7.5px;padding:3px 8px}
 .itile .lockBadge svg,.reel-item .lockBadge svg{width:9px;height:9px}
-@keyframes premGlow{
-  0%,100%{box-shadow:0 0 0 0 rgba(255,217,138,.6),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
-  50%{box-shadow:0 0 0 6px rgba(255,217,138,0),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
-}
 /* ===== laptop: "spin" coverflow presentation for the place & sound reels =====
    Below 900px the reels stay exactly as before (plain horizontal scroll strip) —
    this block only changes anything once the media query matches. */
@@ -481,72 +469,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @media (min-width:900px) and (max-width:1180px){
   #reelsRow{grid-template-columns:1fr;gap:28px 0}
 }
-/* ===== Premium features modal (matches instruments.html) ===== */
-#premiumModal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:rgba(5,3,9,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  opacity:0;pointer-events:none;transition:opacity .3s ease}
-#premiumModal.show{opacity:1;pointer-events:auto}
-#premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
-  background:linear-gradient(180deg,rgba(24,17,32,.94),rgba(14,10,20,.96));border:1px solid var(--line);border-radius:24px;padding:0;
-  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,217,138,.08) inset;
-  transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1),width .2s ease;text-align:center;
-  -webkit-user-select:text;user-select:text}
-#premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
-@media(min-width:861px){
-  #premiumModalCard{width:min(760px,92vw)}
-  #premiumModalCard .premSub{max-width:520px;margin-left:auto;margin-right:auto}
-  #premiumModalSections{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;text-align:left}
-  .premSection{margin-bottom:0}
-  .premSection:last-child{margin-bottom:0}
-}
-#premiumModalScroll{position:relative;overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
-#premiumModalScroll::-webkit-scrollbar{width:7px}#premiumModalScroll::-webkit-scrollbar-thumb{background:rgba(244,241,234,.2);border-radius:7px}
-#premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(14,10,20,0),rgba(14,10,20,.96) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
-#premiumScrollHint{display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);pointer-events:none;
-  align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
-  background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.35);
-  opacity:1;transition:opacity .25s ease;animation:premScrollBounce 1.6s ease-in-out infinite}
-#premiumScrollHint svg{width:13px;height:13px;stroke:var(--gold);fill:none;stroke-width:2.4}
-#premiumScrollHint.hide{opacity:0}
-@media(max-width:560px){ #premiumScrollHint{display:flex} }
-@keyframes premScrollBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
-#premiumModalClose{position:absolute;top:16px;right:16px;z-index:2;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
-  color:var(--soft);background:rgba(244,241,234,.06);border:none;cursor:pointer;transition:background .2s ease,color .2s ease}
-#premiumModalClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
-#premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-.premBadge{display:inline-flex;align-items:center;gap:5px;font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-  color:#2a1c05;background:linear-gradient(135deg,#ffe3a3,#d9a441);padding:6px 12px;border-radius:999px;white-space:nowrap;
-  animation:premGlow 2.4s ease-in-out infinite;transition:transform .15s ease}
-.premBadge svg{width:10px;height:10px;display:block;flex:0 0 auto}
-#premiumModalCard .premBadge{margin-bottom:20px}
-#premiumModalCard h2{font-family:Georgia,serif;font-weight:600;font-size:clamp(21px,5vw,26px);letter-spacing:.02em;margin-bottom:9px;
-  background:linear-gradient(90deg,var(--gold),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
-#premiumModalCard .premSub{font-family:var(--ui);font-size:12.5px;color:var(--soft);letter-spacing:.02em;line-height:1.55;margin-bottom:28px;padding:0 4px}
-#premiumModalSections{margin-bottom:8px}
-.premSection{margin-bottom:26px}
-.premSection:last-child{margin-bottom:22px}
-.premSectionTitle{display:flex;align-items:center;gap:10px;font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:15px;text-align:left}
-.premSectionTitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,217,138,.5),transparent)}
-.premList{display:flex;flex-direction:column;gap:16px;text-align:left}
-.premList li{display:flex;align-items:flex-start;gap:12px}
-.premList .premCheck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-top:1px;
-  background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.4)}
-.premList .premCheck svg{width:11px;height:11px;stroke:var(--gold);fill:none;stroke-width:2.6}
-.premTxt{display:flex;flex-direction:column;gap:4px;min-width:0;font-family:var(--ui)}
-.premHead{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);line-height:1.3}
-.premDetail{font-size:12px;color:var(--soft);line-height:1.5;letter-spacing:.01em}
-.premFoot{font-family:var(--ui);font-size:10.5px;color:var(--soft);opacity:.75;letter-spacing:.04em;line-height:1.5;margin-bottom:20px}
-.premCta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;padding:12px 14px 11px;border-radius:20px;border:none;cursor:pointer;text-decoration:none;box-sizing:border-box;background:linear-gradient(180deg,var(--gold),#d9a441);color:#241c12;font-family:var(--ui);font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
-  box-shadow:0 10px 30px rgba(255,217,138,.28);transition:transform .12s ease,filter .2s ease}
-.premCta:hover{filter:brightness(1.05)}
-.premCta:active{transform:scale(.97)}
-.premCta .premCancelNote{font-weight:500;font-size:9.5px;letter-spacing:.03em;text-transform:none;opacity:.7;color:#241c12}
-.premCtaGhost{width:100%;margin-top:12px;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(244,241,234,.25);color:var(--soft);
-  font-family:var(--ui);font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
-.premCtaGhost:hover{background:rgba(244,241,234,.08);color:var(--ink);border-color:rgba(244,241,234,.4)}
-.premCtaTrial{width:100%;margin-top:10px;padding:12px;border-radius:999px;background:transparent;border:1px solid var(--gold);color:var(--gold);
-  font-family:var(--ui);font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease}
-.premCtaTrial:hover{background:var(--gold);color:#241c12}
 #frontMeta{position:absolute;top:max(112px,calc(env(safe-area-inset-top) + 96px));left:16px;right:16px;z-index:6;display:flex;flex-direction:row;align-items:flex-start;justify-content:space-between;gap:12px;transition:opacity .5s ease}
 #donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
 @supports(padding:max(0px)){
@@ -660,20 +582,20 @@ body.immersive #brand{opacity:0}
 
 /* "Get Premium" and "How to use" are plain rows inside the shared
    #menuPanel background (no individual pill/border per item). */
-#getPremiumMenuBtn,#howToBtn{
+#getPremiumMenuBtn,#howToBtn,#shopMenuBtn{
   display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
   width:100%;box-sizing:border-box;
-  font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);
+  font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);text-decoration:none;
   background:transparent;border:none;border-radius:8px;
   padding:9px 10px;cursor:pointer;transition:background .15s ease;
 }
-#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
 #getPremiumMenuBtn{color:var(--gold);font-weight:600}
 #getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
-#getPremiumMenuBtn:hover,#howToBtn:hover{background:rgba(244,241,234,.1)}
-#getPremiumMenuBtn:active,#howToBtn:active{background:rgba(244,241,234,.16)}
-#getPremiumMenuBtn.hidden,#howToBtn.hidden{display:none}
-body.immersive #getPremiumMenuBtn,body.immersive #howToBtn{opacity:0;pointer-events:none}
+#getPremiumMenuBtn:hover,#howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
+#getPremiumMenuBtn:active,#howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
+#getPremiumMenuBtn.hidden,#howToBtn.hidden,#shopMenuBtn.hidden{display:none}
+body.immersive #getPremiumMenuBtn,body.immersive #howToBtn,body.immersive #shopMenuBtn{opacity:0;pointer-events:none}
 
 /* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button.
    Desktop: wide enough that everything fits without a scrollbar. Mobile: fills the screen and scrolls (see media query below, which is placed AFTER this rule on purpose — same-specificity CSS rules are resolved by source order, and the mobile override must win). */
@@ -735,6 +657,7 @@ body.immersive #howToBox{display:none}
 
 </style>
 <link rel="stylesheet" href="auth-ui.css">
+<link rel="stylesheet" href="premium-ui.css">
 <style>
 /* Nudge the login/account icon that auth.js renders into #authRoot up a
    few pixels so it clears the gold #topNavLine under the header tabs.
@@ -757,11 +680,14 @@ body.immersive #howToBox{display:none}
   </button>
   <div id="menuPanel" role="menu">
     <button id="getPremiumMenuBtn" type="button">
-      ⭐ Unlock Premium
+      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Unlock Premium
     </button>
     <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
       <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
     </button>
+    <a id="shopMenuBtn" href="store.html">
+      <svg class="shop-ic" viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shop
+    </a>
     <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
       <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
       <span class="clabel">Contact</span>
@@ -776,7 +702,7 @@ body.immersive #howToBox{display:none}
     <a href="index.html" class="tab active" aria-current="page"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
     <a href="instruments.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
-    <a href="store.html" class="tab">Shop</a>
+    <a href="yoga-loader.html" class="tab">Yoga</a>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
@@ -834,7 +760,7 @@ body.immersive #howToBox{display:none}
         Premium
       </span>
       <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
-      <p class="premSub">Everything Holistic Loader has to offer — for your breathing practice, your sound healing sessions and your nutrition tracking.</p>
+      <p class="premSub">Everything Holistic Loader has to offer — for your yoga practice, your breathing and sound healing sessions and your nutrition tracking.</p>
       <div id="premiumModalSections"></div>
       <div id="premiumScrollHint" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
@@ -1736,6 +1662,13 @@ const PRESETS=[
   {id:'forest',   name:'Forest Calm', theme:'Gentle 432 Hz soft tones', sound:'handpan', freq:432, tempo:8, br:[4,0,6], anim:'breath', len:10, bg:'skog3', locked:true},
 ];
 const PREMIUM_SECTIONS=[
+  {
+    id:'yoga',
+    label:'Yoga',
+    items:[
+      {head:'7 Additional Guided Programs',detail:'Every goal-based program beyond Morning Energy — evening wind-down, stress & anxiety, better sleep, focus & balance, back pain relief, flexibility and energy & strength.'}
+    ]
+  },
   {
     id:'breathing',
     label:'Breathing',

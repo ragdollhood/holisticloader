@@ -92,7 +92,7 @@
   "sameAs": [
     "https://holisticloader.com/",
     "https://holisticloader.com/instruments.html",
-    "https://holisticloader.com/store.html"
+    "https://holisticloader.com/yoga-loader.html"
   ],
   "publisher": {
     "@type": "Organization",
@@ -1033,18 +1033,18 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
 #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--tn-gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
 #contactBtn .ctext:hover{text-decoration:underline}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
-#loginMenuBtn,#getPremiumMenuBtn,#howToBtn,#langMenuBtn{
+#loginMenuBtn,#getPremiumMenuBtn,#howToBtn,#shopMenuBtn,#langMenuBtn{
   display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
   width:100%;box-sizing:border-box;
-  font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--tn-ink);
+  font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--tn-ink);text-decoration:none;
   background:transparent;border:none;border-radius:8px;
   padding:9px 10px;cursor:pointer;transition:background .15s ease;
 }
-#loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
 #getPremiumMenuBtn{color:var(--tn-gold);font-weight:600}
 #getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
-#loginMenuBtn:hover,#getPremiumMenuBtn:hover,#howToBtn:hover,#langMenuBtn:hover{background:rgba(243,239,228,.1)}
-#loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active,#langMenuBtn:active{background:rgba(243,239,228,.16)}
+#loginMenuBtn:hover,#getPremiumMenuBtn:hover,#howToBtn:hover,#shopMenuBtn:hover,#langMenuBtn:hover{background:rgba(243,239,228,.1)}
+#loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active,#shopMenuBtn:active,#langMenuBtn:active{background:rgba(243,239,228,.16)}
 /* language row inside the hamburger menu — mobile only; desktop keeps the
    standalone flag-only #langBtn next to the hamburger icon */
 #langMenuBtn .flag{flex:0 0 auto;width:20px;height:14px;border-radius:2px;overflow:hidden;display:block;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
@@ -1143,82 +1143,9 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
   border:none;background:linear-gradient(135deg,#ffe3a3,#d9a441);color:#2a1c05;
   font-weight:700;font-size:11px;letter-spacing:.03em;border-radius:999px;
   padding:6px 13px;cursor:pointer;white-space:nowrap}
-.premBadge{
-  display:inline-flex;align-items:center;gap:5px;
-  font-family:'Outfit',system-ui,sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.16em;
-  color:#2a1c05;text-transform:uppercase;
-  background:linear-gradient(135deg,#ffe3a3,#d9a441);
-  padding:6px 12px;border-radius:999px;white-space:nowrap;
-  animation:premGlow 2.4s ease-in-out infinite;transition:transform .15s ease;
-}
-.premBadge svg{width:10px;height:10px;display:block;flex:0 0 auto}
-@keyframes premGlow{
-  0%,100%{box-shadow:0 0 0 0 rgba(255,217,138,.6),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
-  50%{box-shadow:0 0 0 6px rgba(255,217,138,0),0 3px 10px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.25) inset;}
-}
-/* ===================== PREMIUM MODAL ===================== */
-#premiumModal{position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:rgba(5,3,9,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  opacity:0;pointer-events:none;transition:opacity .3s ease}
-#premiumModal.show{opacity:1;pointer-events:auto}
-#premiumModalCard{position:relative;width:min(400px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;
-  background:linear-gradient(180deg,rgba(24,17,32,.94),rgba(14,10,20,.96));border:1px solid var(--tn-line);border-radius:24px;padding:0;
-  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,217,138,.08) inset;
-  transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.22,1,.36,1),width .2s ease;text-align:center;
-  -webkit-user-select:text;user-select:text}
-#premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
-@media(min-width:861px){
-  #premiumModalCard{width:min(760px,92vw)}
-  #premiumModalCard .premSub{max-width:520px;margin-left:auto;margin-right:auto}
-  #premiumModalSections{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;text-align:left}
-  .premSection{margin-bottom:0}
-  .premSection:last-child{margin-bottom:0}
-}
-#premiumModalScroll{position:relative;overflow-y:auto;scrollbar-width:thin;padding:36px 28px 8px;min-height:0}
-#premiumModalScroll::-webkit-scrollbar{width:7px}#premiumModalScroll::-webkit-scrollbar-thumb{background:rgba(243,239,228,.2);border-radius:7px}
-#premiumModalFooter{flex:0 0 auto;padding:14px 28px 28px;background:linear-gradient(180deg,rgba(14,10,20,0),rgba(14,10,20,.96) 22%);box-shadow:0 -14px 20px -14px rgba(0,0,0,.4)}
-#premiumScrollHint{display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);pointer-events:none;
-  align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
-  background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.35);
-  opacity:1;transition:opacity .25s ease;animation:premScrollBounce 1.6s ease-in-out infinite}
-#premiumScrollHint svg{width:13px;height:13px;stroke:var(--tn-gold);fill:none;stroke-width:2.4}
-#premiumScrollHint.hide{opacity:0}
-@media(max-width:560px){ #premiumScrollHint{display:flex} }
-@keyframes premScrollBounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
-#premiumModalClose{position:absolute;top:16px;right:16px;z-index:2;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
-  color:var(--tn-soft);background:rgba(243,239,228,.06);border:none;cursor:pointer;transition:background .2s ease,color .2s ease}
-#premiumModalClose:hover{background:rgba(243,239,228,.14);color:var(--tn-ink)}
-#premiumModalClose svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-#premiumModalCard .premBadge{margin-bottom:20px}
-#premiumModalCard h2{font-family:Georgia,serif;font-weight:600;font-size:clamp(21px,5vw,26px);letter-spacing:.02em;margin-bottom:9px;
-  background:linear-gradient(90deg,var(--tn-gold),var(--tn-violet));-webkit-background-clip:text;background-clip:text;color:transparent}
-#premiumModalCard .premSub{font-family:'Outfit',system-ui,sans-serif;font-size:12.5px;color:var(--tn-soft);letter-spacing:.02em;line-height:1.55;margin-bottom:28px;padding:0 4px}
-#premiumModalSections{margin-bottom:8px}
-.premSection{margin-bottom:26px}
-.premSection:last-child{margin-bottom:22px}
-.premSectionTitle{display:flex;align-items:center;gap:10px;font-family:'Outfit',system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--tn-gold);margin-bottom:15px;text-align:left}
-.premSectionTitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,217,138,.5),transparent)}
-.premList{display:flex;flex-direction:column;gap:16px;text-align:left}
-.premList li{display:flex;align-items:flex-start;gap:12px}
-.premList .premCheck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-top:1px;
-  background:rgba(255,217,138,.14);border:1px solid rgba(255,217,138,.4)}
-.premList .premCheck svg{width:11px;height:11px;stroke:var(--tn-gold);fill:none;stroke-width:2.6}
-.premTxt{display:flex;flex-direction:column;gap:4px;min-width:0;font-family:'Outfit',system-ui,sans-serif}
-.premHead{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tn-ink);line-height:1.3}
-.premDetail{font-size:12px;color:var(--tn-soft);line-height:1.5;letter-spacing:.01em}
-.premCta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;padding:12px 14px 11px;border-radius:20px;border:none;cursor:pointer;text-decoration:none;box-sizing:border-box;background:linear-gradient(180deg,var(--tn-gold),#d9a441);color:#241c12;font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
-  box-shadow:0 10px 30px rgba(255,217,138,.28);transition:transform .12s ease,filter .2s ease}
-.premCta:hover{filter:brightness(1.05)}
-.premCta:active{transform:scale(.97)}
-.premCta .premCancelNote{font-weight:500;font-size:9.5px;letter-spacing:.03em;text-transform:none;opacity:.7;color:#241c12}
-.premCtaGhost{width:100%;margin-top:12px;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(243,239,228,.25);color:var(--tn-soft);
-  font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
-.premCtaGhost:hover{background:rgba(243,239,228,.08);color:var(--tn-ink);border-color:rgba(243,239,228,.4)}
-.premCtaTrial{width:100%;margin-top:10px;padding:12px;border-radius:999px;background:transparent;border:1px solid var(--gold);color:var(--gold);
-  font-family:'Outfit',system-ui,sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease}
-.premCtaTrial:hover{background:var(--gold);color:#241c12}
 </style>
 <link rel="stylesheet" href="auth-ui.css">
+<link rel="stylesheet" href="premium-ui.css">
 <style>
 /* Nudge the login/account icon that auth.js renders into #authRoot up a
    few pixels on desktop so it clears the gold #topNavLine under the header
@@ -1263,7 +1190,7 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
             Premium
           </span>
           <h2 id="premiumModalTitle">Unlock the Full Experience</h2>
-          <p class="premSub">Everything Holistic Loader has to offer — including your synced, always-on food log.</p>
+          <p class="premSub">Everything Holistic Loader has to offer — for your yoga practice, your breathing and sound healing sessions and your nutrition tracking.</p>
           <div id="premiumModalSections"></div>
           <div id="premiumScrollHint" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
@@ -1295,6 +1222,9 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
         <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
           <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
         </button>
+        <a id="shopMenuBtn" href="store.html">
+          <svg class="shop-ic" viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shop
+        </a>
         <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
           <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
           <span class="clabel">Contact</span>
@@ -1346,7 +1276,7 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
         <a href="index.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
         <a href="instruments.html" class="tab">Soundscape Creator</a>
         <a href="nutriloader.html" class="tab active" aria-current="page">Nutrition tracker</a>
-        <a href="store.html" class="tab">Shop</a>
+        <a href="yoga-loader.html" class="tab">Yoga</a>
       </nav>
       <div id="authRoot"></div>
       <div id="topNavLine"></div>
@@ -3801,6 +3731,13 @@ registerVisit();
 (function(){
   var PREMIUM_SECTIONS = [
     {
+      id:'yoga',
+      label:'Yoga',
+      items:[
+        {head:'7 Additional Guided Programs',detail:'Every goal-based program beyond Morning Energy — evening wind-down, stress & anxiety, better sleep, focus & balance, back pain relief, flexibility and energy & strength.'}
+      ]
+    },
+    {
       id:'breathing',
       label:'Breathing',
       items:[
@@ -3822,10 +3759,10 @@ registerVisit();
     },
     {
       id:'nutrition',
-      label:'NutriLoader',
+      label:'Nutrition',
       items:[
-        {head:'Synced Food Log',detail:'Your log book, saved to your account and synced across devices.'},
-        {head:'Bad Habits Tracking',detail:'Track and graph sugar, alcohol and cigarettes over time.'}
+        {head:'Daily Intake Log',detail:'Log your meals and daily habits, and see them summarized as clear statistics over time.'},
+        {head:'Synced Across Devices',detail:'Your log follows you — pick up right where you left off on your phone, tablet or computer.'}
       ]
     }
   ];

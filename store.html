@@ -102,7 +102,7 @@
   #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
     padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
     background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
-  #topTabs{display:flex;pointer-events:auto}
+  #topTabs{display:flex;pointer-events:auto;flex-wrap:wrap;justify-content:center}
   #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
     padding:9px 20px;color:var(--soft);text-decoration:none;white-space:nowrap;
     background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
@@ -172,6 +172,9 @@
     @supports(padding:max(0px)){
       #donateWrap{left:max(4px,env(safe-area-inset-left))}
     }
+  }
+  @media(max-width:400px){
+    #topTabs .tab{padding:7px 8px;font-size:10px;letter-spacing:.01em}
   }
 
   /* ===================== BUTIKEN: ljus & glad produktgrid ===================== */
@@ -345,8 +348,9 @@ text-decoration:none;
   <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
   <nav id="topTabs" aria-label="Main sections">
     <a href="index.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
-    <a href="instruments.html" class="tab">Soundscape Creator</a>
-    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="instruments.html" class="tab"><span class="tab-mobile">Sounds</span><span class="tab-desktop">Soundscape Creator</span></a>
+    <a href="nutriloader.html" class="tab"><span class="tab-mobile">Nutrition</span><span class="tab-desktop">Nutrition Tracker</span></a>
+    <a href="yoga-loader.html" class="tab">Yoga</a>
     <a href="store.html" class="tab active" aria-current="page">Shop</a>
   </nav>
   <div id="authRoot"></div>
