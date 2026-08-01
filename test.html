@@ -75,7 +75,6 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 @media(max-width:560px){
   #brandLogo{max-height:clamp(46px,12vw,84px)}
   #topTabs .tab{padding:8px 13px;font-size:11px}
-  #pageContent{padding-top:max(110px,calc(env(safe-area-inset-top) + 90px))}
 }
 
 /* ===== title plaque: the "dropped tab" hanging under the nav, gold→violet gradient text ===== */
@@ -178,6 +177,9 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   padding:max(166px,calc(env(safe-area-inset-top) + 146px)) 20px 60px;
   display:flex;flex-direction:column;align-items:center;text-align:center}
 #pageContent .placeholder{max-width:520px;color:var(--muted);font-size:14px;line-height:1.7;margin-top:12px}
+@media(max-width:560px){
+  #pageContent{padding-top:max(83px,calc(env(safe-area-inset-top) + 63px))}
+}
 
 /* ===== yoga page content ===== */
 .yoga-intro{max-width:640px;margin:0 auto 8px;color:var(--muted);font-size:13.5px;line-height:1.7}
