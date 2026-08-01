@@ -110,3 +110,28 @@
   padding:3px 8px;border-radius:999px;white-space:nowrap;vertical-align:middle;
   animation:premGlow 2.4s ease-in-out infinite}
 .miniLockBadge svg{width:9px;height:9px;display:block;flex:0 0 auto;stroke:currentColor}
+
+/* ---- mobile: same plaque as desktop, redrawn as a full-width bottom sheet.
+   Same content, same sections, same blue "Start Free 14-Day Trial" CTA — just
+   reshaped to fit a phone: anchored to the bottom edge, a drag-handle, and the
+   feature lists set in a compact two-column grid instead of one long column. ---- */
+@media(max-width:560px){
+  #premiumModal{align-items:flex-end;padding:0}
+  #premiumModalCard{width:100%;max-height:90vh;border-radius:26px 26px 0 0;
+    transform:translateY(100%) scale(1);box-shadow:0 -20px 60px rgba(0,0,0,.55)}
+  #premiumModal.show #premiumModalCard{transform:translateY(0) scale(1)}
+  #premiumModalCard::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    width:36px;height:4px;border-radius:4px;background:rgba(244,241,234,.28);z-index:3}
+  #premiumModalScroll{padding:32px 22px 8px}
+  #premiumModalCard h2{font-size:22px;margin-bottom:26px}
+  #premiumModalSections{display:grid;grid-template-columns:1fr 1fr;column-gap:16px;row-gap:22px;margin-bottom:6px}
+  .premSection{margin-bottom:0;text-align:left}
+  .premSection:last-child{margin-bottom:0}
+  .premSectionTitle{font-size:9.5px;letter-spacing:.14em;margin-bottom:10px}
+  .premList{gap:11px}
+  .premList .premCheck{width:17px;height:17px}
+  .premList .premCheck svg{width:8px;height:8px}
+  .premHead{font-size:10px;line-height:1.35}
+  .premTagline{font-size:11px;margin-top:2px}
+  #premiumModalFooter{padding:14px 22px max(22px,calc(env(safe-area-inset-bottom) + 10px))}
+}
