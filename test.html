@@ -56,7 +56,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px}
 #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
-#topTabs{display:flex;pointer-events:auto;flex-wrap:wrap;justify-content:center}
+#topTabs{display:flex;pointer-events:auto}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
   padding:9px 20px;color:var(--soft);text-decoration:none;white-space:nowrap;
   background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
@@ -64,6 +64,12 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
 #topTabs .tab:hover{color:var(--ink)}
 #topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
+.tab-mobile{display:inline}
+.tab-desktop{display:none}
+@media(min-width:900px){
+  .tab-mobile{display:none}
+  .tab-desktop{display:inline}
+}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);opacity:.55}
 @media(max-width:560px){
@@ -148,6 +154,16 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   #howToBox{position:fixed;inset:0;top:0;left:0;right:0;bottom:0;width:100%;height:100%;max-width:none;max-height:none;border-radius:0;
     padding:max(28px,calc(env(safe-area-inset-top) + 16px)) 18px max(28px,env(safe-area-inset-bottom))}
   #howToClose{top:max(14px,env(safe-area-inset-top));right:14px}
+}
+
+/* ===== site disclaimer footer ===== */
+#siteDisclaimer{max-width:720px;margin:8px auto 40px;padding:20px 24px;
+  border-top:1px solid var(--line);color:var(--faint);font-size:11px;line-height:1.7}
+#siteDisclaimer h4{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);font-weight:600;margin-bottom:8px}
+#siteDisclaimer p{margin:0 0 8px}
+#siteDisclaimer p:last-child{margin-bottom:0}
+@media(max-width:560px){
+  #siteDisclaimer{padding:18px 18px 30px}
 }
 
 /* ===== Premium modal, badges, CTAs & lock styling now live in premium-ui.css ===== */
@@ -432,7 +448,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 <header id="topNav">
   <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
   <nav id="topTabs" aria-label="Main sections">
-    <a href="index.html" class="tab">Guided Breathing</a>
+    <a href="index.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
     <a href="instruments.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="yoga-loader.html" class="tab active" aria-current="page">Yoga</a>
@@ -984,6 +1000,13 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   </div>
 </main>
 
+<footer id="siteDisclaimer">
+  <h4>Disclaimer</h4>
+  <p>The content on this page is provided for general informational and educational purposes only and does not constitute medical, health, or fitness advice. Yoga Loader is not a substitute for professional medical consultation, diagnosis, or treatment.</p>
+  <p>You should consult a qualified physician or healthcare provider before beginning any new exercise program, particularly if you are pregnant, have an existing injury, or have any medical condition that could be affected by physical activity. Do not disregard, avoid, or delay professional medical advice because of anything you have read or seen here.</p>
+  <p>All exercises, poses, and routines featured on this site are performed entirely at your own risk. To the fullest extent permitted by law, the creator of this site accepts no liability for any injury, loss, or damage of any kind arising from or in connection with your use of this content, and you agree that you will not hold the creator responsible or make any claim in relation to such use.</p>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
 <script>
@@ -1349,12 +1372,11 @@ function yogaBuildPrograms(){
         </div>`).join('');
     if(locked){
       /* locked cards stay simple — no interactive duration picker before subscribing */
-      const totalMin=Math.round(basePoses.length*YOGA_POSE_SECONDS/60)||1;
       card.innerHTML=`
         <h3 class="yoga-program-title">${prog.title}</h3>
         <p class="yoga-program-desc">${prog.desc}</p>
         <button class="yoga-program-start" type="button" data-tag="${prog.tag}" style="justify-content:space-between;margin-bottom:14px">
-          <span>Start session</span><span class="yoga-program-meta" style="margin:0">${basePoses.length} poses · ~${totalMin} min</span>
+          <span>Start session</span><span class="yoga-program-meta" style="margin:0">${basePoses.length} poses</span>
         </button>
         <div class="yoga-program-poses-wrap">
           <div class="yoga-program-poses">${posesHtml}</div>${lockBadgeHTML}
@@ -1363,8 +1385,6 @@ function yogaBuildPrograms(){
       card.addEventListener('click',()=>{ openPremiumModal(); });
     }else{
       const selMin=yogaDurationFor(prog.tag);
-      const sessionPoses=yogaPosesForDuration(basePoses,selMin);
-      const actualMin=Math.round(sessionPoses.length*YOGA_POSE_SECONDS/60*10)/10;
       const durHtml=YOGA_DURATIONS.map(m=>`<button type="button" class="yoga-dur-btn${m===selMin?' active':''}" data-tag="${prog.tag}" data-min="${m}">${m}m</button>`).join('');
       card.innerHTML=`
         <h3 class="yoga-program-title">${prog.title}</h3>
@@ -1373,7 +1393,7 @@ function yogaBuildPrograms(){
           <button class="yoga-program-start" type="button" data-tag="${prog.tag}">Start session</button>
           <div class="yoga-dur-group" role="group" aria-label="Session length">${durHtml}</div>
         </div>
-        <p class="yoga-program-meta">${sessionPoses.length} poses · ~${actualMin} min</p>
+        <p class="yoga-program-meta">${basePoses.length} poses</p>
         <div class="yoga-program-poses-wrap">
           <div class="yoga-program-poses">${posesHtml}</div>
         </div>`;
