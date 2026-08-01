@@ -56,7 +56,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px}
 #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
-#topTabs{display:flex;pointer-events:auto;flex-wrap:wrap;justify-content:center}
+#topTabs{display:flex;pointer-events:auto}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
   padding:9px 20px;color:var(--soft);text-decoration:none;white-space:nowrap;
   background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
@@ -64,10 +64,11 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
 #topTabs .tab:hover{color:var(--ink)}
 #topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
-#topTabs .tab .tab-short{display:none}
-@media(max-width:560px){
-  #topTabs .tab .tab-full{display:none}
-  #topTabs .tab .tab-short{display:inline}
+.tab-mobile{display:inline}
+.tab-desktop{display:none}
+@media(min-width:900px){
+  .tab-mobile{display:none}
+  .tab-desktop{display:inline}
 }
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);opacity:.55}
@@ -155,6 +156,16 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   #howToClose{top:max(14px,env(safe-area-inset-top));right:14px}
 }
 
+/* ===== site disclaimer footer ===== */
+#siteDisclaimer{max-width:1400px;width:94%;margin:8px auto 40px;padding:20px 24px 0;
+  border-top:1px solid var(--line);color:var(--faint);font-size:11px;line-height:1.7}
+#siteDisclaimer h4{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);font-weight:600;margin-bottom:8px}
+#siteDisclaimer p{margin:0 0 8px}
+#siteDisclaimer .copyright{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line);font-size:10.5px;letter-spacing:.03em;text-align:center}
+@media(max-width:560px){
+  #siteDisclaimer{width:100%;padding:18px 18px 0}
+}
+
 /* ===== Premium modal, badges, CTAs & lock styling now live in premium-ui.css ===== */
 
 /* nudge for auth.js's login/account icon, rendered into #authRoot */
@@ -163,16 +174,16 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 
 /* ===== page content ===== */
 #pageContent{position:relative;z-index:1;min-height:100vh;
-  padding:max(186px,calc(env(safe-area-inset-top) + 166px)) 20px 60px;
+  padding:max(166px,calc(env(safe-area-inset-top) + 146px)) 20px 60px;
   display:flex;flex-direction:column;align-items:center;text-align:center}
 #pageContent .placeholder{max-width:520px;color:var(--muted);font-size:14px;line-height:1.7;margin-top:12px}
 @media(max-width:560px){
-  #pageContent{padding-top:max(150px,calc(env(safe-area-inset-top) + 130px))}
+  #pageContent{padding-top:max(83px,calc(env(safe-area-inset-top) + 63px))}
 }
 
 /* ===== yoga page content ===== */
 .yoga-intro{max-width:640px;margin:0 auto 8px;color:var(--muted);font-size:13.5px;line-height:1.7}
-.yoga-disclaimer{max-width:640px;margin:0 auto 30px;color:var(--faint);font-size:11px;line-height:1.6;font-style:italic}
+.yoga-disclaimer{max-width:1100px;margin:14px auto 30px;color:var(--faint);font-size:11px;line-height:1.6;font-style:italic}
 .yoga-panel-label{font-family:var(--ui);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px}
 
 /* ===== main section tabs: Guided programs / Category / Benefits ===== */
@@ -270,13 +281,22 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   background:linear-gradient(90deg,var(--gold),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
 .yoga-program-desc{font-size:12px;line-height:1.6;color:var(--muted);margin-bottom:14px;
   height:4.8em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.yoga-program-start{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
-  padding:11px 16px;border-radius:14px;border:none;cursor:pointer;margin-bottom:14px;
-  background:linear-gradient(180deg,var(--gold),#d9a441);color:#241c12;font-family:var(--ui);transition:transform .15s ease}
+.yoga-program-actions{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.yoga-program-start{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;
+  padding:11px 14px;border-radius:14px;border:none;cursor:pointer;
+  background:linear-gradient(180deg,var(--gold),#d9a441);color:#241c12;font-family:var(--ui);
+  font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;transition:transform .15s ease}
 .yoga-program-start:hover{transform:translateY(-1px)}
 .yoga-program-start:active{transform:scale(.98)}
 .yoga-program-start span:first-child{font-weight:700;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase}
-.yoga-program-meta{font-size:10px;letter-spacing:.02em;opacity:.75;white-space:nowrap}
+.yoga-dur-group{display:flex;gap:4px;flex:0 0 auto}
+.yoga-dur-btn{padding:0 9px;height:38px;border-radius:11px;border:1px solid var(--line);background:rgba(244,241,234,.05);
+  color:var(--muted);font-family:var(--ui);font-size:10.5px;font-weight:700;letter-spacing:.01em;cursor:pointer;
+  transition:background .15s ease,color .15s ease,border-color .15s ease}
+.yoga-dur-btn:hover{border-color:var(--gold-soft);color:var(--ink)}
+.yoga-dur-btn.active{background:linear-gradient(180deg,var(--violet),#6b4fc9);border-color:transparent;color:#fff}
+.yoga-program-meta{display:block;font-size:10px;letter-spacing:.02em;color:var(--muted);opacity:.85;margin:0 0 14px}
 .yoga-program-poses{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 8px;margin-top:2px}
 .yoga-program-pose{display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;min-width:0}
 .yoga-program-pose picture,.yoga-program-pose img{display:block;width:100%;max-width:64px;aspect-ratio:1/1;border-radius:50%;object-fit:cover;
@@ -431,10 +451,10 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 <header id="topNav">
   <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
   <nav id="topTabs" aria-label="Main sections">
-    <a href="index.html" class="tab"><span class="tab-full">Guided Breathing</span><span class="tab-short">Breathing</span></a>
-    <a href="instruments.html" class="tab"><span class="tab-full">Soundscape Creator</span><span class="tab-short">Sound</span></a>
-    <a href="nutriloader.html" class="tab"><span class="tab-full">Nutrition Tracker</span><span class="tab-short">Nutrition</span></a>
-    <a href="yoga-loader.html" class="tab active" aria-current="page"><span class="tab-full">Yoga</span><span class="tab-short">Yoga</span></a>
+    <a href="index.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
+    <a href="instruments.html" class="tab">Soundscape Creator</a>
+    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="yoga-loader.html" class="tab active" aria-current="page">Yoga</a>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
@@ -983,6 +1003,13 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   </div>
 </main>
 
+<footer id="siteDisclaimer">
+  <h4>Disclaimer</h4>
+  <p>The content on this page is provided for general informational and educational purposes only and does not constitute medical, health, or fitness advice. Yoga Loader is not a substitute for professional medical consultation, diagnosis, or treatment. You should consult a qualified physician or healthcare provider before beginning any new exercise program, particularly if you are pregnant, have an existing injury, or have any medical condition that could be affected by physical activity. Do not disregard, avoid, or delay professional medical advice because of anything you have read or seen here. All exercises, poses, and routines featured on this site are performed entirely at your own risk. To the fullest extent permitted by law, the creator of this site accepts no liability for any injury, loss, or damage of any kind arising from or in connection with your use of this content, and you agree that you will not hold the creator responsible or make any claim in relation to such use.</p>
+  <p class="copyright">© <span id="copyYear"></span> Holistic Loader. All rights reserved.</p>
+</footer>
+<script>document.getElementById('copyYear').textContent=new Date().getFullYear();</script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
 <script>
@@ -1237,6 +1264,24 @@ const YOGA_PROGRAMS=[
 const YOGA_POSE_SECONDS=24; /* how long each pose stays on screen — exactly 2 breath cycles, so poses always start on an inhale */
 const YOGA_BREATH_SECONDS=12; /* 4s in, 4s hold, 4s out — matches the .yoga-sess-orb CSS animation */
 
+/* ---- manual session length picker: 5 / 15 / 30 min, chosen per-program ---- */
+const YOGA_DURATIONS=[5,15,30];
+const yogaSelectedDuration={}; /* tag -> minutes, lazily filled with defaults below */
+function yogaDurationFor(tag){
+  if(yogaSelectedDuration[tag]==null) yogaSelectedDuration[tag]=(tag==='all')?30:5;
+  return yogaSelectedDuration[tag];
+}
+/* Build the actual pose sequence for a chosen session length: cycle through
+   the program's base poses, repeating from the start as many times as needed
+   (or trimming) so the total length matches the picked duration. */
+function yogaPosesForDuration(basePoses,minutes){
+  if(!basePoses.length)return [];
+  const targetCount=Math.max(1,Math.round((minutes*60)/YOGA_POSE_SECONDS));
+  const out=[];
+  for(let i=0;i<targetCount;i++) out.push(basePoses[i%basePoses.length]);
+  return out;
+}
+
 /* ---- gong synth (50 Hz), a simplified version of the site's "gong" voice ---- */
 const yogaAudio={ctx:null,master:null};
 const GONG_PARTIALS=[[.497,.24],[.503,.24],[.994,.42],[1,.85],[1.008,.42],[1.34,.24],[1.78,.16],[2.68,.14,.45],[2.71,.13,.5],[3.36,.10,.55],[4.07,.075,.62],[4.97,.05,.7],[6.1,.032,.78],[7.35,.02,.85]];
@@ -1313,15 +1358,14 @@ function yogaBuildPrograms(){
   grid.innerHTML='';
   YOGA_PROGRAMS.forEach(prog=>{
     const isAll=prog.tag==='all';
-    const poses=isAll?YOGA_POSES:yogaProgramPoses(prog.tag);
-    const totalMin=Math.round(poses.length*YOGA_POSE_SECONDS/60)||1;
+    const basePoses=isAll?YOGA_POSES:yogaProgramPoses(prog.tag);
     const locked=!!prog.locked&&!isPremium;
     const card=document.createElement('div');card.className='yoga-program-card'+(locked?' locked':'');
     const posesHtml=isAll?`
         <div class="yoga-program-allcount">
-          <span class="num">${poses.length}</span>
+          <span class="num">${basePoses.length}</span>
           <span class="label">Poses</span>
-        </div>`:poses.map(p=>`
+        </div>`:basePoses.map(p=>`
         <div class="yoga-program-pose">
           <picture>
             <source srcset="images/${p.img}.webp" type="image/webp">
@@ -1329,27 +1373,49 @@ function yogaBuildPrograms(){
           </picture>
           <span>${p.name}</span>
         </div>`).join('');
-    card.innerHTML=`
-      <h3 class="yoga-program-title">${prog.title}</h3>
-      <p class="yoga-program-desc">${prog.desc}</p>
-      <button class="yoga-program-start" type="button" data-tag="${prog.tag}">
-        <span>Start session</span><span class="yoga-program-meta">${poses.length} poses · ~${totalMin} min</span>
-      </button>
-      <div class="yoga-program-poses-wrap">
-        <div class="yoga-program-poses">${posesHtml}</div>${locked?lockBadgeHTML:''}
-      </div>`;
     if(locked){
+      /* locked cards stay simple — no interactive duration picker before subscribing */
+      card.innerHTML=`
+        <h3 class="yoga-program-title">${prog.title}</h3>
+        <p class="yoga-program-desc">${prog.desc}</p>
+        <button class="yoga-program-start" type="button" data-tag="${prog.tag}" style="justify-content:space-between;margin-bottom:14px">
+          <span>Start session</span><span class="yoga-program-meta" style="margin:0">${basePoses.length} poses</span>
+        </button>
+        <div class="yoga-program-poses-wrap">
+          <div class="yoga-program-poses">${posesHtml}</div>${lockBadgeHTML}
+        </div>`;
       card.style.cursor='pointer';
       card.addEventListener('click',()=>{ openPremiumModal(); });
+    }else{
+      const selMin=yogaDurationFor(prog.tag);
+      const durHtml=YOGA_DURATIONS.map(m=>`<button type="button" class="yoga-dur-btn${m===selMin?' active':''}" data-tag="${prog.tag}" data-min="${m}">${m}m</button>`).join('');
+      card.innerHTML=`
+        <h3 class="yoga-program-title">${prog.title}</h3>
+        <p class="yoga-program-desc">${prog.desc}</p>
+        <div class="yoga-program-actions">
+          <button class="yoga-program-start" type="button" data-tag="${prog.tag}">Start session</button>
+          <div class="yoga-dur-group" role="group" aria-label="Session length">${durHtml}</div>
+        </div>
+        <p class="yoga-program-meta">${basePoses.length} poses</p>
+        <div class="yoga-program-poses-wrap">
+          <div class="yoga-program-poses">${posesHtml}</div>
+        </div>`;
     }
     grid.appendChild(card);
+  });
+  grid.querySelectorAll('.yoga-dur-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      yogaSelectedDuration[btn.getAttribute('data-tag')]=parseInt(btn.getAttribute('data-min'),10);
+      yogaBuildPrograms();
+    });
   });
   grid.querySelectorAll('.yoga-program-start').forEach(btn=>{
     btn.addEventListener('click',()=>{
       const tag=btn.getAttribute('data-tag');
       const prog=YOGA_PROGRAMS.find(pr=>pr.tag===tag);
       if(prog&&prog.locked&&!isPremium){ openPremiumModal(); return; }
-      yogaSessionPoses=tag==='all'?YOGA_POSES:yogaProgramPoses(tag);
+      const basePoses=tag==='all'?YOGA_POSES:yogaProgramPoses(tag);
+      yogaSessionPoses=yogaPosesForDuration(basePoses,yogaDurationFor(tag));
       yogaSessionTitle=prog?prog.title.replace(/&amp;/g,'&'):'Your Session';
       yogaBuildOverview();
       const ovModal=$('yogaOverviewModal');if(ovModal)ovModal.classList.add('show');

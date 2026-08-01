@@ -178,7 +178,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   display:flex;flex-direction:column;align-items:center;text-align:center}
 #pageContent .placeholder{max-width:520px;color:var(--muted);font-size:14px;line-height:1.7;margin-top:12px}
 @media(max-width:560px){
-  #pageContent{padding-top:max(83px,calc(env(safe-area-inset-top) + 63px))}
+  #pageContent{padding-top:max(140px,calc(env(safe-area-inset-top) + 120px))}
 }
 
 /* ===== yoga page content ===== */
@@ -1133,6 +1133,18 @@ function syncH1FrameWidth(){
   const nav=$('topNav'); if(!nav) return;
   const navBottom=nav.getBoundingClientRect().bottom;
   if(navBottom>0) h1FrameEl.style.top=(navBottom-1)+'px';
+  /* on mobile, tie the page content's top padding to the title plaque's real
+     rendered bottom edge so the gap above it stays small and consistent —
+     and can never end up sliding underneath the plaque on any device */
+  const pc=$('pageContent');
+  if(pc){
+    if(window.innerWidth<=560){
+      const frameBottom=h1FrameEl.getBoundingClientRect().bottom;
+      pc.style.paddingTop=(frameBottom+20)+'px';
+    }else{
+      pc.style.paddingTop='';
+    }
+  }
 }
 addEventListener('resize',syncH1FrameWidth);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncH1FrameWidth);
