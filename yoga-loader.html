@@ -65,7 +65,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   background:radial-gradient(120% 95% at 50% 14%,transparent 36%,rgba(6,7,10,.32) 100%),
   linear-gradient(to bottom,rgba(6,7,10,.5) 0%,transparent 26%,transparent 44%,rgba(6,7,10,.74) 100%)}
 
-/* ===== shared tab navigation (same system as index.html / instruments.html) ===== */
+/* ===== shared tab navigation (same system as breathing.html / instruments.html) ===== */
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
@@ -467,7 +467,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 <header id="topNav">
   <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
   <nav id="topTabs" aria-label="Main sections">
-    <a href="index.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
+    <a href="breathing.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
     <a href="instruments.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="yoga-loader.html" class="tab active" aria-current="page">Yoga</a>
@@ -490,7 +490,7 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   <p>Tap "Start session" on any of the guided programs to move straight into a short flow built for that goal — morning energy, evening wind-down, stress and anxiety, better sleep, focus and balance, back pain relief, flexibility, or energy and strength. Or browse the full pose library below, organized into six categories from standing poses to inversions. Each card shows the pose's English and Sanskrit names, a short "good for" tag, and a description of how to move into it. Use the "Jump to category" pills to skip to a section, or the "Filter by benefit" pills to show only poses good for a particular goal. Each guided session opens with a short countdown over the first pose, then a growing and shrinking orb paces your breath, with a soft gong on every inhale, hold, and exhale, and a small clock counts down the time left on each pose. Tap the eye icon to hide the pause, mute and end buttons for a distraction-free view.</p>
 </div>
 
-<!-- premium modal (edit copy per page, or wire up feature list like index.html's) -->
+<!-- premium modal (edit copy per page, or wire up feature list like breathing.html's) -->
 <div id="premiumModal" role="dialog" aria-modal="true" aria-labelledby="premiumModalTitle">
   <div id="premiumModalCard">
     <button id="premiumModalClose" type="button" aria-label="Close">
@@ -1096,7 +1096,7 @@ const $=id=>document.getElementById(id);
   }
 }
 
-/* premium modal — same feature list + layout as index.html, with a Yoga section added */
+/* premium modal — same feature list + layout as breathing.html, with a Yoga section added */
 const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
 const PREMIUM_SECTIONS=[
   {id:'yoga',label:'🧘 Yoga',items:['8 Programs','6 Categories','8 Benefit Filters']},
@@ -1139,7 +1139,7 @@ function closePremiumModal(){ const m=$('premiumModal'); if(m)m.classList.remove
   document.addEventListener('keydown',e=>{ if(e.key==='Escape')closePremiumModal(); });
 }
 
-/* keep the title plaque flush under the tab row, like index.html does */
+/* keep the title plaque flush under the tab row, like breathing.html does */
 const h1FrameEl=document.querySelector('.h1-frame');
 function syncH1FrameWidth(){
   if(!h1FrameEl) return;
