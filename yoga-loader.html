@@ -64,6 +64,11 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
 #topTabs .tab:hover{color:var(--ink)}
 #topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
+#topTabs .tab .tab-short{display:none}
+@media(max-width:560px){
+  #topTabs .tab .tab-full{display:none}
+  #topTabs .tab .tab-short{display:inline}
+}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);opacity:.55}
 @media(max-width:560px){
@@ -426,10 +431,10 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 <header id="topNav">
   <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
   <nav id="topTabs" aria-label="Main sections">
-    <a href="index.html" class="tab">Breathing</a>
-    <a href="instruments.html" class="tab">Sound</a>
-    <a href="nutriloader.html" class="tab">Nutrition</a>
-    <a href="yoga-loader.html" class="tab active" aria-current="page">Yoga</a>
+    <a href="index.html" class="tab"><span class="tab-full">Guided Breathing</span><span class="tab-short">Breathing</span></a>
+    <a href="instruments.html" class="tab"><span class="tab-full">Soundscape Creator</span><span class="tab-short">Sound</span></a>
+    <a href="nutriloader.html" class="tab"><span class="tab-full">Nutrition Tracker</span><span class="tab-short">Nutrition</span></a>
+    <a href="yoga-loader.html" class="tab active" aria-current="page"><span class="tab-full">Yoga</span><span class="tab-short">Yoga</span></a>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
