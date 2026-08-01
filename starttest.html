@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ============ SEO ============ -->
+<title>Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga</title>
+<meta name="description" content="Holistic Loader — guided breathing, sound healing, nutrition tracking and yoga in one calm, unified practice space. Start your 14-day free trial, no card required.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="theme-color" content="#0c0e13">
+<meta name="application-name" content="Holistic Loader">
+<meta name="apple-mobile-web-app-title" content="Holistic Loader">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="canonical" href="https://holisticloader.com/start.html">
+<link rel="icon" type="image/png" href="images/icon-holistic.png">
+<link rel="apple-touch-icon" href="images/icon-holistic.png">
+<link rel="shortcut icon" href="images/icon-holistic.png">
+<meta name="msapplication-TileColor" content="#0c0e13">
+<!-- ========== /SEO ========== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="auth-ui.css">
+<link rel="stylesheet" href="premium-ui.css">
+<style>
+:root{
+  --bg:#0c0e13; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
+  --gold:#e7c9a2; --gold-soft:#d9b98a; --soft:#b3a98f; --violet:#c9a8ff;
+  --turq:#7fe9dc; --turq-deep:#38b7a9;
+  --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(244,241,234,.15);
+  --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar{display:none}
+body{min-height:100%;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+.hidden{display:none !important}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
+
+/* ===== aurora backdrop: gold / violet / turquoise, drifting slowly ===== */
+#stage{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#0c0e13}
+#stage .aurora{position:absolute;inset:-10%;
+  background:
+    radial-gradient(38% 32% at 18% 12%, rgba(201,168,255,.40), transparent 68%),
+    radial-gradient(34% 30% at 85% 8%,  rgba(127,233,220,.30), transparent 65%),
+    radial-gradient(46% 40% at 78% 78%, rgba(231,201,162,.34), transparent 66%),
+    radial-gradient(40% 34% at 10% 85%, rgba(201,168,255,.22), transparent 65%);
+  filter:blur(10px);animation:auroraDrift 34s ease-in-out infinite alternate}
+@keyframes auroraDrift{
+  0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
+  50%{transform:translate3d(1.5%,-2%,0) rotate(4deg) scale(1.05)}
+  100%{transform:translate3d(-2%,1.5%,0) rotate(-3deg) scale(1.02)}
+}
+#stage::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(120% 90% at 50% 0%,transparent 34%,rgba(6,7,10,.42) 100%),
+  linear-gradient(to bottom,rgba(6,7,10,.55) 0%,transparent 22%,transparent 55%,rgba(6,7,10,.86) 100%)}
+
+/* ===== top corners: hamburger menu (left) + auth icon (right), same placement as the rest of the site ===== */
+#donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
+@supports(padding:max(0px)){ #donateWrap{left:max(4px,env(safe-area-inset-left))} }
+#menuBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:34px;height:34px;padding:0;
+  border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
+#menuBtn:hover{background:rgba(244,241,234,.12)}
+#menuBtn:active{transform:scale(.95)}
+#menuBtn .menu-bar{width:16px;height:2px;border-radius:2px;background:currentColor;transition:transform .22s ease,opacity .18s ease}
+#menuBtn.open .menu-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
+#menuBtn.open .menu-bar:nth-child(2){opacity:0}
+#menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+#menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;min-width:190px;
+  display:flex;flex-direction:column;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:14px;
+  padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.4);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
+#menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+#getPremiumMenuBtn,#howToBtn,#shopMenuBtn{
+  display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;width:100%;box-sizing:border-box;
+  font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);text-decoration:none;
+  background:transparent;border:none;border-radius:8px;padding:9px 10px;cursor:pointer;transition:background .15s ease}
+#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#getPremiumMenuBtn{color:var(--gold);font-weight:600}
+#getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
+#getPremiumMenuBtn:hover,#howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
+#getPremiumMenuBtn:active,#howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
+#contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
+  border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--ink);cursor:pointer;transition:background .15s ease}
+#contactBtn:hover{background:rgba(244,241,234,.1)}
+#contactBtn .env{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#contactBtn .clabel{font-size:12px;letter-spacing:.04em;margin-left:8px;white-space:nowrap}
+#contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
+#contactBtn .ctext:hover{text-decoration:underline}
+#contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
+
+#authRoot{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));z-index:45}
+
+/* ===== "how to use" info box ===== */
+#howToBox{
+  position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
+  z-index:46;width:min(680px,90vw);box-sizing:border-box;
+  max-height:min(80vh,720px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  background:var(--glass-strong);border:1px solid var(--line);border-radius:16px;
+  padding:22px 26px 26px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
+}
+#howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+#howToClose{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;color:var(--muted);z-index:2;
+  background:rgba(20,14,26,.7);transition:background .2s ease,color .2s ease}
+#howToClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
+#howToClose svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+#howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px}
+#howToBox p{font-size:12.5px;line-height:1.6;color:var(--muted)}
+@media(max-width:560px){
+  #howToBox{position:fixed;inset:0;top:0;left:0;right:0;bottom:0;width:100%;height:100%;max-width:none;max-height:none;border-radius:0;
+    padding:max(28px,calc(env(safe-area-inset-top) + 16px)) 18px max(28px,env(safe-area-inset-bottom))}
+  #howToClose{top:max(14px,env(safe-area-inset-top));right:14px}
+}
+
+/* ===================================================================
+   HERO — full-bleed logo + ambient breathing glow (signature element)
+   =================================================================== */
+#hero{position:relative;min-height:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:max(96px,calc(env(safe-area-inset-top) + 76px)) 24px 30px;gap:16px;z-index:1}
+.hero-eyebrow{position:relative;z-index:2;font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--turq)}
+#heroLogo{position:relative;z-index:2;width:min(80vw,680px);max-width:100%;height:auto;
+  filter:drop-shadow(0 18px 50px rgba(0,0,0,.55))}
+.hero-tagline{position:relative;z-index:2;max-width:560px;font-family:var(--display);font-style:italic;font-weight:400;
+  font-size:clamp(16px,2.4vw,21px);line-height:1.55;color:var(--muted)}
+.hero-scroll{position:relative;z-index:2;margin-top:6px;display:inline-flex;flex-direction:column;align-items:center;gap:6px;
+  font-family:var(--ui);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+.hero-scroll svg{width:15px;height:15px;stroke:var(--gold-soft);fill:none;stroke-width:1.8;animation:heroBounce 2.2s ease-in-out infinite}
+@keyframes heroBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ===================================================================
+   FOUR AREAS
+   =================================================================== */
+#areas{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:10px 22px 96px}
+.areas-head{text-align:center;max-width:620px;margin:0 auto 40px}
+.areas-eyebrow{font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px}
+.areas-head h2{font-family:var(--display);font-weight:600;font-size:clamp(26px,4.6vw,38px);letter-spacing:.01em;
+  background:linear-gradient(90deg,var(--violet),var(--turq) 52%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px}
+.areas-head p{font-family:var(--ui);font-size:13.5px;color:var(--muted);line-height:1.7}
+
+.areas-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+@media(max-width:760px){.areas-grid{grid-template-columns:1fr}}
+
+.area-card{position:relative;display:block;aspect-ratio:1200/630;border-radius:26px;overflow:hidden;text-decoration:none;
+  border:1px solid var(--line);isolation:isolate;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease}
+.area-card:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(0,0,0,.5);border-color:rgba(244,241,234,.32)}
+.area-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.03);
+  transition:transform .8s cubic-bezier(.22,1,.36,1);filter:saturate(1.05)}
+.area-card:hover img{transform:scale(1.12)}
+.area-card::after{content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg, rgba(8,6,12,.05) 0%, rgba(8,6,12,.28) 46%, rgba(8,6,12,.92) 100%)}
+.area-card .tint{position:absolute;inset:0;z-index:1;mix-blend-mode:soft-light;opacity:.85}
+.area-card[data-tint="violet"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--violet), transparent 62%)}
+.area-card[data-tint="turq"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--turq), transparent 62%)}
+.area-card[data-tint="gold"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--gold), transparent 62%)}
+.area-card[data-tint="blend"] .tint{background:radial-gradient(120% 90% at 15% 0%, var(--gold), transparent 45%),radial-gradient(120% 90% at 85% 0%, var(--violet), transparent 50%)}
+.area-card-body{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:22px 22px 24px;text-align:left}
+.area-kicker{display:flex;align-items:center;gap:8px;font-family:var(--ui);font-size:10px;font-weight:600;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gold-soft);margin-bottom:8px}
+.area-title{font-family:var(--display);font-weight:700;font-size:clamp(21px,3vw,27px);letter-spacing:.02em;
+  text-transform:uppercase;color:var(--ink);text-shadow:0 3px 18px rgba(0,0,0,.55);line-height:1.12;margin-bottom:6px}
+.area-desc{font-family:var(--ui);font-size:12px;line-height:1.55;color:rgba(244,241,234,.72);max-width:340px;margin-bottom:12px}
+.area-cta{display:inline-flex;align-items:center;gap:7px;font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink)}
+.area-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .25s ease}
+.area-card:hover .area-cta svg{transform:translateX(4px)}
+
+@media(max-width:560px){
+  #hero{padding-top:max(90px,calc(env(safe-area-inset-top) + 74px))}
+}
+</style>
+</head>
+<body>
+<noscript><div style="position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#0c0e13;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6">
+  <div><strong>Holistic Loader</strong><br>Please enable JavaScript to use this page.</div>
+</div></noscript>
+
+<div id="stage"><div class="aurora"></div></div>
+
+<!-- hamburger menu: Premium / How to use / Shop / Contact -->
+<div id="donateWrap">
+  <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+    <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
+  </button>
+  <div id="menuPanel" role="menu">
+    <button id="getPremiumMenuBtn" type="button">
+      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Unlock Premium
+    </button>
+    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
+      <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
+    </button>
+    <a id="shopMenuBtn" href="store.html">
+      <svg class="shop-ic" viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shop
+    </a>
+    <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
+      <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
+      <span class="clabel">Contact</span>
+      <a class="ctext" id="contactEmail" href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<div id="authRoot"></div>
+
+<!-- "how to use" info box -->
+<div id="howToBox">
+  <button id="howToClose" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <h3>How to use</h3>
+  <p>This is home base. Tap any of the four cards below to jump straight into Guided Breathing, the Soundscape Creator, the Nutrition Tracker or Yoga. Everyone gets a free taste of each area; Premium unlocks every scene, instrument, program and pose across all four, plus cross-device sync — try it free for 14 days, no card required.</p>
+</div>
+
+<!-- premium modal -->
+<div id="premiumModal" role="dialog" aria-modal="true" aria-labelledby="premiumModalTitle">
+  <div id="premiumModalCard">
+    <button id="premiumModalClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div id="premiumModalScroll">
+      <h2 id="premiumModalTitle">All-in-One Wellness Platform</h2>
+      <div id="premiumModalSections"></div>
+      <p class="premTagline">Everything unlocked. One membership. Unlimited access. ✨</p>
+      <div id="premiumScrollHint" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+    <div id="premiumModalFooter">
+      <button class="premCtaPrimary" id="premiumModalFreeTrial" type="button">
+        <span>Start Free 14-Day Trial</span>
+        <span class="premCtaSubnote">No card needed</span>
+      </button>
+      <a class="premCta premCtaSecondary" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
+        <span>Get Premium for $4.99/month</span>
+        <span class="premCancelNote">Cancel anytime!</span>
+      </a>
+      <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== page content ===== -->
+<main>
+
+  <!-- HERO -->
+  <section id="hero">
+    <img id="heroLogo" src="images/logga-holistictitel.png" alt="Holistic Loader">
+    <p class="hero-tagline">One calm space for the breath, the body, the mind and the plate — four practices, built to be returned to daily.</p>
+  </section>
+
+  <!-- FOUR AREAS -->
+  <section id="areas" aria-label="Choose a practice">
+    <div class="areas-head">
+      <p class="areas-eyebrow">Choose your practice</p>
+      <h2>Four paths, one calmer you</h2>
+      <p>Every area opens with a free sample. Pick one to start, or unlock all four with Premium.</p>
+    </div>
+    <div class="areas-grid">
+
+      <a class="area-card" data-tint="violet" href="index.html">
+        <img src="images/preview-breathing.jpg" alt="Guided Breathing" loading="lazy">
+        <div class="tint"></div>
+        <div class="area-card-body">
+          <span class="area-kicker">🌬️ Breathwork &amp; scenery</span>
+          <h3 class="area-title">Guided Breathing</h3>
+          <p class="area-desc">26 immersive scenes, paced breathing patterns and 19 instruments to build your own calm.</p>
+          <span class="area-cta">Enter<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="area-card" data-tint="turq" href="instruments.html">
+        <img src="images/preview-soundscape.jpg" alt="Soundscape Creator" loading="lazy">
+        <div class="tint"></div>
+        <div class="area-card-body">
+          <span class="area-kicker">🎵 Sound healing</span>
+          <h3 class="area-title">Soundscape Creator</h3>
+          <p class="area-desc">Layer 16 healing instruments, shape tone with a signal generator, and record what you make.</p>
+          <span class="area-cta">Enter<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="area-card" data-tint="gold" href="nutriloader.html">
+        <img src="images/preview-nutrition.jpg" alt="Nutrition Tracker" loading="lazy">
+        <div class="tint"></div>
+        <div class="area-card-body">
+          <span class="area-kicker">🥗 Daily nourishment</span>
+          <h3 class="area-title">Nutrition Tracker</h3>
+          <p class="area-desc">Log meals with ease and keep your history in sync across every device you use.</p>
+          <span class="area-cta">Enter<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="area-card" data-tint="blend" href="yoga-loader.html">
+        <img src="images/preview-yoga.jpg" alt="Yoga" loading="lazy">
+        <div class="tint"></div>
+        <div class="area-card-body">
+          <span class="area-kicker">🧘 Movement &amp; breath</span>
+          <h3 class="area-title">Yoga</h3>
+          <p class="area-desc">8 guided programs and a 27-pose library, paced by breath with a soft gong to mark the way.</p>
+          <span class="area-cta">Enter<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+
+/* hamburger menu */
+{
+  const mBtn=$('menuBtn'), mPanel=$('menuPanel');
+  const closeMenu=()=>{ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
+  window.closeHamburgerMenu=closeMenu;
+  if(mBtn&&mPanel){
+    mBtn.addEventListener('click',e=>{ e.stopPropagation();
+      if(typeof window.closeAccountMenu==='function') window.closeAccountMenu();
+      const open=mPanel.classList.toggle('show'); mBtn.classList.toggle('open',open); mBtn.setAttribute('aria-expanded',open?'true':'false');
+      if(!open){ const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
+    document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
+  }
+  const getPremiumMenuBtn=$('getPremiumMenuBtn');
+  if(getPremiumMenuBtn){
+    getPremiumMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
+      closeMenu();
+      const headerRegisterBtn=$('registerBtn'); if(headerRegisterBtn){ headerRegisterBtn.click(); } else { openPremiumModal(); }
+    });
+  }
+}
+
+/* contact envelope */
+{
+  const cBtn=$('contactBtn');
+  const hide=()=>{ if(cBtn){cBtn.classList.remove('open');cBtn.setAttribute('aria-expanded','false');} };
+  function updateContactMaxWidth(){
+    if(!cBtn||innerWidth<=560)return;
+    const rect=cBtn.getBoundingClientRect();
+    const avail=Math.max(120,innerWidth-rect.left-16);
+    cBtn.style.maxWidth=avail+'px';
+  }
+  if(cBtn)cBtn.addEventListener('click',e=>{ e.stopPropagation();
+    updateContactMaxWidth();
+    const open=cBtn.classList.toggle('open'); cBtn.setAttribute('aria-expanded',open?'true':'false'); });
+  if(cBtn)cBtn.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cBtn.click(); } });
+  {const cEmail=$('contactEmail'); if(cEmail)cEmail.addEventListener('click',e=>e.stopPropagation());}
+  document.addEventListener('click',e=>{ if(cBtn&&cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hide(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
+  addEventListener('resize',()=>{ if(cBtn&&cBtn.classList.contains('open'))updateContactMaxWidth(); });
+}
+
+/* how to use box */
+{
+  const hBtn=$('howToBtn'), hBox=$('howToBox');
+  const hide=()=>{ if(hBox){hBox.classList.remove('show');} if(hBtn)hBtn.setAttribute('aria-expanded','false'); };
+  function positionHowToBox(){
+    if(!hBtn||!hBox||innerWidth<=560)return;
+    const r=hBtn.getBoundingClientRect();
+    const maxLeft=innerWidth-hBox.offsetWidth-12;
+    hBox.style.left=Math.max(12,Math.min(r.left,maxLeft))+'px';
+    hBox.style.top=(r.bottom+7)+'px';
+  }
+  if(hBtn&&hBox){
+    hBtn.addEventListener('click',e=>{ e.stopPropagation();
+      positionHowToBox();
+      const open=hBox.classList.toggle('show'); hBtn.setAttribute('aria-expanded',open?'true':'false'); });
+    document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
+    addEventListener('resize',()=>{ if(hBox.classList.contains('show'))positionHowToBox(); });
+    const hClose=$('howToClose');
+    if(hClose)hClose.addEventListener('click',e=>{ e.stopPropagation(); hide(); if(typeof window.closeHamburgerMenu==='function')window.closeHamburgerMenu(); });
+  }
+}
+
+/* premium modal — same feature list + layout as the rest of the site */
+const PREMIUM_SECTIONS=[
+  {id:'yoga',label:'🧘 Yoga',items:['8 Programs','6 Categories','8 Benefit Filters']},
+  {id:'breathing',label:'🌬️ Breathing',items:['26 Scenes','Personal Backgrounds','19 Instruments','8 Guided Journeys']},
+  {id:'sound',label:'🎵 Sound Healing',items:['16 Instruments','Signal Generator','Record & Save']},
+  {id:'nutrition',label:'🥗 Nutrition',items:['Daily Tracking','Cross-Device Sync']}
+];
+const premScrollBox=$('premiumModalScroll'), premScrollHint=$('premiumScrollHint');
+function updatePremiumScrollHint(){
+  if(!premScrollBox||!premScrollHint) return;
+  const overflows=premScrollBox.scrollHeight>premScrollBox.clientHeight+4;
+  const atBottom=premScrollBox.scrollTop+premScrollBox.clientHeight>=premScrollBox.scrollHeight-4;
+  premScrollHint.classList.toggle('hide',!overflows||atBottom);
+}
+function openPremiumModal(){
+  const modal=$('premiumModal'), wrap=$('premiumModalSections');
+  if(!modal) return;
+  if(wrap){
+    wrap.innerHTML=PREMIUM_SECTIONS.map(sec=>`
+      <div class="premSection" data-sec="${sec.id}">
+        <div class="premSectionTitle">${sec.label}</div>
+        <ul class="premList">
+          ${sec.items.map(it=>`<li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">${it}</span></li>`).join('')}
+        </ul>
+      </div>`).join('');
+  }
+  modal.classList.add('show');
+  if(premScrollBox) premScrollBox.scrollTop=0;
+  setTimeout(updatePremiumScrollHint,50);
+}
+if(premScrollBox) premScrollBox.addEventListener('scroll',updatePremiumScrollHint);
+window.addEventListener('resize',updatePremiumScrollHint);
+function closePremiumModal(){ const m=$('premiumModal'); if(m)m.classList.remove('show'); }
+{
+  const pm=$('premiumModal'), pClose=$('premiumModalClose'), pCta=$('premiumModalCta'), pTrial=$('premiumModalFreeTrial');
+  if(pClose)pClose.onclick=closePremiumModal;
+  if(pCta)pCta.onclick=closePremiumModal;
+  if(pTrial)pTrial.onclick=function(){ closePremiumModal(); if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); };
+  if(pm)pm.addEventListener('click',e=>{ if(e.target===pm)closePremiumModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape')closePremiumModal(); });
+}
+const detailsLink=$('premiumDetailsLink');
+if(detailsLink)detailsLink.addEventListener('click',e=>{ e.preventDefault(); openPremiumModal(); });
+
+/* on-page premium CTAs mirror the modal's actions directly */
+const pageFreeTrialBtn=$('pageFreeTrialBtn');
+if(pageFreeTrialBtn)pageFreeTrialBtn.addEventListener('click',()=>{
+  if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); else openPremiumModal();
+});
+</script>
+
+<script>
+const VISIT_SUPABASE_URL = "https://ibytawdimgthoqwtbtgv.supabase.co";
+const VISIT_SUPABASE_KEY = "sb_publishable_X4l9e5OPXE9Cq4XVc1jm_A_Hb6tbJUO";
+
+/* owner's own visitor IDs — never counted as visits */
+const EXCLUDED_VISITOR_IDS = [
+  "183871a4-aa9b-4eaa-8668-2cd14de446c2",
+  "9fe82a0f-073b-43ac-b5ec-27e3637fc35e",
+  "bb5f4d85-4d84-448d-ad42-60480d8cbc1b",
+  "071e4c9d-2b06-41d2-9353-77d61f3a83c4"
+];
+
+function getVisitorId() {
+  let id = localStorage.getItem("visitor_id");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("visitor_id", id);
+  }
+  return id;
+}
+
+async function getVisitorCountry() {
+  try {
+    const response = await fetch("https://ipapi.co/json/");
+    const data = await response.json();
+    return data.country_name || "Unknown";
+  } catch (error) {
+    return "Unknown";
+  }
+}
+
+async function registerVisit() {
+  if (localStorage.getItem("site_owner") === "true") return;
+
+  const visitorId = getVisitorId();
+  if (EXCLUDED_VISITOR_IDS.includes(visitorId)) return;
+
+  try {
+    const country = await getVisitorCountry();
+    await fetch(`${VISIT_SUPABASE_URL}/rest/v1/visits`, {
+      method: "POST",
+      headers: {
+        apikey: VISIT_SUPABASE_KEY,
+        Authorization: `Bearer ${VISIT_SUPABASE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify({
+        site: "holisticloader",
+        page: "start",
+        page_url: window.location.pathname,
+        visitor_id: visitorId,
+        country: country
+      })
+    });
+  } catch (error) {
+    console.error("Visit registration failed:", error);
+  }
+}
+
+registerVisit();
+</script>
+</body>
+</html>
