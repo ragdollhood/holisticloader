@@ -158,9 +158,12 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 
 /* ===== page content ===== */
 #pageContent{position:relative;z-index:1;min-height:100vh;
-  padding:max(166px,calc(env(safe-area-inset-top) + 146px)) 20px 60px;
+  padding:max(186px,calc(env(safe-area-inset-top) + 166px)) 20px 60px;
   display:flex;flex-direction:column;align-items:center;text-align:center}
 #pageContent .placeholder{max-width:520px;color:var(--muted);font-size:14px;line-height:1.7;margin-top:12px}
+@media(max-width:560px){
+  #pageContent{padding-top:max(83px,calc(env(safe-area-inset-top) + 73px))}
+}
 
 /* ===== yoga page content ===== */
 .yoga-intro{max-width:640px;margin:0 auto 8px;color:var(--muted);font-size:13.5px;line-height:1.7}
