@@ -37,7 +37,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{height:100%;scrollbar-width:none;-ms-overflow-style:none}
 html::-webkit-scrollbar{display:none}
-body{min-height:100%;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{height:100svh;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow:hidden;display:flex;flex-direction:column}
 button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
 a{color:inherit}
 .hidden{display:none !important}
@@ -127,10 +127,10 @@ a{color:inherit}
 /* ===================================================================
    HERO — full-bleed logo + ambient breathing glow (signature element)
    =================================================================== */
-#hero{position:relative;min-height:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(96px,calc(env(safe-area-inset-top) + 76px)) 24px 30px;gap:16px;z-index:1}
+#hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:max(20px,env(safe-area-inset-top)) 24px 10px;z-index:1}
 .hero-eyebrow{position:relative;z-index:2;font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--turq)}
-#heroLogo{position:relative;z-index:2;width:min(80vw,680px);max-width:100%;height:auto;
+#heroLogo{position:relative;z-index:2;width:min(60vw,460px);max-width:100%;height:auto;
   filter:drop-shadow(0 18px 50px rgba(0,0,0,.55))}
 .hero-tagline{position:relative;z-index:2;max-width:560px;font-family:var(--display);font-style:italic;font-weight:400;
   font-size:clamp(16px,2.4vw,21px);line-height:1.55;color:var(--muted)}
@@ -140,19 +140,14 @@ a{color:inherit}
 @keyframes heroBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
 /* ===================================================================
-   FOUR AREAS
+   FOUR AREAS — fills the remaining viewport, all four visible at once
    =================================================================== */
-#areas{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:10px 22px 96px}
-.areas-head{text-align:center;max-width:620px;margin:0 auto 40px}
-.areas-eyebrow{font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px}
-.areas-head h2{font-family:var(--display);font-weight:600;font-size:clamp(26px,4.6vw,38px);letter-spacing:.01em;
-  background:linear-gradient(90deg,var(--violet),var(--turq) 52%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px}
-.areas-head p{font-family:var(--ui);font-size:13.5px;color:var(--muted);line-height:1.7}
+main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+#areas{position:relative;z-index:1;flex:1 1 auto;min-height:0;width:100%;max-width:1400px;margin:0 auto;padding:0 14px max(14px,env(safe-area-inset-bottom))}
 
-.areas-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
-@media(max-width:760px){.areas-grid{grid-template-columns:1fr}}
+.areas-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:14px;height:100%}
 
-.area-card{position:relative;display:block;aspect-ratio:1200/630;border-radius:26px;overflow:hidden;text-decoration:none;
+.area-card{position:relative;display:block;height:100%;border-radius:22px;overflow:hidden;text-decoration:none;
   border:1px solid var(--line);isolation:isolate;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease}
 .area-card:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(0,0,0,.5);border-color:rgba(244,241,234,.32)}
 .area-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.03);
@@ -165,19 +160,22 @@ a{color:inherit}
 .area-card[data-tint="turq"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--turq), transparent 62%)}
 .area-card[data-tint="gold"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--gold), transparent 62%)}
 .area-card[data-tint="blend"] .tint{background:radial-gradient(120% 90% at 15% 0%, var(--gold), transparent 45%),radial-gradient(120% 90% at 85% 0%, var(--violet), transparent 50%)}
-.area-card-body{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:22px 22px 24px;text-align:left}
-.area-kicker{display:flex;align-items:center;gap:8px;font-family:var(--ui);font-size:10px;font-weight:600;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--gold-soft);margin-bottom:8px}
-.area-title{font-family:var(--display);font-weight:700;font-size:clamp(21px,3vw,27px);letter-spacing:.02em;
-  text-transform:uppercase;color:var(--ink);text-shadow:0 3px 18px rgba(0,0,0,.55);line-height:1.12;margin-bottom:6px}
-.area-desc{font-family:var(--ui);font-size:12px;line-height:1.55;color:rgba(244,241,234,.72);max-width:340px;margin-bottom:12px}
-.area-cta{display:inline-flex;align-items:center;gap:7px;font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:.1em;
+.area-card-body{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:clamp(10px,3vw,22px) clamp(10px,3vw,22px) clamp(12px,3.2vw,24px);text-align:left}
+.area-kicker{display:flex;align-items:center;gap:6px;font-family:var(--ui);font-size:clamp(8px,1.6vw,10px);font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold-soft);margin-bottom:clamp(2px,1vw,8px)}
+.area-title{font-family:var(--display);font-weight:700;font-size:clamp(14px,2.6vw,27px);letter-spacing:.02em;
+  text-transform:uppercase;color:var(--ink);text-shadow:0 3px 18px rgba(0,0,0,.55);line-height:1.12;margin-bottom:clamp(2px,0.8vw,6px)}
+.area-desc{font-family:var(--ui);font-size:clamp(10px,1.6vw,12px);line-height:1.5;color:rgba(244,241,234,.72);max-width:340px;margin-bottom:clamp(4px,1.4vw,12px)}
+.area-cta{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:clamp(9px,1.5vw,11px);font-weight:600;letter-spacing:.08em;
   text-transform:uppercase;color:var(--ink)}
-.area-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .25s ease}
+.area-cta svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .25s ease}
 .area-card:hover .area-cta svg{transform:translateX(4px)}
 
 @media(max-width:560px){
-  #hero{padding-top:max(90px,calc(env(safe-area-inset-top) + 74px))}
+  .areas-grid{gap:8px}
+  #areas{padding:0 8px max(10px,env(safe-area-inset-bottom))}
+  .area-desc{display:none}
+  .area-kicker{display:none}
 }
 </style>
 </head>
@@ -260,11 +258,6 @@ a{color:inherit}
 
   <!-- FOUR AREAS -->
   <section id="areas" aria-label="Choose a practice">
-    <div class="areas-head">
-      <p class="areas-eyebrow">Choose your practice</p>
-      <h2>Four paths, one calmer you</h2>
-      <p>Every area opens with a free sample. Pick one to start, or unlock all four with Premium.</p>
-    </div>
     <div class="areas-grid">
 
       <a class="area-card" data-tint="violet" href="index.html">
