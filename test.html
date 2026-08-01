@@ -127,16 +127,10 @@ a{color:inherit}
 /* ===================================================================
    HERO — full-bleed logo + ambient breathing glow (signature element)
    =================================================================== */
-#hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(110px,calc(env(safe-area-inset-top) + 90px)) 24px 64px;gap:22px;z-index:1}
-.hero-orb-wrap{position:absolute;top:48%;left:50%;transform:translate(-50%,-50%);width:min(64vw,560px);height:min(64vw,560px);
-  z-index:0;pointer-events:none}
-.hero-orb{position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 40% 34%,rgba(255,241,214,.55),rgba(201,168,255,.16) 46%,rgba(127,233,220,.10) 72%,transparent 78%);
-  filter:blur(6px);animation:heroBreath 11s ease-in-out infinite}
-@keyframes heroBreath{0%{transform:scale(.86);opacity:.75}35%{transform:scale(1.08);opacity:1}65%{transform:scale(1.08);opacity:1}100%{transform:scale(.86);opacity:.75}}
+#hero{position:relative;min-height:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:max(96px,calc(env(safe-area-inset-top) + 76px)) 24px 30px;gap:16px;z-index:1}
 .hero-eyebrow{position:relative;z-index:2;font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--turq)}
-#heroLogo{position:relative;z-index:2;width:min(78vw,620px);max-width:100%;height:auto;
+#heroLogo{position:relative;z-index:2;width:min(58vw,420px);max-width:100%;height:auto;
   filter:drop-shadow(0 18px 50px rgba(0,0,0,.55))}
 .hero-tagline{position:relative;z-index:2;max-width:560px;font-family:var(--display);font-style:italic;font-weight:400;
   font-size:clamp(16px,2.4vw,21px);line-height:1.55;color:var(--muted)}
@@ -155,7 +149,8 @@ a{color:inherit}
   background:linear-gradient(90deg,var(--violet),var(--turq) 52%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px}
 .areas-head p{font-family:var(--ui);font-size:13.5px;color:var(--muted);line-height:1.7}
 
-.areas-grid{display:grid;grid-template-columns:1fr;gap:28px}
+.areas-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+@media(max-width:760px){.areas-grid{grid-template-columns:1fr}}
 
 .area-card{position:relative;display:block;aspect-ratio:1200/630;border-radius:26px;overflow:hidden;text-decoration:none;
   border:1px solid var(--line);isolation:isolate;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease}
@@ -180,35 +175,6 @@ a{color:inherit}
   text-transform:uppercase;color:var(--ink)}
 .area-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .25s ease}
 .area-card:hover .area-cta svg{transform:translateX(4px)}
-
-/* ===================================================================
-   PREMIUM — shown directly on the page (not only in the modal)
-   =================================================================== */
-#premium{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 20px 110px}
-.premium-card{position:relative;background:linear-gradient(180deg, rgba(24,17,32,.62), rgba(13,10,19,.78));
-  border:1px solid var(--line);border-radius:32px;padding:clamp(30px,5vw,54px) clamp(22px,5vw,50px);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 30px 80px rgba(0,0,0,.4);overflow:hidden}
-.premium-card::before{content:'';position:absolute;inset:0;z-index:0;opacity:.5;pointer-events:none;
-  background:radial-gradient(60% 60% at 12% 0%, rgba(127,233,220,.16), transparent 60%),
-  radial-gradient(60% 60% at 100% 100%, rgba(201,168,255,.16), transparent 60%)}
-.premium-card>*{position:relative;z-index:1}
-.premium-trial-pill{display:inline-flex;align-items:center;gap:8px;margin:0 auto 22px;padding:8px 18px;
-  border-radius:999px;border:1px solid rgba(127,233,220,.4);background:rgba(127,233,220,.08);
-  font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--turq)}
-.premium-trial-pill svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2}
-.premium-head{text-align:center;max-width:600px;margin:0 auto 38px}
-.premium-head h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,4.6vw,36px);letter-spacing:.02em;
-  text-transform:uppercase;margin-bottom:12px;
-  background:linear-gradient(90deg,var(--gold),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
-.premium-head p{font-family:var(--ui);font-size:13px;color:var(--soft);line-height:1.65}
-
-.premium-grid{display:grid;grid-template-columns:1fr;gap:30px 28px;margin-bottom:38px}
-@media(min-width:760px){
-  .premium-grid{grid-template-columns:repeat(2,1fr)}
-}
-
-.premium-actions{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:380px;margin:0 auto}
-.premium-fineprint{text-align:center;font-family:var(--ui);font-size:10.5px;color:var(--faint);margin-top:4px;line-height:1.6}
 
 @media(max-width:560px){
   #hero{padding-top:max(90px,calc(env(safe-area-inset-top) + 74px))}
@@ -289,13 +255,9 @@ a{color:inherit}
 
   <!-- HERO -->
   <section id="hero">
-    <div class="hero-orb-wrap"><div class="hero-orb"></div></div>
     <p class="hero-eyebrow">Holistic Loader</p>
     <img id="heroLogo" src="images/logga-holistictitel.jpg" alt="Holistic Loader">
     <p class="hero-tagline">One calm space for the breath, the body, the mind and the plate — four practices, built to be returned to daily.</p>
-    <span class="hero-scroll">Explore
-      <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-    </span>
   </section>
 
   <!-- FOUR AREAS -->
@@ -351,69 +313,6 @@ a{color:inherit}
         </div>
       </a>
 
-    </div>
-  </section>
-
-  <!-- PREMIUM, shown directly on the page -->
-  <section id="premium" aria-label="Premium membership">
-    <div class="premium-card">
-      <div style="text-align:center">
-        <span class="premium-trial-pill">
-          <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
-          14 days free · No card needed
-        </span>
-      </div>
-      <div class="premium-head">
-        <h2>Everything, unlocked</h2>
-        <p>One membership covers all four practices. Cancel anytime — nothing is charged until your trial ends, and only if you add a card later.</p>
-      </div>
-
-      <div class="premium-grid">
-        <div class="premSection" data-sec="breathing">
-          <div class="premSectionTitle">🌬️ Breathing</div>
-          <ul class="premList">
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">26 Scenes</span></li>
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">Personal Backgrounds</span></li>
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">19 Instruments</span></li>
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">8 Guided Journeys</span></li>
-          </ul>
-        </div>
-        <div class="premSection" data-sec="sound">
-          <div class="premSectionTitle">🎵 Sound Healing</div>
-          <ul class="premList">
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">16 Instruments</span></li>
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">Signal Generator</span></li>
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">Record &amp; Save</span></li>
-          </ul>
-        </div>
-        <div class="premSection" data-sec="nutrition">
-          <div class="premSectionTitle">🥗 Nutrition</div>
-          <ul class="premList">
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">Daily Tracking</span></li>
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">Cross-Device Sync</span></li>
-          </ul>
-        </div>
-        <div class="premSection" data-sec="yoga">
-          <div class="premSectionTitle">🧘 Yoga</div>
-          <ul class="premList">
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">8 Programs</span></li>
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">6 Categories</span></li>
-            <li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">8 Benefit Filters</span></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="premium-actions">
-        <button class="premCtaPrimary" id="pageFreeTrialBtn" type="button" style="width:100%">
-          <span>Start Free 14-Day Trial</span>
-          <span class="premCtaSubnote">No card needed</span>
-        </button>
-        <a class="premCta premCtaSecondary" id="pageBuyBtn" style="width:100%" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
-          <span>Get Premium for $4.99/month</span>
-          <span class="premCancelNote">Cancel anytime!</span>
-        </a>
-        <p class="premium-fineprint">Prefer to browse the full feature list first? <a href="#" id="premiumDetailsLink" style="color:var(--gold-soft);text-decoration:underline">See everything included</a>.</p>
-      </div>
     </div>
   </section>
 
