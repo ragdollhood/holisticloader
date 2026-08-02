@@ -326,6 +326,7 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
 }
 /* ---- title logo: sits above the nav tabs, at the very top of the page ---- */
 #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px;pointer-events:none}
+#brandLink{display:inline-flex;pointer-events:auto;cursor:pointer}
 #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
 @media (max-width:560px){
@@ -982,7 +983,7 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
 body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
-  background:linear-gradient(to bottom,rgba(6,4,9,.85) 0%,rgba(6,4,9,.5) 65%,transparent 100%)}
+  background:#06040a}
 #topTabs{display:flex;pointer-events:auto}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;line-height:normal;
   padding:9px 20px;color:rgba(255,255,255,.7);text-decoration:none;white-space:nowrap;
@@ -1270,7 +1271,7 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
     </div>
 
     <header id="topNav">
-      <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
+      <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
       <nav id="topTabs" aria-label="Main sections">
         <a href="breathing.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
         <a href="instruments.html" class="tab">Soundscape Creator</a>
