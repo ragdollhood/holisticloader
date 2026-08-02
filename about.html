@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About — Holistic Loader</title>
+<meta name="description" content="About Holistic Loader — guided breathing, sound healing, yoga and nutrition tracking in one calm, unified practice space.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0c0e13">
+<link rel="icon" type="image/png" href="images/icon-holistic.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#120e17; --ink:#f8f6f1; --muted:rgba(248,246,241,.82); --faint:rgba(248,246,241,.5);
+  --gold:#f0d19f; --gold-soft:#e0b878; --soft:#c9bfa8; --violet:#d3b6ff;
+  --turq:#8fefe1; --turq-deep:#38b7a9;
+  --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(248,246,241,.16);
+  --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar{display:none}
+body{min-height:100svh;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(700px 500px at 15% -5%,rgba(211,182,255,.14),transparent 60%),
+             radial-gradient(700px 500px at 100% 10%,rgba(240,209,159,.10),transparent 60%);}
+a{color:inherit}
+
+header{position:relative;z-index:1;padding:22px 20px 8px;display:flex;align-items:center;justify-content:center}
+.brand{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.02em;text-decoration:none;color:var(--ink)}
+.brand span{color:var(--gold)}
+
+main{position:relative;z-index:1;flex:1 0 auto;width:100%;max-width:640px;margin:0 auto;padding:28px 24px 60px}
+
+.backLink{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--soft);text-decoration:none;margin-bottom:26px;transition:color .2s ease}
+.backLink:hover{color:var(--ink)}
+.backLink svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4}
+
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,7vw,38px);letter-spacing:.01em;line-height:1.15;
+  margin-bottom:16px;
+  background:linear-gradient(90deg,var(--gold),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.lede{font-family:var(--display);font-weight:500;font-size:20px;line-height:1.5;color:var(--ink);margin-bottom:6px}
+.intro{font-size:14.5px;line-height:1.75;color:var(--muted);margin-bottom:12px}
+
+section{margin-top:38px;padding-top:24px;border-top:1px solid var(--line)}
+section:first-of-type{border-top:none;padding-top:0;margin-top:26px}
+h2{font-family:var(--ui);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:14px}
+p{font-size:14.5px;line-height:1.75;color:var(--muted);margin-bottom:12px}
+
+.pullQuote{font-family:var(--display);font-style:italic;font-weight:500;font-size:19px;line-height:1.5;color:var(--gold);
+  text-align:center;margin:20px 0;padding:0 6px}
+
+.microLines p{margin-bottom:4px}
+
+/* feature list */
+.featureList{display:flex;flex-direction:column;gap:18px;margin-top:6px}
+.featureItem{display:flex;gap:14px;align-items:flex-start;padding:16px;border:1px solid var(--line);border-radius:16px;
+  background:rgba(248,246,241,.03)}
+.featureIcon{flex:0 0 auto;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:18px;border-radius:12px;background:linear-gradient(135deg,rgba(255,217,138,.16),rgba(211,182,255,.12));
+  border:1px solid rgba(255,217,138,.25)}
+.featureBody{min-width:0}
+.featureTitle{font-family:var(--ui);font-weight:700;font-size:13.5px;letter-spacing:.02em;color:var(--ink);margin-bottom:4px}
+.featureDesc{font-size:13px;line-height:1.6;color:var(--soft)}
+
+/* philosophy tags */
+.tagRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.tagPill{font-family:var(--ui);font-weight:600;font-size:12px;letter-spacing:.04em;color:var(--ink);
+  padding:8px 16px;border-radius:999px;border:1px solid rgba(255,217,138,.3);
+  background:linear-gradient(135deg,rgba(255,217,138,.1),rgba(211,182,255,.08))}
+
+.closing{text-align:center;margin-top:44px;padding-top:30px;border-top:1px solid var(--line)}
+.closing p{color:var(--muted)}
+.question{font-family:var(--display);font-weight:600;font-style:italic;font-size:24px;color:var(--ink);
+  margin-top:14px;
+  background:linear-gradient(90deg,var(--gold),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+footer{position:relative;z-index:1;flex:0 0 auto;text-align:center;padding:34px 20px max(34px,env(safe-area-inset-bottom));
+  border-top:1px solid var(--line);margin-top:20px}
+.footTag{font-family:var(--display);font-style:italic;font-size:15px;color:var(--soft);margin-bottom:6px}
+.footSub{font-size:12px;line-height:1.6;color:var(--faint);max-width:440px;margin:0 auto}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="start.html">Holistic <span>Loader</span></a>
+</header>
+
+<main>
+  <a class="backLink" href="start.html">
+    <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+    Back to Holistic Loader
+  </a>
+
+  <h1>About Holistic Loader</h1>
+
+  <section>
+    <p class="lede">Wellness should feel simple.</p>
+    <p class="intro">Holistic Loader was created to make it easier to take care of yourself, even on busy days.</p>
+    <p class="intro">Many wellness apps focus on a single area. Holistic Loader brings together breathing, sound, movement and healthy habits in one place, so you can choose what helps you most right now.</p>
+    <p class="intro">Whether you want to sleep better, reduce stress, boost your energy or build healthier routines, the goal is the same:</p>
+    <p class="pullQuote">Help you feel better, without making things complicated.</p>
+  </section>
+
+  <section>
+    <h2>Your Experience, Your Way</h2>
+    <p>There is no single "correct" way to use Holistic Loader.</p>
+    <p class="microLines">
+      Some people start with a breathing session before bed.<br>
+      Some create calming soundscapes while working.<br>
+      Others follow yoga programs, track nutrition habits, or combine several tools throughout the day.
+    </p>
+    <p><strong>You decide what works for you.</strong></p>
+  </section>
+
+  <section>
+    <h2>Built Around Outcomes, Not Rules</h2>
+    <p>Holistic Loader isn't about chasing perfection. It's about creating small moments that support your wellbeing.</p>
+    <p class="microLines">
+      A few calm breaths.<br>
+      A few minutes of movement.<br>
+      A soundscape that helps you relax.<br>
+      A healthier choice today than yesterday.
+    </p>
+    <p><strong>Small steps add up.</strong></p>
+  </section>
+
+  <section>
+    <h2>What's Inside?</h2>
+    <div class="featureList">
+      <div class="featureItem">
+        <span class="featureIcon">🌙</span>
+        <div class="featureBody">
+          <div class="featureTitle">Guided Breathing</div>
+          <div class="featureDesc">Breathe with calming visual guides, relaxing sounds and focused exercises.</div>
+        </div>
+      </div>
+      <div class="featureItem">
+        <span class="featureIcon">🎵</span>
+        <div class="featureBody">
+          <div class="featureTitle">Soundscape Creator</div>
+          <div class="featureDesc">Mix instruments, nature sounds and healing frequencies to create your own environment.</div>
+        </div>
+      </div>
+      <div class="featureItem">
+        <span class="featureIcon">⚡</span>
+        <div class="featureBody">
+          <div class="featureTitle">Yoga</div>
+          <div class="featureDesc">Explore gentle movement, flexibility and energy-building practices.</div>
+        </div>
+      </div>
+      <div class="featureItem">
+        <span class="featureIcon">🥗</span>
+        <div class="featureBody">
+          <div class="featureTitle">Nutrition Tracker</div>
+          <div class="featureDesc">Track habits, meals and routines that support long-term wellbeing.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Our Philosophy</h2>
+    <p>We believe wellness should be:</p>
+    <div class="tagRow">
+      <span class="tagPill">Personal</span>
+      <span class="tagPill">Accessible</span>
+      <span class="tagPill">Flexible</span>
+      <span class="tagPill">Enjoyable</span>
+      <span class="tagPill">Available whenever you need it</span>
+    </div>
+    <p style="margin-top:18px">No pressure. No complicated systems. Just tools that help you feel better.</p>
+  </section>
+
+  <div class="closing">
+    <p>Thank you for being here. Whether you're visiting for the first time or using Holistic Loader every day, we're grateful you're part of the journey.</p>
+    <p class="question">How do you want to feel today?</p>
+  </div>
+</main>
+
+<footer>
+  <p class="footTag">Built with care in Sweden.</p>
+  <p class="footSub">Holistic Loader exists to make breathing, sound healing, movement and healthy habits easier to access in everyday life.</p>
+</footer>
+
+</body>
+</html>
