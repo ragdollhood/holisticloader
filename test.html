@@ -241,7 +241,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
   transition:transform .8s cubic-bezier(.22,1,.36,1),filter .4s ease}
 .area-card:hover .card-media img{transform:scale(1.04);filter:saturate(1.08) brightness(1.05)}
 
-/* "Start Here" badge on the recommended first step — top right corner of the image zone */
+/* recommended-first-step badge — top right corner of the image zone (currently unused, kept for future use) */
 .card-badge{position:absolute;top:10px;right:10px;z-index:3;display:inline-flex;align-items:center;gap:5px;
   padding:5px 11px 5px 9px;border-radius:999px;background:rgba(231,201,162,.16);border:1px solid rgba(231,201,162,.6);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(0,0,0,.32);
@@ -271,6 +271,57 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
   .card-desc{display:none}
   .card-btn{padding:5px 11px;margin-top:4px;font-size:9px}
   #hero{padding-top:max(184px,calc(env(safe-area-inset-top) + 174px))}
+}
+
+/* ===== premium banner — sits below the four cards ===== */
+#premiumBanner{flex:0 0 auto;display:flex;justify-content:center;padding:8px 14px max(12px,env(safe-area-inset-bottom))}
+#premiumBannerCard{
+  width:min(1000px,94%);border-radius:16px;overflow:hidden;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(20,22,29,.92),rgba(12,14,19,.96));
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  padding:26px clamp(16px,4vw,40px) 28px;
+  transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;
+}
+#premiumBannerCard:hover{transform:translateY(-3px);border-color:var(--gold-soft);
+  box-shadow:0 16px 38px rgba(0,0,0,.45),0 0 22px rgba(212,175,55,.22)}
+#premiumBannerTitle{
+  font-family:var(--display);font-weight:600;letter-spacing:.02em;text-transform:uppercase;
+  font-size:clamp(20px,3.4vw,30px);text-align:center;margin:0 0 22px;
+  background:linear-gradient(90deg,var(--gold),var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+#premiumBannerGrid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px 28px;margin-bottom:16px;
+}
+.banFeatGroup{min-width:0}
+.banFeatTitle{
+  display:flex;align-items:center;gap:8px;font-family:var(--ui);font-weight:600;
+  font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);
+  padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line);
+}
+.banFeatTitle .banIcon{font-size:14px;line-height:1}
+.banFeatList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.banFeatList li{
+  display:flex;align-items:center;gap:8px;font-family:var(--ui);font-size:13px;
+  font-weight:500;letter-spacing:.01em;color:var(--ink);
+}
+.banCheck{
+  flex:0 0 auto;width:16px;height:16px;border-radius:50%;display:inline-flex;
+  align-items:center;justify-content:center;color:var(--gold);
+}
+.banCheck svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#premiumBannerCard .premTagline{
+  text-align:center;color:var(--gold-soft);font-family:var(--ui);font-size:13px;
+  font-weight:600;letter-spacing:.02em;margin:18px 0 20px;
+}
+#premiumBannerFooter{display:flex;flex-direction:column;gap:10px;max-width:520px;margin:0 auto}
+@media(max-width:720px){
+  #premiumBannerGrid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  #premiumBanner{padding:6px 8px max(10px,env(safe-area-inset-bottom))}
+  #premiumBannerCard{padding:20px 16px 22px}
+  #premiumBannerGrid{grid-template-columns:1fr 1fr;gap:16px 20px}
 }
 </style>
 </head>
@@ -373,10 +424,6 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
       <a class="area-card" data-tint="violet" href="breathing.html">
         <div class="card-media">
           <img src="images/preview-breathing.jpg" alt="Guided Breathing" loading="lazy">
-          <span class="card-badge">
-            <svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>
-            Start Here
-          </span>
         </div>
         <div class="card-overlay">
           <span class="card-title">🌬️ Guided Breathing</span>
@@ -418,6 +465,62 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
         </div>
       </a>
 
+    </div>
+  </section>
+
+  <!-- PREMIUM BANNER — below the four cards -->
+  <section id="premiumBanner" aria-label="Premium">
+    <div id="premiumBannerCard">
+      <h2 id="premiumBannerTitle">All-in-One Wellness Platform</h2>
+
+      <div id="premiumBannerGrid">
+        <div class="banFeatGroup">
+          <div class="banFeatTitle"><span class="banIcon">🧘</span>Yoga</div>
+          <ul class="banFeatList">
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>8 Programs</li>
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>6 Categories</li>
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>8 Benefit Filters</li>
+          </ul>
+        </div>
+        <div class="banFeatGroup">
+          <div class="banFeatTitle"><span class="banIcon">🌬️</span>Breathing</div>
+          <ul class="banFeatList">
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>26 Scenes</li>
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Personal Backgrounds</li>
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>19 Instruments</li>
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>8 Guided Journeys</li>
+          </ul>
+        </div>
+        <div class="banFeatGroup">
+          <div class="banFeatTitle"><span class="banIcon">🎵</span>Sound Healing</div>
+          <ul class="banFeatList">
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>16 Instruments</li>
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Signal Generator</li>
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Record &amp; Save</li>
+          </ul>
+        </div>
+        <div class="banFeatGroup">
+          <div class="banFeatTitle"><span class="banIcon">🥗</span>Nutrition</div>
+          <ul class="banFeatList">
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Daily Tracking</li>
+            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Cross-Device Sync</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="premTagline">Everything unlocked. One membership. Unlimited access. ✨</p>
+
+      <div id="premiumBannerFooter">
+        <button class="premCtaPrimary" id="premiumBannerFreeTrial" type="button">
+          <span>Start Free 14-Day Trial</span>
+          <span class="premCtaSubnote">No card needed</span>
+        </button>
+        <a class="premCta premCtaSecondary" id="premiumBannerBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
+          <span>Get Premium for $4.99/month</span>
+          <span class="premCancelNote">Cancel anytime!</span>
+        </a>
+        <button class="premCtaGhost" id="premiumBannerMaybeLater" type="button">Maybe later</button>
+      </div>
     </div>
   </section>
 
@@ -541,6 +644,15 @@ if(detailsLink)detailsLink.addEventListener('click',e=>{ e.preventDefault(); ope
 const pageFreeTrialBtn=$('pageFreeTrialBtn');
 if(pageFreeTrialBtn)pageFreeTrialBtn.addEventListener('click',()=>{
   if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); else openPremiumModal();
+});
+
+const bannerFreeTrialBtn=$('premiumBannerFreeTrial');
+if(bannerFreeTrialBtn)bannerFreeTrialBtn.addEventListener('click',()=>{
+  if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); else openPremiumModal();
+});
+const bannerMaybeLaterBtn=$('premiumBannerMaybeLater');
+if(bannerMaybeLaterBtn)bannerMaybeLaterBtn.addEventListener('click',()=>{
+  const banner=$('premiumBanner'); if(banner) banner.style.display='none';
 });
 </script>
 
