@@ -47,7 +47,7 @@
 <link rel="stylesheet" href="premium-ui.css">
 <style>
 :root{
-  --bg:#0c0e13; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
+  --bg:#f4e2bd; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
   --gold:#e7c9a2; --gold-soft:#d9b98a; --soft:#b3a98f; --violet:#c9a8ff;
   --turq:#7fe9dc; --turq-deep:#38b7a9;
   --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(244,241,234,.15);
@@ -63,23 +63,26 @@ a{color:inherit}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
 
-/* ===== aurora backdrop: gold / violet / turquoise, drifting slowly ===== */
-#stage{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#0c0e13}
+/* ===== aurora backdrop: mostly light gold, gradient into lila, with hazy black + turquoise wisps ===== */
+#stage{position:fixed;inset:0;z-index:-1;overflow:hidden;
+  background:linear-gradient(160deg,#f8ecd2 0%,#f4e2bd 32%,#e9cfb0 58%,#c9a3d6 82%,#a97fc9 100%)}
 #stage .aurora{position:absolute;inset:-10%;
   background:
-    radial-gradient(38% 32% at 18% 12%, rgba(201,168,255,.40), transparent 68%),
-    radial-gradient(34% 30% at 85% 8%,  rgba(127,233,220,.30), transparent 65%),
-    radial-gradient(46% 40% at 78% 78%, rgba(231,201,162,.34), transparent 66%),
-    radial-gradient(40% 34% at 10% 85%, rgba(201,168,255,.22), transparent 65%);
-  filter:blur(10px);animation:auroraDrift 34s ease-in-out infinite alternate}
+    radial-gradient(30% 26% at 82% 10%, rgba(122,60,150,.4), transparent 68%),
+    radial-gradient(40% 34% at 14% 18%, rgba(255,244,214,.75), transparent 66%),
+    radial-gradient(26% 22% at 90% 82%,  rgba(20,16,26,.22), transparent 70%),
+    radial-gradient(24% 20% at 8% 78%,  rgba(127,233,220,.32), transparent 68%),
+    radial-gradient(20% 18% at 55% 40%, rgba(20,16,26,.12), transparent 72%),
+    radial-gradient(34% 30% at 60% 92%, rgba(169,127,201,.38), transparent 68%);
+  filter:blur(16px);animation:auroraDrift 34s ease-in-out infinite alternate}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
   50%{transform:translate3d(1.5%,-2%,0) rotate(4deg) scale(1.05)}
   100%{transform:translate3d(-2%,1.5%,0) rotate(-3deg) scale(1.02)}
 }
 #stage::after{content:'';position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 50% 0%,transparent 34%,rgba(6,7,10,.42) 100%),
-  linear-gradient(to bottom,rgba(6,7,10,.55) 0%,transparent 22%,transparent 55%,rgba(6,7,10,.86) 100%)}
+  background:radial-gradient(120% 90% at 50% 0%,transparent 34%,rgba(20,14,24,.16) 100%),
+  linear-gradient(to bottom,rgba(20,14,24,.22) 0%,transparent 22%,transparent 55%,rgba(30,18,34,.4) 100%)}
 
 /* ===== top corners: hamburger menu (left) + auth icon (right), same placement as the rest of the site ===== */
 #donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
@@ -227,14 +230,14 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
    with nothing cropped and nothing letterboxed — caption/button centered below */
 .area-card{position:relative;display:flex;flex-direction:column;border-radius:20px;overflow:hidden;
   border:1px solid var(--line);text-decoration:none;cursor:pointer;isolation:isolate;
-  background:rgba(14,16,22,.55);transition:all .35s ease}
+  background:#fffbe9;transition:all .35s ease}
 .area-card:hover,.area-card:focus-visible{
   transform:translateY(-6px) scale(1.02);
   box-shadow:0 15px 35px rgba(0,0,0,.5),0 0 25px rgba(212,175,55,.25);
   border-color:var(--gold-soft)}
 
 /* image zone — locked to the source photos' own ratio (1200×630) so cover-fit fills the box exactly, with no crop */
-.card-media{position:relative;flex:0 0 auto;width:100%;aspect-ratio:1200/630;margin:10px 10px 0;border-radius:14px;overflow:hidden}
+.card-media{position:relative;flex:0 0 auto;width:calc(100% - 20px);aspect-ratio:1200/630;margin:10px 10px 0;border-radius:14px;overflow:hidden}
 .card-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   transition:transform .8s cubic-bezier(.22,1,.36,1),filter .4s ease}
 .area-card:hover .card-media img{transform:scale(1.04);filter:saturate(1.08) brightness(1.05)}
@@ -249,22 +252,23 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 /* caption row — sits below the image, centered */
 .card-overlay{position:relative;flex:0 0 auto;z-index:3;display:flex;flex-direction:column;align-items:center;
   text-align:center;gap:3px;padding:10px 14px 12px}
-.card-title{font-family:var(--ui);font-size:clamp(13px,2vw,16px);font-weight:600;letter-spacing:.03em;color:var(--ink)}
-.card-desc{font-family:var(--ui);font-size:clamp(10.5px,1.4vw,12px);line-height:1.4;color:var(--muted)}
+.card-title{font-family:var(--ui);font-size:clamp(13px,2vw,16px);font-weight:600;letter-spacing:.03em;color:#1a1408}
+.card-desc{font-family:var(--ui);font-size:clamp(10.5px,1.4vw,12px);line-height:1.4;color:#3a300f}
 .card-btn{margin-top:6px;align-self:center;display:inline-flex;align-items:center;gap:6px;
-  padding:7px 14px;border-radius:999px;border:1px solid rgba(231,201,162,.55);background:rgba(231,201,162,.1);
-  font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-soft);
+  padding:7px 14px;border-radius:999px;border:1px solid rgba(26,20,8,.35);background:rgba(26,20,8,.06);
+  font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#1a1408;
   transition:background .3s ease,color .3s ease,border-color .3s ease,transform .3s ease}
 .card-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .3s ease}
 .area-card:hover .card-btn,.area-card:focus-visible .card-btn{
-  background:var(--gold);border-color:var(--gold);color:#211407}
+  background:#ffce3d;border-color:#ffce3d;color:#211407;
+  box-shadow:0 0 16px 4px rgba(255,206,61,.75),0 0 34px 12px rgba(255,206,61,.4)}
 .area-card:hover .card-btn svg,.area-card:focus-visible .card-btn svg{transform:translateX(3px)}
 
 @media(max-width:560px){
   .areas-grid{gap:8px}
   #areas{padding:0 8px max(10px,env(safe-area-inset-bottom))}
   .card-badge{font-size:8px;padding:4px 9px 4px 7px;top:8px;right:8px}
-  .card-media{margin:7px 7px 0}
+  .card-media{margin:7px 7px 0;width:calc(100% - 14px)}
   .card-overlay{padding:7px 10px 9px;gap:2px}
   .card-desc{display:none}
   .card-btn{padding:5px 11px;margin-top:4px;font-size:9px}
@@ -368,7 +372,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 </header>
 
 <div class="h1-frame">
-  <h1>ALL-IN-ONE WELLNESS PLATFORM</h1>
+  <h1>CHOOSE YOUR EXPERIENCE</h1>
 </div>
 
 <!-- "how to use" info box -->
