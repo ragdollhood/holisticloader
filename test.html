@@ -47,10 +47,10 @@
 <link rel="stylesheet" href="premium-ui.css">
 <style>
 :root{
-  --bg:#f4e2bd; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
-  --gold:#e7c9a2; --gold-soft:#d9b98a; --soft:#b3a98f; --violet:#c9a8ff;
-  --turq:#7fe9dc; --turq-deep:#38b7a9;
-  --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(244,241,234,.15);
+  --bg:#120e17; --ink:#f8f6f1; --muted:rgba(248,246,241,.82); --faint:rgba(248,246,241,.5);
+  --gold:#f0d19f; --gold-soft:#e0b878; --soft:#c9bfa8; --violet:#d3b6ff;
+  --turq:#8fefe1; --turq-deep:#38b7a9;
+  --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(248,246,241,.16);
   --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -63,26 +63,27 @@ a{color:inherit}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
 
-/* ===== aurora backdrop: mostly light gold, gradient into lila, with hazy black + turquoise wisps ===== */
+/* ===== aurora backdrop: dark base so light text stays readable, with muted gold/violet + hazy turquoise patches ===== */
 #stage{position:fixed;inset:0;z-index:-1;overflow:hidden;
-  background:linear-gradient(160deg,#f8ecd2 0%,#f4e2bd 32%,#e9cfb0 58%,#c9a3d6 82%,#a97fc9 100%)}
+  background:linear-gradient(160deg,#0e0b12 0%,#120e17 30%,#181120 55%,#241a2e 78%,#1a1420 100%)}
 #stage .aurora{position:absolute;inset:-10%;
   background:
-    radial-gradient(30% 26% at 82% 10%, rgba(122,60,150,.4), transparent 68%),
-    radial-gradient(40% 34% at 14% 18%, rgba(255,244,214,.75), transparent 66%),
-    radial-gradient(26% 22% at 90% 82%,  rgba(20,16,26,.22), transparent 70%),
-    radial-gradient(24% 20% at 8% 78%,  rgba(127,233,220,.32), transparent 68%),
-    radial-gradient(20% 18% at 55% 40%, rgba(20,16,26,.12), transparent 72%),
-    radial-gradient(34% 30% at 60% 92%, rgba(169,127,201,.38), transparent 68%);
-  filter:blur(16px);animation:auroraDrift 34s ease-in-out infinite alternate}
+    radial-gradient(30% 26% at 82% 10%, rgba(122,60,150,.4), transparent 70%),
+    radial-gradient(34% 28% at 14% 16%, rgba(190,150,90,.24), transparent 68%),
+    radial-gradient(28% 24% at 90% 84%,  rgba(0,0,0,.5), transparent 72%),
+    radial-gradient(26% 22% at 6% 78%,  rgba(56,183,169,.26), transparent 68%),
+    radial-gradient(24% 20% at 55% 40%, rgba(0,0,0,.35), transparent 74%),
+    radial-gradient(32% 28% at 60% 92%, rgba(120,80,150,.3), transparent 70%);
+  filter:blur(18px);animation:auroraDrift 34s ease-in-out infinite alternate}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
   50%{transform:translate3d(1.5%,-2%,0) rotate(4deg) scale(1.05)}
   100%{transform:translate3d(-2%,1.5%,0) rotate(-3deg) scale(1.02)}
 }
 #stage::after{content:'';position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 50% 0%,transparent 34%,rgba(20,14,24,.16) 100%),
-  linear-gradient(to bottom,rgba(20,14,24,.22) 0%,transparent 22%,transparent 55%,rgba(30,18,34,.4) 100%)}
+  background:radial-gradient(120% 90% at 50% 0%,transparent 28%,rgba(0,0,0,.42) 100%),
+  linear-gradient(to bottom,rgba(0,0,0,.4) 0%,transparent 20%,transparent 55%,rgba(0,0,0,.58) 100%)}
+
 
 /* ===== top corners: hamburger menu (left) + auth icon (right), same placement as the rest of the site ===== */
 #donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
@@ -167,7 +168,7 @@ a{color:inherit}
   visibility:hidden;
 }
 .h1-frame.h1-ready{visibility:visible}
-.h1-frame h1{
+.h1-frame .flap-text{
   font-family:Georgia,serif;font-size:clamp(15px,4.2vw,20px);font-weight:600;
   letter-spacing:.14em;text-align:center;line-height:1.4;max-width:none;margin:0;white-space:nowrap;
   background:linear-gradient(90deg,var(--gold),var(--violet));
@@ -206,136 +207,84 @@ a{color:inherit}
 }
 
 /* ===================================================================
-   HERO — compact intro line above the cards; the cards remain the hero
+   HERO — headline + subhead only. The entry tiles below ARE the CTA.
    =================================================================== */
 #hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(174px,calc(env(safe-area-inset-top) + 164px)) 24px 4px;z-index:1}
-.hero-eyebrow{position:relative;z-index:2;margin:0;font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--turq)}
-.welcome-sub{position:relative;z-index:2;max-width:560px;margin:6px auto 0;font-family:var(--display);font-style:italic;
-  font-size:clamp(13px,1.9vw,16.5px);line-height:1.5;color:var(--muted)}
-
-/* ===== small discoverability line, sits right above the card grid ===== */
-.areas-intro{position:relative;z-index:2;text-align:center;margin:0 0 8px;font-family:var(--ui);
-  font-size:10.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+  text-align:center;padding:max(96px,calc(env(safe-area-inset-top) + 86px)) 24px 14px;z-index:1;gap:12px}
+#heroTitle{position:relative;z-index:2;margin:0;font-family:var(--display);font-weight:700;
+  font-size:clamp(30px,6vw,50px);line-height:1.1;letter-spacing:.01em;
+  background:linear-gradient(90deg,var(--gold),var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+#heroSub{position:relative;z-index:2;max-width:440px;margin:0 auto;font-family:var(--ui);font-weight:400;
+  font-size:clamp(13.5px,1.8vw,16px);line-height:1.5;color:var(--muted)}
+@media(max-width:560px){
+  #hero{padding-top:max(104px,calc(env(safe-area-inset-top) + 94px));gap:9px}
+}
 
 /* ===================================================================
-   FOUR AREAS — fills the remaining viewport, all four visible at once
+   ENTRY TILES — the single decision mechanism on this page. Four rows,
+   same shape, same weight: pick one and go. No competing CTA styles.
    =================================================================== */
 main{flex:1 1 auto;display:flex;flex-direction:column}
-#areas{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:1400px;margin:0 auto;padding:0 14px max(14px,env(safe-area-inset-bottom))}
-
-.areas-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,auto);gap:14px}
-
-/* each card: image on top, sized to the photos' own 1200×630 ratio so it fills its box edge-to-edge
-   with nothing cropped and nothing letterboxed — caption/button centered below */
-.area-card{position:relative;display:flex;flex-direction:column;border-radius:20px;overflow:hidden;
-  border:1px solid var(--line);text-decoration:none;cursor:pointer;isolation:isolate;
-  background:#fffbe9;transition:all .35s ease}
-.area-card:hover,.area-card:focus-visible{
-  transform:translateY(-6px) scale(1.02);
-  box-shadow:0 15px 35px rgba(0,0,0,.5),0 0 25px rgba(212,175,55,.25);
-  border-color:var(--gold-soft)}
-
-/* image zone — locked to the source photos' own ratio (1200×630) so cover-fit fills the box exactly, with no crop */
-.card-media{position:relative;flex:0 0 auto;width:calc(100% - 20px);aspect-ratio:1200/630;margin:10px 10px 0;border-radius:14px;overflow:hidden}
-.card-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  transition:transform .8s cubic-bezier(.22,1,.36,1),filter .4s ease}
-.area-card:hover .card-media img{transform:scale(1.04);filter:saturate(1.08) brightness(1.05)}
-
-/* recommended-first-step badge — top right corner of the image zone (currently unused, kept for future use) */
-.card-badge{position:absolute;top:10px;right:10px;z-index:3;display:inline-flex;align-items:center;gap:5px;
-  padding:5px 11px 5px 9px;border-radius:999px;background:rgba(231,201,162,.16);border:1px solid rgba(231,201,162,.6);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(0,0,0,.32);
-  font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
-.card-badge svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.2}
-
-/* caption row — sits below the image, centered */
-.card-overlay{position:relative;flex:0 0 auto;z-index:3;display:flex;flex-direction:column;align-items:center;
-  text-align:center;gap:3px;padding:10px 14px 12px}
-.card-title{font-family:var(--ui);font-size:clamp(13px,2vw,16px);font-weight:600;letter-spacing:.03em;color:#1a1408}
-.card-desc{font-family:var(--ui);font-size:clamp(13px,1.8vw,15px);line-height:1.45;color:#3a300f}
-.card-btn{margin-top:6px;align-self:center;display:inline-flex;align-items:center;gap:6px;
-  padding:7px 14px;border-radius:999px;border:1px solid rgba(26,20,8,.35);background:rgba(26,20,8,.06);
-  font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#1a1408;
-  transition:background .3s ease,color .3s ease,border-color .3s ease,transform .3s ease}
-.card-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .3s ease}
-.area-card:hover .card-btn,.area-card:focus-visible .card-btn{
-  background:#ffce3d;border-color:#ffce3d;color:#211407}
-.area-card:hover .card-btn svg,.area-card:focus-visible .card-btn svg{transform:translateX(3px)}
-
+#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:840px;margin:0 auto;
+  padding:0 18px;display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:18px} }
+.entry-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+  padding:26px 24px 24px;border-radius:20px;
+  border:1px solid var(--line);background:rgba(20,15,26,.5);text-decoration:none;color:var(--ink);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 8px 22px rgba(0,0,0,.25);
+  transition:background .2s ease,border-color .2s ease,transform .18s ease,box-shadow .22s ease}
+.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-4px);
+  border-color:var(--tile-accent,var(--gold-soft));background:rgba(26,19,33,.66);
+  box-shadow:0 16px 36px rgba(0,0,0,.4),0 0 26px -6px var(--tile-accent,rgba(231,201,162,.5))}
+.entry-tile[data-tint="violet"]{--tile-accent:var(--violet)}
+.entry-tile[data-tint="turq"]{--tile-accent:var(--turq)}
+.entry-tile[data-tint="blend"]{--tile-accent:var(--gold)}
+.entry-tile[data-tint="gold"]{--tile-accent:var(--gold-soft)}
+.tile-ic{flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;background:rgba(248,246,241,.08);border:1px solid var(--line);font-size:24px;
+  transition:transform .2s ease,border-color .2s ease}
+.entry-tile:hover .tile-ic,.entry-tile:focus-visible .tile-ic{transform:scale(1.08);border-color:var(--tile-accent,var(--gold-soft))}
+.tile-text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px;padding-right:24px}
+.tile-name{font-family:var(--display);font-weight:700;font-size:clamp(19px,2.6vw,23px);letter-spacing:.01em;color:var(--ink)}
+.tile-hook{font-family:var(--ui);font-weight:400;font-size:13.5px;line-height:1.5;color:var(--muted)}
+.tile-arrow{position:absolute;top:24px;right:22px;width:16px;height:16px;stroke:var(--soft);fill:none;stroke-width:2.2;
+  transition:transform .2s ease,stroke .2s ease}
+.entry-tile:hover .tile-arrow,.entry-tile:focus-visible .tile-arrow{transform:translateX(3px);stroke:var(--tile-accent,var(--gold))}
 @media(max-width:560px){
-  .areas-grid{gap:8px}
-  #areas{padding:0 8px max(10px,env(safe-area-inset-bottom))}
-  .card-badge{font-size:8px;padding:4px 9px 4px 7px;top:8px;right:8px}
-  .card-media{margin:7px 7px 0;width:calc(100% - 14px)}
-  .card-overlay{padding:7px 10px 9px;gap:2px}
-  .card-desc{display:none}
-  .card-btn{padding:5px 11px;margin-top:4px;font-size:9px}
-  #hero{padding-top:max(184px,calc(env(safe-area-inset-top) + 174px))}
+  .entry-tile{padding:20px 18px 18px}
+  .tile-ic{width:44px;height:44px;font-size:20px}
 }
 
-/* ===== premium teaser — sits in the gap above the premium banner ===== */
-#premiumTeaser{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:22px 20px 20px;gap:8px}
-#premiumTeaserTitle{font-family:var(--display);font-weight:800;letter-spacing:.05em;text-transform:uppercase;
-  font-size:clamp(20px,2.6vw,28px);margin:0;color:#000}
-#premiumTeaserSub{font-family:var(--ui);font-size:clamp(15px,2vw,18px);letter-spacing:.02em;color:#000;margin:0}
-@media(max-width:560px){
-  #premiumTeaser{padding:34px 16px 12px;gap:5px}
-  #premiumTeaserTitle{font-size:15px;letter-spacing:.04em}
-  #premiumTeaserSub{font-size:13.5px}
-}
+#startHint{position:relative;z-index:1;text-align:center;margin:14px 0 0;font-family:var(--ui);
+  font-size:11px;letter-spacing:.06em;color:var(--faint)}
 
-/* ===== premium banner — sits below the four cards ===== */
-#premiumBanner{flex:0 0 auto;display:flex;justify-content:center;padding:8px 14px max(12px,env(safe-area-inset-bottom))}
-#premiumBannerCard{
-  width:min(1000px,94%);border-radius:16px;overflow:hidden;border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(20,22,29,.92),rgba(12,14,19,.96));
-  box-shadow:0 10px 30px rgba(0,0,0,.35);
-  padding:26px clamp(16px,4vw,40px) 28px;
-  transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;
-}
-#premiumBannerCard:hover{transform:translateY(-3px);border-color:var(--gold-soft);
-  box-shadow:0 16px 38px rgba(0,0,0,.45),0 0 22px rgba(212,175,55,.22)}
-#premiumBannerTitle{
-  font-family:var(--display);font-weight:600;letter-spacing:.02em;text-transform:uppercase;
-  font-size:clamp(20px,3.4vw,30px);text-align:center;margin:0 0 22px;
-  background:linear-gradient(90deg,var(--gold),var(--violet));
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-}
-#premiumBannerGrid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:20px 28px;margin-bottom:16px;
-}
-.banFeatGroup{min-width:0}
-.banFeatTitle{
-  display:flex;align-items:center;gap:8px;font-family:var(--ui);font-weight:600;
-  font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);
-  padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line);
-}
-.banFeatTitle .banIcon{font-size:14px;line-height:1}
-.banFeatList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.banFeatList li{
-  display:flex;align-items:center;gap:8px;font-family:var(--ui);font-size:13px;
-  font-weight:500;letter-spacing:.01em;color:var(--ink);
-}
-.banCheck{
-  flex:0 0 auto;width:16px;height:16px;border-radius:50%;display:inline-flex;
-  align-items:center;justify-content:center;color:var(--gold);
-}
-.banCheck svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-#premiumBannerCard .premTagline{
-  text-align:center;color:var(--gold-soft);font-family:var(--ui);font-size:13px;
-  font-weight:600;letter-spacing:.02em;margin:18px 0 20px;
-}
-#premiumBannerFooter{display:flex;flex-direction:column;gap:10px;max-width:520px;margin:0 auto}
-@media(max-width:720px){
-  #premiumBannerGrid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:560px){
-  #premiumBanner{padding:6px 8px max(10px,env(safe-area-inset-bottom))}
-  #premiumBannerCard{padding:20px 16px 22px}
-  #premiumBannerGrid{grid-template-columns:1fr 1fr;gap:16px 20px}
-}
+/* ===== trust strip — one line, no card grid ===== */
+#trustStrip{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:34px 20px 0;
+  max-width:520px;font-family:var(--ui);display:flex;flex-direction:column;gap:6px}
+#trustStrip .stars{color:var(--gold);letter-spacing:.14em;font-size:14px}
+#trustStrip .rating{color:var(--ink);font-weight:600;margin-left:6px;font-size:13px}
+#trustStrip .quote{font-family:var(--display);font-style:italic;color:var(--muted);font-size:14px}
+
+/* ===== premium micro-link — a single quiet line, not a banner ===== */
+#premiumMicro{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:22px 20px 0}
+#pageFreeTrialBtn{display:inline-flex;align-items:center;gap:6px;color:var(--gold-soft);background:none;border:none;
+  font-family:var(--ui);font-weight:500;font-size:12px;letter-spacing:.02em;cursor:pointer;
+  border-bottom:1px solid rgba(231,201,162,.3);transition:color .2s ease,border-color .2s ease}
+#pageFreeTrialBtn:hover{color:var(--gold);border-color:var(--gold)}
+
+/* ===== footer ===== */
+#siteFooter{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  gap:22px;flex-wrap:wrap;padding:26px 20px max(26px,env(safe-area-inset-bottom));
+  margin-top:26px}
+#siteFooter a{color:var(--muted);text-decoration:none;font-family:var(--ui);font-size:11.5px;
+  letter-spacing:.06em;text-transform:uppercase;transition:color .2s ease}
+#siteFooter a:hover{color:var(--ink)}
+
+/* ===== homepage-only: hide the tab bar so the tiles are the only choice UI ===== */
+#topTabs{display:none !important}
+#topNav{padding-bottom:2px}
 </style>
 </head>
 <body>
@@ -382,17 +331,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   <div id="topNavLine"></div>
 </header>
 
-<div class="h1-frame">
-  <h1>CHOOSE YOUR EXPERIENCE</h1>
-</div>
-
 <!-- "how to use" info box -->
 <div id="howToBox">
   <button id="howToClose" type="button" aria-label="Close">
     <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
   </button>
   <h3>How to use</h3>
-  <p>This is home base. Tap any of the four cards below to jump straight into Guided Breathing, the Soundscape Creator, the Nutrition Tracker or Yoga. Everyone gets a free taste of each area; Premium unlocks every scene, instrument, program and pose across all four, plus cross-device sync — try it free for 14 days, no card required.</p>
+  <p>This is home base. Tap any of the four options below to jump straight into Breathing, Sound, Yoga or Nutrition — no sign-up needed to start. Everyone gets a free taste of each area; Premium unlocks every scene, instrument, program and pose across all four, plus cross-device sync — try it free for 14 days, no card required.</p>
 </div>
 
 <!-- premium modal -->
@@ -426,121 +371,65 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 <!-- ===== page content ===== -->
 <main>
 
-  <!-- HERO — kept as spacing only, clears the hanging flap above; heading removed -->
-  <section id="hero" aria-hidden="true"></section>
-
-  <!-- FOUR AREAS -->
-  <section id="areas" aria-label="Choose a practice">
-    <div class="areas-grid">
-
-      <a class="area-card" data-tint="violet" href="breathing.html">
-        <div class="card-media">
-          <img src="images/start-breathing.jpg" alt="Guided Breathing" loading="lazy">
-        </div>
-        <div class="card-overlay">
-          <span class="card-title">SLEEP BETTER TONIGHT</span>
-          <span class="card-desc">Guided breathing exercises to calm your mind. Choose your background, instruments & noises.</span>
-          <span class="card-btn">Enter Experience <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a class="area-card" data-tint="turq" href="instruments.html">
-        <div class="card-media">
-          <img src="images/start-soundscape.jpg" alt="Soundscape Creator" loading="lazy">
-        </div>
-        <div class="card-overlay">
-          <span class="card-title">CREATE INSTANT CALM (Personalized!)</span>
-          <span class="card-desc">Reduce your stress. Tap the instrument to play a melody, or loop to create your own meditation session.</span>
-          <span class="card-btn">Create Soundscape <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a class="area-card" data-tint="gold" href="nutriloader.html">
-        <div class="card-media">
-          <img src="images/start-nutriloader.jpg" alt="Nutrition Tracker" loading="lazy">
-        </div>
-        <div class="card-overlay">
-          <span class="card-title">BUILD HEALTHIER HABITS</span>
-          <span class="card-desc">Make it fun to eat healthy! See what the nutrients does to your body. Graphs will show your progress.</span>
-          <span class="card-btn">Open Tracker <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-      <a class="area-card" data-tint="blend" href="yoga-loader.html">
-        <div class="card-media">
-          <img src="images/start-yoga.jpg" alt="Yoga" loading="lazy">
-        </div>
-        <div class="card-overlay">
-          <span class="card-title">MOVE. BREATHE. FEEL BETTER.</span>
-          <span class="card-desc">Gentle movement and breathwork designed to help you feel lighter, calmer, and more energized.</span>
-          <span class="card-btn">Start Practice <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </div>
-      </a>
-
-    </div>
+  <!-- HERO -->
+  <section id="hero">
+    <h1 id="heroTitle">Choose Your Goal. Start Instantly.</h1>
+    <p id="heroSub">Feel better in minutes. No experience needed. No sign-up required.</p>
   </section>
 
-  <!-- PREMIUM TEASER — gap above the premium banner -->
-  <div id="premiumTeaser">
-    <p id="premiumTeaserTitle">Try Premium free for 14 days</p>
-    <p id="premiumTeaserSub">No credit card needed. No commitment.</p>
+  <section id="entryTiles" aria-label="Choose your goal">
+    <a class="entry-tile" data-tint="violet" href="breathing.html">
+      <span class="tile-ic" aria-hidden="true">🌙</span>
+      <span class="tile-text">
+        <span class="tile-name">Sleep Better Tonight</span>
+        <span class="tile-hook">Guided breathing and calming sound to help you unwind.</span>
+      </span>
+      <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+    <a class="entry-tile" data-tint="turq" href="instruments.html">
+      <span class="tile-ic" aria-hidden="true">🎵</span>
+      <span class="tile-text">
+        <span class="tile-name">Reduce Stress</span>
+        <span class="tile-hook">Create your own calming soundscape in seconds.</span>
+      </span>
+      <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+    <a class="entry-tile" data-tint="blend" href="yoga-loader.html">
+      <span class="tile-ic" aria-hidden="true">⚡</span>
+      <span class="tile-text">
+        <span class="tile-name">Boost Energy</span>
+        <span class="tile-hook">Gentle movement and breathing to wake up your body.</span>
+      </span>
+      <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+    <a class="entry-tile" data-tint="gold" href="nutriloader.html">
+      <span class="tile-ic" aria-hidden="true">🥗</span>
+      <span class="tile-text">
+        <span class="tile-name">Eat Better Today</span>
+        <span class="tile-hook">Track habits and build a healthier routine.</span>
+      </span>
+      <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </section>
+
+  <p id="startHint">Tap one — no sign-up needed to start.</p>
+
+  <div id="trustStrip">
+    <div><span class="stars">★★★★★</span><span class="rating">4.9/5</span></div>
+    <div class="quote">"Helping people sleep, relax and reset in minutes."</div>
   </div>
 
-  <!-- PREMIUM BANNER — below the four cards -->
-  <section id="premiumBanner" aria-label="Premium">
-    <div id="premiumBannerCard">
-      <h2 id="premiumBannerTitle">All-in-One Wellness Platform</h2>
+  <p id="premiumMicro">
+    <button id="pageFreeTrialBtn" type="button">Curious about Premium? Try free for 14 days →</button>
+  </p>
 
-      <div id="premiumBannerGrid">
-        <div class="banFeatGroup">
-          <div class="banFeatTitle"><span class="banIcon">🧘</span>Yoga</div>
-          <ul class="banFeatList">
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>8 Programs</li>
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>6 Categories</li>
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>8 Benefit Filters</li>
-          </ul>
-        </div>
-        <div class="banFeatGroup">
-          <div class="banFeatTitle"><span class="banIcon">🌬️</span>Breathing</div>
-          <ul class="banFeatList">
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>26 Scenes</li>
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Personal Backgrounds</li>
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>19 Instruments</li>
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>8 Guided Journeys</li>
-          </ul>
-        </div>
-        <div class="banFeatGroup">
-          <div class="banFeatTitle"><span class="banIcon">🎵</span>Sound Healing</div>
-          <ul class="banFeatList">
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>16 Instruments</li>
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Signal Generator</li>
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Record &amp; Save</li>
-          </ul>
-        </div>
-        <div class="banFeatGroup">
-          <div class="banFeatTitle"><span class="banIcon">🥗</span>Nutrition</div>
-          <ul class="banFeatList">
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Daily Tracking</li>
-            <li><span class="banCheck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>Cross-Device Sync</li>
-          </ul>
-        </div>
-      </div>
-
-      <p class="premTagline">Everything unlocked. One membership. Unlimited access. ✨</p>
-
-      <div id="premiumBannerFooter">
-        <button class="premCtaPrimary" id="premiumBannerFreeTrial" type="button">
-          <span>Start Free 14-Day Trial</span>
-          <span class="premCtaSubnote">No card needed</span>
-        </button>
-        <a class="premCta premCtaSecondary" id="premiumBannerBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
-          <span>Get Premium for $4.99/month</span>
-          <span class="premCancelNote">Cancel anytime!</span>
-        </a>
-        <button class="premCtaGhost" id="premiumBannerMaybeLater" type="button">Maybe later</button>
-      </div>
-    </div>
-  </section>
+  <!-- FOOTER -->
+  <footer id="siteFooter">
+    <a href="about.html">About</a>
+    <a href="mailto:holisticloader@gmail.com">Contact</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+  </footer>
 
 </main>
 
