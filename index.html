@@ -8,7 +8,7 @@
 <title>Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga</title>
 <meta name="description" content="Holistic Loader — guided breathing, sound healing, nutrition tracking and yoga in one calm, unified practice space. Start your 14-day free trial, no card required.">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-<meta name="theme-color" content="#14100a">
+<meta name="theme-color" content="#1c150c">
 <meta name="application-name" content="Holistic Loader">
 <meta name="apple-mobile-web-app-title" content="Holistic Loader">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" href="images/icon-holistic.png">
 <link rel="apple-touch-icon" href="images/icon-holistic.png">
 <link rel="shortcut icon" href="images/icon-holistic.png">
-<meta name="msapplication-TileColor" content="#14100a">
+<meta name="msapplication-TileColor" content="#1c150c">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -47,9 +47,11 @@
 <link rel="stylesheet" href="premium-ui.css">
 <style>
 :root{
-  --bg:#120e17; --ink:#f8f6f1; --muted:rgba(248,246,241,.82); --faint:rgba(248,246,241,.5);
+  --bg:#17120e; --ink:#f8f6f1; --muted:rgba(248,246,241,.82); --faint:rgba(248,246,241,.5);
   --gold:#f0d19f; --gold-soft:#e0b878; --soft:#c9bfa8; --violet:#d3b6ff;
   --turq:#8fefe1; --turq-deep:#38b7a9;
+  --champagne:#f3d9ae; --champagne-deep:#e8c894; --lavender:#d9c8f0;
+  --deep-purple:#b98cf0; --sunrise:#ffb454; --sunrise-deep:#ff8a4d; --leaf:#9adf9e; --leaf-deep:#5fb46a;
   --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(248,246,241,.16);
   --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
@@ -63,27 +65,28 @@ a{color:inherit}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
 
-/* ===== aurora backdrop: dark warm base, gold-forward with soft blended violet + hazy turquoise patches ===== */
+/* ===== aurora backdrop: bright golden-yellow forward, blending out to violet + hazy turquoise ===== */
 #stage{position:fixed;inset:0;z-index:-1;overflow:hidden;
-  background:linear-gradient(160deg,#100c0a 0%,#161009 28%,#1f160c 52%,#241b12 76%,#191209 100%)}
+  background:linear-gradient(160deg,#1c150c 0%,#302510 24%,#4a3814 48%,#544015 70%,#2c2110 100%)}
 #stage .aurora{position:absolute;inset:-14%;
   background:
-    radial-gradient(46% 40% at 80% 8%,  rgba(224,184,120,.46), transparent 72%),
-    radial-gradient(50% 44% at 10% 14%, rgba(240,209,159,.32), transparent 74%),
-    radial-gradient(30% 26% at 90% 86%, rgba(0,0,0,.5),        transparent 72%),
-    radial-gradient(36% 32% at 8% 82%,  rgba(122,60,150,.22),  transparent 72%),
-    radial-gradient(26% 22% at 55% 42%, rgba(0,0,0,.32),       transparent 74%),
-    radial-gradient(44% 38% at 62% 94%, rgba(199,150,80,.34),  transparent 72%),
-    radial-gradient(24% 20% at 22% 55%, rgba(56,183,169,.14),  transparent 68%);
-  filter:blur(30px);animation:auroraDrift 34s ease-in-out infinite alternate}
+    radial-gradient(52% 46% at 76% 6%,  rgba(255,225,130,.74), transparent 74%),
+    radial-gradient(56% 50% at 14% 10%, rgba(255,244,200,.56), transparent 76%),
+    radial-gradient(30% 26% at 90% 86%, rgba(0,0,0,.28),        transparent 72%),
+    radial-gradient(36% 32% at 8% 82%,  rgba(190,150,225,.2),  transparent 74%),
+    radial-gradient(26% 22% at 55% 42%, rgba(0,0,0,.12),        transparent 74%),
+    radial-gradient(48% 42% at 58% 92%, rgba(255,196,110,.6),  transparent 72%),
+    radial-gradient(24% 20% at 22% 55%, rgba(94,210,196,.13),  transparent 68%),
+    radial-gradient(26% 22% at 46% 16%, rgba(255,238,180,.48), transparent 70%);
+  filter:blur(26px);animation:auroraDrift 34s ease-in-out infinite alternate}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
   50%{transform:translate3d(1.5%,-2%,0) rotate(4deg) scale(1.05)}
   100%{transform:translate3d(-2%,1.5%,0) rotate(-3deg) scale(1.02)}
 }
 #stage::after{content:'';position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 50% 0%,transparent 28%,rgba(0,0,0,.42) 100%),
-  linear-gradient(to bottom,rgba(0,0,0,.4) 0%,transparent 20%,transparent 55%,rgba(0,0,0,.58) 100%)}
+  background:radial-gradient(120% 90% at 50% 0%,transparent 16%,rgba(0,0,0,.36) 100%),
+  linear-gradient(to bottom,rgba(0,0,0,.32) 0%,transparent 22%,transparent 55%,rgba(0,0,0,.45) 100%)}
 
 
 /* ===== top corners: hamburger menu (left) + auth icon (right), same placement as the rest of the site ===== */
@@ -211,15 +214,31 @@ a{color:inherit}
    HERO — headline + subhead only. The entry tiles below ARE the CTA.
    =================================================================== */
 #hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(96px,calc(env(safe-area-inset-top) + 86px)) 24px 14px;z-index:1;gap:12px}
+  text-align:center;padding:max(92px,calc(env(safe-area-inset-top) + 82px)) 24px 10px;z-index:1;gap:14px}
+#hero::before{content:'';position:absolute;z-index:0;pointer-events:none;
+  left:50%;top:-14%;width:min(800px,144%);height:380px;transform:translateX(-50%);
+  background:
+    radial-gradient(55% 75% at 32% 20%, rgba(217,190,240,.15), transparent 72%),
+    radial-gradient(62% 82% at 72% 8%,  rgba(255,214,110,.44), transparent 74%),
+    radial-gradient(50% 65% at 50% 50%, rgba(255,232,175,.22), transparent 78%);
+  filter:blur(40px)}
 #heroTitle{position:relative;z-index:2;margin:0;font-family:var(--display);font-weight:700;
-  font-size:clamp(30px,6vw,50px);line-height:1.1;letter-spacing:.01em;
-  background:linear-gradient(90deg,var(--gold),var(--violet));
-  -webkit-background-clip:text;background-clip:text;color:transparent}
+  font-size:clamp(38px,9vw,66px);line-height:1.07;letter-spacing:.008em;
+  background:linear-gradient(100deg,#fff8ec 0%,#f6e6c8 20%,#f0d19f 40%,#fffbf0 58%,#e8c894 78%,#fdf3df 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:.65px rgba(240,209,159,.5);
+  text-shadow:
+    0 0 1px rgba(255,248,236,.65),
+    0 1px 0 rgba(255,255,255,.4),
+    0 2px 3px rgba(0,0,0,.18),
+    0 8px 20px rgba(231,201,162,.24),
+    0 0 26px rgba(240,209,159,.32),
+    0 0 46px rgba(255,214,150,.16)}
 #heroSub{position:relative;z-index:2;max-width:440px;margin:0 auto;font-family:var(--ui);font-weight:400;
-  font-size:clamp(13.5px,1.8vw,16px);line-height:1.5;color:var(--muted)}
+  font-size:clamp(14px,1.9vw,17px);line-height:1.5;color:var(--muted);
+  text-shadow:0 1px 8px rgba(0,0,0,.55)}
 @media(max-width:560px){
-  #hero{padding-top:max(104px,calc(env(safe-area-inset-top) + 94px));gap:9px}
+  #hero{padding-top:max(98px,calc(env(safe-area-inset-top) + 88px));gap:10px}
 }
 
 /* ===================================================================
@@ -227,62 +246,118 @@ a{color:inherit}
    same shape, same weight: pick one and go. No competing CTA styles.
    =================================================================== */
 main{flex:1 1 auto;display:flex;flex-direction:column}
-#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:840px;margin:0 auto;
-  padding:0 18px;display:grid;grid-template-columns:1fr;gap:14px}
-@media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:18px} }
+#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:880px;margin:0 auto;
+  padding:0 16px;display:grid;grid-template-columns:1fr;gap:13px}
+@media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:16px} }
+/* soft gold ambient glow sitting behind the whole tile grid */
+#entryTiles::before{content:'';position:absolute;z-index:0;left:50%;top:-10%;
+  width:126%;height:128%;transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(60% 55% at 50% 4%, rgba(255,214,140,.16), transparent 72%);
+  filter:blur(50px)}
 .entry-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;
-  min-height:190px;padding:26px 24px 24px;border-radius:28px;overflow:hidden;
-  border:1px solid var(--line);background-color:#151019;background-size:cover;background-position:center;
+  min-height:212px;padding:28px 26px 26px;border-radius:26px;overflow:hidden;
+  border:none;background-color:#1c1712;background-size:cover;background-position:center;
   text-decoration:none;color:var(--ink);
-  box-shadow:0 8px 22px rgba(0,0,0,.3);
-  transition:border-color .2s ease,transform .18s ease,box-shadow .22s ease}
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.22),
+    0 0 30px rgba(231,201,162,.14),
+    inset 0 1px 1px rgba(255,255,255,.06),
+    inset 0 -26px 36px -18px rgba(0,0,0,.34);
+  transition:transform .26s cubic-bezier(.22,1,.36,1),box-shadow .32s ease,background-size .6s ease}
+/* layer 1: default soft image overlay (fallback — each card below gets its own emotional palette) */
 .entry-tile::before{content:'';position:absolute;inset:0;z-index:1;
   background:
-    linear-gradient(135deg,rgba(8,5,14,.86),rgba(20,10,30,.64)),
-    radial-gradient(circle at top left,var(--tile-accent,rgba(231,201,162,.22)),transparent 45%);
-  opacity:.9;transition:opacity .25s ease}
-.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-4px);
-  border-color:var(--tile-accent,var(--gold-soft));
-  box-shadow:0 20px 50px rgba(0,0,0,.45),0 0 26px -6px var(--tile-accent,rgba(231,201,162,.5))}
-.entry-tile:hover::before,.entry-tile:focus-visible::before{opacity:.78}
-.entry-tile[data-tint="violet"]{--tile-accent:var(--violet)}
-.entry-tile[data-tint="turq"]{--tile-accent:var(--turq)}
-.entry-tile[data-tint="blend"]{--tile-accent:var(--gold)}
-.entry-tile[data-tint="gold"]{--tile-accent:var(--gold-soft)}
+    linear-gradient(150deg,rgba(14,10,18,.7) 10%,rgba(24,14,28,.4) 60%,rgba(14,10,18,.58) 100%),
+    radial-gradient(circle at top left,var(--tile-accent,rgba(231,201,162,.26)),transparent 48%),
+    linear-gradient(to top,rgba(0,0,0,.4) 0%,transparent 42%);
+  opacity:.86;transition:opacity .3s ease}
+/* layer: outer gradient border — thin luxury ring, gold → champagne → lavender → plum, masked to a stroke only */
+.entry-tile::after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;
+  border-radius:inherit;padding:2px;
+  background:linear-gradient(135deg,
+    rgba(240,209,159,.6)  0%,
+    rgba(247,231,197,.5) 28%,
+    rgba(211,182,255,.4) 60%,
+    rgba(80,44,80,.55)   100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:.62;transition:opacity .3s ease,filter .3s ease}
+.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-4px);background-size:110%;
+  box-shadow:
+    0 28px 56px rgba(0,0,0,.32),
+    0 0 42px rgba(231,201,162,.22),
+    inset 0 1px 1px rgba(255,255,255,.08),
+    inset 0 -26px 36px -18px rgba(0,0,0,.38)}
+.entry-tile:hover::before,.entry-tile:focus-visible::before{opacity:.72}
+.entry-tile:hover::after,.entry-tile:focus-visible::after{opacity:.95;filter:brightness(1.15)}
+
+/* ---- per-card emotional palette: each goal now reads as a distinct mood, not a shared dark tint ---- */
+/* Sleep Better Tonight — soft champagne + bedside lamp glow + cream + gentle moonlight lavender */
+.entry-tile[data-tint="sleep"]{--tile-accent:var(--champagne)}
+.entry-tile[data-tint="sleep"]::before{
+  background:
+    linear-gradient(150deg,rgba(56,40,30,.42) 6%,rgba(255,222,176,.24) 46%,rgba(212,196,236,.26) 100%),
+    radial-gradient(58% 52% at 24% 14%, rgba(255,214,150,.58), transparent 70%),
+    radial-gradient(46% 46% at 82% 88%, rgba(216,198,240,.3), transparent 72%),
+    linear-gradient(to top,rgba(32,22,20,.32) 0%,transparent 48%);
+  opacity:.78}
+/* Reduce Stress — deep purple, singing-bowl calm, sound-healing glow */
+.entry-tile[data-tint="stress"]{--tile-accent:var(--deep-purple)}
+.entry-tile[data-tint="stress"]::before{
+  background:
+    linear-gradient(150deg,rgba(24,10,36,.76) 10%,rgba(50,22,70,.48) 55%,rgba(16,6,26,.66) 100%),
+    radial-gradient(55% 50% at 22% 16%, rgba(185,125,235,.42), transparent 70%),
+    linear-gradient(to top,rgba(12,5,20,.46) 0%,transparent 42%);
+  opacity:.88}
+/* Boost Energy — sunrise gold, warm vibrant light */
+.entry-tile[data-tint="energy"]{--tile-accent:var(--sunrise)}
+.entry-tile[data-tint="energy"]::before{
+  background:
+    linear-gradient(150deg,rgba(44,22,8,.56) 8%,rgba(255,172,64,.3) 48%,rgba(255,122,44,.24) 100%),
+    radial-gradient(60% 55% at 76% 12%, rgba(255,198,96,.62), transparent 72%),
+    linear-gradient(to top,rgba(30,14,4,.36) 0%,transparent 44%);
+  opacity:.82}
+/* Eat Better Today — colorful, fresh greens, natural vitality */
+.entry-tile[data-tint="eat"]{--tile-accent:var(--leaf)}
+.entry-tile[data-tint="eat"]::before{
+  background:
+    linear-gradient(150deg,rgba(10,26,14,.56) 8%,rgba(130,208,128,.26) 48%,rgba(60,150,90,.22) 100%),
+    radial-gradient(55% 50% at 22% 18%, rgba(166,226,142,.5), transparent 72%),
+    linear-gradient(to top,rgba(8,20,10,.36) 0%,transparent 44%);
+  opacity:.82}
 .tile-ic{position:relative;z-index:2;flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
   border-radius:50%;background:rgba(20,15,20,.42);border:1px solid rgba(248,246,241,.28);font-size:24px;
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   transition:transform .2s ease,border-color .2s ease}
 .entry-tile:hover .tile-ic,.entry-tile:focus-visible .tile-ic{transform:scale(1.08);border-color:var(--tile-accent,var(--gold-soft))}
 .tile-text{position:relative;z-index:2;flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px;padding-right:24px}
-.tile-name{font-family:var(--display);font-weight:700;font-size:clamp(19px,2.6vw,23px);letter-spacing:.01em;
-  color:#fffdf9;text-shadow:0 2px 10px rgba(0,0,0,.45)}
+.tile-name{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.8vw,24px);letter-spacing:.01em;
+  color:#fffdf9;text-shadow:0 2px 10px rgba(0,0,0,.5)}
 .tile-hook{font-family:var(--ui);font-weight:400;font-size:13.5px;line-height:1.5;
-  color:rgba(248,244,236,.92);text-shadow:0 1px 6px rgba(0,0,0,.4)}
-.tile-arrow{position:absolute;z-index:2;top:24px;right:22px;width:16px;height:16px;stroke:rgba(248,246,241,.85);fill:none;stroke-width:2.2;
+  color:rgba(248,244,236,.94);text-shadow:0 1px 6px rgba(0,0,0,.45)}
+.tile-arrow{position:absolute;z-index:2;top:26px;right:24px;width:17px;height:17px;stroke:rgba(248,246,241,.9);fill:none;stroke-width:2.2;
   filter:drop-shadow(0 1px 4px rgba(0,0,0,.4));
   transition:transform .2s ease,stroke .2s ease}
-.entry-tile:hover .tile-arrow,.entry-tile:focus-visible .tile-arrow{transform:translateX(3px);stroke:var(--tile-accent,var(--gold))}
+.entry-tile:hover .tile-arrow,.entry-tile:focus-visible .tile-arrow{transform:translateX(4px);stroke:var(--tile-accent,var(--gold))}
 @media(max-width:560px){
-  .entry-tile{padding:20px 18px 18px;min-height:170px}
+  .entry-tile{padding:22px 20px 20px;min-height:184px}
   .tile-ic{width:44px;height:44px;font-size:20px}
 }
-
-#startHint{position:relative;z-index:1;text-align:center;margin:14px 0 0;font-family:var(--ui);
-  font-size:11px;letter-spacing:.06em;color:var(--faint)}
 
 /* ===== trust strip — one line, no card grid ===== */
 #trustStrip{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:34px 20px 0;
   max-width:520px;font-family:var(--ui);display:flex;flex-direction:column;gap:6px}
-#trustStrip .stars{color:var(--gold);letter-spacing:.14em;font-size:14px}
-#trustStrip .rating{color:var(--ink);font-weight:600;margin-left:6px;font-size:13px}
-#trustStrip .quote{font-family:var(--display);font-style:italic;color:var(--muted);font-size:14px}
+#trustStrip .stars{color:var(--gold);letter-spacing:.14em;font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+#trustStrip .rating{color:var(--ink);font-weight:600;margin-left:6px;font-size:13px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+#trustStrip .quote{font-family:var(--display);font-style:italic;color:var(--muted);font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 
 /* ===== premium micro-link — a single quiet line, not a banner ===== */
 #premiumMicro{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:22px 20px 0}
 #pageFreeTrialBtn{display:inline-flex;align-items:center;gap:6px;color:var(--gold-soft);background:none;border:none;
   font-family:var(--ui);font-weight:500;font-size:12px;letter-spacing:.02em;cursor:pointer;
-  border-bottom:1px solid rgba(231,201,162,.3);transition:color .2s ease,border-color .2s ease}
+  border-bottom:1px solid rgba(231,201,162,.3);transition:color .2s ease,border-color .2s ease;
+  text-shadow:0 1px 6px rgba(0,0,0,.5)}
 #pageFreeTrialBtn:hover{color:var(--gold);border-color:var(--gold)}
 
 /* ===== footer ===== */
@@ -290,7 +365,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   gap:22px;flex-wrap:wrap;padding:26px 20px max(26px,env(safe-area-inset-bottom));
   margin-top:26px}
 #siteFooter a{color:var(--muted);text-decoration:none;font-family:var(--ui);font-size:11.5px;
-  letter-spacing:.06em;text-transform:uppercase;transition:color .2s ease}
+  letter-spacing:.06em;text-transform:uppercase;transition:color .2s ease;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 #siteFooter a:hover{color:var(--ink)}
 
 /* ===== homepage-only: hide the tab bar so the tiles are the only choice UI ===== */
@@ -299,7 +374,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 </style>
 </head>
 <body>
-<noscript><div style="position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#14100a;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6">
+<noscript><div style="position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;background:#1c150c;color:#f4f1ea;font-family:'Outfit',system-ui,sans-serif;line-height:1.6">
   <div><strong>Holistic Loader</strong><br>Please enable JavaScript to use this page.</div>
 </div></noscript>
 
@@ -389,7 +464,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   </section>
 
   <section id="entryTiles" aria-label="Choose your goal">
-    <a class="entry-tile" data-tint="violet" href="breathing.html" style="background-image:url('images/start-sleep.jpg')">
+    <a class="entry-tile" data-tint="sleep" href="breathing.html" style="background-image:url('images/start-sleep.jpg')">
       <span class="tile-ic" aria-hidden="true">🌙</span>
       <span class="tile-text">
         <span class="tile-name">Sleep Better Tonight</span>
@@ -397,7 +472,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
-    <a class="entry-tile" data-tint="turq" href="instruments.html" style="background-image:url('images/start-stress.jpg')">
+    <a class="entry-tile" data-tint="stress" href="instruments.html" style="background-image:url('images/start-stress.jpg')">
       <span class="tile-ic" aria-hidden="true">🎵</span>
       <span class="tile-text">
         <span class="tile-name">Reduce Stress</span>
@@ -405,7 +480,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
-    <a class="entry-tile" data-tint="blend" href="yoga-loader.html" style="background-image:url('images/start-energy.jpg')">
+    <a class="entry-tile" data-tint="energy" href="yoga-loader.html" style="background-image:url('images/start-energy.jpg')">
       <span class="tile-ic" aria-hidden="true">⚡</span>
       <span class="tile-text">
         <span class="tile-name">Boost Energy</span>
@@ -413,7 +488,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
-    <a class="entry-tile" data-tint="gold" href="nutriloader.html" style="background-image:url('images/start-bowl.jpg')">
+    <a class="entry-tile" data-tint="eat" href="nutriloader.html" style="background-image:url('images/start-bowl.jpg')">
       <span class="tile-ic" aria-hidden="true">🥗</span>
       <span class="tile-text">
         <span class="tile-name">Eat Better Today</span>
@@ -423,15 +498,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     </a>
   </section>
 
-  <p id="startHint">Tap one to start</p>
-
   <div id="trustStrip">
     <div><span class="stars">★★★★★</span><span class="rating">4.9/5</span></div>
-    <div class="quote">"Helping people sleep, relax and reset in minutes."</div>
+    <div class="quote">"Calmer nights. Brighter days. Real balance."</div>
   </div>
 
   <p id="premiumMicro">
-    <button id="pageFreeTrialBtn" type="button">Curious about Premium? Try free for 14 days →</button>
+    <button id="pageFreeTrialBtn" type="button">Want to go deeper? Try Premium free for 14 days →</button>
   </p>
 
   <!-- FOOTER -->
