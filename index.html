@@ -275,6 +275,18 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   #hero{padding-top:max(184px,calc(env(safe-area-inset-top) + 174px))}
 }
 
+/* ===== premium teaser — sits in the gap above the premium banner ===== */
+#premiumTeaser{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:22px 20px 20px;gap:8px}
+#premiumTeaserTitle{font-family:var(--display);font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  font-size:clamp(20px,2.6vw,28px);margin:0;color:#000}
+#premiumTeaserSub{font-family:var(--ui);font-size:14px;letter-spacing:.02em;color:#000;margin:0}
+@media(max-width:560px){
+  #premiumTeaser{padding:34px 16px 12px;gap:5px}
+  #premiumTeaserTitle{font-size:13.5px;letter-spacing:.04em}
+  #premiumTeaserSub{font-size:11px}
+}
+
 /* ===== premium banner — sits below the four cards ===== */
 #premiumBanner{flex:0 0 auto;display:flex;justify-content:center;padding:8px 14px max(12px,env(safe-area-inset-bottom))}
 #premiumBannerCard{
@@ -468,6 +480,12 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 
     </div>
   </section>
+
+  <!-- PREMIUM TEASER — gap above the premium banner -->
+  <div id="premiumTeaser">
+    <p id="premiumTeaserTitle">Try Premium free for 14 days</p>
+    <p id="premiumTeaserSub">No credit card needed. No commitment.</p>
+  </div>
 
   <!-- PREMIUM BANNER — below the four cards -->
   <section id="premiumBanner" aria-label="Premium">
