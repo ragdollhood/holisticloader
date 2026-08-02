@@ -230,30 +230,40 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   padding:0 18px;display:grid;grid-template-columns:1fr;gap:14px}
 @media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:18px} }
 .entry-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;
-  padding:26px 24px 24px;border-radius:20px;
-  border:1px solid var(--line);background:rgba(20,15,26,.5);text-decoration:none;color:var(--ink);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  box-shadow:0 8px 22px rgba(0,0,0,.25);
-  transition:background .2s ease,border-color .2s ease,transform .18s ease,box-shadow .22s ease}
+  min-height:190px;padding:26px 24px 24px;border-radius:28px;overflow:hidden;
+  border:1px solid var(--line);background-color:#151019;background-size:cover;background-position:center;
+  text-decoration:none;color:var(--ink);
+  box-shadow:0 8px 22px rgba(0,0,0,.3);
+  transition:border-color .2s ease,transform .18s ease,box-shadow .22s ease}
+.entry-tile::before{content:'';position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(135deg,rgba(8,5,14,.86),rgba(20,10,30,.64)),
+    radial-gradient(circle at top left,var(--tile-accent,rgba(231,201,162,.22)),transparent 45%);
+  opacity:.9;transition:opacity .25s ease}
 .entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-4px);
-  border-color:var(--tile-accent,var(--gold-soft));background:rgba(26,19,33,.66);
-  box-shadow:0 16px 36px rgba(0,0,0,.4),0 0 26px -6px var(--tile-accent,rgba(231,201,162,.5))}
+  border-color:var(--tile-accent,var(--gold-soft));
+  box-shadow:0 20px 50px rgba(0,0,0,.45),0 0 26px -6px var(--tile-accent,rgba(231,201,162,.5))}
+.entry-tile:hover::before,.entry-tile:focus-visible::before{opacity:.78}
 .entry-tile[data-tint="violet"]{--tile-accent:var(--violet)}
 .entry-tile[data-tint="turq"]{--tile-accent:var(--turq)}
 .entry-tile[data-tint="blend"]{--tile-accent:var(--gold)}
 .entry-tile[data-tint="gold"]{--tile-accent:var(--gold-soft)}
-.tile-ic{flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
-  border-radius:50%;background:rgba(248,246,241,.08);border:1px solid var(--line);font-size:24px;
+.tile-ic{position:relative;z-index:2;flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;background:rgba(20,15,20,.42);border:1px solid rgba(248,246,241,.28);font-size:24px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   transition:transform .2s ease,border-color .2s ease}
 .entry-tile:hover .tile-ic,.entry-tile:focus-visible .tile-ic{transform:scale(1.08);border-color:var(--tile-accent,var(--gold-soft))}
-.tile-text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px;padding-right:24px}
-.tile-name{font-family:var(--display);font-weight:700;font-size:clamp(19px,2.6vw,23px);letter-spacing:.01em;color:var(--ink)}
-.tile-hook{font-family:var(--ui);font-weight:400;font-size:13.5px;line-height:1.5;color:var(--muted)}
-.tile-arrow{position:absolute;top:24px;right:22px;width:16px;height:16px;stroke:var(--soft);fill:none;stroke-width:2.2;
+.tile-text{position:relative;z-index:2;flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px;padding-right:24px}
+.tile-name{font-family:var(--display);font-weight:700;font-size:clamp(19px,2.6vw,23px);letter-spacing:.01em;
+  color:#fffdf9;text-shadow:0 2px 10px rgba(0,0,0,.45)}
+.tile-hook{font-family:var(--ui);font-weight:400;font-size:13.5px;line-height:1.5;
+  color:rgba(248,244,236,.92);text-shadow:0 1px 6px rgba(0,0,0,.4)}
+.tile-arrow{position:absolute;z-index:2;top:24px;right:22px;width:16px;height:16px;stroke:rgba(248,246,241,.85);fill:none;stroke-width:2.2;
+  filter:drop-shadow(0 1px 4px rgba(0,0,0,.4));
   transition:transform .2s ease,stroke .2s ease}
 .entry-tile:hover .tile-arrow,.entry-tile:focus-visible .tile-arrow{transform:translateX(3px);stroke:var(--tile-accent,var(--gold))}
 @media(max-width:560px){
-  .entry-tile{padding:20px 18px 18px}
+  .entry-tile{padding:20px 18px 18px;min-height:170px}
   .tile-ic{width:44px;height:44px;font-size:20px}
 }
 
@@ -373,12 +383,12 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 
   <!-- HERO -->
   <section id="hero">
-    <h1 id="heroTitle">Choose Your Goal. Start Instantly.</h1>
-    <p id="heroSub">Feel better in minutes. No experience needed. No sign-up required.</p>
+    <h1 id="heroTitle">How do you want to feel today?</h1>
+    <p id="heroSub">Choose a goal and start in seconds. No sign-up required.</p>
   </section>
 
   <section id="entryTiles" aria-label="Choose your goal">
-    <a class="entry-tile" data-tint="violet" href="breathing.html">
+    <a class="entry-tile" data-tint="violet" href="breathing.html" style="background-image:url('images/sleep.jpg')">
       <span class="tile-ic" aria-hidden="true">🌙</span>
       <span class="tile-text">
         <span class="tile-name">Sleep Better Tonight</span>
@@ -386,7 +396,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
-    <a class="entry-tile" data-tint="turq" href="instruments.html">
+    <a class="entry-tile" data-tint="turq" href="instruments.html" style="background-image:url('images/stress.jpg')">
       <span class="tile-ic" aria-hidden="true">🎵</span>
       <span class="tile-text">
         <span class="tile-name">Reduce Stress</span>
@@ -394,7 +404,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
-    <a class="entry-tile" data-tint="blend" href="yoga-loader.html">
+    <a class="entry-tile" data-tint="blend" href="yoga-loader.html" style="background-image:url('images/energy.jpg')">
       <span class="tile-ic" aria-hidden="true">⚡</span>
       <span class="tile-text">
         <span class="tile-name">Boost Energy</span>
@@ -402,7 +412,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
-    <a class="entry-tile" data-tint="gold" href="nutriloader.html">
+    <a class="entry-tile" data-tint="gold" href="nutriloader.html" style="background-image:url('images/bowl.jpg')">
       <span class="tile-ic" aria-hidden="true">🥗</span>
       <span class="tile-text">
         <span class="tile-name">Eat Better Today</span>
