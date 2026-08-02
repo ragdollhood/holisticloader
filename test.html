@@ -145,6 +145,40 @@ a{color:inherit}
   #topTabs .tab{padding:8px 13px;font-size:11px}
 }
 
+/* ---- hanging flap under the nav — same look as instruments.html's .h1-frame ---- */
+.h1-frame{
+  position:fixed;
+  top:max(118px,calc(env(safe-area-inset-top) + 106px));
+  left:50%;
+  transform:translateX(-50%);
+  margin:0;
+  z-index:30;
+  width:min(94vw,820px);
+  padding:9px 24px 9px;
+  border:1.5px solid var(--gold);
+  border-top:none;
+  border-radius:0 0 30px 30px;
+  background:linear-gradient(180deg, rgba(20,14,28,.74) 0%, rgba(14,10,20,.62) 100%);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
+  visibility:hidden;
+}
+.h1-frame.h1-ready{visibility:visible}
+.h1-frame h1{
+  font-family:Georgia,serif;font-size:clamp(15px,4.2vw,20px);font-weight:600;
+  letter-spacing:.14em;text-align:center;line-height:1.4;max-width:none;margin:0;white-space:nowrap;
+  background:linear-gradient(90deg,var(--gold),var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+@media(max-width:560px){
+  .h1-frame{
+    top:max(89px,calc(env(safe-area-inset-top) + 75px));
+    width:92vw;
+    padding:11px 14px 5px;
+    border-radius:0 0 18px 18px;
+  }
+}
+
 /* ===== "how to use" info box ===== */
 #howToBox{
   position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
@@ -172,7 +206,7 @@ a{color:inherit}
    HERO — compact intro line above the cards; the cards remain the hero
    =================================================================== */
 #hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(120px,calc(env(safe-area-inset-top) + 110px)) 24px 4px;z-index:1}
+  text-align:center;padding:max(174px,calc(env(safe-area-inset-top) + 164px)) 24px 4px;z-index:1}
 .hero-eyebrow{position:relative;z-index:2;margin:0;font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--turq)}
 .welcome-sub{position:relative;z-index:2;max-width:560px;margin:6px auto 0;font-family:var(--display);font-style:italic;
   font-size:clamp(13px,1.9vw,16.5px);line-height:1.5;color:var(--muted)}
@@ -187,35 +221,39 @@ a{color:inherit}
 main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
 #areas{position:relative;z-index:1;flex:1 1 auto;min-height:0;width:100%;max-width:1400px;margin:0 auto;padding:0 14px max(14px,env(safe-area-inset-bottom))}
 
-.areas-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:14px;height:100%}
+.areas-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,auto);gap:14px;
+  height:100%;align-content:center;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+.areas-grid::-webkit-scrollbar{display:none}
 
-/* each card is the photo itself — image fills the card, cover-fit, nothing cropped beyond that */
-.area-card{position:relative;display:block;height:100%;border-radius:20px;overflow:hidden;
+/* each card: image on top, sized to the photos' own 1200×630 ratio so it fills its box edge-to-edge
+   with nothing cropped and nothing letterboxed — caption/button centered below */
+.area-card{position:relative;display:flex;flex-direction:column;border-radius:20px;overflow:hidden;
   border:1px solid var(--line);text-decoration:none;cursor:pointer;isolation:isolate;
-  transition:all .35s ease}
+  background:rgba(14,16,22,.55);transition:all .35s ease}
 .area-card:hover,.area-card:focus-visible{
   transform:translateY(-6px) scale(1.02);
   box-shadow:0 15px 35px rgba(0,0,0,.5),0 0 25px rgba(212,175,55,.25);
   border-color:var(--gold-soft)}
-.area-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.03);
-  transition:transform .8s cubic-bezier(.22,1,.36,1);filter:saturate(1.05)}
-.area-card:hover img{transform:scale(1.1)}
-.area-card .tint{position:absolute;inset:0;z-index:1;mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
-.card-scrim{position:absolute;inset:auto 0 0 0;height:58%;z-index:2;pointer-events:none;
-  background:linear-gradient(to top,rgba(6,7,10,.82) 0%,rgba(6,7,10,.25) 60%,transparent 100%)}
 
-/* "Start Here" badge on the recommended first step — top right corner */
+/* image zone — locked to the source photos' own ratio (1200×630) so cover-fit fills the box exactly, with no crop */
+.card-media{position:relative;flex:0 0 auto;width:100%;aspect-ratio:1200/630;margin:10px 10px 0;border-radius:14px;overflow:hidden}
+.card-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:transform .8s cubic-bezier(.22,1,.36,1),filter .4s ease}
+.area-card:hover .card-media img{transform:scale(1.04);filter:saturate(1.08) brightness(1.05)}
+
+/* "Start Here" badge on the recommended first step — top right corner of the image zone */
 .card-badge{position:absolute;top:10px;right:10px;z-index:3;display:inline-flex;align-items:center;gap:5px;
   padding:5px 11px 5px 9px;border-radius:999px;background:rgba(231,201,162,.16);border:1px solid rgba(231,201,162,.6);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(0,0,0,.32);
   font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 .card-badge svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.2}
 
-/* bottom-of-image overlay: title + short description + button — visible immediately, brightens on hover */
-.card-overlay{position:absolute;left:14px;right:14px;bottom:13px;z-index:3;display:flex;flex-direction:column;gap:4px}
+/* caption row — sits below the image, centered */
+.card-overlay{position:relative;flex:0 0 auto;z-index:3;display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:3px;padding:10px 14px 12px}
 .card-title{font-family:var(--ui);font-size:clamp(13px,2vw,16px);font-weight:600;letter-spacing:.03em;color:var(--ink)}
 .card-desc{font-family:var(--ui);font-size:clamp(10.5px,1.4vw,12px);line-height:1.4;color:var(--muted)}
-.card-btn{margin-top:6px;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
+.card-btn{margin-top:6px;align-self:center;display:inline-flex;align-items:center;gap:6px;
   padding:7px 14px;border-radius:999px;border:1px solid rgba(231,201,162,.55);background:rgba(231,201,162,.1);
   font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-soft);
   transition:background .3s ease,color .3s ease,border-color .3s ease,transform .3s ease}
@@ -224,19 +262,15 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
   background:var(--gold);border-color:var(--gold);color:#211407}
 .area-card:hover .card-btn svg,.area-card:focus-visible .card-btn svg{transform:translateX(3px)}
 
-.area-card[data-tint="violet"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--violet), transparent 62%)}
-.area-card[data-tint="turq"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--turq), transparent 62%)}
-.area-card[data-tint="gold"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--gold), transparent 62%)}
-.area-card[data-tint="blend"] .tint{background:radial-gradient(120% 90% at 15% 0%, var(--gold), transparent 45%),radial-gradient(120% 90% at 85% 0%, var(--violet), transparent 50%)}
-
 @media(max-width:560px){
   .areas-grid{gap:8px}
   #areas{padding:0 8px max(10px,env(safe-area-inset-bottom))}
   .card-badge{font-size:8px;padding:4px 9px 4px 7px;top:8px;right:8px}
-  .card-overlay{left:10px;right:10px;bottom:9px;gap:2px}
+  .card-media{margin:7px 7px 0}
+  .card-overlay{padding:7px 10px 9px;gap:2px}
   .card-desc{display:none}
   .card-btn{padding:5px 11px;margin-top:4px;font-size:9px}
-  #hero{padding-top:max(138px,calc(env(safe-area-inset-top) + 128px))}
+  #hero{padding-top:max(184px,calc(env(safe-area-inset-top) + 174px))}
 }
 </style>
 </head>
@@ -284,6 +318,10 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
   <div id="topNavLine"></div>
 </header>
 
+<div class="h1-frame">
+  <h1>ALL-IN-ONE WELLNESS PLATFORM</h1>
+</div>
+
 <!-- "how to use" info box -->
 <div id="howToBox">
   <button id="howToClose" type="button" aria-label="Close">
@@ -324,11 +362,8 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
 <!-- ===== page content ===== -->
 <main>
 
-  <!-- HERO -->
-  <section id="hero">
-    <h1 class="hero-eyebrow">Welcome to Holistic Loader</h1>
-    <p class="welcome-sub">Create your own wellness experience through sound, breath, movement and mindful nutrition.</p>
-  </section>
+  <!-- HERO — kept as spacing only, clears the hanging flap above; heading removed -->
+  <section id="hero" aria-hidden="true"></section>
 
   <!-- FOUR AREAS -->
   <section id="areas" aria-label="Choose a practice">
@@ -336,13 +371,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
     <div class="areas-grid">
 
       <a class="area-card" data-tint="violet" href="breathing.html">
-        <img src="images/preview-breathing.jpg" alt="Guided Breathing" loading="lazy">
-        <div class="tint"></div>
-        <div class="card-scrim"></div>
-        <span class="card-badge">
-          <svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>
-          Start Here
-        </span>
+        <div class="card-media">
+          <img src="images/preview-breathing.jpg" alt="Guided Breathing" loading="lazy">
+          <span class="card-badge">
+            <svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>
+            Start Here
+          </span>
+        </div>
         <div class="card-overlay">
           <span class="card-title">🌬️ Guided Breathing</span>
           <span class="card-desc">Calm your mind and reset your nervous system.</span>
@@ -351,9 +386,9 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
       </a>
 
       <a class="area-card" data-tint="turq" href="instruments.html">
-        <img src="images/preview-soundscape.jpg" alt="Soundscape Creator" loading="lazy">
-        <div class="tint"></div>
-        <div class="card-scrim"></div>
+        <div class="card-media">
+          <img src="images/preview-soundscape.jpg" alt="Soundscape Creator" loading="lazy">
+        </div>
         <div class="card-overlay">
           <span class="card-title">🎵 Soundscape Creator</span>
           <span class="card-desc">Build personalized healing sound journeys.</span>
@@ -362,9 +397,9 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
       </a>
 
       <a class="area-card" data-tint="gold" href="nutriloader.html">
-        <img src="images/preview-nutrition.jpg" alt="Nutrition Tracker" loading="lazy">
-        <div class="tint"></div>
-        <div class="card-scrim"></div>
+        <div class="card-media">
+          <img src="images/preview-nutrition.jpg" alt="Nutrition Tracker" loading="lazy">
+        </div>
         <div class="card-overlay">
           <span class="card-title">🥗 Nutrition Tracker</span>
           <span class="card-desc">Support wellness with mindful habits.</span>
@@ -373,9 +408,9 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
       </a>
 
       <a class="area-card" data-tint="blend" href="yoga-loader.html">
-        <img src="images/preview-yoga.jpg" alt="Yoga" loading="lazy">
-        <div class="tint"></div>
-        <div class="card-scrim"></div>
+        <div class="card-media">
+          <img src="images/preview-yoga.jpg" alt="Yoga" loading="lazy">
+        </div>
         <div class="card-overlay">
           <span class="card-title">🧘 Yoga</span>
           <span class="card-desc">Move, breathe and unwind at your own pace.</span>
@@ -570,6 +605,35 @@ async function registerVisit() {
 }
 
 registerVisit();
+</script>
+
+<script>
+/* keep the .h1-frame flap flush under #topNav's bottom edge at every window
+   size — the logo scales continuously with vw, so #topNav's height isn't
+   fixed; measure it live instead (same technique as instruments.html). */
+(function(){
+  var h1FrameEl=document.querySelector('.h1-frame');
+  if(!h1FrameEl) return;
+  function syncH1FrameTop(){
+    var nav=document.getElementById('topNav'); if(!nav) return;
+    var tabs=document.getElementById('topTabs');
+    if(tabs){
+      var w=tabs.getBoundingClientRect().width;
+      if(w>0) h1FrameEl.style.width=w+'px';
+    }
+    var navBottom=nav.getBoundingClientRect().bottom;
+    if(navBottom>0) h1FrameEl.style.top=(navBottom-1)+'px';
+  }
+  function firstSync(){
+    syncH1FrameTop();
+    h1FrameEl.classList.add('h1-ready');
+  }
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(firstSync);
+  else firstSync();
+  addEventListener('resize',syncH1FrameTop);
+  addEventListener('orientationchange',function(){setTimeout(syncH1FrameTop,60);});
+  if(window.visualViewport) visualViewport.addEventListener('resize',syncH1FrameTop);
+})();
 </script>
 </body>
 </html>
