@@ -56,7 +56,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{height:100%;scrollbar-width:none;-ms-overflow-style:none}
 html::-webkit-scrollbar{display:none}
-body{height:100svh;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow:hidden;display:flex;flex-direction:column}
+body{min-height:100svh;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-y:auto;display:flex;flex-direction:column}
 button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
 a{color:inherit}
 .hidden{display:none !important}
@@ -218,12 +218,10 @@ a{color:inherit}
 /* ===================================================================
    FOUR AREAS — fills the remaining viewport, all four visible at once
    =================================================================== */
-main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
-#areas{position:relative;z-index:1;flex:1 1 auto;min-height:0;width:100%;max-width:1400px;margin:0 auto;padding:0 14px max(14px,env(safe-area-inset-bottom))}
+main{flex:1 1 auto;display:flex;flex-direction:column}
+#areas{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:1400px;margin:0 auto;padding:0 14px max(14px,env(safe-area-inset-bottom))}
 
-.areas-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,auto);gap:14px;
-  height:100%;align-content:center;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
-.areas-grid::-webkit-scrollbar{display:none}
+.areas-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,auto);gap:14px}
 
 /* each card: image on top, sized to the photos' own 1200×630 ratio so it fills its box edge-to-edge
    with nothing cropped and nothing letterboxed — caption/button centered below */
@@ -418,7 +416,6 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
 
   <!-- FOUR AREAS -->
   <section id="areas" aria-label="Choose a practice">
-    <p class="areas-intro">Choose where you would like to begin.</p>
     <div class="areas-grid">
 
       <a class="area-card" data-tint="violet" href="breathing.html">
