@@ -65,25 +65,24 @@ a{color:inherit}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
 
-/* ===== aurora backdrop: clean gold atmosphere, kept crisp rather than smoky ===== */
+/* ===== aurora backdrop: clean gold ambiance, intentional not smoky ===== */
 #stage{position:fixed;inset:0;z-index:-1;overflow:hidden;
-  background:linear-gradient(160deg,#201810 0%,#33270f 28%,#4d3a13 55%,#2c2110 100%)}
-#stage .aurora{position:absolute;inset:-8%;
+  background:linear-gradient(160deg,#221a11 0%,#3a2c12 35%,#4d3a13 60%,#2c2110 100%)}
+#stage .aurora{position:absolute;inset:-6%;
   background:
-    radial-gradient(50% 44% at 76% 6%,  rgba(255,225,130,.62), transparent 70%),
-    radial-gradient(52% 46% at 14% 10%, rgba(255,244,200,.42), transparent 72%),
-    radial-gradient(34% 30% at 8% 84%,  rgba(190,150,225,.15), transparent 72%),
-    radial-gradient(46% 40% at 58% 92%, rgba(255,196,110,.46), transparent 70%),
-    radial-gradient(24% 20% at 46% 16%, rgba(255,238,180,.32), transparent 68%);
-  filter:blur(14px);animation:auroraDrift 34s ease-in-out infinite alternate}
+    radial-gradient(48% 42% at 76% 6%,  rgba(255,225,130,.56), transparent 68%),
+    radial-gradient(50% 44% at 14% 10%, rgba(255,244,200,.36), transparent 70%),
+    radial-gradient(42% 36% at 58% 92%, rgba(255,196,110,.4),  transparent 68%),
+    radial-gradient(22% 18% at 46% 16%, rgba(255,238,180,.26), transparent 66%);
+  filter:blur(10px);animation:auroraDrift 34s ease-in-out infinite alternate}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
   50%{transform:translate3d(1.5%,-2%,0) rotate(4deg) scale(1.05)}
   100%{transform:translate3d(-2%,1.5%,0) rotate(-3deg) scale(1.02)}
 }
 #stage::after{content:'';position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 50% 0%,transparent 22%,rgba(0,0,0,.24) 100%),
-  linear-gradient(to bottom,rgba(0,0,0,.2) 0%,transparent 24%,transparent 55%,rgba(0,0,0,.3) 100%)}
+  background:radial-gradient(120% 90% at 50% 0%,transparent 26%,rgba(0,0,0,.2) 100%),
+  linear-gradient(to bottom,rgba(0,0,0,.16) 0%,transparent 24%,transparent 55%,rgba(0,0,0,.26) 100%)}
 
 
 /* ===== top corners: hamburger menu (left) + auth icon (right), same placement as the rest of the site ===== */
@@ -213,22 +212,22 @@ a{color:inherit}
 #hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;padding:max(92px,calc(env(safe-area-inset-top) + 82px)) 24px 10px;z-index:1;gap:14px}
 #hero::before{content:'';position:absolute;z-index:0;pointer-events:none;
-  left:50%;top:-10%;width:min(700px,132%);height:320px;transform:translateX(-50%);
+  left:50%;top:-8%;width:min(640px,124%);height:280px;transform:translateX(-50%);
   background:
-    radial-gradient(55% 70% at 32% 20%, rgba(217,190,240,.1), transparent 70%),
-    radial-gradient(58% 74% at 72% 8%,  rgba(255,214,110,.34), transparent 72%),
-    radial-gradient(46% 58% at 50% 50%, rgba(255,232,175,.14), transparent 76%);
-  filter:blur(24px)}
+    radial-gradient(55% 68% at 32% 20%, rgba(217,190,240,.08), transparent 68%),
+    radial-gradient(56% 70% at 72% 8%,  rgba(255,214,110,.26), transparent 70%),
+    radial-gradient(44% 54% at 50% 50%, rgba(255,232,175,.1), transparent 74%);
+  filter:blur(18px)}
 #heroTitle{position:relative;z-index:2;margin:0;font-family:var(--display);font-weight:700;
   font-size:clamp(38px,9vw,66px);line-height:1.07;letter-spacing:.008em;
   background:linear-gradient(100deg,#fff8ec 0%,#f6e6c8 20%,#f0d19f 40%,#fffbf0 58%,#e8c894 78%,#fdf3df 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  -webkit-text-stroke:.7px rgba(240,209,159,.55);
+  -webkit-text-stroke:.8px rgba(240,209,159,.62);
   text-shadow:
-    0 1px 0 rgba(255,255,255,.42),
-    0 2px 3px rgba(0,0,0,.22),
-    0 6px 12px rgba(0,0,0,.16),
-    0 0 10px rgba(240,209,159,.22)}
+    0 1px 0 rgba(255,255,255,.46),
+    0 1px 2px rgba(0,0,0,.28),
+    0 4px 8px rgba(0,0,0,.14),
+    0 0 6px rgba(240,209,159,.16)}
 #heroSub{position:relative;z-index:2;max-width:440px;margin:0 auto;font-family:var(--ui);font-weight:400;
   font-size:clamp(14px,1.9vw,17px);line-height:1.5;color:var(--muted);
   text-shadow:0 1px 3px rgba(0,0,0,.5)}
@@ -245,92 +244,79 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   padding:0 16px;display:grid;grid-template-columns:1fr;gap:13px}
 @media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:16px} }
 /* subtle gold ambient glow behind the tile grid — light touch, not a haze */
-#entryTiles::before{content:'';position:absolute;z-index:0;left:50%;top:-8%;
-  width:118%;height:120%;transform:translateX(-50%);pointer-events:none;
-  background:radial-gradient(55% 50% at 50% 2%, rgba(255,214,140,.09), transparent 68%);
-  filter:blur(28px)}
+#entryTiles::before{content:'';position:absolute;z-index:0;left:50%;top:-6%;
+  width:112%;height:114%;transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(50% 46% at 50% 2%, rgba(255,214,140,.07), transparent 66%);
+  filter:blur(22px)}
 .entry-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;
   min-height:212px;padding:28px 26px 26px;border-radius:26px;overflow:hidden;
   border:none;background-color:#1c1712;background-size:cover;background-position:center;
   text-decoration:none;color:var(--ink);
   box-shadow:
-    0 10px 22px rgba(0,0,0,.32),
-    0 2px 6px rgba(0,0,0,.24),
-    inset 0 1px 1px rgba(255,255,255,.07),
-    inset 0 -18px 26px -16px rgba(0,0,0,.3);
+    0 8px 18px rgba(0,0,0,.3),
+    0 2px 5px rgba(0,0,0,.22),
+    inset 0 1px 1px rgba(255,255,255,.07);
   transition:transform .26s cubic-bezier(.22,1,.36,1),box-shadow .32s ease,background-size .6s ease}
-/* layer 1: default image overlay (fallback — each card below gets its own emotional palette) */
+/* layer 1: left-anchored scrim — darkens only the content zone (icon/title/description), photo stays clear elsewhere */
 .entry-tile::before{content:'';position:absolute;inset:0;z-index:1;
   background:
-    linear-gradient(150deg,rgba(14,10,18,.5) 8%,rgba(24,14,28,.24) 58%,rgba(14,10,18,.4) 100%),
-    radial-gradient(circle at top left,var(--tile-accent,rgba(231,201,162,.18)),transparent 46%),
-    linear-gradient(to top,rgba(0,0,0,.3) 0%,transparent 40%);
-  opacity:.55;transition:opacity .3s ease}
+    linear-gradient(100deg,rgba(12,9,12,.62) 0%,rgba(12,9,12,.44) 32%,rgba(12,9,12,.14) 54%,transparent 70%),
+    radial-gradient(46% 60% at 16% 22%,var(--tile-accent,rgba(231,201,162,.2)),transparent 62%);
+  transition:opacity .3s ease}
 /* layer: outer gradient border — thin luxury ring, gold → champagne → lavender → plum, a clear crisp edge */
 .entry-tile::after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;
   border-radius:inherit;padding:1.5px;
   background:linear-gradient(135deg,
-    rgba(240,209,159,.65)  0%,
-    rgba(247,231,197,.55) 28%,
-    rgba(211,182,255,.42) 60%,
-    rgba(80,44,80,.58)   100%);
+    rgba(240,209,159,.68)  0%,
+    rgba(247,231,197,.58) 28%,
+    rgba(211,182,255,.44) 60%,
+    rgba(80,44,80,.6)   100%);
   -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor;
   mask-composite:exclude;
-  opacity:.7;transition:opacity .3s ease}
+  opacity:.72;transition:opacity .3s ease}
 .entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-4px);background-size:110%;
   box-shadow:
-    0 16px 32px rgba(0,0,0,.38),
-    0 4px 10px rgba(0,0,0,.28),
-    inset 0 1px 1px rgba(255,255,255,.09),
-    inset 0 -18px 26px -16px rgba(0,0,0,.34)}
-.entry-tile:hover::before,.entry-tile:focus-visible::before{opacity:.46}
-.entry-tile:hover::after,.entry-tile:focus-visible::after{opacity:.9}
+    0 14px 28px rgba(0,0,0,.36),
+    0 3px 8px rgba(0,0,0,.26),
+    inset 0 1px 1px rgba(255,255,255,.09)}
+.entry-tile:hover::after,.entry-tile:focus-visible::after{opacity:.92}
 
-/* ---- per-card emotional palette: each goal reads as a distinct mood, image detail stays visible ---- */
+/* ---- per-card emotional palette: identity lives in the scrim near the icon, not a wash across the photo ---- */
 /* Sleep Better Tonight — soft champagne + bedside lamp glow + cream + gentle moonlight lavender */
 .entry-tile[data-tint="sleep"]{--tile-accent:var(--champagne)}
 .entry-tile[data-tint="sleep"]::before{
   background:
-    linear-gradient(150deg,rgba(56,40,30,.34) 6%,rgba(255,222,176,.16) 46%,rgba(212,196,236,.18) 100%),
-    radial-gradient(58% 52% at 24% 14%, rgba(255,214,150,.42), transparent 68%),
-    radial-gradient(46% 46% at 82% 88%, rgba(216,198,240,.2), transparent 70%),
-    linear-gradient(to top,rgba(32,22,20,.22) 0%,transparent 44%);
-  opacity:.55}
+    linear-gradient(100deg,rgba(40,28,20,.56) 0%,rgba(40,28,20,.38) 32%,rgba(40,28,20,.1) 54%,transparent 70%),
+    radial-gradient(46% 60% at 16% 22%, rgba(255,214,150,.4), transparent 62%)}
 /* Reduce Stress — deep purple, singing-bowl calm, sound-healing glow */
 .entry-tile[data-tint="stress"]{--tile-accent:var(--deep-purple)}
 .entry-tile[data-tint="stress"]::before{
   background:
-    linear-gradient(150deg,rgba(24,10,36,.58) 10%,rgba(50,22,70,.34) 55%,rgba(16,6,26,.48) 100%),
-    radial-gradient(55% 50% at 22% 16%, rgba(185,125,235,.3), transparent 68%),
-    linear-gradient(to top,rgba(12,5,20,.32) 0%,transparent 40%);
-  opacity:.62}
+    linear-gradient(100deg,rgba(20,9,30,.68) 0%,rgba(20,9,30,.5) 32%,rgba(20,9,30,.16) 54%,transparent 70%),
+    radial-gradient(46% 60% at 16% 22%, rgba(185,125,235,.34), transparent 62%)}
 /* Boost Energy — sunrise gold, warm vibrant light */
 .entry-tile[data-tint="energy"]{--tile-accent:var(--sunrise)}
 .entry-tile[data-tint="energy"]::before{
   background:
-    linear-gradient(150deg,rgba(44,22,8,.4) 8%,rgba(255,172,64,.2) 48%,rgba(255,122,44,.16) 100%),
-    radial-gradient(60% 55% at 76% 12%, rgba(255,198,96,.44), transparent 70%),
-    linear-gradient(to top,rgba(30,14,4,.24) 0%,transparent 42%);
-  opacity:.58}
+    linear-gradient(100deg,rgba(36,19,7,.58) 0%,rgba(36,19,7,.4) 32%,rgba(36,19,7,.12) 54%,transparent 70%),
+    radial-gradient(46% 60% at 16% 22%, rgba(255,198,96,.4), transparent 62%)}
 /* Eat Better Today — colorful, fresh greens, natural vitality */
 .entry-tile[data-tint="eat"]{--tile-accent:var(--leaf)}
 .entry-tile[data-tint="eat"]::before{
   background:
-    linear-gradient(150deg,rgba(10,26,14,.4) 8%,rgba(130,208,128,.18) 48%,rgba(60,150,90,.16) 100%),
-    radial-gradient(55% 50% at 22% 18%, rgba(166,226,142,.36), transparent 70%),
-    linear-gradient(to top,rgba(8,20,10,.24) 0%,transparent 42%);
-  opacity:.58}
+    linear-gradient(100deg,rgba(8,20,10,.56) 0%,rgba(8,20,10,.38) 32%,rgba(8,20,10,.1) 54%,transparent 70%),
+    radial-gradient(46% 60% at 16% 22%, rgba(166,226,142,.36), transparent 62%)}
 .tile-ic{position:relative;z-index:2;flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
-  border-radius:50%;background:rgba(16,12,16,.52);border:1px solid rgba(248,246,241,.34);font-size:24px;
+  border-radius:50%;background:rgba(14,10,14,.58);border:1px solid rgba(248,246,241,.36);font-size:24px;
   backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
   transition:transform .2s ease,border-color .2s ease}
 .entry-tile:hover .tile-ic,.entry-tile:focus-visible .tile-ic{transform:scale(1.08);border-color:var(--tile-accent,var(--gold-soft))}
 .tile-text{position:relative;z-index:2;flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px;padding-right:24px}
 .tile-name{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.8vw,24px);letter-spacing:.01em;
-  color:#fffdf9;text-shadow:0 1px 2px rgba(0,0,0,.7),0 3px 10px rgba(0,0,0,.35)}
+  color:#fffdf9;text-shadow:0 1px 2px rgba(0,0,0,.75),0 2px 8px rgba(0,0,0,.4)}
 .tile-hook{font-family:var(--ui);font-weight:400;font-size:13.5px;line-height:1.5;
-  color:rgba(248,244,236,.96);text-shadow:0 1px 2px rgba(0,0,0,.6),0 2px 8px rgba(0,0,0,.3)}
+  color:rgba(248,244,236,.97);text-shadow:0 1px 2px rgba(0,0,0,.65),0 2px 7px rgba(0,0,0,.34)}
 .tile-arrow{position:absolute;z-index:2;top:26px;right:24px;width:17px;height:17px;stroke:rgba(248,246,241,.9);fill:none;stroke-width:2.2;
   filter:drop-shadow(0 1px 3px rgba(0,0,0,.45));
   transition:transform .2s ease,stroke .2s ease}
@@ -348,19 +334,19 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 #trustStrip .quote{font-family:var(--display);font-style:italic;color:var(--muted);font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 
 /* ===== premium micro-link — a single quiet line, not a banner ===== */
-#premiumMicro{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:22px 20px 0}
-#pageFreeTrialBtn{display:inline-flex;align-items:center;gap:6px;color:var(--gold-soft);background:none;border:none;
-  font-family:var(--ui);font-weight:500;font-size:12px;letter-spacing:.02em;cursor:pointer;
-  border-bottom:1px solid rgba(231,201,162,.3);transition:color .2s ease,border-color .2s ease;
-  text-shadow:0 1px 6px rgba(0,0,0,.5)}
-#pageFreeTrialBtn:hover{color:var(--gold);border-color:var(--gold)}
+#premiumMicro{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:36px 20px 0}
+#pageFreeTrialBtn{display:inline-flex;align-items:center;gap:6px;color:var(--gold);background:none;border:none;
+  font-family:var(--ui);font-weight:600;font-size:13px;letter-spacing:.03em;cursor:pointer;
+  border-bottom:1px solid rgba(240,209,159,.45);transition:color .2s ease,border-color .2s ease;
+  text-shadow:0 1px 3px rgba(0,0,0,.5)}
+#pageFreeTrialBtn:hover{color:#fff8ec;border-color:var(--gold)}
 
 /* ===== footer ===== */
 #siteFooter{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
   gap:22px;flex-wrap:wrap;padding:32px 20px max(26px,env(safe-area-inset-bottom));
   margin-top:26px}
 #siteFooter::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent 0%,rgba(240,209,159,.5) 18%,rgba(217,190,240,.35) 50%,rgba(240,209,159,.5) 82%,transparent 100%)}
+  background:linear-gradient(90deg,transparent 0%,rgba(240,209,159,.55) 20%,rgba(217,190,240,.4) 50%,rgba(240,209,159,.55) 80%,transparent 100%)}
 #siteFooter a{color:var(--muted);text-decoration:none;font-family:var(--ui);font-size:11.5px;
   letter-spacing:.06em;text-transform:uppercase;transition:color .2s ease;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 #siteFooter a:hover{color:var(--ink)}
