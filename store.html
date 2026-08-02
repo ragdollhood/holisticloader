@@ -77,6 +77,7 @@
   .h1-frame h1{max-width:none;margin:0}
   /* ---- title logo: sits above the nav tabs, at the very top of the page ---- */
   #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px;pointer-events:none}
+  #brandLink{display:inline-flex;pointer-events:auto;cursor:pointer}
   #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
     filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
   @media (max-width:560px){
@@ -278,7 +279,7 @@ text-decoration:none;
 </div>
 
 <header id="topNav">
-  <h1 id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></h1>
+  <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
   <nav id="topTabs" aria-label="Main sections">
     <a href="breathing.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
     <a href="instruments.html" class="tab"><span class="tab-mobile">Sounds</span><span class="tab-desktop">Soundscape Creator</span></a>
