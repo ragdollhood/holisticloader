@@ -19,6 +19,25 @@
 <link rel="apple-touch-icon" href="images/icon-holistic.png">
 <link rel="shortcut icon" href="images/icon-holistic.png">
 <meta name="msapplication-TileColor" content="#0c0e13">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Holistic Loader">
+<meta property="og:title" content="Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga">
+<meta property="og:description" content="Holistic Loader — guided breathing, sound healing, nutrition tracking and yoga in one calm, unified practice space. Start your 14-day free trial, no card required.">
+<meta property="og:image" content="https://holisticloader.com/images/preview-holistic.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Holistic Loader preview">
+<meta property="og:url" content="https://holisticloader.com/start.html">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga">
+<meta name="twitter:description" content="Holistic Loader — guided breathing, sound healing, nutrition tracking and yoga in one calm, unified practice space. Start your 14-day free trial, no card required.">
+<meta name="twitter:image" content="https://holisticloader.com/images/preview-holistic.jpg">
+<meta name="twitter:image:alt" content="Holistic Loader preview">
 <!-- ========== /SEO ========== -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +56,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{height:100%;scrollbar-width:none;-ms-overflow-style:none}
 html::-webkit-scrollbar{display:none}
-body{height:100svh;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow:hidden;display:flex;flex-direction:column}
+body{min-height:100svh;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;display:flex;flex-direction:column}
+body::-webkit-scrollbar{display:none}
 button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
 a{color:inherit}
 .hidden{display:none !important}
@@ -101,6 +121,31 @@ a{color:inherit}
 
 #authRoot{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));z-index:45}
 
+/* ===== top header: logo + section tabs (same shared header as breathing.html / instruments.html / etc.) ===== */
+#topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
+  padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
+#brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px;pointer-events:none}
+#brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
+  filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
+#topTabs{display:flex;pointer-events:auto}
+#topTabs .tab{font-family:var(--ui);font-weight:500;font-size:12.5px;letter-spacing:.04em;
+  padding:9px 20px;color:var(--soft);text-decoration:none;white-space:nowrap;
+  background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
+  border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
+#topTabs .tab:hover{color:var(--ink)}
+#topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
+.tab-mobile{display:inline}
+.tab-desktop{display:none}
+@media(min-width:900px){ .tab-mobile{display:none} .tab-desktop{display:inline} }
+#topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);opacity:.55}
+@media(max-width:560px){
+  #brandLogo{max-height:clamp(46px,12vw,84px)}
+  #topTabs .tab{padding:8px 13px;font-size:11px}
+}
+
 /* ===== "how to use" info box ===== */
 #howToBox{
   position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
@@ -128,16 +173,34 @@ a{color:inherit}
    HERO — full-bleed logo + ambient breathing glow (signature element)
    =================================================================== */
 #hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(20px,env(safe-area-inset-top)) 24px 10px;z-index:1}
+  text-align:center;padding:max(128px,calc(env(safe-area-inset-top) + 118px)) 24px 8px;z-index:1}
 .hero-eyebrow{position:relative;z-index:2;font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--turq)}
-#heroLogo{position:relative;z-index:2;width:min(60vw,460px);max-width:100%;height:auto;
+#heroLogo{position:relative;z-index:2;width:min(48vw,360px);max-width:100%;height:auto;
   filter:drop-shadow(0 18px 50px rgba(0,0,0,.55))}
+.welcome-title{position:relative;z-index:2;font-family:var(--display);font-weight:700;
+  font-size:clamp(28px,5.2vw,46px);letter-spacing:.01em;line-height:1.15;margin-top:8px;
+  background:linear-gradient(90deg,var(--gold),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.welcome-sub{position:relative;z-index:2;max-width:640px;margin:8px auto 0;font-family:var(--ui);
+  font-size:clamp(12px,1.6vw,14.5px);line-height:1.65;color:var(--muted)}
 .hero-tagline{position:relative;z-index:2;max-width:560px;font-family:var(--display);font-style:italic;font-weight:400;
   font-size:clamp(16px,2.4vw,21px);line-height:1.55;color:var(--muted)}
 .hero-scroll{position:relative;z-index:2;margin-top:6px;display:inline-flex;flex-direction:column;align-items:center;gap:6px;
   font-family:var(--ui);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
 .hero-scroll svg{width:15px;height:15px;stroke:var(--gold-soft);fill:none;stroke-width:1.8;animation:heroBounce 2.2s ease-in-out infinite}
 @keyframes heroBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ===== hero CTAs + trust line (conversion path) ===== */
+.hero-ctas{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin-top:16px}
+.cta-btn{font-family:var(--ui);font-weight:600;font-size:12.5px;letter-spacing:.03em;padding:12px 26px;border-radius:999px;
+  text-decoration:none;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  transition:transform .2s ease,box-shadow .3s ease,background .3s ease,border-color .3s ease}
+.cta-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.cta-primary{color:#211407;background:linear-gradient(90deg,var(--gold),var(--gold-soft));box-shadow:0 10px 28px rgba(231,201,162,.28)}
+.cta-primary:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(231,201,162,.42)}
+.cta-secondary{color:var(--ink);background:rgba(244,241,234,.06);border:1px solid var(--line);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.cta-secondary:hover{background:rgba(244,241,234,.12);border-color:rgba(231,201,162,.5);color:var(--gold);transform:translateY(-2px)}
+.trust-line{position:relative;z-index:2;margin-top:11px;font-family:var(--ui);font-size:10.5px;letter-spacing:.03em;color:var(--faint)}
 
 /* ===================================================================
    FOUR AREAS — fills the remaining viewport, all four visible at once
@@ -147,35 +210,52 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
 
 .areas-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:14px;height:100%}
 
-.area-card{position:relative;display:block;height:100%;border-radius:22px;overflow:hidden;text-decoration:none;
-  border:1px solid var(--line);isolation:isolate;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease}
-.area-card:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(0,0,0,.5);border-color:rgba(244,241,234,.32)}
+.area-card{position:relative;display:flex;flex-direction:column;gap:4px;height:100%;text-decoration:none;
+  isolation:isolate}
+.area-label{flex:0 0 auto;font-family:var(--ui);font-size:clamp(10px,1.8vw,13px);font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold-soft)}
+.area-micro{flex:0 0 auto;font-family:var(--ui);font-size:10.5px;line-height:1.35;color:var(--faint);margin-top:-2px}
+.area-img-wrap{position:relative;flex:1 1 auto;min-height:0;border-radius:20px;overflow:hidden;
+  border:1px solid var(--line);
+  transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease}
+.area-card:hover .area-img-wrap,.area-card:focus-visible .area-img-wrap{
+  transform:translateY(-6px) scale(1.015);
+  box-shadow:0 26px 60px rgba(0,0,0,.5),0 0 0 1px rgba(231,201,162,.3),0 0 44px rgba(231,201,162,.2);
+  border-color:var(--gold-soft)}
 .area-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.03);
   transition:transform .8s cubic-bezier(.22,1,.36,1);filter:saturate(1.05)}
 .area-card:hover img{transform:scale(1.12)}
-.area-card::after{content:'';position:absolute;inset:0;z-index:1;
-  background:linear-gradient(180deg, rgba(8,6,12,.05) 0%, rgba(8,6,12,.28) 46%, rgba(8,6,12,.92) 100%)}
-.area-card .tint{position:absolute;inset:0;z-index:1;mix-blend-mode:soft-light;opacity:.85}
+.area-card .tint{position:absolute;inset:0;z-index:1;mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
+
+/* "Start Here" badge on the recommended first step */
+.card-badge{position:absolute;top:10px;left:10px;z-index:3;display:inline-flex;align-items:center;gap:5px;
+  padding:5px 11px 5px 9px;border-radius:999px;background:rgba(231,201,162,.16);border:1px solid rgba(231,201,162,.6);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(0,0,0,.32);
+  font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.card-badge svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+/* card CTA overlay — makes the card read as clickable, brightens on hover */
+.card-cta{position:absolute;left:12px;right:12px;bottom:11px;z-index:3;display:flex;align-items:center;gap:6px;
+  font-family:var(--ui);font-size:clamp(10px,1.5vw,11.5px);font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink);opacity:.82;transform:translateY(1px);transition:opacity .3s ease,transform .3s ease,color .3s ease}
+.card-cta svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .3s ease}
+.area-card:hover .card-cta,.area-card:focus-visible .card-cta{opacity:1;transform:translateY(0);color:var(--gold)}
+.area-card:hover .card-cta svg,.area-card:focus-visible .card-cta svg{transform:translateX(4px)}
+.card-scrim{position:absolute;inset:auto 0 0 0;height:52%;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,rgba(6,7,10,.72) 0%,transparent 100%)}
 .area-card[data-tint="violet"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--violet), transparent 62%)}
 .area-card[data-tint="turq"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--turq), transparent 62%)}
 .area-card[data-tint="gold"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--gold), transparent 62%)}
 .area-card[data-tint="blend"] .tint{background:radial-gradient(120% 90% at 15% 0%, var(--gold), transparent 45%),radial-gradient(120% 90% at 85% 0%, var(--violet), transparent 50%)}
-.area-card-body{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:clamp(10px,3vw,22px) clamp(10px,3vw,22px) clamp(12px,3.2vw,24px);text-align:left}
-.area-kicker{display:flex;align-items:center;gap:6px;font-family:var(--ui);font-size:clamp(8px,1.6vw,10px);font-weight:600;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--gold-soft);margin-bottom:clamp(2px,1vw,8px)}
-.area-title{font-family:var(--display);font-weight:700;font-size:clamp(14px,2.6vw,27px);letter-spacing:.02em;
-  text-transform:uppercase;color:var(--ink);text-shadow:0 3px 18px rgba(0,0,0,.55);line-height:1.12;margin-bottom:clamp(2px,0.8vw,6px)}
-.area-desc{font-family:var(--ui);font-size:clamp(10px,1.6vw,12px);line-height:1.5;color:rgba(244,241,234,.72);max-width:340px;margin-bottom:clamp(4px,1.4vw,12px)}
-.area-cta{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:clamp(9px,1.5vw,11px);font-weight:600;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--ink)}
-.area-cta svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .25s ease}
-.area-card:hover .area-cta svg{transform:translateX(4px)}
 
 @media(max-width:560px){
   .areas-grid{gap:8px}
   #areas{padding:0 8px max(10px,env(safe-area-inset-bottom))}
-  .area-desc{display:none}
-  .area-kicker{display:none}
+  .area-label{font-size:10px;letter-spacing:.08em}
+  .area-micro{font-size:9.5px}
+  .card-badge{font-size:8px;padding:4px 9px 4px 7px;top:8px;left:8px}
+  .card-cta{left:9px;right:9px;bottom:8px}
+  #hero{padding-top:max(146px,calc(env(safe-area-inset-top) + 136px))}
 }
 </style>
 </head>
@@ -210,6 +290,18 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
 </div>
 
 <div id="authRoot"></div>
+
+<!-- shared header: logo + section tabs (same as breathing.html / instruments.html / etc.) -->
+<header id="topNav">
+  <div id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></div>
+  <nav id="topTabs" aria-label="Main sections">
+    <a href="breathing.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
+    <a href="instruments.html" class="tab">Soundscape Creator</a>
+    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="yoga-loader.html" class="tab">Yoga</a>
+  </nav>
+  <div id="topNavLine"></div>
+</header>
 
 <!-- "how to use" info box -->
 <div id="howToBox">
@@ -253,54 +345,68 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
 
   <!-- HERO -->
   <section id="hero">
-    <img id="heroLogo" src="images/logga-holistictitel.png" alt="Holistic Loader">
+    <span class="hero-eyebrow">Your Wellness Space</span>
+    <h1 class="welcome-title">Reset Your Mind, Body &amp; Breath — In Minutes</h1>
+    <p class="welcome-sub">Guided breathing, healing soundscapes, mindful nutrition and yoga — one calm practice space, designed around you.</p>
+    <div class="hero-ctas">
+      <a class="cta-btn cta-primary" href="breathing.html">
+        Start Your First 1-Minute Reset
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="cta-btn cta-secondary" href="instruments.html">Explore Sound Healing</a>
+    </div>
+    <p class="trust-line">No app. No setup. Just choose your path and begin.</p>
   </section>
 
   <!-- FOUR AREAS -->
   <section id="areas" aria-label="Choose a practice">
     <div class="areas-grid">
 
-      <a class="area-card" data-tint="violet" href="index.html">
-        <img src="images/preview-breathing.jpg" alt="Guided Breathing" loading="lazy">
-        <div class="tint"></div>
-        <div class="area-card-body">
-          <span class="area-kicker">🌬️ Breathwork &amp; scenery</span>
-          <h3 class="area-title">Guided Breathing</h3>
-          <p class="area-desc">26 immersive scenes, paced breathing patterns and 19 instruments to build your own calm.</p>
-          <span class="area-cta">Enter<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <a class="area-card" data-tint="violet" href="breathing.html">
+        <span class="area-label">🌬️ Guided Breathing</span>
+        <span class="area-micro">Quick guided sessions to calm and reset.</span>
+        <div class="area-img-wrap">
+          <img src="images/preview-breathing.jpg" alt="Guided Breathing" loading="lazy">
+          <div class="tint"></div>
+          <div class="card-scrim"></div>
+          <span class="card-badge">
+            <svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>
+            Start Here
+          </span>
+          <span class="card-cta">Start Breathing <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
 
       <a class="area-card" data-tint="turq" href="instruments.html">
-        <img src="images/preview-soundscape.jpg" alt="Soundscape Creator" loading="lazy">
-        <div class="tint"></div>
-        <div class="area-card-body">
-          <span class="area-kicker">🎵 Sound healing</span>
-          <h3 class="area-title">Soundscape Creator</h3>
-          <p class="area-desc">Layer 16 healing instruments, shape tone with a signal generator, and record what you make.</p>
-          <span class="area-cta">Enter<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <span class="area-label">🎵 Soundscape Creator</span>
+        <span class="area-micro">Build personalized healing sound journeys.</span>
+        <div class="area-img-wrap">
+          <img src="images/preview-soundscape.jpg" alt="Soundscape Creator" loading="lazy">
+          <div class="tint"></div>
+          <div class="card-scrim"></div>
+          <span class="card-cta">Create Soundscape <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
 
       <a class="area-card" data-tint="gold" href="nutriloader.html">
-        <img src="images/preview-nutrition.jpg" alt="Nutrition Tracker" loading="lazy">
-        <div class="tint"></div>
-        <div class="area-card-body">
-          <span class="area-kicker">🥗 Daily nourishment</span>
-          <h3 class="area-title">Nutrition Tracker</h3>
-          <p class="area-desc">Log meals with ease and keep your history in sync across every device you use.</p>
-          <span class="area-cta">Enter<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <span class="area-label">🥗 Nutrition Tracker</span>
+        <span class="area-micro">Track mindful nutrition and wellness habits.</span>
+        <div class="area-img-wrap">
+          <img src="images/preview-nutrition.jpg" alt="Nutrition Tracker" loading="lazy">
+          <div class="tint"></div>
+          <div class="card-scrim"></div>
+          <span class="card-cta">Open Tracker <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
 
       <a class="area-card" data-tint="blend" href="yoga-loader.html">
-        <img src="images/preview-yoga.jpg" alt="Yoga" loading="lazy">
-        <div class="tint"></div>
-        <div class="area-card-body">
-          <span class="area-kicker">🧘 Movement &amp; breath</span>
-          <h3 class="area-title">Yoga</h3>
-          <p class="area-desc">8 guided programs and a 27-pose library, paced by breath with a soft gong to mark the way.</p>
-          <span class="area-cta">Enter<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <span class="area-label">🧘 Yoga</span>
+        <span class="area-micro">Simple practices designed around your needs.</span>
+        <div class="area-img-wrap">
+          <img src="images/preview-yoga.jpg" alt="Yoga" loading="lazy">
+          <div class="tint"></div>
+          <div class="card-scrim"></div>
+          <span class="card-cta">Start Practice <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
 
@@ -479,7 +585,7 @@ async function registerVisit() {
       },
       body: JSON.stringify({
         site: "holisticloader",
-        page: "start",
+        page: "startsida",
         page_url: window.location.pathname,
         visitor_id: visitorId,
         country: country
