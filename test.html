@@ -190,39 +190,41 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
 
 .areas-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:14px;height:100%}
 
-.area-card{position:relative;display:flex;flex-direction:column;gap:4px;height:100%;text-decoration:none;
-  isolation:isolate}
-.area-label{flex:0 0 auto;font-family:var(--ui);font-size:clamp(10px,1.8vw,13px);font-weight:600;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--gold-soft)}
-.area-micro{flex:0 0 auto;font-family:var(--ui);font-size:10.5px;line-height:1.35;color:var(--faint);margin-top:-2px}
-.area-img-wrap{position:relative;flex:1 1 auto;min-height:0;border-radius:20px;overflow:hidden;
-  border:1px solid var(--line);
-  transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease}
-.area-card:hover .area-img-wrap,.area-card:focus-visible .area-img-wrap{
-  transform:translateY(-6px) scale(1.015);
-  box-shadow:0 26px 60px rgba(0,0,0,.5),0 0 0 1px rgba(231,201,162,.3),0 0 44px rgba(231,201,162,.2);
+/* each card is the photo itself — image fills the card, cover-fit, nothing cropped beyond that */
+.area-card{position:relative;display:block;height:100%;border-radius:20px;overflow:hidden;
+  border:1px solid var(--line);text-decoration:none;cursor:pointer;isolation:isolate;
+  transition:all .35s ease}
+.area-card:hover,.area-card:focus-visible{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 15px 35px rgba(0,0,0,.5),0 0 25px rgba(212,175,55,.25);
   border-color:var(--gold-soft)}
 .area-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.03);
   transition:transform .8s cubic-bezier(.22,1,.36,1);filter:saturate(1.05)}
-.area-card:hover img{transform:scale(1.12)}
+.area-card:hover img{transform:scale(1.1)}
 .area-card .tint{position:absolute;inset:0;z-index:1;mix-blend-mode:soft-light;opacity:.5;pointer-events:none}
+.card-scrim{position:absolute;inset:auto 0 0 0;height:58%;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,rgba(6,7,10,.82) 0%,rgba(6,7,10,.25) 60%,transparent 100%)}
 
-/* "Start Here" badge on the recommended first step */
-.card-badge{position:absolute;top:10px;left:10px;z-index:3;display:inline-flex;align-items:center;gap:5px;
+/* "Start Here" badge on the recommended first step — top right corner */
+.card-badge{position:absolute;top:10px;right:10px;z-index:3;display:inline-flex;align-items:center;gap:5px;
   padding:5px 11px 5px 9px;border-radius:999px;background:rgba(231,201,162,.16);border:1px solid rgba(231,201,162,.6);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(0,0,0,.32);
   font-family:var(--ui);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 .card-badge svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.2}
 
-/* card CTA overlay — makes the card read as clickable, brightens on hover */
-.card-cta{position:absolute;left:12px;right:12px;bottom:11px;z-index:3;display:flex;align-items:center;gap:6px;
-  font-family:var(--ui);font-size:clamp(10px,1.5vw,11.5px);font-weight:600;letter-spacing:.05em;text-transform:uppercase;
-  color:var(--ink);opacity:.82;transform:translateY(1px);transition:opacity .3s ease,transform .3s ease,color .3s ease}
-.card-cta svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .3s ease}
-.area-card:hover .card-cta,.area-card:focus-visible .card-cta{opacity:1;transform:translateY(0);color:var(--gold)}
-.area-card:hover .card-cta svg,.area-card:focus-visible .card-cta svg{transform:translateX(4px)}
-.card-scrim{position:absolute;inset:auto 0 0 0;height:52%;z-index:2;pointer-events:none;
-  background:linear-gradient(to top,rgba(6,7,10,.72) 0%,transparent 100%)}
+/* bottom-of-image overlay: title + short description + button — visible immediately, brightens on hover */
+.card-overlay{position:absolute;left:14px;right:14px;bottom:13px;z-index:3;display:flex;flex-direction:column;gap:4px}
+.card-title{font-family:var(--ui);font-size:clamp(13px,2vw,16px);font-weight:600;letter-spacing:.03em;color:var(--ink)}
+.card-desc{font-family:var(--ui);font-size:clamp(10.5px,1.4vw,12px);line-height:1.4;color:var(--muted)}
+.card-btn{margin-top:6px;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:999px;border:1px solid rgba(231,201,162,.55);background:rgba(231,201,162,.1);
+  font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-soft);
+  transition:background .3s ease,color .3s ease,border-color .3s ease,transform .3s ease}
+.card-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .3s ease}
+.area-card:hover .card-btn,.area-card:focus-visible .card-btn{
+  background:var(--gold);border-color:var(--gold);color:#211407}
+.area-card:hover .card-btn svg,.area-card:focus-visible .card-btn svg{transform:translateX(3px)}
+
 .area-card[data-tint="violet"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--violet), transparent 62%)}
 .area-card[data-tint="turq"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--turq), transparent 62%)}
 .area-card[data-tint="gold"] .tint{background:radial-gradient(120% 90% at 20% 0%, var(--gold), transparent 62%)}
@@ -231,10 +233,10 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
 @media(max-width:560px){
   .areas-grid{gap:8px}
   #areas{padding:0 8px max(10px,env(safe-area-inset-bottom))}
-  .area-label{font-size:10px;letter-spacing:.08em}
-  .area-micro{font-size:9.5px}
-  .card-badge{font-size:8px;padding:4px 9px 4px 7px;top:8px;left:8px}
-  .card-cta{left:9px;right:9px;bottom:8px}
+  .card-badge{font-size:8px;padding:4px 9px 4px 7px;top:8px;right:8px}
+  .card-overlay{left:10px;right:10px;bottom:9px;gap:2px}
+  .card-desc{display:none}
+  .card-btn{padding:5px 11px;margin-top:4px;font-size:9px}
   #hero{padding-top:max(138px,calc(env(safe-area-inset-top) + 128px))}
 }
 </style>
@@ -335,50 +337,50 @@ main{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
     <div class="areas-grid">
 
       <a class="area-card" data-tint="violet" href="breathing.html">
-        <span class="area-label">🌬️ Guided Breathing</span>
-        <span class="area-micro">Calm your mind and reset your nervous system.</span>
-        <div class="area-img-wrap">
-          <img src="images/preview-breathing.jpg" alt="Guided Breathing" loading="lazy">
-          <div class="tint"></div>
-          <div class="card-scrim"></div>
-          <span class="card-badge">
-            <svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>
-            Start Here
-          </span>
-          <span class="card-cta">Enter Experience <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <img src="images/preview-breathing.jpg" alt="Guided Breathing" loading="lazy">
+        <div class="tint"></div>
+        <div class="card-scrim"></div>
+        <span class="card-badge">
+          <svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>
+          Start Here
+        </span>
+        <div class="card-overlay">
+          <span class="card-title">🌬️ Guided Breathing</span>
+          <span class="card-desc">Calm your mind and reset your nervous system.</span>
+          <span class="card-btn">Enter Experience <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
 
       <a class="area-card" data-tint="turq" href="instruments.html">
-        <span class="area-label">🎵 Soundscape Creator</span>
-        <span class="area-micro">Build personalized healing sound journeys.</span>
-        <div class="area-img-wrap">
-          <img src="images/preview-soundscape.jpg" alt="Soundscape Creator" loading="lazy">
-          <div class="tint"></div>
-          <div class="card-scrim"></div>
-          <span class="card-cta">Create Soundscape <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <img src="images/preview-sound.jpg" alt="Soundscape Creator" loading="lazy">
+        <div class="tint"></div>
+        <div class="card-scrim"></div>
+        <div class="card-overlay">
+          <span class="card-title">🎵 Soundscape Creator</span>
+          <span class="card-desc">Build personalized healing sound journeys.</span>
+          <span class="card-btn">Create Soundscape <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
 
       <a class="area-card" data-tint="gold" href="nutriloader.html">
-        <span class="area-label">🥗 Nutrition Tracker</span>
-        <span class="area-micro">Support wellness with mindful daily habits.</span>
-        <div class="area-img-wrap">
-          <img src="images/preview-nutrition.jpg" alt="Nutrition Tracker" loading="lazy">
-          <div class="tint"></div>
-          <div class="card-scrim"></div>
-          <span class="card-cta">Open Tracker <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <img src="images/preview-nutrition.jpg" alt="Nutrition Tracker" loading="lazy">
+        <div class="tint"></div>
+        <div class="card-scrim"></div>
+        <div class="card-overlay">
+          <span class="card-title">🥗 Nutrition Tracker</span>
+          <span class="card-desc">Support wellness with mindful habits.</span>
+          <span class="card-btn">Open Tracker <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
 
       <a class="area-card" data-tint="blend" href="yoga-loader.html">
-        <span class="area-label">🧘 Yoga</span>
-        <span class="area-micro">Move, breathe and unwind at your own pace.</span>
-        <div class="area-img-wrap">
-          <img src="images/preview-yoga.jpg" alt="Yoga" loading="lazy">
-          <div class="tint"></div>
-          <div class="card-scrim"></div>
-          <span class="card-cta">Start Practice <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <img src="images/preview-yoga.jpg" alt="Yoga" loading="lazy">
+        <div class="tint"></div>
+        <div class="card-scrim"></div>
+        <div class="card-overlay">
+          <span class="card-title">🧘 Yoga</span>
+          <span class="card-desc">Move, breathe and unwind at your own pace.</span>
+          <span class="card-btn">Start Practice <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
 
