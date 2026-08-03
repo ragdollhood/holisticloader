@@ -270,17 +270,37 @@ a{color:inherit}
   #hero{padding-top:max(98px,calc(env(safe-area-inset-top) + 88px));gap:10px}
 }
 
-/* ===== feature strip — immediate proof of what's inside, right under the hero ===== */
+/* ===== positioning statement — the one-line "what this is" under the hero ===== */
+#heroPositioning{position:relative;z-index:2;margin:0 auto;max-width:480px;font-family:var(--ui);font-weight:600;
+  font-size:clamp(12.5px,1.7vw,14.5px);letter-spacing:.03em;color:var(--gold);
+  text-shadow:0 1px 3px rgba(0,0,0,.55),0 0 18px rgba(240,209,159,.18)}
+
+/* ===== feature strip — immediate proof of what's inside, right under the hero.
+   Pills are real entry points now (clickable), each carrying a faint accent
+   color that matches its destination so users learn the mapping at a glance. ===== */
 #featureStrip{position:relative;z-index:1;flex:0 0 auto;list-style:none;display:flex;flex-wrap:wrap;
   align-items:center;justify-content:center;gap:10px;margin:4px auto 22px;padding:0 20px;max-width:640px}
-#featureStrip li{display:inline-flex;align-items:center;gap:7px;font-family:var(--ui);font-weight:500;
-  font-size:12.5px;letter-spacing:.03em;color:var(--muted);background:rgba(244,241,234,.06);
-  border:1px solid var(--line);border-radius:999px;padding:7px 15px 7px 12px;
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-#featureStrip .fs-ic{font-size:14px;line-height:1}
+#featureStrip li{list-style:none}
+#featureStrip a.fs-pill{position:relative;display:inline-flex;align-items:center;gap:7px;font-family:var(--ui);font-weight:600;
+  font-size:12.5px;letter-spacing:.03em;color:var(--muted);text-decoration:none;
+  background:
+    radial-gradient(120% 140% at 14% 50%, var(--fs-glow,transparent), transparent 72%),
+    rgba(244,241,234,.06);
+  border:1px solid var(--line);border-radius:999px;padding:7px 16px 7px 12px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  transition:transform .22s cubic-bezier(.22,1,.36,1),background .25s ease,border-color .25s ease,box-shadow .3s ease,color .2s ease}
+#featureStrip a.fs-pill:hover,#featureStrip a.fs-pill:focus-visible{
+  transform:translateY(-3px);color:var(--ink);border-color:var(--fs-accent,var(--gold-soft));
+  box-shadow:0 10px 24px -6px var(--fs-glow-strong,rgba(240,209,159,.4))}
+#featureStrip .fs-ic{font-size:14px;line-height:1;filter:drop-shadow(0 0 5px var(--fs-glow-strong,transparent))}
+/* per-destination accent: breathing turquoise, soundscapes lavender, yoga warm gold, nutrition green */
+#featureStrip a[data-tint="breathing"]{--fs-accent:var(--turq);--fs-glow:rgba(143,239,225,.22);--fs-glow-strong:rgba(143,239,225,.4)}
+#featureStrip a[data-tint="sound"]{--fs-accent:var(--lavender);--fs-glow:rgba(217,200,240,.22);--fs-glow-strong:rgba(217,200,240,.4)}
+#featureStrip a[data-tint="yoga"]{--fs-accent:var(--sunrise);--fs-glow:rgba(255,180,84,.2);--fs-glow-strong:rgba(255,180,84,.4)}
+#featureStrip a[data-tint="nutrition"]{--fs-accent:var(--leaf);--fs-glow:rgba(154,223,158,.22);--fs-glow-strong:rgba(154,223,158,.4)}
 @media(max-width:560px){
   #featureStrip{gap:8px;margin:2px auto 16px}
-  #featureStrip li{font-size:11.5px;padding:6px 12px 6px 10px}
+  #featureStrip a.fs-pill{font-size:11.5px;padding:6px 13px 6px 10px}
 }
 
 /* ===================================================================
@@ -386,40 +406,53 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 #trustStrip .rating{color:var(--ink);font-weight:600;margin-left:6px;font-size:13px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 #trustStrip .quote{font-family:var(--display);font-style:italic;color:var(--muted);font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 
-/* ===== premium section — the single strongest conversion element on the page ===== */
-#premiumSection{position:relative;z-index:1;flex:0 0 auto;max-width:680px;margin:38px auto 0;padding:0 20px}
-#premiumCard{position:relative;overflow:hidden;border-radius:28px;padding:34px 30px 30px;text-align:center;
-  background:linear-gradient(165deg,rgba(46,34,18,.86) 0%,rgba(30,22,14,.9) 60%,rgba(20,15,10,.92) 100%);
-  box-shadow:0 18px 40px rgba(0,0,0,.4),inset 0 1px 1px rgba(255,255,255,.08)}
-#premiumCard::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;
-  background:linear-gradient(135deg,rgba(240,209,159,.75) 0%,rgba(247,231,197,.55) 30%,rgba(211,182,255,.4) 65%,rgba(240,209,159,.7) 100%);
-  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.85}
-#premiumCard::after{content:'';position:absolute;z-index:0;left:50%;top:-30%;width:130%;height:180%;transform:translateX(-50%);
-  background:radial-gradient(45% 40% at 50% 0%,rgba(255,214,140,.14),transparent 70%);pointer-events:none}
-#premiumEyebrow{position:relative;z-index:1;display:inline-block;font-family:var(--ui);font-weight:700;
-  font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-#premiumHeadline{position:relative;z-index:1;margin:0 0 8px;font-family:var(--display);font-weight:700;
-  font-size:clamp(26px,4.4vw,34px);line-height:1.15;
+/* ===== premium section — the single strongest conversion element on the page.
+   Deliberately more contrast, more glow, more depth than everything above it,
+   while staying inside the same black-and-gold luxury language. ===== */
+#premiumSection{position:relative;z-index:1;flex:0 0 auto;max-width:680px;margin:44px auto 0;padding:0 20px}
+#premiumCard{position:relative;overflow:hidden;border-radius:28px;padding:40px 34px 34px;text-align:center;
+  background:linear-gradient(165deg,rgba(54,40,20,.92) 0%,rgba(32,23,14,.94) 55%,rgba(18,13,9,.96) 100%);
+  box-shadow:0 22px 50px rgba(0,0,0,.5),0 0 0 1px rgba(255,217,138,.06) inset,inset 0 1px 1px rgba(255,255,255,.09);
+  animation:premiumCardGlow 3.6s ease-in-out infinite}
+@keyframes premiumCardGlow{
+  0%,100%{box-shadow:0 22px 50px rgba(0,0,0,.5),0 0 46px -10px rgba(240,209,159,.28),0 0 0 1px rgba(255,217,138,.06) inset,inset 0 1px 1px rgba(255,255,255,.09)}
+  50%{box-shadow:0 22px 50px rgba(0,0,0,.5),0 0 72px -6px rgba(240,209,159,.5),0 0 0 1px rgba(255,217,138,.1) inset,inset 0 1px 1px rgba(255,255,255,.13)}
+}
+#premiumCard::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.75px;pointer-events:none;
+  background:linear-gradient(135deg,rgba(240,209,159,.9) 0%,rgba(247,231,197,.68) 30%,rgba(211,182,255,.5) 65%,rgba(240,209,159,.85) 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.95}
+#premiumCard::after{content:'';position:absolute;z-index:0;left:50%;top:-35%;width:140%;height:200%;transform:translateX(-50%);
+  background:radial-gradient(46% 42% at 50% 0%,rgba(255,214,140,.2),transparent 70%);pointer-events:none}
+#premiumEyebrow{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-weight:700;
+  font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#2a1c05;
+  background:linear-gradient(135deg,#ffe3a3,#d9a441);padding:7px 16px;border-radius:999px;
+  box-shadow:0 8px 22px rgba(240,209,159,.4);margin-bottom:16px;animation:premGlow 2.4s ease-in-out infinite}
+#premiumHeadline{position:relative;z-index:1;margin:0 0 10px;font-family:var(--display);font-weight:700;
+  font-size:clamp(28px,4.8vw,38px);line-height:1.14;
   background:linear-gradient(100deg,#fff8ec 0%,#f0d19f 45%,#fff8ec 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent}
-#premiumSub{position:relative;z-index:1;margin:0 auto 20px;max-width:440px;font-family:var(--ui);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 30px rgba(240,209,159,.2)}
+#premiumSub{position:relative;z-index:1;margin:0 auto 22px;max-width:440px;font-family:var(--ui);
   font-size:13.5px;line-height:1.5;color:var(--muted)}
 #premiumChecklist{position:relative;z-index:1;list-style:none;display:grid;grid-template-columns:1fr 1fr;
-  gap:9px 18px;text-align:left;max-width:460px;margin:0 auto 24px;padding:0}
-#premiumChecklist li{display:flex;align-items:center;gap:8px;font-family:var(--ui);font-weight:500;
-  font-size:13px;color:rgba(248,246,241,.92)}
-#premiumChecklist .chk{flex:0 0 auto;color:var(--gold);font-size:13px}
+  gap:11px 18px;text-align:left;max-width:460px;margin:0 auto 26px;padding:0}
+#premiumChecklist li{display:flex;align-items:center;gap:9px;font-family:var(--ui);font-weight:500;
+  font-size:13px;color:rgba(248,246,241,.94)}
+#premiumChecklist .chk{flex:0 0 auto;width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;background:rgba(255,217,138,.16);border:1px solid rgba(255,217,138,.42);
+  color:var(--gold);font-size:10.5px;font-weight:700}
 #pageFreeTrialBtn{position:relative;z-index:1;display:inline-flex;flex-direction:column;align-items:center;
-  gap:2px;width:100%;max-width:340px;padding:15px 24px;border-radius:999px;cursor:pointer;
-  font-family:var(--ui);color:#241708;background:linear-gradient(100deg,#f0d19f,#fff3d6,#e0b878);
-  box-shadow:0 10px 26px rgba(224,184,120,.28),inset 0 1px 1px rgba(255,255,255,.5);
-  transition:transform .2s ease,box-shadow .2s ease}
-#pageFreeTrialBtn:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(224,184,120,.36),inset 0 1px 1px rgba(255,255,255,.5)}
-#pageFreeTrialBtn .ptCta{font-weight:700;font-size:15px;letter-spacing:.01em}
-#pageFreeTrialBtn .ptNote{font-weight:500;font-size:11px;letter-spacing:.03em;color:rgba(36,23,8,.72)}
+  gap:3px;width:100%;max-width:360px;padding:18px 26px;border-radius:999px;cursor:pointer;
+  font-family:var(--ui);color:#fff;background:linear-gradient(135deg,#5EA8FF,#7C6BFF);
+  box-shadow:0 16px 40px rgba(124,107,255,.48),0 0 0 1px rgba(255,255,255,.1) inset;
+  animation:premGlowBlue 2.6s ease-in-out infinite;
+  transition:transform .2s ease,filter .2s ease}
+#pageFreeTrialBtn:hover{transform:translateY(-3px) scale(1.015);filter:brightness(1.1)}
+#pageFreeTrialBtn .ptCta{font-weight:700;font-size:16.5px;letter-spacing:.01em}
+#pageFreeTrialBtn .ptNote{font-weight:500;font-size:11.5px;letter-spacing:.03em;color:rgba(255,255,255,.88)}
 @media(max-width:560px){
-  #premiumCard{padding:28px 20px 24px;border-radius:22px}
-  #premiumChecklist{grid-template-columns:1fr;gap:8px}
+  #premiumCard{padding:32px 22px 28px;border-radius:22px}
+  #premiumChecklist{grid-template-columns:1fr;gap:9px}
 }
 
 /* ===== footer ===== */
@@ -525,13 +558,14 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   <section id="hero">
     <h1 id="heroTitle">How do you want to feel today?</h1>
     <p id="heroSub">Choose your goal and start in seconds using breathing, soundscapes, yoga and nutrition tools.</p>
+    <p id="heroPositioning">Breathing, Soundscapes, Yoga &amp; Nutrition — in one beautiful experience.</p>
   </section>
 
-  <ul id="featureStrip" aria-label="What's inside Holistic Loader">
-    <li><span class="fs-ic">🫁</span>Breathing</li>
-    <li><span class="fs-ic">🎵</span>Soundscapes</li>
-    <li><span class="fs-ic">🧘</span>Yoga</li>
-    <li><span class="fs-ic">🥗</span>Nutrition</li>
+  <ul id="featureStrip" aria-label="Jump straight into a tool">
+    <li><a class="fs-pill" data-tint="breathing" href="breathing.html"><span class="fs-ic">🫁</span>Start Breathing</a></li>
+    <li><a class="fs-pill" data-tint="sound" href="instruments.html"><span class="fs-ic">🎵</span>Build Soundscape</a></li>
+    <li><a class="fs-pill" data-tint="yoga" href="yoga-loader.html"><span class="fs-ic">🧘</span>Explore Yoga</a></li>
+    <li><a class="fs-pill" data-tint="nutrition" href="nutriloader.html"><span class="fs-ic">🥗</span>Track Nutrition</a></li>
   </ul>
 
   <section id="entryTiles" aria-label="Choose your goal">
