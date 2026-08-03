@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="premium-ui.css">
 <style>
 :root{
-  --bg:#120e17; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
+  --bg:#17120e; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
   --gold:#e7c9a2; --gold-soft:#d9b98a; --soft:#b3a98f; --violet:#c9a8ff;
   --turq:#7fe9dc; --turq-deep:#38b7a9;
   --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(244,241,234,.15);
@@ -61,32 +61,22 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 
 /* ===== aurora backdrop: mostly dark, with muted gold + violet and hazy turquoise wisps ===== */
 #stage{position:fixed;inset:0;z-index:-1;overflow:hidden;
-  background:linear-gradient(160deg,#0e0b12 0%,#120e17 30%,#181120 55%,#241a2e 78%,#1a1420 100%)}
-#stage .aurora{position:absolute;inset:-10%;
+  background:linear-gradient(160deg,#221a11 0%,#3a2c12 35%,#4d3a13 60%,#2c2110 100%)}
+#stage .aurora{position:absolute;inset:-6%;
   background:
-    radial-gradient(30% 26% at 82% 10%, rgba(122,60,150,.55), transparent 68%),
-    radial-gradient(26% 22% at 20% 8%,  rgba(190,150,90,.4), transparent 66%),
-    radial-gradient(34% 28% at 14% 16%, rgba(190,150,90,.4), transparent 68%),
-    radial-gradient(28% 24% at 90% 84%, rgba(0,0,0,.55), transparent 72%),
-    radial-gradient(26% 22% at 6% 78%,  rgba(56,183,169,.48), transparent 66%),
-    radial-gradient(22% 20% at 55% 40%, rgba(0,0,0,.4), transparent 74%),
-    radial-gradient(32% 28% at 60% 92%, rgba(120,80,150,.5), transparent 68%),
-    radial-gradient(24% 22% at 35% 65%, rgba(56,183,169,.42), transparent 68%),
-    radial-gradient(24% 20% at 72% 55%, rgba(122,60,150,.42), transparent 66%),
-    radial-gradient(22% 20% at 48% 20%, rgba(190,150,90,.32), transparent 66%),
-    radial-gradient(20% 18% at 92% 40%, rgba(56,183,169,.36), transparent 66%),
-    radial-gradient(24% 20% at 10% 45%, rgba(120,80,150,.4), transparent 68%),
-    radial-gradient(20% 18% at 65% 75%, rgba(190,150,90,.3), transparent 66%),
-    radial-gradient(18% 16% at 30% 88%, rgba(122,60,150,.36), transparent 66%);
-  filter:blur(18px);animation:auroraDrift 34s ease-in-out infinite alternate}
+    radial-gradient(48% 42% at 76% 6%,  rgba(255,225,130,.56), transparent 68%),
+    radial-gradient(50% 44% at 14% 10%, rgba(255,244,200,.36), transparent 70%),
+    radial-gradient(42% 36% at 58% 92%, rgba(255,196,110,.4),  transparent 68%),
+    radial-gradient(22% 18% at 46% 16%, rgba(255,238,180,.26), transparent 66%);
+  filter:blur(10px);animation:auroraDrift 34s ease-in-out infinite alternate}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
   50%{transform:translate3d(1.5%,-2%,0) rotate(4deg) scale(1.05)}
   100%{transform:translate3d(-2%,1.5%,0) rotate(-3deg) scale(1.02)}
 }
 #stage::after{content:'';position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 50% 0%,transparent 30%,rgba(0,0,0,.4) 100%),
-  linear-gradient(to bottom,rgba(0,0,0,.35) 0%,transparent 22%,transparent 55%,rgba(0,0,0,.55) 100%)}
+  background:radial-gradient(120% 90% at 50% 0%,transparent 26%,rgba(0,0,0,.2) 100%),
+  linear-gradient(to bottom,rgba(0,0,0,.16) 0%,transparent 24%,transparent 55%,rgba(0,0,0,.26) 100%)}
 
 /* ===== shared tab navigation (same system as breathing.html / instruments.html) ===== */
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;

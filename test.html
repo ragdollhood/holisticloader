@@ -44,7 +44,7 @@
 <link rel="stylesheet" href="premium-ui.css">
 <style>
 :root{
-  --bg:#17120e; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
+  --bg:#ffc93c; --ink:#f4f1ea; --muted:rgba(244,241,234,.62); --faint:rgba(244,241,234,.34);
   --gold:#e7c9a2; --gold-soft:#d9b98a; --soft:#b3a98f; --violet:#c9a8ff;
   --turq:#7fe9dc; --turq-deep:#38b7a9;
   --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(244,241,234,.15);
@@ -61,13 +61,13 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 
 /* ===== aurora backdrop: mostly dark, with muted gold + violet and hazy turquoise wisps ===== */
 #stage{position:fixed;inset:0;z-index:-1;overflow:hidden;
-  background:linear-gradient(160deg,#221a11 0%,#3a2c12 35%,#4d3a13 60%,#2c2110 100%)}
+  background:linear-gradient(160deg,#ffdc70 0%,#ffc93c 35%,#ffb400 65%,#ffa000 100%)}
 #stage .aurora{position:absolute;inset:-6%;
   background:
-    radial-gradient(48% 42% at 76% 6%,  rgba(255,225,130,.56), transparent 68%),
-    radial-gradient(50% 44% at 14% 10%, rgba(255,244,200,.36), transparent 70%),
-    radial-gradient(42% 36% at 58% 92%, rgba(255,196,110,.4),  transparent 68%),
-    radial-gradient(22% 18% at 46% 16%, rgba(255,238,180,.26), transparent 66%);
+    radial-gradient(50% 44% at 76% 6%,  rgba(255,252,220,.8), transparent 70%),
+    radial-gradient(52% 46% at 14% 10%, rgba(255,255,245,.6), transparent 72%),
+    radial-gradient(44% 38% at 58% 92%, rgba(255,222,120,.65), transparent 70%),
+    radial-gradient(24% 20% at 46% 16%, rgba(255,250,230,.45), transparent 68%);
   filter:blur(10px);animation:auroraDrift 34s ease-in-out infinite alternate}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
@@ -75,8 +75,8 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   100%{transform:translate3d(-2%,1.5%,0) rotate(-3deg) scale(1.02)}
 }
 #stage::after{content:'';position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 50% 0%,transparent 26%,rgba(0,0,0,.2) 100%),
-  linear-gradient(to bottom,rgba(0,0,0,.16) 0%,transparent 24%,transparent 55%,rgba(0,0,0,.26) 100%)}
+  background:radial-gradient(120% 90% at 50% 0%,transparent 42%,rgba(0,0,0,.08) 100%),
+  linear-gradient(to bottom,rgba(0,0,0,.06) 0%,transparent 20%,transparent 60%,rgba(0,0,0,.12) 100%)}
 
 /* ===== shared tab navigation (same system as breathing.html / instruments.html) ===== */
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
