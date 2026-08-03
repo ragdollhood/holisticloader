@@ -245,7 +245,7 @@ a{color:inherit}
    HERO — headline + subhead only. The entry tiles below ARE the CTA.
    =================================================================== */
 #hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(92px,calc(env(safe-area-inset-top) + 82px)) 24px 10px;z-index:1;gap:14px}
+  text-align:center;padding:max(92px,calc(env(safe-area-inset-top) + 82px)) 24px 6px;z-index:1;gap:14px}
 #hero::before{content:'';position:absolute;z-index:0;pointer-events:none;
   left:50%;top:-8%;width:min(640px,124%);height:280px;transform:translateX(-50%);
   background:
@@ -270,51 +270,12 @@ a{color:inherit}
   #hero{padding-top:max(98px,calc(env(safe-area-inset-top) + 88px));gap:10px}
 }
 
-/* ===== positioning statement — the one-line "what this is" under the hero ===== */
-#heroPositioning{position:relative;z-index:2;margin:0 auto;max-width:480px;font-family:var(--ui);font-weight:600;
-  font-size:clamp(12.5px,1.7vw,14.5px);letter-spacing:.03em;color:var(--gold);
-  text-shadow:0 1px 3px rgba(0,0,0,.55),0 0 18px rgba(240,209,159,.18)}
-
-/* ===== feature strip — immediate proof of what's inside, right under the hero.
-   Pills are real entry points now (clickable), each carrying a faint accent
-   color that matches its destination so users learn the mapping at a glance. ===== */
-#featureStrip{position:relative;z-index:1;flex:0 0 auto;list-style:none;display:flex;flex-wrap:wrap;
-  align-items:center;justify-content:center;gap:10px;margin:4px auto 22px;padding:0 20px;max-width:640px}
-#featureStrip li{list-style:none}
-#featureStrip a.fs-pill{position:relative;display:inline-flex;align-items:center;gap:7px;font-family:var(--ui);font-weight:600;
-  font-size:12.5px;letter-spacing:.03em;color:var(--muted);text-decoration:none;
-  background:
-    radial-gradient(120% 140% at 14% 50%, var(--fs-glow,transparent), transparent 72%),
-    rgba(244,241,234,.06);
-  border:1px solid var(--line);border-radius:999px;padding:7px 16px 7px 12px;
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  transition:transform .32s cubic-bezier(.22,1,.36,1),background .3s ease,border-color .3s ease,box-shadow .38s cubic-bezier(.22,1,.36,1),color .22s ease,filter .3s ease}
-#featureStrip a.fs-pill:hover,#featureStrip a.fs-pill:focus-visible{
-  transform:translateY(-3px) scale(1.045);color:var(--ink);border-color:var(--fs-accent,var(--gold-soft));
-  filter:brightness(1.14);
-  box-shadow:
-    0 3px 8px -2px var(--fs-glow-strong,rgba(240,209,159,.4)),
-    0 16px 34px -8px var(--fs-glow-strong,rgba(240,209,159,.45)),
-    0 0 0 1px var(--fs-accent,transparent) inset}
-#featureStrip a.fs-pill:active{transform:translateY(-1px) scale(1.01)}
-#featureStrip .fs-ic{font-size:14px;line-height:1;filter:drop-shadow(0 0 5px var(--fs-glow-strong,transparent));transition:filter .3s ease}
-#featureStrip a.fs-pill:hover .fs-ic,#featureStrip a.fs-pill:focus-visible .fs-ic{filter:drop-shadow(0 0 9px var(--fs-glow-strong,transparent))}
-/* per-destination accent: breathing turquoise, soundscapes lavender, yoga warm gold, nutrition green */
-#featureStrip a[data-tint="breathing"]{--fs-accent:var(--turq);--fs-glow:rgba(143,239,225,.22);--fs-glow-strong:rgba(143,239,225,.4)}
-#featureStrip a[data-tint="sound"]{--fs-accent:var(--lavender);--fs-glow:rgba(217,200,240,.22);--fs-glow-strong:rgba(217,200,240,.4)}
-#featureStrip a[data-tint="yoga"]{--fs-accent:var(--sunrise);--fs-glow:rgba(255,180,84,.2);--fs-glow-strong:rgba(255,180,84,.4)}
-#featureStrip a[data-tint="nutrition"]{--fs-accent:var(--leaf);--fs-glow:rgba(154,223,158,.22);--fs-glow-strong:rgba(154,223,158,.4)}
-@media(max-width:560px){
-  #featureStrip{gap:8px;margin:2px auto 16px}
-  #featureStrip a.fs-pill{font-size:11.5px;padding:6px 13px 6px 10px}
-}
-
 /* ===================================================================
    ENTRY TILES — the single decision mechanism on this page. Four rows,
    same shape, same weight: pick one and go. No competing CTA styles.
    =================================================================== */
 main{flex:1 1 auto;display:flex;flex-direction:column}
-#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:880px;margin:0 auto;
+#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:880px;margin:22px auto 0;
   padding:0 16px;display:grid;grid-template-columns:1fr;gap:13px}
 @media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:16px} }
 /* subtle gold ambient glow behind the tile grid — light touch, not a haze */
@@ -330,7 +291,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     0 8px 18px rgba(0,0,0,.3),
     0 2px 5px rgba(0,0,0,.22),
     inset 0 1px 1px rgba(255,255,255,.07);
-  transition:transform .38s cubic-bezier(.22,1,.36,1),box-shadow .42s cubic-bezier(.22,1,.36,1),filter .4s ease,background-size .6s ease}
+  transition:transform .36s cubic-bezier(.22,1,.36,1),box-shadow .38s cubic-bezier(.22,1,.36,1),filter .36s ease,background-size .6s ease}
 /* layer 1: left-anchored scrim — darkens only the content zone (icon/title/description), photo stays clear elsewhere */
 .entry-tile::before{content:'';position:absolute;inset:0;z-index:1;
   background:
@@ -422,11 +383,20 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   color:#fffdf9;text-shadow:0 1px 2px rgba(0,0,0,.75),0 2px 8px rgba(0,0,0,.4)}
 .tile-hook{font-family:var(--ui);font-weight:400;font-size:13.5px;line-height:1.5;
   color:rgba(248,244,236,.97);text-shadow:0 1px 2px rgba(0,0,0,.65),0 2px 7px rgba(0,0,0,.34)}
-.tile-badge{display:inline-flex;align-self:flex-start;margin-top:2px;font-family:var(--ui);font-weight:600;
-  font-size:11px;letter-spacing:.03em;color:#fff8ec;background:rgba(0,0,0,.34);
-  border:1px solid rgba(248,246,241,.28);border-radius:999px;padding:5px 12px;
-  text-shadow:none;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-.entry-tile:hover .tile-badge,.entry-tile:focus-visible .tile-badge{border-color:var(--tile-accent,var(--gold-soft))}
+.tile-badge{display:inline-flex;align-self:flex-start;margin-top:6px;font-family:var(--ui);font-weight:700;
+  font-size:13.5px;letter-spacing:.02em;color:#fff8ec;
+  background:
+    radial-gradient(120% 160% at 12% 50%, color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 30%, transparent), transparent 72%),
+    rgba(0,0,0,.4);
+  border:1px solid color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 55%, rgba(248,246,241,.3));
+  border-radius:999px;padding:8px 18px;
+  box-shadow:0 2px 10px -2px color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 45%, transparent),inset 0 1px 1px rgba(255,255,255,.08);
+  text-shadow:0 1px 2px rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  transition:transform .32s cubic-bezier(.22,1,.36,1),box-shadow .36s ease,border-color .3s ease}
+.entry-tile:hover .tile-badge,.entry-tile:focus-visible .tile-badge{
+  border-color:var(--tile-accent,var(--gold-soft));transform:translateY(-1px);
+  box-shadow:0 4px 16px -2px color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 60%, transparent),inset 0 1px 1px rgba(255,255,255,.1)}
+@media(max-width:560px){.tile-badge{font-size:12px;padding:7px 14px}}
 .tile-arrow{position:absolute;z-index:2;top:26px;right:24px;width:17px;height:17px;stroke:rgba(248,246,241,.72);fill:none;stroke-width:2.2;
   filter:drop-shadow(0 1px 3px rgba(0,0,0,.45));
   transition:transform .3s cubic-bezier(.22,1,.36,1),stroke .3s ease,opacity .3s ease}
@@ -602,16 +572,8 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   <!-- HERO -->
   <section id="hero">
     <h1 id="heroTitle">How do you want to feel today?</h1>
-    <p id="heroSub">Choose your goal and start in seconds using breathing, soundscapes, yoga and nutrition tools.</p>
-    <p id="heroPositioning">Breathing, Soundscapes, Yoga &amp; Nutrition — in one beautiful experience.</p>
+    <p id="heroSub">Choose your goal and start in seconds.</p>
   </section>
-
-  <ul id="featureStrip" aria-label="Jump straight into a tool">
-    <li><a class="fs-pill" data-tint="breathing" href="breathing.html"><span class="fs-ic">🫁</span>Start Breathing</a></li>
-    <li><a class="fs-pill" data-tint="sound" href="instruments.html"><span class="fs-ic">🎵</span>Build Soundscape</a></li>
-    <li><a class="fs-pill" data-tint="yoga" href="yoga-loader.html"><span class="fs-ic">🧘</span>Explore Yoga</a></li>
-    <li><a class="fs-pill" data-tint="nutrition" href="nutriloader.html"><span class="fs-ic">🥗</span>Track Nutrition</a></li>
-  </ul>
 
   <section id="entryTiles" aria-label="Choose your goal">
     <a class="entry-tile" data-tint="sleep" href="breathing.html" style="background-image:url('images/start-sleep.jpg')">
