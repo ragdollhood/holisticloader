@@ -390,6 +390,56 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     0 0 52px -10px rgba(154,223,158,.42),
     0 0 76px -14px rgba(226,238,150,.28),
     inset 0 1px 1px rgba(255,255,255,.09)}
+/* ===================================================================
+   AMBIENT PAGE LIGHT — each card acts as a permanent light source that
+   spills into the page background around it, not a glow on the card
+   itself. Cards stay sharp/opaque; these sit behind them (earlier in
+   DOM, z-index 0) as grid items sized to each card's own grid cell,
+   then bled far past that cell with negative insets so the color
+   pools into the surrounding page. Always visible; hover only makes
+   it a little brighter/larger — the border illumination on hover is
+   handled separately by .entry-tile's own ::after + box-shadow rules.
+   =================================================================== */
+.tile-ambient{position:absolute;z-index:0;pointer-events:none;
+  filter:blur(78px);opacity:.55;
+  transition:opacity .6s ease,filter .6s ease}
+/* sleep — top-left card: blue-lavender light pushed into the left margin */
+.tile-ambient--sleep{grid-column:1;grid-row:1;inset:-190px -110px -190px -60vw;
+  background:
+    radial-gradient(60% 60% at 32% 45%, rgba(135,150,255,.5), transparent 68%),
+    radial-gradient(50% 50% at 55% 55%, rgba(196,168,255,.3), transparent 70%)}
+/* stress — top-right card: purple-gold light pushed into the right margin */
+.tile-ambient--stress{grid-column:2;grid-row:1;inset:-190px -60vw -190px -110px;
+  background:
+    radial-gradient(60% 60% at 68% 45%, rgba(183,123,235,.48), transparent 68%),
+    radial-gradient(50% 50% at 45% 55%, rgba(232,192,122,.26), transparent 70%)}
+/* energy — bottom-left card: amber-orange light pushed into the left margin */
+.tile-ambient--energy{grid-column:1;grid-row:2;inset:-190px -110px -190px -60vw;
+  background:
+    radial-gradient(60% 60% at 32% 50%, rgba(255,168,72,.52), transparent 68%),
+    radial-gradient(50% 50% at 55% 55%, rgba(255,120,64,.26), transparent 70%)}
+/* eat — bottom-right card: botanical green light pushed into the right margin */
+.tile-ambient--eat{grid-column:2;grid-row:2;inset:-190px -60vw -190px -110px;
+  background:
+    radial-gradient(60% 60% at 68% 50%, rgba(122,214,138,.48), transparent 68%),
+    radial-gradient(50% 50% at 45% 55%, rgba(178,214,110,.26), transparent 70%)}
+@media(max-width:659px){
+  /* single-column layout: every card is its own row, but each keeps its
+     assigned side so the left/right mood pattern still reads */
+  .tile-ambient{inset:-120px -60px -120px -60px;filter:blur(56px)}
+  .tile-ambient--sleep{grid-column:1;grid-row:1;inset:-130px -70px -110px -55vw}
+  .tile-ambient--stress{grid-column:1;grid-row:2;inset:-110px -55vw -110px -70px}
+  .tile-ambient--energy{grid-column:1;grid-row:3;inset:-110px -70px -110px -55vw}
+  .tile-ambient--eat{grid-column:1;grid-row:4;inset:-130px -55vw -130px -70px}
+}
+/* hover: strengthen the ambient light slightly — card border illumination
+   is handled by .entry-tile's own hover rules, not here */
+#entryTiles:has(>.entry-tile[data-tint="sleep"]:hover,>.entry-tile[data-tint="sleep"]:focus-visible) .tile-ambient--sleep,
+#entryTiles:has(>.entry-tile[data-tint="stress"]:hover,>.entry-tile[data-tint="stress"]:focus-visible) .tile-ambient--stress,
+#entryTiles:has(>.entry-tile[data-tint="energy"]:hover,>.entry-tile[data-tint="energy"]:focus-visible) .tile-ambient--energy,
+#entryTiles:has(>.entry-tile[data-tint="eat"]:hover,>.entry-tile[data-tint="eat"]:focus-visible) .tile-ambient--eat{
+  opacity:.82;filter:blur(88px)}
+
 .tile-ic{position:relative;z-index:2;flex:0 0 auto;width:58px;height:58px;display:inline-flex;align-items:center;justify-content:center;
   border-radius:50%;background:rgba(14,10,14,.58);border:1px solid rgba(248,246,241,.36);font-size:27px;
   backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
@@ -595,6 +645,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   </section>
 
   <section id="entryTiles" aria-label="Choose your goal">
+    <div class="tile-ambient tile-ambient--sleep" aria-hidden="true"></div>
     <a class="entry-tile" data-tint="sleep" href="breathing.html" style="background-image:url('images/start-sleep.jpg')">
       <span class="tile-ic" aria-hidden="true">🌙</span>
       <span class="tile-text">
@@ -604,6 +655,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
+    <div class="tile-ambient tile-ambient--stress" aria-hidden="true"></div>
     <a class="entry-tile" data-tint="stress" href="instruments.html" style="background-image:url('images/start-stress.jpg')">
       <span class="tile-ic" aria-hidden="true">🎵</span>
       <span class="tile-text">
@@ -613,6 +665,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
+    <div class="tile-ambient tile-ambient--energy" aria-hidden="true"></div>
     <a class="entry-tile" data-tint="energy" href="yoga-loader.html" style="background-image:url('images/start-energy.jpg')">
       <span class="tile-ic" aria-hidden="true">⚡</span>
       <span class="tile-text">
@@ -622,6 +675,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
+    <div class="tile-ambient tile-ambient--eat" aria-hidden="true"></div>
     <a class="entry-tile" data-tint="eat" href="nutriloader.html" style="background-image:url('images/start-bowl.jpg')">
       <span class="tile-ic" aria-hidden="true">🥗</span>
       <span class="tile-text">
