@@ -106,17 +106,17 @@ a{color:inherit}
    mood without ever reading as a "section" ===== */
 #stage{position:fixed;inset:0;z-index:-1;overflow:hidden;
   background:
-    radial-gradient(48% 42% at 50% 38%, rgba(255,206,132,.19), transparent 68%),
+    radial-gradient(48% 42% at 50% 38%, rgba(255,206,132,.14), transparent 68%),
     radial-gradient(120% 84% at 50% -14%, rgba(255,225,175,.05), transparent 52%),
     radial-gradient(140% 120% at 50% 50%, transparent 26%, rgba(1,1,1,.72) 68%, #000 100%),
     linear-gradient(180deg,#060402 0%,#030201 100%)}
 #stage .aurora{position:absolute;inset:-6%;
   background:
-    radial-gradient(32% 27% at 50% 36%, rgba(255,214,150,.52), transparent 68%),
-    radial-gradient(18% 14% at 16% 14%, rgba(175,175,255,.05), transparent 72%),
-    radial-gradient(18% 14% at 84% 16%, rgba(205,150,240,.045), transparent 72%),
-    radial-gradient(18% 14% at 18% 86%, rgba(255,190,110,.055), transparent 72%),
-    radial-gradient(18% 14% at 82% 88%, rgba(160,225,165,.045), transparent 72%);
+    radial-gradient(32% 27% at 50% 36%, rgba(255,214,150,.44), transparent 68%),
+    radial-gradient(20% 16% at 16% 14%, rgba(175,175,255,.065), transparent 72%),
+    radial-gradient(20% 16% at 84% 16%, rgba(205,150,240,.06), transparent 72%),
+    radial-gradient(20% 16% at 18% 86%, rgba(255,190,110,.07), transparent 72%),
+    radial-gradient(20% 16% at 82% 88%, rgba(160,225,165,.06), transparent 72%);
   filter:blur(8px);animation:auroraDrift 34s ease-in-out infinite alternate}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
@@ -254,7 +254,7 @@ a{color:inherit}
    HERO — headline + subhead only. The entry tiles below ARE the CTA.
    =================================================================== */
 #hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(92px,calc(env(safe-area-inset-top) + 82px)) 24px 0;z-index:1;gap:9px}
+  text-align:center;padding:max(88px,calc(env(safe-area-inset-top) + 78px)) 24px 0;z-index:1;gap:8px}
 #hero::before{content:'';position:absolute;z-index:0;pointer-events:none;
   left:50%;top:-8%;width:min(680px,128%);height:300px;transform:translateX(-50%);
   background:
@@ -284,23 +284,23 @@ a{color:inherit}
    same shape, same weight: pick one and go. No competing CTA styles.
    =================================================================== */
 main{flex:1 1 auto;display:flex;flex-direction:column}
-#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:1040px;margin:14px auto 0;
-  padding:0 16px;display:grid;grid-template-columns:1fr;gap:15px}
-@media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:20px;padding:0 20px} }
+#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:1170px;margin:8px auto 0;
+  padding:0 14px;display:grid;grid-template-columns:1fr;gap:15px;align-items:stretch}
+@media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:18px;padding:0 18px} }
 /* subtle gold ambient glow behind the tile grid — a soft pool of light with the
    center brighter, plus faint, near-subconscious color echoes from each card
    (sleep→lavender-blue, stress→purple-gold, energy→amber, nutrition→green) */
 #entryTiles::before{content:'';position:absolute;z-index:0;left:50%;top:-8%;
   width:112%;height:120%;transform:translateX(-50%);pointer-events:none;
   background:
-    radial-gradient(38% 32% at 50% 38%, rgba(255,222,164,.19), transparent 68%),
-    radial-gradient(24% 22% at 22% 20%, rgba(170,160,255,.05), transparent 70%),
-    radial-gradient(24% 22% at 78% 26%, rgba(200,130,235,.045), transparent 70%),
-    radial-gradient(24% 22% at 24% 78%, rgba(255,180,84,.05), transparent 70%),
-    radial-gradient(24% 22% at 76% 80%, rgba(154,223,158,.04), transparent 70%);
+    radial-gradient(38% 32% at 50% 38%, rgba(255,222,164,.14), transparent 68%),
+    radial-gradient(26% 24% at 22% 20%, rgba(170,160,255,.065), transparent 70%),
+    radial-gradient(26% 24% at 78% 26%, rgba(200,130,235,.06), transparent 70%),
+    radial-gradient(26% 24% at 24% 78%, rgba(255,180,84,.065), transparent 70%),
+    radial-gradient(26% 24% at 76% 80%, rgba(154,223,158,.055), transparent 70%);
   filter:blur(18px)}
 .entry-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:11px;
-  min-height:264px;padding:32px 30px 30px;border-radius:28px;overflow:hidden;
+  min-height:300px;padding:36px 33px 32px;border-radius:28px;overflow:hidden;
   border:none;background-color:#1c1712;background-size:cover;background-position:center;
   text-decoration:none;color:var(--ink);
   box-shadow:
@@ -327,13 +327,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   -webkit-mask-composite:xor;
   mask-composite:exclude;
   opacity:.72;transition:opacity .3s ease}
-.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-6px);background-size:110%;filter:brightness(1.08);
+.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-8px);background-size:108%;filter:brightness(1.1) saturate(1.03);
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
-    0 0 48px -10px var(--tile-accent,rgba(240,209,159,.45)),
-    inset 0 1px 1px rgba(255,255,255,.09)}
-.entry-tile:hover::after,.entry-tile:focus-visible::after{opacity:.92}
+    0 26px 52px rgba(0,0,0,.42),
+    0 7px 18px rgba(0,0,0,.3),
+    0 0 52px -9px var(--tile-accent,rgba(240,209,159,.5)),
+    inset 0 1px 1px rgba(255,255,255,.11)}
+.entry-tile:hover::after,.entry-tile:focus-visible::after{opacity:1}
 
 /* ---- per-card emotional palette: identity lives in the scrim near the icon, not a wash across the photo ---- */
 /* Sleep Better Tonight — soft champagne + bedside lamp glow + cream + gentle moonlight lavender */
@@ -364,32 +364,32 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 /* ---- ambient hover glow: as if each photo were illuminating its own frame, tuned to that card's mood ---- */
 .entry-tile[data-tint="sleep"]:hover,.entry-tile[data-tint="sleep"]:focus-visible{
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
-    0 0 52px -10px rgba(130,150,255,.4),
-    0 0 76px -14px rgba(190,150,255,.32),
-    inset 0 1px 1px rgba(255,255,255,.09)}
+    0 26px 52px rgba(0,0,0,.42),
+    0 7px 18px rgba(0,0,0,.3),
+    0 0 58px -9px rgba(130,150,255,.46),
+    0 0 82px -13px rgba(190,150,255,.36),
+    inset 0 1px 1px rgba(255,255,255,.11)}
 .entry-tile[data-tint="stress"]:hover,.entry-tile[data-tint="stress"]:focus-visible{
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
-    0 0 52px -10px rgba(185,125,235,.42),
-    0 0 76px -14px rgba(240,209,159,.28),
-    inset 0 1px 1px rgba(255,255,255,.09)}
+    0 26px 52px rgba(0,0,0,.42),
+    0 7px 18px rgba(0,0,0,.3),
+    0 0 58px -9px rgba(185,125,235,.48),
+    0 0 82px -13px rgba(240,209,159,.32),
+    inset 0 1px 1px rgba(255,255,255,.11)}
 .entry-tile[data-tint="energy"]:hover,.entry-tile[data-tint="energy"]:focus-visible{
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
-    0 0 52px -10px rgba(255,180,84,.46),
-    0 0 76px -14px rgba(255,138,77,.3),
-    inset 0 1px 1px rgba(255,255,255,.09)}
+    0 26px 52px rgba(0,0,0,.42),
+    0 7px 18px rgba(0,0,0,.3),
+    0 0 58px -9px rgba(255,180,84,.52),
+    0 0 82px -13px rgba(255,138,77,.34),
+    inset 0 1px 1px rgba(255,255,255,.11)}
 .entry-tile[data-tint="eat"]:hover,.entry-tile[data-tint="eat"]:focus-visible{
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
-    0 0 52px -10px rgba(154,223,158,.42),
-    0 0 76px -14px rgba(226,238,150,.28),
-    inset 0 1px 1px rgba(255,255,255,.09)}
+    0 26px 52px rgba(0,0,0,.42),
+    0 7px 18px rgba(0,0,0,.3),
+    0 0 58px -9px rgba(154,223,158,.48),
+    0 0 82px -13px rgba(226,238,150,.32),
+    inset 0 1px 1px rgba(255,255,255,.11)}
 /* ===================================================================
    AMBIENT PAGE LIGHT — each card acts as a permanent light source that
    spills into the page background around it, not a glow on the card
@@ -401,36 +401,36 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
    handled separately by .entry-tile's own ::after + box-shadow rules.
    =================================================================== */
 .tile-ambient{position:absolute;z-index:0;pointer-events:none;
-  filter:blur(78px);opacity:.55;
+  filter:blur(64px);opacity:.62;
   transition:opacity .6s ease,filter .6s ease}
-/* sleep — top-left card: blue-lavender light pushed into the left margin */
-.tile-ambient--sleep{grid-column:1;grid-row:1;inset:-190px -110px -190px -60vw;
+/* sleep — top-left card: blue-lavender light held close, reading as the card's own spill */
+.tile-ambient--sleep{grid-column:1;grid-row:1;inset:-140px -85px -140px -46vw;
   background:
-    radial-gradient(60% 60% at 32% 45%, rgba(135,150,255,.5), transparent 68%),
-    radial-gradient(50% 50% at 55% 55%, rgba(196,168,255,.3), transparent 70%)}
-/* stress — top-right card: purple-gold light pushed into the right margin */
-.tile-ambient--stress{grid-column:2;grid-row:1;inset:-190px -60vw -190px -110px;
+    radial-gradient(60% 60% at 30% 42%, rgba(135,150,255,.56), transparent 66%),
+    radial-gradient(48% 48% at 52% 54%, rgba(196,168,255,.32), transparent 68%)}
+/* stress — top-right card: purple-gold light held close to the card */
+.tile-ambient--stress{grid-column:2;grid-row:1;inset:-140px -46vw -140px -85px;
   background:
-    radial-gradient(60% 60% at 68% 45%, rgba(183,123,235,.48), transparent 68%),
-    radial-gradient(50% 50% at 45% 55%, rgba(232,192,122,.26), transparent 70%)}
-/* energy — bottom-left card: amber-orange light pushed into the left margin */
-.tile-ambient--energy{grid-column:1;grid-row:2;inset:-190px -110px -190px -60vw;
+    radial-gradient(60% 60% at 70% 42%, rgba(183,123,235,.54), transparent 66%),
+    radial-gradient(48% 48% at 48% 54%, rgba(232,192,122,.28), transparent 68%)}
+/* energy — bottom-left card: amber-orange light held close to the card */
+.tile-ambient--energy{grid-column:1;grid-row:2;inset:-140px -85px -140px -46vw;
   background:
-    radial-gradient(60% 60% at 32% 50%, rgba(255,168,72,.52), transparent 68%),
-    radial-gradient(50% 50% at 55% 55%, rgba(255,120,64,.26), transparent 70%)}
-/* eat — bottom-right card: botanical green light pushed into the right margin */
-.tile-ambient--eat{grid-column:2;grid-row:2;inset:-190px -60vw -190px -110px;
+    radial-gradient(60% 60% at 30% 48%, rgba(255,168,72,.58), transparent 66%),
+    radial-gradient(48% 48% at 52% 54%, rgba(255,120,64,.28), transparent 68%)}
+/* eat — bottom-right card: botanical green light held close to the card */
+.tile-ambient--eat{grid-column:2;grid-row:2;inset:-140px -46vw -140px -85px;
   background:
-    radial-gradient(60% 60% at 68% 50%, rgba(122,214,138,.48), transparent 68%),
-    radial-gradient(50% 50% at 45% 55%, rgba(178,214,110,.26), transparent 70%)}
+    radial-gradient(60% 60% at 70% 48%, rgba(122,214,138,.54), transparent 66%),
+    radial-gradient(48% 48% at 48% 54%, rgba(178,214,110,.28), transparent 68%)}
 @media(max-width:659px){
   /* single-column layout: every card is its own row, but each keeps its
      assigned side so the left/right mood pattern still reads */
-  .tile-ambient{inset:-120px -60px -120px -60px;filter:blur(56px)}
-  .tile-ambient--sleep{grid-column:1;grid-row:1;inset:-130px -70px -110px -55vw}
-  .tile-ambient--stress{grid-column:1;grid-row:2;inset:-110px -55vw -110px -70px}
-  .tile-ambient--energy{grid-column:1;grid-row:3;inset:-110px -70px -110px -55vw}
-  .tile-ambient--eat{grid-column:1;grid-row:4;inset:-130px -55vw -130px -70px}
+  .tile-ambient{inset:-100px -50px -100px -50px;filter:blur(48px)}
+  .tile-ambient--sleep{grid-column:1;grid-row:1;inset:-110px -58px -95px -42vw}
+  .tile-ambient--stress{grid-column:1;grid-row:2;inset:-95px -42vw -95px -58px}
+  .tile-ambient--energy{grid-column:1;grid-row:3;inset:-95px -58px -95px -42vw}
+  .tile-ambient--eat{grid-column:1;grid-row:4;inset:-110px -42vw -110px -58px}
 }
 /* hover: strengthen the ambient light slightly — card border illumination
    is handled by .entry-tile's own hover rules, not here */
@@ -438,7 +438,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 #entryTiles:has(>.entry-tile[data-tint="stress"]:hover,>.entry-tile[data-tint="stress"]:focus-visible) .tile-ambient--stress,
 #entryTiles:has(>.entry-tile[data-tint="energy"]:hover,>.entry-tile[data-tint="energy"]:focus-visible) .tile-ambient--energy,
 #entryTiles:has(>.entry-tile[data-tint="eat"]:hover,>.entry-tile[data-tint="eat"]:focus-visible) .tile-ambient--eat{
-  opacity:.82;filter:blur(88px)}
+  opacity:.88;filter:blur(72px)}
 
 .tile-ic{position:relative;z-index:2;flex:0 0 auto;width:58px;height:58px;display:inline-flex;align-items:center;justify-content:center;
   border-radius:50%;background:rgba(14,10,14,.58);border:1px solid rgba(248,246,241,.36);font-size:27px;
@@ -449,7 +449,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 .tile-hook{overflow-wrap:break-word;word-break:break-word}
 .tile-name{font-family:var(--display);font-weight:700;font-size:clamp(22px,3.1vw,27px);letter-spacing:.01em;
   color:#fffdf9;text-shadow:0 1px 2px rgba(0,0,0,.75),0 2px 8px rgba(0,0,0,.4)}
-.tile-hook{font-family:var(--ui);font-weight:400;font-size:14.5px;line-height:1.5;
+.tile-hook{font-family:var(--ui);font-weight:400;font-size:14.5px;line-height:1.5;min-height:2.9em;
   color:rgba(248,244,236,.97);text-shadow:0 1px 2px rgba(0,0,0,.65),0 2px 7px rgba(0,0,0,.34)}
 .tile-badge{display:inline-flex;align-self:flex-start;max-width:100%;white-space:normal;text-align:left;line-height:1.3;margin-top:auto;font-family:var(--ui);font-weight:700;
   font-size:14.5px;letter-spacing:.02em;color:#fff8ec;
@@ -470,13 +470,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   transition:transform .3s cubic-bezier(.22,1,.36,1),stroke .3s ease,opacity .3s ease}
 .entry-tile:hover .tile-arrow,.entry-tile:focus-visible .tile-arrow{transform:translateX(4px) scale(1.08);stroke:var(--tile-accent,var(--gold));opacity:1}
 @media(max-width:560px){
-  .entry-tile{padding:25px 22px 22px;min-height:222px}
+  .entry-tile{padding:28px 24px 24px;min-height:250px}
   .tile-ic{width:48px;height:48px;font-size:22px}
   .tile-text{width:58%;max-width:58%}
 }
 
 /* ===== trust strip — one line, no card grid ===== */
-#trustStrip{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:34px 20px 0;
+#trustStrip{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:28px 20px 0;
   max-width:520px;font-family:var(--ui);display:flex;flex-direction:column;gap:6px}
 #trustStrip::before{content:'';position:absolute;z-index:-1;left:50%;top:-10%;width:140%;height:170%;
   transform:translateX(-50%);pointer-events:none;
@@ -492,15 +492,15 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 #premiumSection{position:relative;z-index:1;flex:0 0 auto;max-width:680px;margin:44px auto 0;padding:0 20px}
 #premiumSection::before{content:'';position:absolute;z-index:0;left:50%;top:-14%;width:150%;height:140%;
   transform:translateX(-50%);pointer-events:none;
-  background:radial-gradient(50% 52% at 50% 30%, rgba(255,214,140,.16), transparent 70%);
-  filter:blur(28px)}
+  background:radial-gradient(50% 52% at 50% 30%, rgba(255,214,140,.23), transparent 70%);
+  filter:blur(24px)}
 #premiumCard{position:relative;overflow:hidden;border-radius:28px;padding:40px 34px 34px;text-align:center;
-  background:linear-gradient(165deg,rgba(54,40,20,.92) 0%,rgba(32,23,14,.94) 55%,rgba(18,13,9,.96) 100%);
-  box-shadow:0 22px 50px rgba(0,0,0,.5),0 0 0 1px rgba(255,217,138,.06) inset,inset 0 1px 1px rgba(255,255,255,.09);
+  background:linear-gradient(165deg,rgba(60,44,22,.94) 0%,rgba(34,24,15,.96) 55%,rgba(16,11,8,.97) 100%);
+  box-shadow:0 26px 58px rgba(0,0,0,.54),0 0 0 1px rgba(255,217,138,.08) inset,inset 0 1px 1px rgba(255,255,255,.1);
   animation:premiumCardGlow 3.6s ease-in-out infinite}
 @keyframes premiumCardGlow{
-  0%,100%{box-shadow:0 24px 56px rgba(0,0,0,.52),0 0 58px -8px rgba(240,209,159,.36),0 0 0 1px rgba(255,217,138,.08) inset,inset 0 1px 1px rgba(255,255,255,.1)}
-  50%{box-shadow:0 24px 56px rgba(0,0,0,.52),0 0 92px -4px rgba(240,209,159,.62),0 0 0 1px rgba(255,217,138,.15) inset,inset 0 1px 1px rgba(255,255,255,.17)}
+  0%,100%{box-shadow:0 28px 62px rgba(0,0,0,.56),0 0 64px -8px rgba(240,209,159,.42),0 0 0 1px rgba(255,217,138,.1) inset,inset 0 1px 1px rgba(255,255,255,.12)}
+  50%{box-shadow:0 28px 62px rgba(0,0,0,.56),0 0 104px -3px rgba(240,209,159,.7),0 0 0 1px rgba(255,217,138,.18) inset,inset 0 1px 1px rgba(255,255,255,.19)}
 }
 #premiumCard::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:2.25px;pointer-events:none;
   background:linear-gradient(135deg,rgba(240,209,159,1) 0%,rgba(247,231,197,.8) 30%,rgba(211,182,255,.6) 65%,rgba(240,209,159,.95) 100%);
@@ -509,13 +509,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   background:radial-gradient(46% 42% at 50% 0%,rgba(255,214,140,.2),transparent 70%);pointer-events:none}
 #premiumEyebrow{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-weight:700;
   font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#2a1c05;
-  background:linear-gradient(135deg,#ffe3a3,#d9a441);padding:7px 16px;border-radius:999px;
-  box-shadow:0 8px 22px rgba(240,209,159,.4);margin-bottom:16px;animation:premGlow 2.4s ease-in-out infinite}
+  background:linear-gradient(135deg,#ffe8b0,#dcaa48);padding:7px 16px;border-radius:999px;
+  box-shadow:0 10px 26px rgba(240,209,159,.48);margin-bottom:16px;animation:premGlow 2.4s ease-in-out infinite}
 #premiumHeadline{position:relative;z-index:1;margin:0 0 10px;font-family:var(--display);font-weight:700;
-  font-size:clamp(28px,4.8vw,38px);line-height:1.14;
+  font-size:clamp(29px,5vw,40px);line-height:1.14;
   background:linear-gradient(100deg,#fff8ec 0%,#f0d19f 45%,#fff8ec 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  text-shadow:0 0 30px rgba(240,209,159,.2)}
+  text-shadow:0 0 34px rgba(240,209,159,.26)}
 #premiumSub{position:relative;z-index:1;margin:0 auto 22px;max-width:440px;font-family:var(--ui);
   font-size:13.5px;line-height:1.5;color:var(--muted)}
 #premiumChecklist{position:relative;z-index:1;list-style:none;display:grid;grid-template-columns:1fr 1fr;
