@@ -106,18 +106,18 @@ a{color:inherit}
    mood without ever reading as a "section" ===== */
 #stage{position:fixed;inset:0;z-index:-1;overflow:hidden;
   background:
-    radial-gradient(62% 52% at 50% 40%, rgba(255,206,132,.15), transparent 70%),
-    radial-gradient(130% 90% at 50% -12%, rgba(255,225,175,.06), transparent 55%),
-    radial-gradient(150% 130% at 50% 50%, transparent 32%, rgba(3,2,2,.62) 76%, #050403 100%),
-    linear-gradient(180deg,#0b0806 0%,#090604 100%)}
+    radial-gradient(48% 42% at 50% 38%, rgba(255,206,132,.19), transparent 68%),
+    radial-gradient(120% 84% at 50% -14%, rgba(255,225,175,.05), transparent 52%),
+    radial-gradient(140% 120% at 50% 50%, transparent 26%, rgba(1,1,1,.72) 68%, #000 100%),
+    linear-gradient(180deg,#060402 0%,#030201 100%)}
 #stage .aurora{position:absolute;inset:-6%;
   background:
-    radial-gradient(40% 34% at 50% 38%, rgba(255,214,150,.48), transparent 72%),
-    radial-gradient(22% 18% at 16% 14%, rgba(175,175,255,.07), transparent 74%),
-    radial-gradient(22% 18% at 84% 16%, rgba(205,150,240,.065), transparent 74%),
-    radial-gradient(22% 18% at 18% 86%, rgba(255,190,110,.08), transparent 74%),
-    radial-gradient(22% 18% at 82% 88%, rgba(160,225,165,.065), transparent 74%);
-  filter:blur(13px);animation:auroraDrift 34s ease-in-out infinite alternate}
+    radial-gradient(32% 27% at 50% 36%, rgba(255,214,150,.52), transparent 68%),
+    radial-gradient(18% 14% at 16% 14%, rgba(175,175,255,.05), transparent 72%),
+    radial-gradient(18% 14% at 84% 16%, rgba(205,150,240,.045), transparent 72%),
+    radial-gradient(18% 14% at 18% 86%, rgba(255,190,110,.055), transparent 72%),
+    radial-gradient(18% 14% at 82% 88%, rgba(160,225,165,.045), transparent 72%);
+  filter:blur(8px);animation:auroraDrift 34s ease-in-out infinite alternate}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
   50%{transform:translate3d(1.5%,-2%,0) rotate(4deg) scale(1.05)}
@@ -125,8 +125,8 @@ a{color:inherit}
 }
 #stage::after{content:'';position:absolute;inset:0;
   background:
-    radial-gradient(145% 100% at 50% 46%, transparent 36%, rgba(0,0,0,.58) 100%),
-    linear-gradient(to bottom,rgba(0,0,0,.22) 0%,transparent 20%,transparent 58%,rgba(0,0,0,.34) 100%)}
+    radial-gradient(135% 92% at 50% 44%, transparent 30%, rgba(0,0,0,.72) 100%),
+    linear-gradient(to bottom,rgba(0,0,0,.28) 0%,transparent 18%,transparent 56%,rgba(0,0,0,.42) 100%)}
 
 
 /* ===== top corners: hamburger menu (left) + auth icon (right), same placement as the rest of the site ===== */
@@ -254,7 +254,7 @@ a{color:inherit}
    HERO — headline + subhead only. The entry tiles below ARE the CTA.
    =================================================================== */
 #hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(92px,calc(env(safe-area-inset-top) + 82px)) 24px 6px;z-index:1;gap:14px}
+  text-align:center;padding:max(92px,calc(env(safe-area-inset-top) + 82px)) 24px 0;z-index:1;gap:9px}
 #hero::before{content:'';position:absolute;z-index:0;pointer-events:none;
   left:50%;top:-8%;width:min(680px,128%);height:300px;transform:translateX(-50%);
   background:
@@ -263,7 +263,7 @@ a{color:inherit}
     radial-gradient(46% 56% at 50% 50%, rgba(255,236,190,.14), transparent 74%);
   filter:blur(18px)}
 #heroTitle{position:relative;z-index:2;margin:0;font-family:var(--display);font-weight:700;
-  font-size:clamp(32px,7.4vw,55px);line-height:1.1;letter-spacing:.008em;
+  font-size:clamp(28px,6.4vw,48px);line-height:1.1;letter-spacing:.008em;
   background:linear-gradient(100deg,#fff8ec 0%,#f6e6c8 20%,#f0d19f 40%,#fffbf0 58%,#e8c894 78%,#fdf3df 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   -webkit-text-stroke:.8px rgba(240,209,159,.62);
@@ -276,7 +276,7 @@ a{color:inherit}
   font-size:clamp(14px,1.9vw,17px);line-height:1.5;color:var(--muted);
   text-shadow:0 1px 3px rgba(0,0,0,.5)}
 @media(max-width:560px){
-  #hero{padding-top:max(98px,calc(env(safe-area-inset-top) + 88px));gap:10px}
+  #hero{padding-top:max(98px,calc(env(safe-area-inset-top) + 88px));gap:8px}
 }
 
 /* ===================================================================
@@ -284,30 +284,30 @@ a{color:inherit}
    same shape, same weight: pick one and go. No competing CTA styles.
    =================================================================== */
 main{flex:1 1 auto;display:flex;flex-direction:column}
-#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:880px;margin:22px auto 0;
-  padding:0 16px;display:grid;grid-template-columns:1fr;gap:13px}
-@media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:16px} }
+#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:1040px;margin:14px auto 0;
+  padding:0 16px;display:grid;grid-template-columns:1fr;gap:15px}
+@media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:20px;padding:0 20px} }
 /* subtle gold ambient glow behind the tile grid — a soft pool of light with the
    center brighter, plus faint, near-subconscious color echoes from each card
    (sleep→lavender-blue, stress→purple-gold, energy→amber, nutrition→green) */
-#entryTiles::before{content:'';position:absolute;z-index:0;left:50%;top:-10%;
-  width:124%;height:132%;transform:translateX(-50%);pointer-events:none;
+#entryTiles::before{content:'';position:absolute;z-index:0;left:50%;top:-8%;
+  width:112%;height:120%;transform:translateX(-50%);pointer-events:none;
   background:
-    radial-gradient(46% 40% at 50% 42%, rgba(255,222,164,.16), transparent 70%),
-    radial-gradient(30% 28% at 22% 20%, rgba(170,160,255,.06), transparent 72%),
-    radial-gradient(30% 28% at 78% 26%, rgba(200,130,235,.055), transparent 72%),
-    radial-gradient(30% 28% at 24% 78%, rgba(255,180,84,.06), transparent 72%),
-    radial-gradient(30% 28% at 76% 80%, rgba(154,223,158,.05), transparent 72%);
-  filter:blur(26px)}
-.entry-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;
-  min-height:226px;padding:28px 26px 26px;border-radius:26px;overflow:hidden;
+    radial-gradient(38% 32% at 50% 38%, rgba(255,222,164,.19), transparent 68%),
+    radial-gradient(24% 22% at 22% 20%, rgba(170,160,255,.05), transparent 70%),
+    radial-gradient(24% 22% at 78% 26%, rgba(200,130,235,.045), transparent 70%),
+    radial-gradient(24% 22% at 24% 78%, rgba(255,180,84,.05), transparent 70%),
+    radial-gradient(24% 22% at 76% 80%, rgba(154,223,158,.04), transparent 70%);
+  filter:blur(18px)}
+.entry-tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:11px;
+  min-height:264px;padding:32px 30px 30px;border-radius:28px;overflow:hidden;
   border:none;background-color:#1c1712;background-size:cover;background-position:center;
   text-decoration:none;color:var(--ink);
   box-shadow:
     0 8px 18px rgba(0,0,0,.3),
     0 2px 5px rgba(0,0,0,.22),
     inset 0 1px 1px rgba(255,255,255,.07);
-  transition:transform .36s cubic-bezier(.22,1,.36,1),box-shadow .38s cubic-bezier(.22,1,.36,1),filter .36s ease,background-size .6s ease}
+  transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s cubic-bezier(.22,1,.36,1),filter .35s ease,background-size .6s ease}
 /* layer 1: left-anchored scrim — darkens only the text column, ends before the
    image's focal area so nothing text-related ever sits over the photo's subject */
 .entry-tile::before{content:'';position:absolute;inset:0;z-index:1;
@@ -327,7 +327,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   -webkit-mask-composite:xor;
   mask-composite:exclude;
   opacity:.72;transition:opacity .3s ease}
-.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-5px);background-size:110%;filter:brightness(1.05);
+.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-6px);background-size:110%;filter:brightness(1.08);
   box-shadow:
     0 22px 46px rgba(0,0,0,.4),
     0 6px 16px rgba(0,0,0,.28),
@@ -390,24 +390,24 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     0 0 52px -10px rgba(154,223,158,.42),
     0 0 76px -14px rgba(226,238,150,.28),
     inset 0 1px 1px rgba(255,255,255,.09)}
-.tile-ic{position:relative;z-index:2;flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
-  border-radius:50%;background:rgba(14,10,14,.58);border:1px solid rgba(248,246,241,.36);font-size:24px;
+.tile-ic{position:relative;z-index:2;flex:0 0 auto;width:58px;height:58px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;background:rgba(14,10,14,.58);border:1px solid rgba(248,246,241,.36);font-size:27px;
   backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
   transition:transform .32s cubic-bezier(.22,1,.36,1),border-color .3s ease}
 .entry-tile:hover .tile-ic,.entry-tile:focus-visible .tile-ic{transform:scale(1.1);border-color:var(--tile-accent,var(--gold-soft))}
 .tile-text{position:relative;z-index:2;flex:0 1 auto;width:44%;max-width:44%;min-width:0;display:flex;flex-direction:column;gap:5px}
 .tile-hook{overflow-wrap:break-word;word-break:break-word}
-.tile-name{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.8vw,24px);letter-spacing:.01em;
+.tile-name{font-family:var(--display);font-weight:700;font-size:clamp(22px,3.1vw,27px);letter-spacing:.01em;
   color:#fffdf9;text-shadow:0 1px 2px rgba(0,0,0,.75),0 2px 8px rgba(0,0,0,.4)}
-.tile-hook{font-family:var(--ui);font-weight:400;font-size:13.5px;line-height:1.5;
+.tile-hook{font-family:var(--ui);font-weight:400;font-size:14.5px;line-height:1.5;
   color:rgba(248,244,236,.97);text-shadow:0 1px 2px rgba(0,0,0,.65),0 2px 7px rgba(0,0,0,.34)}
-.tile-badge{display:inline-flex;align-self:flex-start;max-width:100%;white-space:normal;text-align:left;line-height:1.3;margin-top:6px;font-family:var(--ui);font-weight:700;
-  font-size:13.5px;letter-spacing:.02em;color:#fff8ec;
+.tile-badge{display:inline-flex;align-self:flex-start;max-width:100%;white-space:normal;text-align:left;line-height:1.3;margin-top:7px;font-family:var(--ui);font-weight:700;
+  font-size:14.5px;letter-spacing:.02em;color:#fff8ec;
   background:
     radial-gradient(120% 160% at 12% 50%, color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 30%, transparent), transparent 72%),
     rgba(0,0,0,.4);
   border:1px solid color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 55%, rgba(248,246,241,.3));
-  border-radius:999px;padding:8px 18px;
+  border-radius:999px;padding:9px 20px;
   box-shadow:0 2px 10px -2px color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 45%, transparent),inset 0 1px 1px rgba(255,255,255,.08);
   text-shadow:0 1px 2px rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
   transition:transform .32s cubic-bezier(.22,1,.36,1),box-shadow .36s ease,border-color .3s ease}
@@ -415,13 +415,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   border-color:var(--tile-accent,var(--gold-soft));transform:translateY(-1px);
   box-shadow:0 4px 16px -2px color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 60%, transparent),inset 0 1px 1px rgba(255,255,255,.1)}
 @media(max-width:560px){.tile-badge{font-size:12px;padding:7px 14px}}
-.tile-arrow{position:absolute;z-index:2;top:26px;right:24px;width:17px;height:17px;stroke:rgba(248,246,241,.72);fill:none;stroke-width:2.2;
+.tile-arrow{position:absolute;z-index:2;top:30px;right:28px;width:19px;height:19px;stroke:rgba(248,246,241,.72);fill:none;stroke-width:2.2;
   filter:drop-shadow(0 1px 3px rgba(0,0,0,.45));
   transition:transform .3s cubic-bezier(.22,1,.36,1),stroke .3s ease,opacity .3s ease}
 .entry-tile:hover .tile-arrow,.entry-tile:focus-visible .tile-arrow{transform:translateX(4px) scale(1.08);stroke:var(--tile-accent,var(--gold));opacity:1}
 @media(max-width:560px){
-  .entry-tile{padding:22px 20px 20px;min-height:196px}
-  .tile-ic{width:44px;height:44px;font-size:20px}
+  .entry-tile{padding:25px 22px 22px;min-height:222px}
+  .tile-ic{width:48px;height:48px;font-size:22px}
   .tile-text{width:58%;max-width:58%}
 }
 
