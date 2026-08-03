@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <!-- ============ SEO ============ -->
-<title>Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga</title>
-<meta name="description" content="Holistic Loader — guided breathing, sound healing, nutrition tracking and yoga in one calm, unified practice space. Start your 14-day free trial, no card required.">
+<title>Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga App</title>
+<meta name="description" content="Guided breathing, calming sound, yoga and nutrition tracking in one calm app. Sleep better, stress less, more energy. Free 14-day trial, no card required.">
+<meta name="keywords" content="guided breathing app, sound healing, calming sounds, yoga poses, nutrition tracker, sleep app, stress relief, wellness app">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="theme-color" content="#1c150c">
 <meta name="application-name" content="Holistic Loader">
@@ -14,7 +15,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="canonical" href="https://holisticloader.com/start.html">
+<link rel="canonical" href="https://holisticloader.com/">
 <link rel="icon" type="image/png" href="images/icon-holistic.png">
 <link rel="apple-touch-icon" href="images/icon-holistic.png">
 <link rel="shortcut icon" href="images/icon-holistic.png">
@@ -23,21 +24,55 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Holistic Loader">
-<meta property="og:title" content="Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga">
-<meta property="og:description" content="Holistic Loader — guided breathing, sound healing, nutrition tracking and yoga in one calm, unified practice space. Start your 14-day free trial, no card required.">
+<meta property="og:title" content="Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga App">
+<meta property="og:description" content="Guided breathing, calming sound, yoga and nutrition tracking in one calm app. Sleep better, stress less, more energy. Free 14-day trial, no card required.">
 <meta property="og:image" content="https://holisticloader.com/images/preview-holistic.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Holistic Loader preview">
-<meta property="og:url" content="https://holisticloader.com/start.html">
+<meta property="og:image:alt" content="Holistic Loader — breathing, sound, yoga and nutrition app">
+<meta property="og:url" content="https://holisticloader.com/">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga">
-<meta name="twitter:description" content="Holistic Loader — guided breathing, sound healing, nutrition tracking and yoga in one calm, unified practice space. Start your 14-day free trial, no card required.">
+<meta name="twitter:title" content="Holistic Loader — Breathing, Sound, Nutrition &amp; Yoga App">
+<meta name="twitter:description" content="Guided breathing, calming sound, yoga and nutrition tracking in one calm app. Sleep better, stress less, more energy. Free 14-day trial, no card required.">
 <meta name="twitter:image" content="https://holisticloader.com/images/preview-holistic.jpg">
-<meta name="twitter:image:alt" content="Holistic Loader preview">
+<meta name="twitter:image:alt" content="Holistic Loader — breathing, sound, yoga and nutrition app">
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Holistic Loader",
+  "url": "https://holisticloader.com/",
+  "description": "Guided breathing, calming sound, yoga and nutrition tracking in one calm app. Sleep better, stress less, more energy.",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Web",
+  "image": "https://holisticloader.com/images/preview-holistic.jpg",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Free 14-day trial",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    {
+      "@type": "Offer",
+      "name": "Premium membership",
+      "price": "4.99",
+      "priceCurrency": "USD",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "4.99",
+        "priceCurrency": "USD",
+        "unitCode": "MON"
+      }
+    }
+  ]
+}
+</script>
 <!-- ========== /SEO ========== -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -210,7 +245,7 @@ a{color:inherit}
    HERO — headline + subhead only. The entry tiles below ARE the CTA.
    =================================================================== */
 #hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:max(92px,calc(env(safe-area-inset-top) + 82px)) 24px 10px;z-index:1;gap:14px}
+  text-align:center;padding:max(92px,calc(env(safe-area-inset-top) + 82px)) 24px 6px;z-index:1;gap:14px}
 #hero::before{content:'';position:absolute;z-index:0;pointer-events:none;
   left:50%;top:-8%;width:min(640px,124%);height:280px;transform:translateX(-50%);
   background:
@@ -219,7 +254,7 @@ a{color:inherit}
     radial-gradient(44% 54% at 50% 50%, rgba(255,232,175,.1), transparent 74%);
   filter:blur(18px)}
 #heroTitle{position:relative;z-index:2;margin:0;font-family:var(--display);font-weight:700;
-  font-size:clamp(38px,9vw,66px);line-height:1.07;letter-spacing:.008em;
+  font-size:clamp(32px,7.4vw,55px);line-height:1.1;letter-spacing:.008em;
   background:linear-gradient(100deg,#fff8ec 0%,#f6e6c8 20%,#f0d19f 40%,#fffbf0 58%,#e8c894 78%,#fdf3df 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   -webkit-text-stroke:.8px rgba(240,209,159,.62);
@@ -240,7 +275,7 @@ a{color:inherit}
    same shape, same weight: pick one and go. No competing CTA styles.
    =================================================================== */
 main{flex:1 1 auto;display:flex;flex-direction:column}
-#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:880px;margin:0 auto;
+#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:880px;margin:22px auto 0;
   padding:0 16px;display:grid;grid-template-columns:1fr;gap:13px}
 @media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:16px} }
 /* subtle gold ambient glow behind the tile grid — light touch, not a haze */
@@ -256,7 +291,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     0 8px 18px rgba(0,0,0,.3),
     0 2px 5px rgba(0,0,0,.22),
     inset 0 1px 1px rgba(255,255,255,.07);
-  transition:transform .26s cubic-bezier(.22,1,.36,1),box-shadow .32s ease,background-size .6s ease}
+  transition:transform .36s cubic-bezier(.22,1,.36,1),box-shadow .38s cubic-bezier(.22,1,.36,1),filter .36s ease,background-size .6s ease}
 /* layer 1: left-anchored scrim — darkens only the content zone (icon/title/description), photo stays clear elsewhere */
 .entry-tile::before{content:'';position:absolute;inset:0;z-index:1;
   background:
@@ -275,10 +310,11 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   -webkit-mask-composite:xor;
   mask-composite:exclude;
   opacity:.72;transition:opacity .3s ease}
-.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-4px);background-size:110%;
+.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-5px);background-size:110%;filter:brightness(1.05);
   box-shadow:
-    0 14px 28px rgba(0,0,0,.36),
-    0 3px 8px rgba(0,0,0,.26),
+    0 22px 46px rgba(0,0,0,.4),
+    0 6px 16px rgba(0,0,0,.28),
+    0 0 48px -10px var(--tile-accent,rgba(240,209,159,.45)),
     inset 0 1px 1px rgba(255,255,255,.09)}
 .entry-tile:hover::after,.entry-tile:focus-visible::after{opacity:.92}
 
@@ -307,20 +343,64 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   background:
     linear-gradient(100deg,rgba(8,20,10,.56) 0%,rgba(8,20,10,.38) 32%,rgba(8,20,10,.1) 54%,transparent 70%),
     radial-gradient(46% 60% at 16% 22%, rgba(166,226,142,.36), transparent 62%)}
+
+/* ---- ambient hover glow: as if each photo were illuminating its own frame, tuned to that card's mood ---- */
+.entry-tile[data-tint="sleep"]:hover,.entry-tile[data-tint="sleep"]:focus-visible{
+  box-shadow:
+    0 22px 46px rgba(0,0,0,.4),
+    0 6px 16px rgba(0,0,0,.28),
+    0 0 52px -10px rgba(130,150,255,.4),
+    0 0 76px -14px rgba(190,150,255,.32),
+    inset 0 1px 1px rgba(255,255,255,.09)}
+.entry-tile[data-tint="stress"]:hover,.entry-tile[data-tint="stress"]:focus-visible{
+  box-shadow:
+    0 22px 46px rgba(0,0,0,.4),
+    0 6px 16px rgba(0,0,0,.28),
+    0 0 52px -10px rgba(185,125,235,.42),
+    0 0 76px -14px rgba(240,209,159,.28),
+    inset 0 1px 1px rgba(255,255,255,.09)}
+.entry-tile[data-tint="energy"]:hover,.entry-tile[data-tint="energy"]:focus-visible{
+  box-shadow:
+    0 22px 46px rgba(0,0,0,.4),
+    0 6px 16px rgba(0,0,0,.28),
+    0 0 52px -10px rgba(255,180,84,.46),
+    0 0 76px -14px rgba(255,138,77,.3),
+    inset 0 1px 1px rgba(255,255,255,.09)}
+.entry-tile[data-tint="eat"]:hover,.entry-tile[data-tint="eat"]:focus-visible{
+  box-shadow:
+    0 22px 46px rgba(0,0,0,.4),
+    0 6px 16px rgba(0,0,0,.28),
+    0 0 52px -10px rgba(154,223,158,.42),
+    0 0 76px -14px rgba(226,238,150,.28),
+    inset 0 1px 1px rgba(255,255,255,.09)}
 .tile-ic{position:relative;z-index:2;flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
   border-radius:50%;background:rgba(14,10,14,.58);border:1px solid rgba(248,246,241,.36);font-size:24px;
   backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-  transition:transform .2s ease,border-color .2s ease}
-.entry-tile:hover .tile-ic,.entry-tile:focus-visible .tile-ic{transform:scale(1.08);border-color:var(--tile-accent,var(--gold-soft))}
+  transition:transform .32s cubic-bezier(.22,1,.36,1),border-color .3s ease}
+.entry-tile:hover .tile-ic,.entry-tile:focus-visible .tile-ic{transform:scale(1.1);border-color:var(--tile-accent,var(--gold-soft))}
 .tile-text{position:relative;z-index:2;flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px;padding-right:24px}
 .tile-name{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.8vw,24px);letter-spacing:.01em;
   color:#fffdf9;text-shadow:0 1px 2px rgba(0,0,0,.75),0 2px 8px rgba(0,0,0,.4)}
 .tile-hook{font-family:var(--ui);font-weight:400;font-size:13.5px;line-height:1.5;
   color:rgba(248,244,236,.97);text-shadow:0 1px 2px rgba(0,0,0,.65),0 2px 7px rgba(0,0,0,.34)}
-.tile-arrow{position:absolute;z-index:2;top:26px;right:24px;width:17px;height:17px;stroke:rgba(248,246,241,.9);fill:none;stroke-width:2.2;
+.tile-badge{display:inline-flex;align-self:flex-start;margin-top:6px;font-family:var(--ui);font-weight:700;
+  font-size:13.5px;letter-spacing:.02em;color:#fff8ec;
+  background:
+    radial-gradient(120% 160% at 12% 50%, color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 30%, transparent), transparent 72%),
+    rgba(0,0,0,.4);
+  border:1px solid color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 55%, rgba(248,246,241,.3));
+  border-radius:999px;padding:8px 18px;
+  box-shadow:0 2px 10px -2px color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 45%, transparent),inset 0 1px 1px rgba(255,255,255,.08);
+  text-shadow:0 1px 2px rgba(0,0,0,.4);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  transition:transform .32s cubic-bezier(.22,1,.36,1),box-shadow .36s ease,border-color .3s ease}
+.entry-tile:hover .tile-badge,.entry-tile:focus-visible .tile-badge{
+  border-color:var(--tile-accent,var(--gold-soft));transform:translateY(-1px);
+  box-shadow:0 4px 16px -2px color-mix(in srgb, var(--tile-accent,var(--gold-soft)) 60%, transparent),inset 0 1px 1px rgba(255,255,255,.1)}
+@media(max-width:560px){.tile-badge{font-size:12px;padding:7px 14px}}
+.tile-arrow{position:absolute;z-index:2;top:26px;right:24px;width:17px;height:17px;stroke:rgba(248,246,241,.72);fill:none;stroke-width:2.2;
   filter:drop-shadow(0 1px 3px rgba(0,0,0,.45));
-  transition:transform .2s ease,stroke .2s ease}
-.entry-tile:hover .tile-arrow,.entry-tile:focus-visible .tile-arrow{transform:translateX(4px);stroke:var(--tile-accent,var(--gold))}
+  transition:transform .3s cubic-bezier(.22,1,.36,1),stroke .3s ease,opacity .3s ease}
+.entry-tile:hover .tile-arrow,.entry-tile:focus-visible .tile-arrow{transform:translateX(4px) scale(1.08);stroke:var(--tile-accent,var(--gold));opacity:1}
 @media(max-width:560px){
   .entry-tile{padding:22px 20px 20px;min-height:184px}
   .tile-ic{width:44px;height:44px;font-size:20px}
@@ -329,17 +409,66 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 /* ===== trust strip — one line, no card grid ===== */
 #trustStrip{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:34px 20px 0;
   max-width:520px;font-family:var(--ui);display:flex;flex-direction:column;gap:6px}
+#trustStrip::before{content:'';position:absolute;z-index:-1;left:50%;top:-10%;width:140%;height:170%;
+  transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(40% 50% at 50% 30%, rgba(211,182,255,.07), transparent 70%);
+  filter:blur(24px)}
 #trustStrip .stars{color:var(--gold);letter-spacing:.14em;font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 #trustStrip .rating{color:var(--ink);font-weight:600;margin-left:6px;font-size:13px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 #trustStrip .quote{font-family:var(--display);font-style:italic;color:var(--muted);font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 
-/* ===== premium micro-link — a single quiet line, not a banner ===== */
-#premiumMicro{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:36px 20px 0}
-#pageFreeTrialBtn{display:inline-flex;align-items:center;gap:6px;color:var(--gold);background:none;border:none;
-  font-family:var(--ui);font-weight:600;font-size:13px;letter-spacing:.03em;cursor:pointer;
-  border-bottom:1px solid rgba(240,209,159,.45);transition:color .2s ease,border-color .2s ease;
-  text-shadow:0 1px 3px rgba(0,0,0,.5)}
-#pageFreeTrialBtn:hover{color:#fff8ec;border-color:var(--gold)}
+/* ===== premium section — the single strongest conversion element on the page.
+   Deliberately more contrast, more glow, more depth than everything above it,
+   while staying inside the same black-and-gold luxury language. ===== */
+#premiumSection{position:relative;z-index:1;flex:0 0 auto;max-width:680px;margin:44px auto 0;padding:0 20px}
+#premiumSection::before{content:'';position:absolute;z-index:0;left:50%;top:-14%;width:150%;height:140%;
+  transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(48% 50% at 50% 30%, rgba(255,214,140,.12), transparent 70%);
+  filter:blur(28px)}
+#premiumCard{position:relative;overflow:hidden;border-radius:28px;padding:40px 34px 34px;text-align:center;
+  background:linear-gradient(165deg,rgba(54,40,20,.92) 0%,rgba(32,23,14,.94) 55%,rgba(18,13,9,.96) 100%);
+  box-shadow:0 22px 50px rgba(0,0,0,.5),0 0 0 1px rgba(255,217,138,.06) inset,inset 0 1px 1px rgba(255,255,255,.09);
+  animation:premiumCardGlow 3.6s ease-in-out infinite}
+@keyframes premiumCardGlow{
+  0%,100%{box-shadow:0 24px 56px rgba(0,0,0,.52),0 0 58px -8px rgba(240,209,159,.36),0 0 0 1px rgba(255,217,138,.08) inset,inset 0 1px 1px rgba(255,255,255,.1)}
+  50%{box-shadow:0 24px 56px rgba(0,0,0,.52),0 0 92px -4px rgba(240,209,159,.62),0 0 0 1px rgba(255,217,138,.15) inset,inset 0 1px 1px rgba(255,255,255,.17)}
+}
+#premiumCard::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:2.25px;pointer-events:none;
+  background:linear-gradient(135deg,rgba(240,209,159,1) 0%,rgba(247,231,197,.8) 30%,rgba(211,182,255,.6) 65%,rgba(240,209,159,.95) 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+#premiumCard::after{content:'';position:absolute;z-index:0;left:50%;top:-35%;width:140%;height:200%;transform:translateX(-50%);
+  background:radial-gradient(46% 42% at 50% 0%,rgba(255,214,140,.2),transparent 70%);pointer-events:none}
+#premiumEyebrow{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-weight:700;
+  font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#2a1c05;
+  background:linear-gradient(135deg,#ffe3a3,#d9a441);padding:7px 16px;border-radius:999px;
+  box-shadow:0 8px 22px rgba(240,209,159,.4);margin-bottom:16px;animation:premGlow 2.4s ease-in-out infinite}
+#premiumHeadline{position:relative;z-index:1;margin:0 0 10px;font-family:var(--display);font-weight:700;
+  font-size:clamp(28px,4.8vw,38px);line-height:1.14;
+  background:linear-gradient(100deg,#fff8ec 0%,#f0d19f 45%,#fff8ec 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 30px rgba(240,209,159,.2)}
+#premiumSub{position:relative;z-index:1;margin:0 auto 22px;max-width:440px;font-family:var(--ui);
+  font-size:13.5px;line-height:1.5;color:var(--muted)}
+#premiumChecklist{position:relative;z-index:1;list-style:none;display:grid;grid-template-columns:1fr 1fr;
+  gap:11px 18px;text-align:left;max-width:460px;margin:0 auto 26px;padding:0}
+#premiumChecklist li{display:flex;align-items:center;gap:9px;font-family:var(--ui);font-weight:500;
+  font-size:13px;color:rgba(248,246,241,.94)}
+#premiumChecklist .chk{flex:0 0 auto;width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;background:rgba(255,217,138,.16);border:1px solid rgba(255,217,138,.42);
+  color:var(--gold);font-size:10.5px;font-weight:700}
+#pageFreeTrialBtn{position:relative;z-index:1;display:inline-flex;flex-direction:column;align-items:center;
+  gap:4px;width:100%;max-width:380px;padding:20px 28px;border-radius:999px;cursor:pointer;
+  font-family:var(--ui);color:#fff;background:linear-gradient(135deg,#5EA8FF,#7C6BFF);
+  box-shadow:0 18px 46px rgba(124,107,255,.54),0 0 0 1px rgba(255,255,255,.12) inset;
+  animation:premGlowBlue 2.6s ease-in-out infinite;
+  transition:transform .3s cubic-bezier(.22,1,.36,1),filter .3s ease,box-shadow .3s ease}
+#pageFreeTrialBtn:hover{transform:translateY(-3px) scale(1.02);filter:brightness(1.12)}
+#pageFreeTrialBtn .ptCta{font-weight:700;font-size:17.5px;letter-spacing:.01em}
+#pageFreeTrialBtn .ptNote{font-weight:500;font-size:11.5px;letter-spacing:.03em;color:rgba(255,255,255,.88)}
+@media(max-width:560px){
+  #premiumCard{padding:32px 22px 28px;border-radius:22px}
+  #premiumChecklist{grid-template-columns:1fr;gap:9px}
+}
 
 /* ===== footer ===== */
 #siteFooter{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
@@ -443,7 +572,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   <!-- HERO -->
   <section id="hero">
     <h1 id="heroTitle">How do you want to feel today?</h1>
-    <p id="heroSub">Choose a goal and start in seconds.</p>
+    <p id="heroSub">Choose your goal and start in seconds.</p>
   </section>
 
   <section id="entryTiles" aria-label="Choose your goal">
@@ -451,7 +580,8 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       <span class="tile-ic" aria-hidden="true">🌙</span>
       <span class="tile-text">
         <span class="tile-name">Sleep Better Tonight</span>
-        <span class="tile-hook">Guided breathing and calming sound to help you unwind.</span>
+        <span class="tile-hook">Guided breathing and sleep soundscapes designed to help you unwind.</span>
+        <span class="tile-badge">🫁 Breathing + 🎵 Soundscapes</span>
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
@@ -459,7 +589,8 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       <span class="tile-ic" aria-hidden="true">🎵</span>
       <span class="tile-text">
         <span class="tile-name">Reduce Stress</span>
-        <span class="tile-hook">Create your own calming soundscape in seconds.</span>
+        <span class="tile-hook">Create a personalized calming soundscape in seconds.</span>
+        <span class="tile-badge">🎵 Soundscape Builder</span>
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
@@ -467,7 +598,8 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       <span class="tile-ic" aria-hidden="true">⚡</span>
       <span class="tile-text">
         <span class="tile-name">Boost Energy</span>
-        <span class="tile-hook">Gentle movement and breathing to wake up your body.</span>
+        <span class="tile-hook">Gentle movement, yoga and breathing to energize your body.</span>
+        <span class="tile-badge">🧘 Yoga + 🫁 Breathing</span>
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
@@ -475,7 +607,8 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       <span class="tile-ic" aria-hidden="true">🥗</span>
       <span class="tile-text">
         <span class="tile-name">Eat Better Today</span>
-        <span class="tile-hook">Track habits and build a healthier routine.</span>
+        <span class="tile-hook">Track nutrition, build habits and improve consistency.</span>
+        <span class="tile-badge">🥗 Nutrition Tracker</span>
       </span>
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
@@ -486,9 +619,25 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     <div class="quote">"Calmer nights. Brighter days. Real balance."</div>
   </div>
 
-  <p id="premiumMicro">
-    <button id="pageFreeTrialBtn" type="button">Want to go deeper? Try Premium free for 14 days →</button>
-  </p>
+  <section id="premiumSection" aria-label="Premium free trial">
+    <div id="premiumCard">
+      <span id="premiumEyebrow">14 Days Free</span>
+      <h2 id="premiumHeadline">Unlock the Full Experience</h2>
+      <p id="premiumSub">Go deeper with every scene, program and pose across Breathing, Sound, Yoga and Nutrition.</p>
+      <ul id="premiumChecklist">
+        <li><span class="chk">✓</span>Unlimited Soundscapes</li>
+        <li><span class="chk">✓</span>Advanced Breathing Programs</li>
+        <li><span class="chk">✓</span>Full Yoga Library</li>
+        <li><span class="chk">✓</span>Nutrition Tracking</li>
+        <li><span class="chk">✓</span>Habit Building Tools</li>
+        <li><span class="chk">✓</span>Cross-Device Sync</li>
+      </ul>
+      <button id="pageFreeTrialBtn" type="button">
+        <span class="ptCta">Start Free 14-Day Trial</span>
+        <span class="ptNote">No card required</span>
+      </button>
+    </div>
+  </section>
 
   <!-- FOOTER -->
   <footer id="siteFooter">
