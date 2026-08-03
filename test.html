@@ -404,22 +404,22 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   filter:blur(78px);opacity:.55;
   transition:opacity .6s ease,filter .6s ease}
 /* sleep — top-left card: blue-lavender light pushed into the left margin */
-.tile-ambient--sleep{grid-column:1;grid-row:1;inset:-190px -110px -190px -340px;
+.tile-ambient--sleep{grid-column:1;grid-row:1;inset:-190px -110px -190px -60vw;
   background:
     radial-gradient(60% 60% at 32% 45%, rgba(135,150,255,.5), transparent 68%),
     radial-gradient(50% 50% at 55% 55%, rgba(196,168,255,.3), transparent 70%)}
 /* stress — top-right card: purple-gold light pushed into the right margin */
-.tile-ambient--stress{grid-column:2;grid-row:1;inset:-190px -340px -190px -110px;
+.tile-ambient--stress{grid-column:2;grid-row:1;inset:-190px -60vw -190px -110px;
   background:
     radial-gradient(60% 60% at 68% 45%, rgba(183,123,235,.48), transparent 68%),
     radial-gradient(50% 50% at 45% 55%, rgba(232,192,122,.26), transparent 70%)}
 /* energy — bottom-left card: amber-orange light pushed into the left margin */
-.tile-ambient--energy{grid-column:1;grid-row:2;inset:-190px -110px -190px -340px;
+.tile-ambient--energy{grid-column:1;grid-row:2;inset:-190px -110px -190px -60vw;
   background:
     radial-gradient(60% 60% at 32% 50%, rgba(255,168,72,.52), transparent 68%),
     radial-gradient(50% 50% at 55% 55%, rgba(255,120,64,.26), transparent 70%)}
 /* eat — bottom-right card: botanical green light pushed into the right margin */
-.tile-ambient--eat{grid-column:2;grid-row:2;inset:-190px -340px -190px -110px;
+.tile-ambient--eat{grid-column:2;grid-row:2;inset:-190px -60vw -190px -110px;
   background:
     radial-gradient(60% 60% at 68% 50%, rgba(122,214,138,.48), transparent 68%),
     radial-gradient(50% 50% at 45% 55%, rgba(178,214,110,.26), transparent 70%)}
@@ -427,10 +427,10 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   /* single-column layout: every card is its own row, but each keeps its
      assigned side so the left/right mood pattern still reads */
   .tile-ambient{inset:-120px -60px -120px -60px;filter:blur(56px)}
-  .tile-ambient--sleep{grid-column:1;grid-row:1;inset:-130px -70px -110px -190px}
-  .tile-ambient--stress{grid-column:1;grid-row:2;inset:-110px -190px -110px -70px}
-  .tile-ambient--energy{grid-column:1;grid-row:3;inset:-110px -70px -110px -190px}
-  .tile-ambient--eat{grid-column:1;grid-row:4;inset:-130px -190px -130px -70px}
+  .tile-ambient--sleep{grid-column:1;grid-row:1;inset:-130px -70px -110px -55vw}
+  .tile-ambient--stress{grid-column:1;grid-row:2;inset:-110px -55vw -110px -70px}
+  .tile-ambient--energy{grid-column:1;grid-row:3;inset:-110px -70px -110px -55vw}
+  .tile-ambient--eat{grid-column:1;grid-row:4;inset:-130px -55vw -130px -70px}
 }
 /* hover: strengthen the ambient light slightly — card border illumination
    is handled by .entry-tile's own hover rules, not here */
