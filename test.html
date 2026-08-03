@@ -327,69 +327,109 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   -webkit-mask-composite:xor;
   mask-composite:exclude;
   opacity:.72;transition:opacity .3s ease}
-.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-6px);background-size:110%;filter:brightness(1.08);
+.entry-tile:hover,.entry-tile:focus-visible{transform:translateY(-8px);background-size:110%;filter:brightness(1.12) saturate(1.06);
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
+    0 28px 56px rgba(0,0,0,.46),
+    0 8px 20px rgba(0,0,0,.32),
     0 0 48px -10px var(--tile-accent,rgba(240,209,159,.45)),
     inset 0 1px 1px rgba(255,255,255,.09)}
-.entry-tile:hover::after,.entry-tile:focus-visible::after{opacity:.92}
+.entry-tile:hover::after,.entry-tile:focus-visible::after{opacity:1}
 
 /* ---- per-card emotional palette: identity lives in the scrim near the icon, not a wash across the photo ---- */
 /* Sleep Better Tonight — soft champagne + bedside lamp glow + cream + gentle moonlight lavender */
-.entry-tile[data-tint="sleep"]{--tile-accent:var(--champagne)}
+.entry-tile[data-tint="sleep"]{--tile-accent:var(--champagne);
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.3),
+    0 2px 5px rgba(0,0,0,.22),
+    -60px 6px 130px -36px rgba(120,140,255,.22),
+    -30px 10px 74px -22px rgba(196,168,255,.16),
+    inset 0 1px 1px rgba(255,255,255,.07)}
 .entry-tile[data-tint="sleep"]::before{
   background:
     linear-gradient(100deg,rgba(40,28,20,.78) 0%,rgba(40,28,20,.6) 30%,rgba(40,28,20,.28) 44%,rgba(40,28,20,.06) 56%,transparent 64%),
     radial-gradient(46% 60% at 16% 22%, rgba(255,214,150,.4), transparent 62%)}
 /* Reduce Stress — deep purple, singing-bowl calm, sound-healing glow */
-.entry-tile[data-tint="stress"]{--tile-accent:var(--deep-purple)}
+.entry-tile[data-tint="stress"]{--tile-accent:var(--deep-purple);
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.3),
+    0 2px 5px rgba(0,0,0,.22),
+    60px 6px 130px -36px rgba(178,120,232,.2),
+    30px 10px 74px -22px rgba(240,209,159,.14),
+    inset 0 1px 1px rgba(255,255,255,.07)}
 .entry-tile[data-tint="stress"]::before{
   background:
     linear-gradient(100deg,rgba(20,9,30,.86) 0%,rgba(20,9,30,.68) 30%,rgba(20,9,30,.34) 44%,rgba(20,9,30,.08) 56%,transparent 64%),
     radial-gradient(46% 60% at 16% 22%, rgba(185,125,235,.34), transparent 62%)}
 /* Boost Energy — sunrise gold, warm vibrant light */
-.entry-tile[data-tint="energy"]{--tile-accent:var(--sunrise)}
+.entry-tile[data-tint="energy"]{--tile-accent:var(--sunrise);
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.3),
+    0 2px 5px rgba(0,0,0,.22),
+    -60px 6px 130px -36px rgba(255,176,84,.24),
+    -30px 10px 74px -22px rgba(255,138,77,.17),
+    inset 0 1px 1px rgba(255,255,255,.07)}
 .entry-tile[data-tint="energy"]::before{
   background:
     linear-gradient(100deg,rgba(36,19,7,.8) 0%,rgba(36,19,7,.62) 30%,rgba(36,19,7,.3) 44%,rgba(36,19,7,.07) 56%,transparent 64%),
     radial-gradient(46% 60% at 16% 22%, rgba(255,198,96,.4), transparent 62%)}
 /* Eat Better Today — colorful, fresh greens, natural vitality */
-.entry-tile[data-tint="eat"]{--tile-accent:var(--leaf)}
+.entry-tile[data-tint="eat"]{--tile-accent:var(--leaf);
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.3),
+    0 2px 5px rgba(0,0,0,.22),
+    60px 6px 130px -36px rgba(150,220,155,.22),
+    30px 10px 74px -22px rgba(226,238,150,.16),
+    inset 0 1px 1px rgba(255,255,255,.07)}
 .entry-tile[data-tint="eat"]::before{
   background:
     linear-gradient(100deg,rgba(8,20,10,.78) 0%,rgba(8,20,10,.6) 30%,rgba(8,20,10,.28) 44%,rgba(8,20,10,.06) 56%,transparent 64%),
     radial-gradient(46% 60% at 16% 22%, rgba(166,226,142,.36), transparent 62%)}
 
-/* ---- ambient hover glow: as if each photo were illuminating its own frame, tuned to that card's mood ---- */
+/* ---- illuminated border ring: each card gets its own hue so the "awakening" border feels tied to its mood ---- */
+.entry-tile[data-tint="sleep"]::after{
+  background:linear-gradient(135deg,rgba(140,160,255,.5) 0%,rgba(200,175,255,.5) 45%,rgba(230,220,255,.4) 75%,rgba(120,110,180,.4) 100%)}
+.entry-tile[data-tint="stress"]::after{
+  background:linear-gradient(135deg,rgba(190,130,240,.5) 0%,rgba(240,209,159,.44) 45%,rgba(211,182,255,.42) 75%,rgba(80,44,80,.4) 100%)}
+.entry-tile[data-tint="energy"]::after{
+  background:linear-gradient(135deg,rgba(255,180,84,.55) 0%,rgba(255,138,77,.48) 45%,rgba(255,214,150,.4) 75%,rgba(160,80,20,.4) 100%)}
+.entry-tile[data-tint="eat"]::after{
+  background:linear-gradient(135deg,rgba(154,223,158,.5) 0%,rgba(226,238,150,.46) 45%,rgba(200,235,190,.4) 75%,rgba(60,110,70,.4) 100%)}
+
+/* ---- ambient hover glow: as if each photo were illuminating its own frame, tuned to that card's mood ----
+   directional bleed matches the card's default-state side (sleep/energy → left, stress/eat → right) so the
+   light simply grows brighter and wider on wake, rather than jumping to a new shape ---- */
 .entry-tile[data-tint="sleep"]:hover,.entry-tile[data-tint="sleep"]:focus-visible{
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
-    0 0 52px -10px rgba(130,150,255,.4),
-    0 0 76px -14px rgba(190,150,255,.32),
-    inset 0 1px 1px rgba(255,255,255,.09)}
+    0 28px 58px rgba(0,0,0,.48),
+    0 8px 20px rgba(0,0,0,.32),
+    -80px 8px 170px -34px rgba(120,140,255,.4),
+    -44px 12px 100px -18px rgba(196,168,255,.32),
+    0 0 40px -6px rgba(160,170,255,.28),
+    inset 0 1px 1px rgba(255,255,255,.1)}
 .entry-tile[data-tint="stress"]:hover,.entry-tile[data-tint="stress"]:focus-visible{
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
-    0 0 52px -10px rgba(185,125,235,.42),
-    0 0 76px -14px rgba(240,209,159,.28),
-    inset 0 1px 1px rgba(255,255,255,.09)}
+    0 28px 58px rgba(0,0,0,.48),
+    0 8px 20px rgba(0,0,0,.32),
+    80px 8px 170px -34px rgba(178,120,232,.42),
+    44px 12px 100px -18px rgba(240,209,159,.3),
+    0 0 40px -6px rgba(200,160,235,.3),
+    inset 0 1px 1px rgba(255,255,255,.1)}
 .entry-tile[data-tint="energy"]:hover,.entry-tile[data-tint="energy"]:focus-visible{
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
-    0 0 52px -10px rgba(255,180,84,.46),
-    0 0 76px -14px rgba(255,138,77,.3),
-    inset 0 1px 1px rgba(255,255,255,.09)}
+    0 28px 58px rgba(0,0,0,.48),
+    0 8px 20px rgba(0,0,0,.32),
+    -80px 8px 170px -34px rgba(255,176,84,.46),
+    -44px 12px 100px -18px rgba(255,138,77,.34),
+    0 0 40px -6px rgba(255,170,90,.3),
+    inset 0 1px 1px rgba(255,255,255,.1)}
 .entry-tile[data-tint="eat"]:hover,.entry-tile[data-tint="eat"]:focus-visible{
   box-shadow:
-    0 22px 46px rgba(0,0,0,.4),
-    0 6px 16px rgba(0,0,0,.28),
-    0 0 52px -10px rgba(154,223,158,.42),
-    0 0 76px -14px rgba(226,238,150,.28),
-    inset 0 1px 1px rgba(255,255,255,.09)}
+    0 28px 58px rgba(0,0,0,.48),
+    0 8px 20px rgba(0,0,0,.32),
+    80px 8px 170px -34px rgba(150,220,155,.42),
+    44px 12px 100px -18px rgba(226,238,150,.3),
+    0 0 40px -6px rgba(170,225,165,.28),
+    inset 0 1px 1px rgba(255,255,255,.1)}
 .tile-ic{position:relative;z-index:2;flex:0 0 auto;width:58px;height:58px;display:inline-flex;align-items:center;justify-content:center;
   border-radius:50%;background:rgba(14,10,14,.58);border:1px solid rgba(248,246,241,.36);font-size:27px;
   backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
