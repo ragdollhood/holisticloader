@@ -91,9 +91,9 @@
   --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{height:100%;scrollbar-width:none;-ms-overflow-style:none}
+html{height:100%;scrollbar-width:none;-ms-overflow-style:none;overflow-x:hidden;overflow-x:clip;overscroll-behavior-y:none}
 html::-webkit-scrollbar{display:none}
-body{min-height:100svh;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-y:auto;display:flex;flex-direction:column}
+body{min-height:100svh;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip;overflow-y:auto;overscroll-behavior-y:none;display:flex;flex-direction:column}
 button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
 a{color:inherit}
 .hidden{display:none !important}
@@ -549,6 +549,15 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   letter-spacing:.06em;text-transform:uppercase;transition:color .2s ease;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 #siteFooter a:hover{color:var(--ink)}
 
+/* ===== decorative corner detail — small, quiet, out of the way of any controls ===== */
+#cornerBowl{position:fixed;z-index:20;pointer-events:none;
+  right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));
+  width:64px;height:64px;object-fit:contain;opacity:.82;
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,.45));}
+@media(max-width:560px){
+  #cornerBowl{width:46px;height:46px;right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom))}
+}
+
 /* ===== homepage-only: hide the tab bar so the tiles are the only choice UI ===== */
 #topTabs{display:none !important}
 #topNav{padding-bottom:2px}
@@ -560,6 +569,9 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 </div></noscript>
 
 <div id="stage"><div class="aurora"></div></div>
+
+<!-- decorative corner detail -->
+<img id="cornerBowl" src="images/start-bowl.png" alt="" aria-hidden="true">
 
 <!-- hamburger menu: Premium / How to use / Shop / Contact -->
 <div id="donateWrap">
