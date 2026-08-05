@@ -507,11 +507,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
 #premiumCard::after{content:'';position:absolute;z-index:0;left:50%;top:-35%;width:140%;height:200%;transform:translateX(-50%);
   background:radial-gradient(46% 42% at 50% 0%,rgba(255,214,140,.2),transparent 70%);pointer-events:none}
-#premiumBowlImg{position:absolute;left:14px;bottom:14px;z-index:0;width:64px;height:64px;object-fit:cover;
-  border-radius:16px;opacity:.85;box-shadow:0 8px 20px rgba(0,0,0,.4);pointer-events:none}
-@media(max-width:560px){
-  #premiumBowlImg{width:46px;height:46px;left:10px;bottom:10px}
-}
+
 #premiumEyebrow{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-weight:700;
   font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#2a1c05;
   background:linear-gradient(135deg,#ffe8b0,#dcaa48);padding:7px 16px;border-radius:999px;
@@ -553,6 +549,11 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 #siteFooter a{color:var(--muted);text-decoration:none;font-family:var(--ui);font-size:11.5px;
   letter-spacing:.06em;text-transform:uppercase;transition:color .2s ease;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 #siteFooter a:hover{color:var(--ink)}
+#footerBowlImg{position:absolute;left:20px;bottom:14px;z-index:1;width:40px;height:40px;object-fit:cover;
+  border-radius:10px;opacity:.85}
+@media(max-width:560px){
+  #footerBowlImg{width:32px;height:32px;left:14px;bottom:12px}
+}
 
 /* ===== homepage-only: hide the tab bar so the tiles are the only choice UI ===== */
 #topTabs{display:none !important}
@@ -699,7 +700,6 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 
   <section id="premiumSection" aria-label="Premium free trial">
     <div id="premiumCard">
-      <img id="premiumBowlImg" src="images/start-bowl.png" alt="" aria-hidden="true">
       <span id="premiumEyebrow">14 Days Free</span>
       <h2 id="premiumHeadline">Unlock the Full Experience</h2>
       <p id="premiumSub">Go deeper with every scene, program and pose across Breathing, Sound, Yoga and Nutrition.</p>
@@ -720,6 +720,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 
   <!-- FOOTER -->
   <footer id="siteFooter">
+    <img id="footerBowlImg" src="images/start-bowl.png" alt="" aria-hidden="true">
     <a href="about.html">About</a>
     <a href="mailto:holisticloader@gmail.com">Contact</a>
     <a href="privacy.html">Privacy</a>
