@@ -191,7 +191,7 @@ g.organ.hovsel .hoverpart{transform:scale(1.7)}
 g.organ .hoverimg{opacity:0;transform:scale(1);transition:opacity .16s ease, transform .22s ease;
   transform-box:fill-box;transform-origin:center;pointer-events:none;
   filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
-/* organ images are full-body sized (same box as body.png), so hover just fades them in
+/* organ images are full-body sized (same box as nutri-body-body.png), so hover just fades them in
    with a subtle scale rather than the large enlarge used for small icons */
 g.organ.hov .hoverimg, g.organ.hovsel .hoverimg{opacity:1;transform:scale(1.03)}
 g.organ.hovsel .hoverimg{transform:scale(1.05)}
@@ -1361,7 +1361,7 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
       <div id="bodyFlex">
       <div class="organBars" id="obarsL"></div>
       <div id="bodyWrap">
-        <img id="bodyImg" src="images/body.png" alt="Interactive human body diagram showing which organs are affected by the nutrients you eat" loading="lazy">
+        <img id="bodyImg" src="images/nutri-body-body.png" alt="Interactive human body diagram showing which organs are affected by the nutrients you eat" loading="lazy">
         <svg id="bodySvg" viewBox="0 0 724 1536" role="img" aria-label="Human body overlay">
           <defs id="clipDefs">
             <filter id="skinBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="16"/></filter>
@@ -1719,7 +1719,7 @@ const HIT_SHAPES = {
   eyes:'<rect x="284" y="110" width="144" height="44" rx="22"/>',
   immune:'<circle cx="300" cy="252" r="17"/><circle cx="412" cy="252" r="17"/><circle cx="216" cy="330" r="17"/><circle cx="496" cy="330" r="17"/><circle cx="292" cy="866" r="17"/><circle cx="422" cy="866" r="17"/><ellipse cx="478" cy="576" rx="27" ry="44"/>'
 };
-/* organ hover images — rendered at full body size, same box as body.png (see ORGAN_IMG_BOX
+/* organ hover images — rendered at full body size, same box as nutri-body-body.png (see ORGAN_IMG_BOX
    near buildBody), so each organ's artwork must already be positioned correctly within that canvas */
 const ORGAN_IMAGES = {
   heart:'/images/nutri-body-heart.png',
@@ -1750,7 +1750,7 @@ const foodById=id=>FOODS.find(f=>f.id===id);
 const SVGNS='http://www.w3.org/2000/svg';
 
 /* ================= BODY BUILD ================= */
-/* Every organ image is treated as a full-body canvas — same size & position as body.png itself
+/* Every organ image is treated as a full-body canvas — same size & position as nutri-body-body.png itself
    (0,0 to 724x1536). The organ artwork is already drawn at its correct anatomical spot inside
    that canvas, so no per-organ coordinates are needed; this guarantees identical outer size
    ("yttermått") and correct placement for every organ, exactly like blood.png. */
