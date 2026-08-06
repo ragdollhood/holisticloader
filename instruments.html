@@ -525,6 +525,28 @@
     margin-top:26px;max-width:420px;line-height:1.6;letter-spacing:.02em;
   }
 
+  /* ===== audio hint banner: shown once per page load if sound seems to have
+     failed to start, or (on iOS) as a proactive mute-switch/volume tip ===== */
+  #audioHint{
+    position:fixed;left:50%;top:max(74px,calc(env(safe-area-inset-top) + 60px));
+    transform:translateX(-50%);
+    z-index:60;max-width:min(92vw,420px);
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;border-radius:14px;
+    background:rgba(20,14,26,.94);border:1px solid var(--gold);
+    color:var(--ink);font-size:12px;line-height:1.45;letter-spacing:.01em;
+    box-shadow:0 14px 30px rgba(0,0,0,.4);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    opacity:0;pointer-events:none;transition:opacity .3s ease;
+  }
+  #audioHint.show{opacity:1;pointer-events:auto}
+  #audioHint button{
+    flex:0 0 auto;width:22px;height:22px;border-radius:50%;
+    background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--soft);
+    font-size:12px;line-height:1;cursor:pointer;
+  }
+  #audioHint button:hover{color:var(--gold);border-color:var(--gold)}
+
   /* ===== shared tab navigation (same system as index.html) ===== */
   #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
     padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
@@ -1070,6 +1092,11 @@
 <div id="bg" style="background-image:url(images/bg.jpg)"></div>
 <div id="bgdim"></div>
 <canvas id="cosmos"></canvas>
+
+<div id="audioHint" role="status" aria-live="polite">
+  <span id="audioHintText"></span>
+  <button type="button" id="audioHintClose" aria-label="Close">✕</button>
+</div>
 
 <div class="h1-frame">
   <h1><span class="h1-desktop">CLICK · DOUBLE CLICK & DRAG</span><span class="h1-mobile">TAP · DOUBLE TAP & SWEEP</span></h1>
@@ -1771,8 +1798,16 @@
   // buffer inte hinner fyllas i tid. 130 är en säkrare medelväg; tillsammans
   // med softClip-ändringen ovan och den lättare harpvikten nedan får harpan
   // ändå påtagligt mer utrymme än ursprungliga 110, utan att knastra.
-  const MAX_NEW_WEIGHT_PER_SEC=130;
-  const MAX_LIVE_WEIGHT=130;
+  // Anpassa gränserna efter enhetens uppskattade prestanda istället för ett
+  // fast värde: navigator.hardwareConcurrency (antal CPU-kärnor webbläsaren
+  // rapporterar) är ett grovt men användbart mått. Svagare enheter (färre
+  // kärnor, ofta äldre plattor/telefoner) får en lägre gräns, vilket minskar
+  // risken för sprakande ljud (buffer underruns) på just den hårdvaran, utan
+  // att påverka upplevelsen på starkare datorer/telefoner.
+  const _cores=navigator.hardwareConcurrency||4;
+  const _perfScale=_cores<=2?.55:_cores<=4?.75:1;
+  const MAX_NEW_WEIGHT_PER_SEC=Math.round(130*_perfScale);
+  const MAX_LIVE_WEIGHT=Math.round(130*_perfScale);
   function voiceGateOpen(weight){
     reapExpiredVoices(); // släpp vikten från allt som redan klingat klart innan vi mäter
     const now=performance.now();
@@ -2578,7 +2613,7 @@
   // sänkta från 220/28 — varje spark/burst är minst en createRadialGradient()-
   // fyllning PER BILDRUTA så länge den lever, oavsett om något ljud spelas.
   // Det är en konstant kostnad för hela sidan, inte bara vid intensivt spel.
-  const SPARK_CAP=100, BURST_CAP=18;
+  const SPARK_CAP=Math.round(100*_perfScale), BURST_CAP=Math.round(18*_perfScale);
   function fxResize(){
     const r=stage.getBoundingClientRect();
     fx.width=r.width*2; fx.height=r.height*2;
@@ -2608,7 +2643,7 @@
     }
   }
   let bolts=[];
-  const BOLT_CAP=50; // sänkt från 90, samma skäl som SPARK_CAP/BURST_CAP ovan
+  const BOLT_CAP=Math.round(50*_perfScale); // sänkt från 90, samma skäl som SPARK_CAP/BURST_CAP ovan
   function lightning(cx,cy){
     function bolt(x,y,dir,segs,branchProb){
       const pts=[[x,y]];
@@ -3540,6 +3575,34 @@
     if(window.ResizeObserver) new ResizeObserver(syncStopBtnWidth).observe(recTab);
   })();
 
+
+  /* ================= LJUD-HJÄLP ("inget ljud"-varning) =================
+     Om ljudmotorn faktiskt INTE lyckats starta ett par sekunder efter första
+     trycket, visa en tydlig varning om vad man kan kolla. Visas bara en
+     gång per sidladdning. */
+  let audioHintShown=false;
+  function showAudioHint(text){
+    if(audioHintShown) return;
+    audioHintShown=true;
+    const hint=$('audioHint'), hintText=$('audioHintText');
+    if(!hint||!hintText) return;
+    hintText.textContent=text;
+    hint.classList.add('show');
+  }
+  (function(){
+    const closeBtn=$('audioHintClose'), hint=$('audioHint');
+    if(closeBtn&&hint) closeBtn.addEventListener('click',function(){ hint.classList.remove('show'); });
+  })();
+  let _firstInteractionChecked=false;
+  document.addEventListener('pointerdown',function(){
+    if(_firstInteractionChecked) return;
+    _firstInteractionChecked=true;
+    setTimeout(function(){
+      if(!ac || ac.state!=='running'){
+        showAudioHint('Sound doesn\'t seem to have started. Check that your phone isn\'t on silent (mute switch) and that the volume is turned up, then reload the page.');
+      }
+    },2200);
+  },true);
 
   document.addEventListener('visibilitychange',function(){
     if(!document.hidden&&ac&&ac.state!=='running'&&ac.state!=='closed') ac.resume().catch(function(){});
