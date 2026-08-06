@@ -143,7 +143,8 @@
     --gold-soft:#e6c179;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{min-height:100%}
+  html{min-height:100%;width:100%;max-width:100%;overflow-x:hidden}
+  body{min-height:100%}
   body{
     color:var(--ink);
     font-family:-apple-system,system-ui,'Segoe UI',sans-serif;
@@ -1500,6 +1501,15 @@
     }
     return {rx,ry,scale,tilt,warm,dir,rot:Math.random()*6.3,pts};
   }
+  // debounce: rå 'resize'-händelser kan avfyras många gånger i rad på kort tid
+  // (t.ex. under en zoom-gest i vissa mobila webbläsare/webviews). cosmosResize
+  // och fxResize allokerar om helskärms-canvasar varje gång de körs — kör man
+  // det dussintals gånger inom en sekund byggs GPU-minnestrycket upp snabbare
+  // än det hinner städas, vilket är det som fick sidan att krascha vid zoom.
+  // Med debounce körs den dyra omberäkningen bara en gång, efter att storleken
+  // har slutat ändras.
+  function debounce(fn,delay){ let t; return function(){ clearTimeout(t); t=setTimeout(fn,delay); }; }
+
   function cosmosResize(){
     cc.width=innerWidth; cc.height=innerHeight;
     stars=[];
@@ -1509,7 +1519,7 @@
     }
     galaxies=[];   // himlen i fotobakgrunden står för galaxerna
   }
-  addEventListener('resize',cosmosResize); cosmosResize();
+  addEventListener('resize',debounce(cosmosResize,180)); cosmosResize();
 
   function mix(c1,c2,t){return [0,1,2].map(i=>Math.round(c1[i]+(c2[i]-c1[i])*t))}
   function emitRibbon(pal){
@@ -2575,7 +2585,7 @@
     fx.style.width=r.width+'px'; fx.style.height=r.height+'px';
     fctx.setTransform(2,0,0,2,0,0);
   }
-  addEventListener('resize',fxResize);
+  addEventListener('resize',debounce(fxResize,180));
   requestAnimationFrame(fxResize);
   Array.prototype.forEach.call(document.images,function(im){
     im.addEventListener('load',fxResize);
