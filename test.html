@@ -3577,17 +3577,9 @@
 
 
   /* ================= LJUD-HJÄLP ("inget ljud"-varning) =================
-     Vi kan inte upptäcka t.ex. iPhones fysiska ljudlös-brytare via JS — den
-     stör inte AudioContext-state, den bara tystar högtalaren. Så vi gör två
-     saker: (1) om ljudmotorn faktiskt INTE lyckats starta ett par sekunder
-     efter första trycket, visa en tydlig varning; (2) på iOS, visa ändå en
-     kort proaktiv påminnelse om brytare/volym, eftersom det är den absolut
-     vanligaste orsaken till "inget ljud" på just den plattformen och går
-     inte att upptäcka i kod. Visas bara en gång per sidladdning. */
-  function isIOSish(){
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-  }
+     Om ljudmotorn faktiskt INTE lyckats starta ett par sekunder efter första
+     trycket, visa en tydlig varning om vad man kan kolla. Visas bara en
+     gång per sidladdning. */
   let audioHintShown=false;
   function showAudioHint(text){
     if(audioHintShown) return;
@@ -3607,9 +3599,7 @@
     _firstInteractionChecked=true;
     setTimeout(function(){
       if(!ac || ac.state!=='running'){
-        showAudioHint('Ljudet verkar inte ha startat. Kontrollera att telefonen inte är i tyst-läge (ljudlös-brytaren) och att volymen är uppe, ladda sedan om sidan.');
-      } else if(isIOSish()){
-        showAudioHint('Hör du inget? Kolla att ljudlös-brytaren på sidan av telefonen inte är på, och att volymen är uppe.');
+        showAudioHint('Sound doesn\'t seem to have started. Check that your phone isn\'t on silent (mute switch) and that the volume is turned up, then reload the page.');
       }
     },2200);
   },true);
