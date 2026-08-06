@@ -91,9 +91,9 @@
   --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{height:100%;scrollbar-width:none;-ms-overflow-style:none}
+html{height:100%;width:100%;max-width:100%;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none}
 html::-webkit-scrollbar{display:none}
-body{min-height:100svh;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-y:auto;display:flex;flex-direction:column}
+body{min-height:100svh;width:100%;max-width:100%;font-family:var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-y:auto;display:flex;flex-direction:column}
 button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none;-webkit-tap-highlight-color:transparent}
 a{color:inherit}
 .hidden{display:none !important}
@@ -253,7 +253,7 @@ a{color:inherit}
 /* ===================================================================
    HERO — headline + subhead only. The entry tiles below ARE the CTA.
    =================================================================== */
-#hero{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+#hero{position:relative;overflow-x:hidden;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;padding:max(88px,calc(env(safe-area-inset-top) + 78px)) 24px 0;z-index:1;gap:8px}
 #hero::before{content:'';position:absolute;z-index:0;pointer-events:none;
   left:50%;top:-8%;width:min(680px,128%);height:300px;transform:translateX(-50%);
@@ -284,7 +284,7 @@ a{color:inherit}
    same shape, same weight: pick one and go. No competing CTA styles.
    =================================================================== */
 main{flex:1 1 auto;display:flex;flex-direction:column}
-#entryTiles{position:relative;z-index:1;flex:0 0 auto;width:100%;max-width:1170px;margin:8px auto 0;
+#entryTiles{position:relative;overflow-x:hidden;z-index:1;flex:0 0 auto;width:100%;max-width:1170px;margin:8px auto 0;
   padding:0 14px;display:grid;grid-template-columns:1fr;gap:15px;align-items:stretch}
 @media(min-width:660px){ #entryTiles{grid-template-columns:1fr 1fr;gap:18px;padding:0 18px} }
 /* subtle gold ambient glow behind the tile grid — a soft pool of light with the
@@ -476,7 +476,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 }
 
 /* ===== trust strip — one line, no card grid ===== */
-#trustStrip{position:relative;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:28px 20px 0;
+#trustStrip{position:relative;overflow-x:hidden;z-index:1;flex:0 0 auto;text-align:center;margin:0 auto;padding:28px 20px 0;
   max-width:520px;font-family:var(--ui);display:flex;flex-direction:column;gap:6px}
 #trustStrip::before{content:'';position:absolute;z-index:-1;left:50%;top:-10%;width:140%;height:170%;
   transform:translateX(-50%);pointer-events:none;
@@ -489,7 +489,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 /* ===== premium section — the single strongest conversion element on the page.
    Deliberately more contrast, more glow, more depth than everything above it,
    while staying inside the same black-and-gold luxury language. ===== */
-#premiumSection{position:relative;z-index:1;flex:0 0 auto;max-width:680px;margin:44px auto 0;padding:0 20px}
+#premiumSection{position:relative;overflow-x:hidden;z-index:1;flex:0 0 auto;max-width:680px;margin:44px auto 0;padding:0 20px}
 #premiumSection::before{content:'';position:absolute;z-index:0;left:50%;top:-14%;width:150%;height:140%;
   transform:translateX(-50%);pointer-events:none;
   background:radial-gradient(50% 52% at 50% 30%, rgba(255,214,140,.23), transparent 70%);
