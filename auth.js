@@ -346,9 +346,7 @@ function _buildAuthDom() {
     modal.setAttribute("aria-labelledby", "authModalTitle");
     modal.innerHTML = `
       <div id="authModalCard">
-        <button id="authModalClose" type="button" aria-label="Close">
-          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
+        <button id="authModalClose" type="button" aria-label="Close">&times;</button>
         <h2 id="authModalTitle">Log in</h2>
         <form id="authForm" novalidate>
           <label for="authEmail">Email</label>
