@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wellness Garden Premium | Holistic Loader</title>
+  <link rel="stylesheet" href="auth-ui.css">
+  <style>
+    :root {
+      --gold: #f8d98b;
+      --gold2: #fff2bd;
+      --lav: #c9a7ff;
+      --text: #fff8ee;
+      --muted: rgba(255, 248, 238, 0.72);
+      --glass: rgba(20, 10, 30, 0.42);
+      --glass-strong: rgba(20, 10, 30, 0.70);
+      --border: rgba(255, 255, 255, 0.20);
+      --shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
+
+      /* Aliases so auth-ui.css (built against --ink/--line/--bg) reads
+         the same palette as the rest of this page. */
+      --ink: var(--text);
+      --line: var(--border);
+      --bg: #10091b;
+
+  --board-left: 18%;
+  --board-top: 19%;
+
+  --board-width: 64%;
+  --board-height: 60%;
+
+}
+
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      overflow: hidden;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #10091b;
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100svh;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(201, 167, 255, .24), transparent 34%),
+        radial-gradient(circle at 84% 10%, rgba(248, 217, 139, .18), transparent 32%),
+        linear-gradient(135deg, #10091b, #271638 62%, #12091d);
+    }
+
+    .screen {
+      width: 100vw;
+      height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(8px, 1.6vw, 18px);
+      position: relative;
+    }
+.stage {
+  position: relative;
+
+  width: min(96vw, 1200px);
+  height: min(96vh, 1200px);
+
+  border-radius: clamp(20px, 3vw, 36px);
+
+  /* Fallback color shows through if a world's image (images/game-world-levelN.jpg)
+     is missing or still loading, instead of leaving the stage plain black. */
+  background-color: #1b1030;
+  background-image: var(--world-bg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  box-shadow:
+    var(--shadow),
+    0 0 80px rgba(248,217,139,.14);
+
+  overflow: hidden;
+  isolation: isolate;
+
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 47%, transparent 0 44%, rgba(16, 9, 27, .20) 66%, rgba(7, 3, 12, .54) 100%),
+        linear-gradient(to bottom, rgba(9, 5, 16, .18), rgba(9, 5, 16, .04) 45%, rgba(9, 5, 16, .30));
+      z-index: 1;
+    }
+
+    .stars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.78) 0 1px, transparent 1.4px),
+        radial-gradient(circle, rgba(248,217,139,.60) 0 1px, transparent 1.3px);
+      background-size: 130px 130px, 210px 210px;
+      opacity: .16;
+      animation: drift 28s linear infinite;
+      z-index: 2;
+    }
+
+    @keyframes drift { from { transform: translateY(0); } to { transform: translateY(-120px); } }
+
+    .hud {
+      position: absolute;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.06)), var(--glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 18px 50px rgba(0,0,0,.30);
+    }
+
+    .brand {
+      left: clamp(12px, 3vw, 26px);
+      top: clamp(12px, 3vw, 26px);
+      padding: 10px 14px;
+      border-radius: 999px;
+      max-width: calc(100% - 28px);
+    }
+
+    .brand small {
+      display: block;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--gold2);
+    }
+
+    .brand strong {
+      display: block;
+      margin-top: 2px;
+      font-size: clamp(18px, 3vw, 28px);
+      letter-spacing: -.04em;
+      color: #fff4d5;
+      white-space: nowrap;
+    }
+
+    .score {
+      /* Pushed down from the usual top-right HUD spot to leave room for
+         the account icon (#authRoot, from auth-ui.css) above it. */
+      right: clamp(12px, 3vw, 26px);
+      top: clamp(60px, 12vw, 82px);
+      padding: 10px 14px;
+      border-radius: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, auto);
+      gap: 10px;
+    }
+
+    .stat {
+      min-width: 50px;
+      text-align: center;
+      padding: 8px 8px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .stat b { display: block; color: var(--gold2); font-family: Arial, sans-serif; font-size: 15px; }
+    .stat span { display: block; margin-top: 2px; color: var(--muted); font-family: Arial, sans-serif; font-weight: 800; font-size: 9px; letter-spacing: .10em; text-transform: uppercase; }
+
+    .next-box {
+      left: clamp(12px, 3vw, 26px);
+      bottom: clamp(12px, 3vw, 26px);
+      padding: 12px 14px;
+      border-radius: 24px;
+    }
+
+    .next-seed {
+      width: 62px;
+      height: 62px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      font-size: 38px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(248,217,139,.28);
+      box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
+    }
+
+    .next-copy { font-family: Arial, sans-serif; line-height: 1.25; }
+    .next-copy b { display: block; color: var(--gold2); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .next-copy span { color: var(--muted); font-size: 12px; }
+
+  .actions {
+  position: absolute;
+
+  right: 20px;
+  bottom: 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px;
+
+  border-radius: 999px;
+}
+
+button {
+  min-width: auto;
+
+  padding: 10px 12px;
+
+  border-radius: 999px;
+
+  font-family: Arial, sans-serif;
+  font-weight: 900;
+  font-size: 10px;
+
+  letter-spacing: .08em;
+  text-transform: uppercase;
+
+  color: #24162c;
+
+  background: linear-gradient(
+    135deg,
+    var(--gold2),
+    var(--gold)
+  );
+
+  box-shadow:
+    0 14px 34px rgba(248,217,139,.22);
+}
+
+    button.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: none;
+    }
+
+    .world-picker {
+      position: absolute;
+      z-index: 7;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: clamp(88px, 11svh, 118px);
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 999px;
+      background: rgba(18, 9, 28, .45);
+      border: 1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .world-dot {
+      width: 12px;
+      height: 12px;
+      padding: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,.30);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,.24);
+    }
+
+    .world-dot.active { background: linear-gradient(135deg, var(--gold), var(--lav)); box-shadow: 0 0 18px rgba(248,217,139,.36); }
+
+ .board {
+  position: absolute;
+
+  left: var(--board-left);
+  top: var(--board-top);
+
+  width: var(--board-width);
+  height: var(--board-height);
+
+  display: grid;
+
+  grid-template-columns: repeat(5,1fr);
+  grid-template-rows: repeat(5,1fr);
+
+  gap: 4%;
+}
+
+  .cell {
+  width: 92%;
+  height: 92%;
+
+  justify-self: center;
+  align-self: center;
+
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+
+  display: grid;
+  place-items: center;
+}
+
+    .cell:hover, .cell:focus-visible {
+      outline: none;
+      transform: scale(1.08);
+      background: radial-gradient(circle, rgba(248,217,139,.22), rgba(248,217,139,.05) 46%, transparent 72%);
+      box-shadow: 0 0 22px rgba(248,217,139,.20);
+    }
+
+    /* Keyboard-only ring on top of the shared hover look above, so
+       tabbing through the board is clearly visible, not just a subtle
+       glow that's easy to miss. */
+    .cell:focus-visible {
+      box-shadow: 0 0 0 2px rgba(255,242,189,.85), 0 0 22px rgba(248,217,139,.20);
+    }
+
+    .cell.empty::after {
+      content: "";
+      width: 52%;
+      height: 52%;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity .18s ease;
+      background: radial-gradient(circle, rgba(255,242,189,.18), transparent 70%);
+    }
+
+    .cell.empty:hover::after { opacity: 1; }
+.tile {
+  font-size: clamp(20px, 5.5vw, 42px);
+
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  filter:
+    drop-shadow(0 0 13px rgba(248,217,139,.38))
+    drop-shadow(0 8px 10px rgba(0,0,0,.25));
+}
+
+    .tile.level-4, .tile.level-5, .tile.level-6 { filter: drop-shadow(0 0 18px rgba(248,217,139,.56)) drop-shadow(0 8px 12px rgba(0,0,0,.32)); }
+
+    @keyframes pop { from { transform: scale(.55); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .merge-burst {
+      position: absolute;
+      z-index: 8;
+      pointer-events: none;
+      font-size: clamp(28px, 7vw, 54px);
+      animation: burst .8s ease forwards;
+      filter: drop-shadow(0 0 20px rgba(248,217,139,.62));
+    }
+
+    @keyframes burst {
+      0% { transform: translate(-50%, -50%) scale(.7); opacity: 0; }
+      25% { opacity: 1; }
+      100% { transform: translate(-50%, -130%) scale(1.25); opacity: 0; }
+    }
+
+    .collection {
+      position: absolute;
+      z-index: 6;
+      left: 50%;
+      transform: translateX(-50%);
+      top: clamp(80px, 10svh, 110px);
+      display: flex;
+      gap: 6px;
+      max-width: min(70%, 430px);
+      justify-content: center;
+      flex-wrap: wrap;
+      pointer-events: none;
+    }
+
+    .collection span {
+      font-size: clamp(18px, 3vw, 28px);
+      filter: drop-shadow(0 0 12px rgba(248,217,139,.30));
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      z-index: 30;
+      transform: translateX(-50%) translateY(26px);
+      opacity: 0;
+      padding: 13px 17px;
+      border-radius: 999px;
+      background: rgba(16,9,27,.88);
+      border: 1px solid rgba(248,217,139,.34);
+      color: var(--gold2);
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      pointer-events: none;
+      transition: .25s ease;
+      box-shadow: 0 18px 60px rgba(0,0,0,.44), 0 0 28px rgba(248,217,139,.18);
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(5,3,10,.68);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .modal.show { display: grid; }
+
+    .modal-card {
+      width: min(520px, 100%);
+      border-radius: 34px;
+      border: 1px solid rgba(248,217,139,.32);
+      background:
+        radial-gradient(circle at 30% 8%, rgba(248,217,139,.24), transparent 32%),
+        radial-gradient(circle at 82% 18%, rgba(201,167,255,.19), transparent 30%),
+        linear-gradient(145deg, rgba(44,24,63,.98), rgba(16,9,27,.98));
+      box-shadow: 0 30px 110px rgba(0,0,0,.65);
+      padding: 30px;
+      text-align: center;
+    }
+
+    .modal-card .big { font-size: 60px; margin-bottom: 8px; }
+    .modal-card h2 { margin: 0; color: #fff2d3; font-size: 38px; letter-spacing: -.04em; }
+    .modal-card p { margin: 12px auto 22px; max-width: 390px; color: var(--muted); font-family: Arial, sans-serif; line-height: 1.6; font-size: 14px; }
+    .modal-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+    /* ---------- Login gate ----------
+       Covers the whole stage until a Supabase session exists — this
+       game is cloud-saved only, so playing without an account would
+       just lose progress on refresh. */
+    .login-gate {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+      background: rgba(9, 5, 16, .74);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .login-gate.show { display: grid; }
+
+    .login-gate-card {
+      max-width: 340px;
+      padding: 32px 26px;
+      border-radius: 28px;
+      border: 1px solid rgba(248,217,139,.30);
+      background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03)), var(--glass-strong);
+      box-shadow: 0 24px 80px rgba(0,0,0,.5);
+    }
+
+    .login-gate-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 16px rgba(248,217,139,.40));
+    }
+
+    .login-gate-card h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      letter-spacing: -.02em;
+      color: #fff4d5;
+    }
+
+    .login-gate-card p {
+      margin: 0 0 20px;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .login-gate-card button { min-width: 210px; }
+
+    @media (max-width: 760px) {
+
+      .stage { width: min(98vw, 86svh); }
+      .score { grid-template-columns: 1fr; gap: 6px; right: 10px; top: 54px; }
+      .score .stat { min-width: 54px; padding: 7px 8px; }
+      .brand { left: 10px; top: 10px; padding: 9px 11px; }
+      .brand strong { font-size: 18px; }
+      .next-box { left: 10px; bottom: 10px; padding: 9px 10px; }
+      .next-seed { width: 50px; height: 50px; font-size: 31px; border-radius: 17px; }
+      .next-copy span { display: none; }
+      .actions { right: 10px; bottom: 10px; padding: 7px; gap: 6px; }
+      button { padding: 9px 10px; font-size: 9px; }
+      .world-picker { bottom: 75px; }
+      .collection { top: 70px; max-width: 58%; }
+    }
+
+    @media (max-height: 650px) {
+      .world-picker { display: none; }
+      .collection { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="screen">
+    <section class="stage" id="stage" aria-label="Wellness Garden spelvärld">
+      <div class="stars"></div>
+
+      <div id="authRoot"></div>
+
+      <div class="hud brand">
+        <div>
+          <small>✦ Holistic Loader</small>
+          <strong id="worldName">Wellness Garden</strong>
+        </div>
+      </div>
+
+      <div class="hud score" aria-label="Spelstatistik">
+        <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
+        <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
+        <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
+      </div>
+
+      <div class="collection" id="collection" aria-label="Skapade belöningar"></div>
+
+      <div class="board" id="board" aria-label="Spelplan"></div>
+
+      <div class="hud next-box">
+        <div class="next-seed" id="nextTile">🌱</div>
+        <div class="next-copy"><b>Next seed</b><span>Placera på en tom cirkel</span></div>
+      </div>
+
+      <div class="hud actions">
+        <button class="secondary" id="undoBtn">Undo</button>
+        <button class="secondary" id="saveBtn">Save</button>
+        <button id="newBtn">New</button>
+      </div>
+
+      <div class="world-picker" id="worldPicker" aria-label="Välj värld"></div>
+
+      <div class="login-gate" id="loginGate">
+        <div class="login-gate-card">
+          <div class="login-gate-icon">🔒</div>
+          <h2>Logga in för att odla</h2>
+          <p>Din trädgård sparas i molnet på ditt konto, så du behöver vara inloggad för att spela.</p>
+          <button type="button" id="loginGateBtn">Logga in / Skapa konto</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">Beautiful merge ✨</div>
+
+  <div class="modal" id="gameOverModal">
+    <div class="modal-card">
+      <div class="big">🌙</div>
+      <h2>Garden Complete</h2>
+      <p id="gameOverText">Din trädgård är full. Starta en ny och försök skapa ännu mer harmony.</p>
+      <div class="modal-actions">
+        <button id="againBtn">New Garden</button>
+        <button class="secondary" id="closeModalBtn">Stay Here</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="auth.js"></script>
+  <script>
+const WORLDS = [
+  { key: "level1", name: "Lavender Meadow", src: "images/game-world-level1.jpg" },
+  { key: "level2", name: "Sunrise Grove", src: "images/game-world-level2.jpg" },
+  { key: "level3", name: "Crystal Falls", src: "images/game-world-level3.jpg" },
+  { key: "level4", name: "Whispering Bamboo", src: "images/game-world-level4.jpg" },
+  { key: "level5", name: "Moonlit Pond", src: "images/game-world-level5.jpg" },
+  { key: "level6", name: "Golden Orchard", src: "images/game-world-level6.jpg" },
+  { key: "level7", name: "Misty Highlands", src: "images/game-world-level7.jpg" },
+  { key: "level8", name: "Coral Sanctuary", src: "images/game-world-level8.jpg" },
+  { key: "level9", name: "Starlit Dunes", src: "images/game-world-level9.jpg" },
+  { key: "level10", name: "Sacred Summit", src: "images/game-world-level10.jpg" }
+];
+    const SIZE = 5;
+    const ITEMS = [
+      { level: 0, icon: "", name: "Empty", score: 0 },
+      { level: 1, icon: "🌱", name: "Seed", score: 5 },
+      { level: 2, icon: "🌿", name: "Sprout", score: 22 },
+      { level: 3, icon: "🌸", name: "Bloom", score: 80 },
+      { level: 4, icon: "💎", name: "Crystal", score: 260 },
+      { level: 5, icon: "🪷", name: "Lotus", score: 780 },
+      { level: 6, icon: "✨", name: "Sacred Light", score: 1900 }
+    ];
+
+    /* Progress lives in Supabase only (table: garden_saves — see the
+       setup notes near GARDEN_TABLE below), not localStorage: playing
+       requires an account, so the cloud row is always the source of
+       truth and there's nothing useful to cache offline. */
+    let board = createEmptyBoard();
+    let nextLevel = 1;
+    let score = 0;
+    let moves = 0;
+    let best = 0;
+    let history = [];
+    let collection = [];
+    let currentWorld = 0;
+
+    const stageEl = document.getElementById("stage");
+    const boardEl = document.getElementById("board");
+    const nextTileEl = document.getElementById("nextTile");
+    const scoreStatEl = document.getElementById("scoreStat");
+    const movesStatEl = document.getElementById("movesStat");
+    const bestStatEl = document.getElementById("bestStat");
+    const collectionEl = document.getElementById("collection");
+    const toastEl = document.getElementById("toast");
+    const modalEl = document.getElementById("gameOverModal");
+    const gameOverTextEl = document.getElementById("gameOverText");
+    const worldNameEl = document.getElementById("worldName");
+    const worldPickerEl = document.getElementById("worldPicker");
+    const loginGateEl = document.getElementById("loginGate");
+
+    document.getElementById("newBtn").addEventListener("click", newGarden);
+    document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
+    document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+    document.getElementById("undoBtn").addEventListener("click", undo);
+    document.getElementById("saveBtn").addEventListener("click", saveGame);
+    document.getElementById("loginGateBtn").addEventListener("click", () => {
+      // #accountBtn is built by auth.js into #authRoot; logged out, a
+      // click on it opens the login/sign-up modal directly.
+      const accountBtn = document.getElementById("accountBtn");
+      if (accountBtn) accountBtn.click();
+    });
+
+    function createEmptyBoard() {
+      return Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => 0));
+    }
+
+    function cloneBoard(source) { return source.map(row => row.slice()); }
+
+    function randomNextLevel() {
+      const roll = Math.random();
+      if (score > 2400 && roll < 0.07) return 3;
+      if (score > 900 && roll < 0.18) return 2;
+      if (roll < 0.80) return 1;
+      return 2;
+    }
+
+    function setWorld(index) {
+      currentWorld = (index + WORLDS.length) % WORLDS.length;
+      const world = WORLDS[currentWorld];
+      stageEl.style.setProperty("--world-bg", `url("${world.src}")`);
+      worldNameEl.textContent = world.name;
+      renderWorldPicker();
+      syncToCloud(false);
+    }
+
+    function renderWorldPicker() {
+      worldPickerEl.innerHTML = "";
+      WORLDS.forEach((world, index) => {
+        const btn = document.createElement("button");
+        btn.className = "world-dot" + (index === currentWorld ? " active" : "");
+        btn.title = world.name;
+        btn.setAttribute("aria-label", world.name);
+        btn.addEventListener("click", () => setWorld(index));
+        worldPickerEl.appendChild(btn);
+      });
+    }
+
+    function newGarden() {
+      board = createEmptyBoard();
+      score = 0;
+      moves = 0;
+      history = [];
+      collection = [];
+      nextLevel = 1;
+      addStartingTiles();
+      render();
+      showToast("New garden planted 🌱");
+      syncToCloud(false);
+    }
+
+    function addStartingTiles() {
+      [
+        { r: 2, c: 1, level: 1 },
+        { r: 2, c: 2, level: 1 },
+        { r: 3, c: 2, level: 1 }
+      ].forEach(item => { board[item.r][item.c] = item.level; });
+    }
+
+    function saveHistory() {
+      history.push({ board: cloneBoard(board), nextLevel, score, moves, collection: collection.slice() });
+      if (history.length > 20) history.shift();
+    }
+
+    function undo() {
+      const previous = history.pop();
+      if (!previous) { showToast("Nothing to undo 🌙"); return; }
+      board = cloneBoard(previous.board);
+      nextLevel = previous.nextLevel;
+      score = previous.score;
+      moves = previous.moves;
+      collection = previous.collection.slice();
+      render();
+      showToast("One step back 🌙");
+      syncToCloud(false);
+    }
+
+    /* -----------------------------------------------------------------
+       CLOUD SAVE — Supabase, same pattern as nutriloader.html's food
+       log (auth.js provides the shared `sb` client and `currentUser`).
+       Unlike the food log, there's no localStorage fallback here:
+       playing this game requires being logged in, so the cloud row is
+       always the only copy — one row per account, upserted on every
+       move.
+
+       REQUIRED ONE-TIME SUPABASE SETUP (run once in the SQL Editor,
+       same project as auth.js's `profiles`/`log_entries` tables):
+
+         create table public.garden_saves (
+           user_id       uuid primary key references auth.users(id) on delete cascade,
+           board         jsonb not null default '[]',
+           next_level    int not null default 1,
+           score         int not null default 0,
+           moves         int not null default 0,
+           collection    jsonb not null default '[]',
+           current_world int not null default 0,
+           best          int not null default 0,
+           updated_at    timestamptz not null default now()
+         );
+
+         alter table public.garden_saves enable row level security;
+
+         create policy "Users can view their own garden"
+         on public.garden_saves for select
+         to authenticated
+         using (auth.uid() = user_id);
+
+         create policy "Users can insert their own garden"
+         on public.garden_saves for insert
+         to authenticated
+         with check (auth.uid() = user_id);
+
+         create policy "Users can update their own garden"
+         on public.garden_saves for update
+         to authenticated
+         using (auth.uid() = user_id)
+         with check (auth.uid() = user_id);
+    ----------------------------------------------------------------- */
+    const GARDEN_TABLE = "garden_saves";
+
+    function currentSaveRow() {
+      return {
+        user_id: currentUser.id,
+        board,
+        next_level: nextLevel,
+        score,
+        moves,
+        collection,
+        current_world: currentWorld,
+        best,
+        updated_at: new Date().toISOString()
+      };
+    }
+
+    async function syncToCloud(showFeedback) {
+      if (!currentUser || typeof sb === "undefined") return;
+      try {
+        const { error } = await sb.from(GARDEN_TABLE).upsert(currentSaveRow(), { onConflict: "user_id" });
+        if (error) throw error;
+        if (showFeedback) showToast("Garden saved ✨");
+      } catch (err) {
+        console.error("syncToCloud() error:", err);
+        if (showFeedback) showToast("Could not save — try again 🌙");
+      }
+    }
+
+    // "Save" button — same cloud write as the automatic saves below,
+    // just with a toast so the user gets explicit confirmation.
+    function saveGame() {
+      if (!currentUser) { showToast("Log in to save your garden 🔒"); return; }
+      syncToCloud(true);
+    }
+
+    async function loadFromCloud() {
+      if (!currentUser || typeof sb === "undefined") { newGarden(); return; }
+      try {
+        const { data, error } = await sb
+          .from(GARDEN_TABLE)
+          .select("*")
+          .eq("user_id", currentUser.id)
+          .maybeSingle();
+        if (error) throw error;
+
+        if (data) {
+          board = data.board || createEmptyBoard();
+          nextLevel = data.next_level || 1;
+          score = data.score || 0;
+          moves = data.moves || 0;
+          collection = data.collection || [];
+          currentWorld = typeof data.current_world === "number" ? data.current_world : 0;
+          best = typeof data.best === "number" ? data.best : 0;
+          history = [];
+          setWorld(currentWorld);
+          bestStatEl.textContent = formatNumber(best);
+          render();
+          showToast("Garden restored 🌿");
+        } else {
+          // First time this account plays — start fresh and create the row.
+          newGarden();
+        }
+      } catch (err) {
+        console.error("loadFromCloud() error:", err);
+        showToast("Could not load your garden 🌙");
+        newGarden();
+      }
+    }
+
+    function placeTile(r, c) {
+      if (board[r][c] !== 0) return;
+      saveHistory();
+      board[r][c] = nextLevel;
+      moves++;
+      const createdLevel = resolveMerges(r, c);
+      if (createdLevel >= 3) collection.push(createdLevel);
+      nextLevel = randomNextLevel();
+      updateBest();
+      autoUnlockWorld();
+      render();
+      if (createdLevel >= 6) showToast("Sacred Light created ✨");
+      else if (createdLevel >= 5) showToast("Lotus awakened 🪷");
+      else if (createdLevel > 0) showToast("Beautiful merge ✨");
+      if (isFull()) showGameOver();
+      syncToCloud(false);
+    }
+
+    function resolveMerges(startR, startC) {
+      let currentR = startR;
+      let currentC = startC;
+      let highestCreated = 0;
+      let keepMerging = true;
+      while (keepMerging) {
+        keepMerging = false;
+        const level = board[currentR][currentC];
+        if (level <= 0 || level >= ITEMS.length - 1) break;
+        const group = findConnectedGroup(currentR, currentC, level);
+        if (group.length >= 3) {
+          group.forEach(pos => { board[pos.r][pos.c] = 0; });
+          board[currentR][currentC] = level + 1;
+          score += ITEMS[level + 1].score * group.length;
+          highestCreated = Math.max(highestCreated, level + 1);
+          spawnBurst(currentR, currentC, ITEMS[level + 1].icon);
+          keepMerging = true;
+        }
+      }
+      return highestCreated;
+    }
+
+    function findConnectedGroup(r, c, level) {
+      const visited = new Set();
+      const result = [];
+      const queue = [{ r, c }];
+      while (queue.length) {
+        const pos = queue.shift();
+        const cellKey = `${pos.r},${pos.c}`;
+        if (visited.has(cellKey)) continue;
+        visited.add(cellKey);
+        if (!inBounds(pos.r, pos.c)) continue;
+        if (board[pos.r][pos.c] !== level) continue;
+        result.push(pos);
+        getNeighbors(pos.r, pos.c).forEach(next => { if (!visited.has(`${next.r},${next.c}`)) queue.push(next); });
+      }
+      return result;
+    }
+
+    function getNeighbors(r, c) {
+      return [{ r: r - 1, c }, { r: r + 1, c }, { r, c: c - 1 }, { r, c: c + 1 }].filter(pos => inBounds(pos.r, pos.c));
+    }
+
+    function inBounds(r, c) { return r >= 0 && c >= 0 && r < SIZE && c < SIZE; }
+    function isFull() { return board.every(row => row.every(cell => cell !== 0)); }
+
+    function updateBest() {
+      if (score > best) {
+        best = score;
+      }
+    }
+
+    function autoUnlockWorld() {
+      // Spaced out for 10 worlds (was tuned for 3): last world unlocks
+      // around 12,600 points instead of the old ~2,700.
+      const targetWorld = Math.min(WORLDS.length - 1, Math.floor(score / 1400));
+      if (targetWorld > currentWorld) setWorld(targetWorld);
+    }
+
+    function render() { renderBoard(); renderStats(); renderNext(); renderCollection(); }
+
+    function renderBoard() {
+      boardEl.innerHTML = "";
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+          const level = board[r][c];
+          const cell = document.createElement("button");
+          cell.type = "button";
+          cell.className = "cell" + (level === 0 ? " empty" : "");
+          cell.setAttribute("aria-label", level === 0 ? "Tom planteringscirkel" : ITEMS[level].name);
+          cell.addEventListener("click", () => placeTile(r, c));
+          if (level > 0) {
+            const tile = document.createElement("span");
+            tile.className = `tile level-${level}`;
+            tile.textContent = ITEMS[level].icon;
+            cell.appendChild(tile);
+          }
+          boardEl.appendChild(cell);
+        }
+      }
+    }
+
+    function renderStats() {
+      scoreStatEl.textContent = formatNumber(score);
+      movesStatEl.textContent = String(moves);
+      bestStatEl.textContent = formatNumber(best);
+    }
+
+    function renderNext() { nextTileEl.textContent = ITEMS[nextLevel].icon; }
+
+    function renderCollection() {
+      collectionEl.innerHTML = "";
+      collection.slice(-12).forEach(level => {
+        const item = document.createElement("span");
+        item.textContent = ITEMS[level].icon;
+        collectionEl.appendChild(item);
+      });
+    }
+
+    function spawnBurst(r, c, icon) {
+      const boardRect = boardEl.getBoundingClientRect();
+      const cellW = boardRect.width / SIZE;
+      const cellH = boardRect.height / SIZE;
+      const burst = document.createElement("div");
+      burst.className = "merge-burst";
+      burst.textContent = icon;
+      burst.style.left = `${boardRect.left + cellW * (c + .5)}px`;
+      burst.style.top = `${boardRect.top + cellH * (r + .5)}px`;
+      document.body.appendChild(burst);
+      setTimeout(() => burst.remove(), 850);
+    }
+
+    function showGameOver() {
+      gameOverTextEl.textContent = `Din trädgård är full. Du fick ${formatNumber(score)} harmony på ${moves} moves.`;
+      modalEl.classList.add("show");
+    }
+
+    function hideModal() { modalEl.classList.remove("show"); }
+
+    function showToast(message) {
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      setTimeout(() => toastEl.classList.remove("show"), 1500);
+    }
+
+    function formatNumber(value) { return new Intl.NumberFormat("sv-SE").format(value); }
+
+    /* -----------------------------------------------------------------
+       LOGIN GATE — this game only exists in the cloud, so nothing
+       plays or renders a real board until auth.js confirms a session.
+       onPremiumStatusChange() (from auth.js) fires on initial load,
+       login, and logout alike (it's driven by sb.auth.onAuthStateChange),
+       so it doubles as a general "auth state changed" hook here even
+       though its name is about premium status.
+    ----------------------------------------------------------------- */
+    let gardenLoadedForUser = null; // tracks which user_id we've already loaded, to avoid reloading on unrelated premium-status refreshes
+
+    function onAuthOrPremiumChange() {
+      if (currentUser) {
+        loginGateEl.classList.remove("show");
+        if (gardenLoadedForUser !== currentUser.id) {
+          gardenLoadedForUser = currentUser.id;
+          loadFromCloud();
+        }
+      } else {
+        gardenLoadedForUser = null;
+        loginGateEl.classList.add("show");
+        // Reset the visible board so a previous account's garden never
+        // lingers on screen for whoever uses this device/browser next.
+        board = createEmptyBoard();
+        score = 0; moves = 0; history = []; collection = []; nextLevel = 1;
+        best = 0; currentWorld = 0;
+        render();
+      }
+    }
+
+    setWorld(currentWorld); // sets an initial background (and picker dots) before auth resolves
+    loginGateEl.classList.add("show"); // default to gated until we hear otherwise
+
+    if (typeof onPremiumStatusChange === "function") {
+      onPremiumStatusChange(onAuthOrPremiumChange);
+    } else {
+      console.error("auth.js did not load — cloud saves are unavailable.");
+    }
+  </script>
+</body>
+</html>
