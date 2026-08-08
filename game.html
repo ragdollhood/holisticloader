@@ -224,7 +224,7 @@
 
     .next-box {
       left: clamp(12px, 3vw, 26px);
-      bottom: clamp(78px, 10svh, 108px);
+      bottom: clamp(12px, 3vw, 26px);
       padding: 12px 14px;
       border-radius: 24px;
     }
@@ -248,7 +248,7 @@
   position: absolute;
 
   right: 20px;
-  bottom: clamp(78px, 10svh, 108px);
+  bottom: clamp(12px, 3vw, 26px);
 
   display: flex;
   align-items: center;
@@ -488,16 +488,14 @@ button {
       100% { transform: translate(-50%, -130%) scale(1.25); opacity: 0; }
     }
 
-    /* Docked to the very bottom edge — next-box/actions were shifted up
-       (see their rules above) to make room for it here, and it now
-       reads as the lowest strip in the whole layout, below even the
-       Undo/Save/New buttons. .hud (added in the markup) gives it the
+    /* Sits just above next-box/actions (which now dock to the very
+       bottom edge) — the .hud class (added in the markup) gives it the
        same bordered glass-panel look as those, so it reads as a real
        "frame" instead of icons floating loose over the artwork. */
     .collection {
       left: 50%;
       transform: translateX(-50%);
-      bottom: clamp(12px, 3vw, 26px);
+      bottom: clamp(78px, 10svh, 108px);
       display: flex;
       gap: 6px;
       max-width: min(78%, 520px);
