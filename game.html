@@ -67,7 +67,7 @@
 
   border-radius: clamp(20px, 3vw, 36px);
 
-  /* Fallback color shows through if a world's image (images/game-world-levelN.jpg)
+  /* Fallback color shows through if a world's image (images/game-worlds/*.webp)
      is missing or still loading, instead of leaving the stage plain black. */
   background-color: #1b1030;
   background-image: var(--world-bg);
@@ -607,14 +607,14 @@ button {
    else in the game cares which format you use.
 
    Expected folder layout (create these in images/ next to the HTML):
-     images/items/crystalFalls/level1.webp ... level6.webp
-     images/items/dragonValley/level1.webp ... level6.webp
-     images/items/iceCavern/level1.png   ... level6.png
-     images/items/cosmos/level1.png      ... level6.png
-     images/worlds/crystalFalls-bg.jpg  (stage backdrop per world)
-     images/worlds/dragonValley-bg.jpg
-     images/worlds/iceCavern-bg.jpg
-     images/worlds/cosmos-bg.jpg
+     images/game-items/crystalFalls/level1.webp ... level6.webp
+     images/game-items/dragonValley/level1.webp ... level6.webp
+     images/game-items/iceCavern/level1.png   ... level6.png
+     images/game-items/cosmos/level1.png      ... level6.png
+     images/game-worlds/crystalFalls-bg.webp  (stage backdrop per world)
+     images/game-worlds/dragonValley-bg.webp
+     images/game-worlds/iceCavern-bg.webp
+     images/game-worlds/cosmos-bg.webp
 
    Add a new world by adding one more key here (and to
    WORLD_BACKGROUNDS / WORLD_LABELS below) — setWorld() and
@@ -623,36 +623,36 @@ button {
 ----------------------------------------------------------------- */
 const WORLDS = {
   crystalFalls: [
-    { level: 1, image: "images/items/crystalFalls/level1.webp", name: "Crystal Seed",     score: 5 },
-    { level: 2, image: "images/items/crystalFalls/level2.webp", name: "Crystal Sprout",   score: 22 },
-    { level: 3, image: "images/items/crystalFalls/level3.webp", name: "Crystal Bloom",    score: 80 },
-    { level: 4, image: "images/items/crystalFalls/level4.webp", name: "Crystal Shard",    score: 260 },
-    { level: 5, image: "images/items/crystalFalls/level5.webp", name: "Crystal Lotus",    score: 780 },
-    { level: 6, image: "images/items/crystalFalls/level6.webp", name: "Crystal Radiance", score: 1900 }
+    { level: 1, image: "images/game-items/crystalFalls/level1.webp", name: "Crystal Seed",     score: 5 },
+    { level: 2, image: "images/game-items/crystalFalls/level2.webp", name: "Crystal Sprout",   score: 22 },
+    { level: 3, image: "images/game-items/crystalFalls/level3.webp", name: "Crystal Bloom",    score: 80 },
+    { level: 4, image: "images/game-items/crystalFalls/level4.webp", name: "Crystal Shard",    score: 260 },
+    { level: 5, image: "images/game-items/crystalFalls/level5.webp", name: "Crystal Lotus",    score: 780 },
+    { level: 6, image: "images/game-items/crystalFalls/level6.webp", name: "Crystal Radiance", score: 1900 }
   ],
   dragonValley: [
-    { level: 1, image: "images/items/dragonValley/level1.webp", name: "Dragon Egg",      score: 5 },
-    { level: 2, image: "images/items/dragonValley/level2.webp", name: "Hatchling",       score: 22 },
-    { level: 3, image: "images/items/dragonValley/level3.webp", name: "Young Drake",     score: 80 },
-    { level: 4, image: "images/items/dragonValley/level4.webp", name: "Fire Drake",      score: 260 },
-    { level: 5, image: "images/items/dragonValley/level5.webp", name: "Elder Wyrm",      score: 780 },
-    { level: 6, image: "images/items/dragonValley/level6.webp", name: "Ancient Dragon",  score: 1900 }
+    { level: 1, image: "images/game-items/dragonValley/level1.webp", name: "Dragon Egg",      score: 5 },
+    { level: 2, image: "images/game-items/dragonValley/level2.webp", name: "Hatchling",       score: 22 },
+    { level: 3, image: "images/game-items/dragonValley/level3.webp", name: "Young Drake",     score: 80 },
+    { level: 4, image: "images/game-items/dragonValley/level4.webp", name: "Fire Drake",      score: 260 },
+    { level: 5, image: "images/game-items/dragonValley/level5.webp", name: "Elder Wyrm",      score: 780 },
+    { level: 6, image: "images/game-items/dragonValley/level6.webp", name: "Ancient Dragon",  score: 1900 }
   ],
   iceCavern: [
-    { level: 1, image: "images/items/iceCavern/level1.png", name: "Snowflake",      score: 5 },
-    { level: 2, image: "images/items/iceCavern/level2.png", name: "Icicle",         score: 22 },
-    { level: 3, image: "images/items/iceCavern/level3.png", name: "Frost Bloom",    score: 80 },
-    { level: 4, image: "images/items/iceCavern/level4.png", name: "Glacier Shard",  score: 260 },
-    { level: 5, image: "images/items/iceCavern/level5.png", name: "Aurora Crystal", score: 780 },
-    { level: 6, image: "images/items/iceCavern/level6.png", name: "Frozen Star",    score: 1900 }
+    { level: 1, image: "images/game-items/iceCavern/level1.png", name: "Snowflake",      score: 5 },
+    { level: 2, image: "images/game-items/iceCavern/level2.png", name: "Icicle",         score: 22 },
+    { level: 3, image: "images/game-items/iceCavern/level3.png", name: "Frost Bloom",    score: 80 },
+    { level: 4, image: "images/game-items/iceCavern/level4.png", name: "Glacier Shard",  score: 260 },
+    { level: 5, image: "images/game-items/iceCavern/level5.png", name: "Aurora Crystal", score: 780 },
+    { level: 6, image: "images/game-items/iceCavern/level6.png", name: "Frozen Star",    score: 1900 }
   ],
   cosmos: [
-    { level: 1, image: "images/items/cosmos/level1.png", name: "Stardust",        score: 5 },
-    { level: 2, image: "images/items/cosmos/level2.png", name: "Comet",           score: 22 },
-    { level: 3, image: "images/items/cosmos/level3.png", name: "Nebula Bloom",    score: 80 },
-    { level: 4, image: "images/items/cosmos/level4.png", name: "Star Core",       score: 260 },
-    { level: 5, image: "images/items/cosmos/level5.png", name: "Galaxy Lotus",    score: 780 },
-    { level: 6, image: "images/items/cosmos/level6.png", name: "Cosmic Radiance", score: 1900 }
+    { level: 1, image: "images/game-items/cosmos/level1.png", name: "Stardust",        score: 5 },
+    { level: 2, image: "images/game-items/cosmos/level2.png", name: "Comet",           score: 22 },
+    { level: 3, image: "images/game-items/cosmos/level3.png", name: "Nebula Bloom",    score: 80 },
+    { level: 4, image: "images/game-items/cosmos/level4.png", name: "Star Core",       score: 260 },
+    { level: 5, image: "images/game-items/cosmos/level5.png", name: "Galaxy Lotus",    score: 780 },
+    { level: 6, image: "images/game-items/cosmos/level6.png", name: "Cosmic Radiance", score: 1900 }
   ]
 };
 
@@ -660,10 +660,10 @@ const WORLDS = {
 const WORLD_KEYS = Object.keys(WORLDS);
 
 const WORLD_BACKGROUNDS = {
-  crystalFalls: "images/worlds/crystalFalls-bg.jpg",
-  dragonValley: "images/worlds/dragonValley-bg.jpg",
-  iceCavern:    "images/worlds/iceCavern-bg.jpg",
-  cosmos:       "images/worlds/cosmos-bg.jpg"
+  crystalFalls: "images/game-worlds/crystalFalls-bg.webp",
+  dragonValley: "images/game-worlds/dragonValley-bg.webp",
+  iceCavern:    "images/game-worlds/iceCavern-bg.webp",
+  cosmos:       "images/game-worlds/cosmos-bg.webp"
 };
 
 const WORLD_LABELS = {
