@@ -597,91 +597,95 @@ button {
   <script src="auth.js"></script>
   <script>
 /* -----------------------------------------------------------------
-   WORLDS — one array per world, each entry a merge-tile definition:
+   ITEMS — a single shared set of merge-tile art used in every world:
    { level, image, name, score }. No emoji anywhere: every tile,
    the "next up" preview, the collection strip, and the merge burst
    all render a real <img class="item-icon"> pointed at `image`.
 
    Swap art without touching any other code: point `image` at .png
-   or .webp files interchangeably, per level, per world — nothing
-   else in the game cares which format you use.
+   or .webp — nothing else in the game cares which format you use.
 
    Expected folder layout (create these in images/ next to the HTML):
-     images/game-items/crystalFalls/level1.webp ... level6.webp
-     images/game-items/dragonValley/level1.webp ... level6.webp
-     images/game-items/iceCavern/level1.png   ... level6.png
-     images/game-items/cosmos/level1.png      ... level6.png
-     images/game-worlds/crystalFalls-bg.webp  (stage backdrop per world)
-     images/game-worlds/dragonValley-bg.webp
-     images/game-worlds/iceCavern-bg.webp
-     images/game-worlds/cosmos-bg.webp
+     images/game-items/item1.webp ... item6.webp   (one icon per level,
+                                                      shared by all worlds)
+     images/game-worlds/<worldKey>-bg.webp          (stage backdrop,
+                                                      one per world)
 
-   Add a new world by adding one more key here (and to
-   WORLD_BACKGROUNDS / WORLD_LABELS below) — setWorld() and
-   renderWorldPicker() both iterate WORLDS automatically, no other
-   code changes needed.
+   Add a new world by adding one more key to WORLD_BACKGROUNDS and
+   WORLD_LABELS below — setWorld() and renderWorldPicker() both
+   iterate WORLD_KEYS automatically, no other code changes needed.
 ----------------------------------------------------------------- */
-const WORLDS = {
-  crystalFalls: [
-    { level: 1, image: "images/game-items/crystalFalls/level1.webp", name: "Crystal Seed",     score: 5 },
-    { level: 2, image: "images/game-items/crystalFalls/level2.webp", name: "Crystal Sprout",   score: 22 },
-    { level: 3, image: "images/game-items/crystalFalls/level3.webp", name: "Crystal Bloom",    score: 80 },
-    { level: 4, image: "images/game-items/crystalFalls/level4.webp", name: "Crystal Shard",    score: 260 },
-    { level: 5, image: "images/game-items/crystalFalls/level5.webp", name: "Crystal Lotus",    score: 780 },
-    { level: 6, image: "images/game-items/crystalFalls/level6.webp", name: "Crystal Radiance", score: 1900 }
-  ],
-  dragonValley: [
-    { level: 1, image: "images/game-items/dragonValley/level1.webp", name: "Dragon Egg",      score: 5 },
-    { level: 2, image: "images/game-items/dragonValley/level2.webp", name: "Hatchling",       score: 22 },
-    { level: 3, image: "images/game-items/dragonValley/level3.webp", name: "Young Drake",     score: 80 },
-    { level: 4, image: "images/game-items/dragonValley/level4.webp", name: "Fire Drake",      score: 260 },
-    { level: 5, image: "images/game-items/dragonValley/level5.webp", name: "Elder Wyrm",      score: 780 },
-    { level: 6, image: "images/game-items/dragonValley/level6.webp", name: "Ancient Dragon",  score: 1900 }
-  ],
-  iceCavern: [
-    { level: 1, image: "images/game-items/iceCavern/level1.png", name: "Snowflake",      score: 5 },
-    { level: 2, image: "images/game-items/iceCavern/level2.png", name: "Icicle",         score: 22 },
-    { level: 3, image: "images/game-items/iceCavern/level3.png", name: "Frost Bloom",    score: 80 },
-    { level: 4, image: "images/game-items/iceCavern/level4.png", name: "Glacier Shard",  score: 260 },
-    { level: 5, image: "images/game-items/iceCavern/level5.png", name: "Aurora Crystal", score: 780 },
-    { level: 6, image: "images/game-items/iceCavern/level6.png", name: "Frozen Star",    score: 1900 }
-  ],
-  cosmos: [
-    { level: 1, image: "images/game-items/cosmos/level1.png", name: "Stardust",        score: 5 },
-    { level: 2, image: "images/game-items/cosmos/level2.png", name: "Comet",           score: 22 },
-    { level: 3, image: "images/game-items/cosmos/level3.png", name: "Nebula Bloom",    score: 80 },
-    { level: 4, image: "images/game-items/cosmos/level4.png", name: "Star Core",       score: 260 },
-    { level: 5, image: "images/game-items/cosmos/level5.png", name: "Galaxy Lotus",    score: 780 },
-    { level: 6, image: "images/game-items/cosmos/level6.png", name: "Cosmic Radiance", score: 1900 }
-  ]
-};
+const ITEMS = [
+  { level: 1, image: "images/game-items/item1.webp", name: "Seed",     score: 5 },
+  { level: 2, image: "images/game-items/item2.webp", name: "Sprout",   score: 22 },
+  { level: 3, image: "images/game-items/item3.webp", name: "Bloom",    score: 80 },
+  { level: 4, image: "images/game-items/item4.webp", name: "Shard",    score: 260 },
+  { level: 5, image: "images/game-items/item5.webp", name: "Lotus",    score: 780 },
+  { level: 6, image: "images/game-items/item6.webp", name: "Radiance", score: 1900 }
+];
 
-// Declaration order of the keys above = world/unlock order everywhere else.
-const WORLD_KEYS = Object.keys(WORLDS);
-
+// Declaration order of the keys below = world/unlock order everywhere else.
 const WORLD_BACKGROUNDS = {
-  crystalFalls: "images/game-worlds/crystalFalls-bg.webp",
-  dragonValley: "images/game-worlds/dragonValley-bg.webp",
-  iceCavern:    "images/game-worlds/iceCavern-bg.webp",
-  cosmos:       "images/game-worlds/cosmos-bg.webp"
+  crystalFalls:    "images/game-worlds/crystalFalls-bg.webp",
+  dragonValley:    "images/game-worlds/dragonValley-bg.webp",
+  iceCavern:       "images/game-worlds/iceCavern-bg.webp",
+  cosmos:          "images/game-worlds/cosmos-bg.webp",
+  mountainShrine:  "images/game-worlds/mountain-shrine-bg.webp",
+  underwaterRuins: "images/game-worlds/underwater-ruins-bg.webp",
+  desertOasis:     "images/game-worlds/desert-oasis-bg.webp",
+  volcano:         "images/game-worlds/volcano-bg.webp",
+  jungleTemple:    "images/game-worlds/jungle-temple-bg.webp",
+  cherryBlossom:   "images/game-worlds/cherry-blossom-bg.webp",
+  flowerGarden:    "images/game-worlds/flower-garden-bg.webp",
+  enchantedForest: "images/game-worlds/enchanted-forest-bg.webp",
+  lavenderGarden:  "images/game-worlds/lavender-garden-bg.webp",
+  sunsetMeadow:    "images/game-worlds/sunset-meadow-bg.webp",
+  waterfallGrove:  "images/game-worlds/waterfall-grove-bg.webp",
+  bambooForest:    "images/game-worlds/bamboo-forest-bg.webp",
+  moonlitPond:     "images/game-worlds/moonlit-pond-bg.webp",
+  // TODO: only 17 background images were supplied — these last 3 reuse
+  // an existing background as a placeholder. Drop in a real image at
+  // the paths below (and swap the path here) whenever art is ready.
+  mysticGlade:     "images/game-worlds/enchanted-forest-bg.webp",
+  goldenDunes:     "images/game-worlds/desert-oasis-bg.webp",
+  auroraPeak:      "images/game-worlds/iceCavern-bg.webp"
 };
+
+const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
 const WORLD_LABELS = {
-  crystalFalls: "Crystal Falls",
-  dragonValley: "Dragon Valley",
-  iceCavern:    "Ice Cavern",
-  cosmos:       "Cosmos"
+  crystalFalls:    "Crystal Falls",
+  dragonValley:    "Dragon Valley",
+  iceCavern:       "Ice Cavern",
+  cosmos:          "Cosmos",
+  mountainShrine:  "Mountain Shrine",
+  underwaterRuins: "Underwater Ruins",
+  desertOasis:     "Desert Oasis",
+  volcano:         "Volcano",
+  jungleTemple:    "Jungle Temple",
+  cherryBlossom:   "Cherry Blossom",
+  flowerGarden:    "Flower Garden",
+  enchantedForest: "Enchanted Forest",
+  lavenderGarden:  "Lavender Garden",
+  sunsetMeadow:    "Sunset Meadow",
+  waterfallGrove:  "Waterfall Grove",
+  bambooForest:    "Bamboo Forest",
+  moonlitPond:     "Moonlit Pond",
+  mysticGlade:     "Mystic Glade",
+  goldenDunes:     "Golden Dunes",
+  auroraPeak:      "Aurora Peak"
 };
 
 const EMPTY_ITEM = { level: 0, image: null, name: "Empty", score: 0 };
 
-function currentWorldItems() { return WORLDS[currentWorldKey]; }
+function currentWorldItems() { return ITEMS; }
 
 // Single lookup used everywhere a tile needs its icon/name/score —
-// level 0 (empty circle) always resolves to EMPTY_ITEM regardless of world.
+// level 0 (empty circle) always resolves to EMPTY_ITEM. Item art is
+// shared across every world, so this doesn't depend on currentWorldKey.
 function getItem(level) {
   if (level <= 0) return EMPTY_ITEM;
-  return currentWorldItems()[level - 1] || EMPTY_ITEM;
+  return ITEMS[level - 1] || EMPTY_ITEM;
 }
 
     const SIZE = 5;
@@ -744,7 +748,7 @@ function getItem(level) {
     // the world-picker dots, or your own console/menu) to swap both the
     // stage backdrop AND every tile's icon set at once.
     function setWorld(key) {
-      if (!WORLDS[key]) {
+      if (!WORLD_BACKGROUNDS[key]) {
         console.error(`setWorld(): unknown world "${key}" — staying on "${currentWorldKey}"`);
         return;
       }
@@ -910,7 +914,7 @@ function getItem(level) {
           score = data.score || 0;
           moves = data.moves || 0;
           collection = data.collection || [];
-          currentWorldKey = (typeof data.current_world === "string" && WORLDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
+          currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
           history = [];
           setWorld(currentWorldKey);
