@@ -86,7 +86,7 @@
 
   border-radius: clamp(20px, 3vw, 36px);
 
-  /* Fallback color shows through if a world's image (images/game-worlds/*.webp)
+  /* Fallback color shows through if a world's image (images/games-world*.webp)
      is missing or still loading, instead of leaving the stage plain black. */
   background-color: #1b1030;
   background-image: var(--world-bg);
@@ -805,8 +805,10 @@ button {
    Expected folder layout (create these in images/ next to the HTML):
      images/game-item1.webp ... game-item7.webp    (one icon per level,
                                                       shared by all worlds)
-     images/game-worlds/<worldKey>-bg.webp          (stage backdrop,
-                                                      one per world)
+     images/games-world1.webp ... games-world20.webp (stage backdrop,
+                                                      one per world, numbered
+                                                      in WORLD_BACKGROUNDS'
+                                                      declaration order)
 
    Add a new world by adding one more key to WORLD_BACKGROUNDS and
    WORLD_LABELS below — setWorld() and renderWorldPicker() both
@@ -823,30 +825,29 @@ const ITEMS = [
 ];
 
 // Declaration order of the keys below = world/unlock order everywhere else.
+// Backdrop art lives at images/games-world<N>.webp, numbered in this same
+// declaration order (1 = crystalFalls ... 20 = auroraPeak).
 const WORLD_BACKGROUNDS = {
-  crystalFalls:    "images/game-worlds/crystalFalls-bg.webp",
-  dragonValley:    "images/game-worlds/dragonValley-bg.webp",
-  iceCavern:       "images/game-worlds/iceCavern-bg.webp",
-  cosmos:          "images/game-worlds/cosmos-bg.webp",
-  mountainShrine:  "images/game-worlds/mountain-shrine-bg.webp",
-  underwaterRuins: "images/game-worlds/underwater-ruins-bg.webp",
-  desertOasis:     "images/game-worlds/desert-oasis-bg.webp",
-  volcano:         "images/game-worlds/volcano-bg.webp",
-  jungleTemple:    "images/game-worlds/jungle-temple-bg.webp",
-  cherryBlossom:   "images/game-worlds/cherry-blossom-bg.webp",
-  flowerGarden:    "images/game-worlds/flower-garden-bg.webp",
-  enchantedForest: "images/game-worlds/enchanted-forest-bg.webp",
-  lavenderGarden:  "images/game-worlds/lavender-garden-bg.webp",
-  sunsetMeadow:    "images/game-worlds/sunset-meadow-bg.webp",
-  waterfallGrove:  "images/game-worlds/waterfall-grove-bg.webp",
-  bambooForest:    "images/game-worlds/bamboo-forest-bg.webp",
-  moonlitPond:     "images/game-worlds/moonlit-pond-bg.webp",
-  // TODO: only 17 background images were supplied — these last 3 reuse
-  // an existing background as a placeholder. Drop in a real image at
-  // the paths below (and swap the path here) whenever art is ready.
-  mysticGlade:     "images/game-worlds/enchanted-forest-bg.webp",
-  goldenDunes:     "images/game-worlds/desert-oasis-bg.webp",
-  auroraPeak:      "images/game-worlds/iceCavern-bg.webp"
+  crystalFalls:    "images/games-world1.webp",
+  dragonValley:    "images/games-world2.webp",
+  iceCavern:       "images/games-world3.webp",
+  cosmos:          "images/games-world4.webp",
+  mountainShrine:  "images/games-world5.webp",
+  underwaterRuins: "images/games-world6.webp",
+  desertOasis:     "images/games-world7.webp",
+  volcano:         "images/games-world8.webp",
+  jungleTemple:    "images/games-world9.webp",
+  cherryBlossom:   "images/games-world10.webp",
+  flowerGarden:    "images/games-world11.webp",
+  enchantedForest: "images/games-world12.webp",
+  lavenderGarden:  "images/games-world13.webp",
+  sunsetMeadow:    "images/games-world14.webp",
+  waterfallGrove:  "images/games-world15.webp",
+  bambooForest:    "images/games-world16.webp",
+  moonlitPond:     "images/games-world17.webp",
+  mysticGlade:     "images/games-world18.webp",
+  goldenDunes:     "images/games-world19.webp",
+  auroraPeak:      "images/games-world20.webp"
 };
 
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
