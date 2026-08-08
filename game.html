@@ -80,7 +80,8 @@
      a short/wide browser window still can't make the frame taller
      than the viewport even once it's no longer square. */
   --stage-ratio: 1;
-  width: min(96vw, calc(96svh * var(--stage-ratio)), 1200px);
+  height: min(96svh, calc(96vw / var(--stage-ratio)));
+  width: auto;
   aspect-ratio: var(--stage-ratio);
 }
 
