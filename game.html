@@ -370,17 +370,17 @@ button {
        object-fit:contain + pointer-events:none + drop-shadow from the
        base class still apply everywhere. */
     .item-icon {
-      width: 80px;
-      height: 80px;
+      width: 150px;
+      height: 150px;
       object-fit: contain;
       pointer-events: none;
       filter: drop-shadow(0 0 12px rgba(255,255,255,.25));
     }
 
-    .tile .item-icon { width: 78%; height: 78%; }
-    .next-seed .item-icon { width: 40px; height: 40px; }
-    .collection .item-icon { width: 26px; height: 26px; }
-    .merge-burst .item-icon { width: 56px; height: 56px; }
+    .tile .item-icon { width: 148%; height: 148%; }
+    .next-seed .item-icon { width: 76px; height: 76px; }
+    .collection .item-icon { width: 50px; height: 50px; }
+    .merge-burst .item-icon { width: 106px; height: 106px; }
 
     /* Small contained placeholder shown when an item-icon 404s, so a
        missing file is visible (check the console for which one) without
@@ -641,7 +641,7 @@ button {
    or .webp — nothing else in the game cares which format you use.
 
    Expected folder layout (create these in images/ next to the HTML):
-     images/game-items/item1.webp ... item6.webp   (one icon per level,
+     images/game-items1.webp ... game-items6.webp  (one icon per level,
                                                       shared by all worlds)
      images/game-worlds/<worldKey>-bg.webp          (stage backdrop,
                                                       one per world)
@@ -651,12 +651,12 @@ button {
    iterate WORLD_KEYS automatically, no other code changes needed.
 ----------------------------------------------------------------- */
 const ITEMS = [
-  { level: 1, image: "images/game-items/item1.webp", name: "Seed",     score: 5 },
-  { level: 2, image: "images/game-items/item2.webp", name: "Sprout",   score: 22 },
-  { level: 3, image: "images/game-items/item3.webp", name: "Bloom",    score: 80 },
-  { level: 4, image: "images/game-items/item4.webp", name: "Shard",    score: 260 },
-  { level: 5, image: "images/game-items/item5.webp", name: "Lotus",    score: 780 },
-  { level: 6, image: "images/game-items/item6.webp", name: "Radiance", score: 1900 }
+  { level: 1, image: "images/game-items1.webp", name: "Seed",     score: 5 },
+  { level: 2, image: "images/game-items2.webp", name: "Sprout",   score: 22 },
+  { level: 3, image: "images/game-items3.webp", name: "Bloom",    score: 80 },
+  { level: 4, image: "images/game-items4.webp", name: "Shard",    score: 260 },
+  { level: 5, image: "images/game-items5.webp", name: "Lotus",    score: 780 },
+  { level: 6, image: "images/game-items6.webp", name: "Radiance", score: 1900 }
 ];
 
 // Declaration order of the keys below = world/unlock order everywhere else.
