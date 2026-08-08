@@ -320,6 +320,107 @@ button {
 
     .world-dot.active { background: linear-gradient(135deg, var(--gold), var(--lav)); box-shadow: 0 0 18px rgba(248,217,139,.36); }
 
+    /* ---------- Map screen ----------
+       Shown instead of the board on first load (and any time the player
+       taps "Map") — images/game-karta1-5.jpg for islands 1-5, then
+       images/game-karta6-10.jpg once every world 1-5 has been cleared.
+       Sits on top of the stage (same layer the login-gate uses) so the
+       board underneath keeps its own state untouched while hidden. */
+    .map-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      display: none;
+      background-color: #1b1030;
+      background-image: var(--map-bg);
+      background-size: cover;
+      background-position: center;
+      border-radius: clamp(20px, 3vw, 36px);
+      overflow: hidden;
+    }
+
+    .map-screen.show { display: block; }
+
+    .map-title {
+      position: absolute;
+      left: 50%;
+      top: clamp(10px, 2.4vw, 22px);
+      transform: translateX(-50%);
+      z-index: 2;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--gold2);
+      background: rgba(16,9,27,.55);
+      border: 1px solid rgba(248,217,139,.30);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .island-btn {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: clamp(38px, 7vw, 58px);
+      height: clamp(38px, 7vw, 58px);
+      border-radius: 50%;
+      border: 2px solid rgba(248,217,139,.65);
+      background: radial-gradient(circle, rgba(248,217,139,.30), rgba(20,10,30,.55) 70%);
+      color: var(--gold2);
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: clamp(14px, 2.4vw, 20px);
+      box-shadow: 0 0 20px rgba(248,217,139,.30), 0 10px 26px rgba(0,0,0,.4);
+      cursor: pointer;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .island-btn:hover, .island-btn:focus-visible { transform: translate(-50%, -50%) scale(1.1); }
+
+    .island-btn.cleared {
+      border-color: rgba(154,255,180,.85);
+      background: radial-gradient(circle, rgba(154,255,180,.30), rgba(20,10,30,.55) 70%);
+      box-shadow: 0 0 20px rgba(154,255,180,.35), 0 10px 26px rgba(0,0,0,.4);
+    }
+
+    .island-btn.locked {
+      opacity: .42;
+      filter: grayscale(.6);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .island-btn.locked:hover, .island-btn.locked:focus-visible { transform: translate(-50%, -50%); }
+
+    @keyframes islandPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(248,217,139,.30), 0 10px 26px rgba(0,0,0,.4); transform: translate(-50%, -50%) scale(1); }
+      50% { box-shadow: 0 0 40px rgba(248,217,139,.85), 0 10px 26px rgba(0,0,0,.4); transform: translate(-50%, -50%) scale(1.22); }
+    }
+
+    .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
+
+    .map-btn {
+      position: absolute;
+      right: clamp(12px, 3vw, 26px);
+      top: clamp(12px, 3vw, 26px);
+      z-index: 6;
+    }
+
+    /* While the map is showing, hide the board-only HUD chrome so it
+       doesn't float over the map art (the map has its own title). */
+    .stage-frame.on-map .map-btn,
+    .stage-frame.on-map .world-picker,
+    .stage-frame.on-map .collection,
+    .stage-frame.on-map .bottom-bar,
+    .stage-frame.on-map .score {
+      display: none;
+    }
+
  /* .board-wrap keeps the ORIGINAL bounding box (left/top/width/height —
     which is deliberately non-square, see the vars above) but no longer
     lays out the grid itself. It's a container-query context, so the
@@ -850,6 +951,10 @@ button {
         <div class="board-wrap">
           <div class="board" id="board" aria-label="Game board"></div>
         </div>
+
+        <div class="map-screen" id="mapScreen" aria-label="World map">
+          <div class="map-title" id="mapTitle">Choose an island</div>
+        </div>
       </section>
 
       <!-- Wrapped so mobile can put the title and the account icon on one
@@ -891,6 +996,8 @@ button {
           <button id="newBtn">New</button>
         </div>
       </div>
+
+      <button type="button" class="hud map-btn" id="mapBtn" aria-label="Show world map">Map</button>
 
       <div class="world-picker" id="worldPicker" aria-label="Choose world"></div>
 
@@ -1051,6 +1158,31 @@ const WORLD_LABELS = {
   crystalFalls:      "Crystal Falls"
 };
 
+/* -----------------------------------------------------------------
+   MAP SCREENS — images/game-karta1-5.jpg covers islands 1-5 (the
+   first 5 WORLD_KEYS), images/game-karta6-10.jpg covers islands 6-10
+   (the next 5 WORLD_KEYS). The map is the landing screen after login;
+   tapping an unlocked island calls enterWorld() to open that world's
+   board. "Clearing" an island = creating CLEAR_ITEM_LEVEL's item
+   (level 5, "Lotus") at least once while that world is active — see
+   checkWorldClear() in placeTile(). Clearing island N unlocks island
+   N+1; clearing island 5 additionally reveals the karta6-10 map.
+
+   Positions are percentages (of the map image's width/height) for
+   each numbered circle in the artwork — eyeball-adjust these if the
+   final art shifts the islands at all.
+----------------------------------------------------------------- */
+const CLEAR_ITEM_LEVEL = 5;
+const MAP_WORLD_KEYS = WORLD_KEYS.slice(0, 10); // islands 1-10
+const MAP_PAGES = {
+  1: { image: "images/game-karta1-5.jpg", keys: MAP_WORLD_KEYS.slice(0, 5), offset: 0 },
+  2: { image: "images/game-karta6-10.jpg", keys: MAP_WORLD_KEYS.slice(5, 10), offset: 5 }
+};
+const ISLAND_POSITIONS = {
+  1: { x: 18, y: 40 }, 2: { x: 41, y: 40 }, 3: { x: 76, y: 35 }, 4: { x: 20, y: 89 }, 5: { x: 76, y: 89 },
+  6: { x: 9,  y: 55 }, 7: { x: 27, y: 55 }, 8: { x: 48, y: 54 }, 9: { x: 69, y: 55 }, 10: { x: 89, y: 46 }
+};
+
 const EMPTY_ITEM = { level: 0, image: null, name: "Empty", score: 0 };
 
 function currentWorldItems() { return ITEMS; }
@@ -1087,6 +1219,13 @@ function getItem(level) {
     let collection = [];
     let currentWorldKey = WORLD_KEYS[0];
 
+    // Map progression state — persisted to Supabase alongside the rest
+    // of the save (see currentSaveRow() / loadFromCloud()).
+    let clearedWorlds = [];   // world keys that have been "cleared" (see CLEAR_ITEM_LEVEL)
+    let mapPage = 1;          // 1 = karta1-5.jpg unlocked, 2 = karta6-10.jpg also unlocked
+    let onMap = true;         // true while the map screen is showing instead of the board
+    let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
+
     const stageEl = document.getElementById("stage");
     const stageFrameEl = document.getElementById("stageFrame");
     const boardEl = document.getElementById("board");
@@ -1101,12 +1240,16 @@ function getItem(level) {
     const worldNameEl = document.getElementById("worldName");
     const worldPickerEl = document.getElementById("worldPicker");
     const loginGateEl = document.getElementById("loginGate");
+    const mapScreenEl = document.getElementById("mapScreen");
+    const mapTitleEl = document.getElementById("mapTitle");
+    const mapBtnEl = document.getElementById("mapBtn");
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
     document.getElementById("closeModalBtn").addEventListener("click", hideModal);
     document.getElementById("undoBtn").addEventListener("click", undo);
     document.getElementById("saveBtn").addEventListener("click", saveGame);
+    mapBtnEl.addEventListener("click", () => showMap(null));
     document.getElementById("loginGateBtn").addEventListener("click", () => {
       // #accountBtn is built by auth.js into #authRoot; logged out, a
       // click on it opens the login/sign-up modal directly.
@@ -1243,6 +1386,101 @@ function getItem(level) {
       });
     }
 
+    /* -----------------------------------------------------------------
+       MAP SCREEN — see the MAP_PAGES / ISLAND_POSITIONS comment above
+       for the data this reads.
+    ----------------------------------------------------------------- */
+    function isWorldCleared(key) { return clearedWorlds.includes(key); }
+
+    // Island 1 of each page is always open once that page is unlocked;
+    // every later island needs the one before it (in MAP_WORLD_KEYS
+    // order) cleared first.
+    function isWorldUnlocked(key) {
+      const idx = MAP_WORLD_KEYS.indexOf(key);
+      if (idx <= 0) return true;
+      return isWorldCleared(MAP_WORLD_KEYS[idx - 1]);
+    }
+
+    function showMap(highlightKey) {
+      onMap = true;
+      stageFrameEl.classList.add("on-map");
+      justUnlockedKey = highlightKey || null;
+      if (justUnlockedKey) {
+        const page = MAP_WORLD_KEYS.indexOf(justUnlockedKey) < 5 ? 1 : 2;
+        mapPage = Math.max(mapPage, page);
+      }
+      renderMap();
+      mapScreenEl.classList.add("show");
+      if (justUnlockedKey) {
+        setTimeout(() => {
+          justUnlockedKey = null;
+          renderMap();
+        }, 3000);
+      }
+    }
+
+    function hideMap() {
+      onMap = false;
+      stageFrameEl.classList.remove("on-map");
+      mapScreenEl.classList.remove("show");
+    }
+
+    function enterWorld(key) {
+      if (!isWorldUnlocked(key)) { showToast("Clear the island before this one first"); return; }
+      hideMap();
+      setWorld(key);
+      syncToCloud(false);
+    }
+
+    function renderMap() {
+      const page = MAP_PAGES[mapPage] || MAP_PAGES[1];
+      mapScreenEl.style.setProperty("--map-bg", `url("${page.image}")`);
+      mapTitleEl.textContent = mapPage === 1 ? "Islands 1 - 5" : "Islands 6 - 10";
+
+      // Re-render every button (cheap: at most 10) rather than diffing —
+      // this only runs when the map is opened, an island is cleared, or
+      // the 3s "just unlocked" pulse expires.
+      mapScreenEl.querySelectorAll(".island-btn").forEach(el => el.remove());
+
+      page.keys.forEach((key, i) => {
+        const islandNumber = page.offset + i + 1;
+        const pos = ISLAND_POSITIONS[islandNumber];
+        if (!pos) return;
+        const unlocked = isWorldUnlocked(key);
+        const cleared = isWorldCleared(key);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "island-btn"
+          + (unlocked ? "" : " locked")
+          + (cleared ? " cleared" : "")
+          + (key === justUnlockedKey ? " just-unlocked" : "");
+        btn.style.left = `${pos.x}%`;
+        btn.style.top = `${pos.y}%`;
+        btn.textContent = String(islandNumber);
+        btn.setAttribute("aria-label", `${WORLD_LABELS[key] || key} — island ${islandNumber}${cleared ? ", cleared" : unlocked ? "" : ", locked"}`);
+        btn.addEventListener("click", () => enterWorld(key));
+        mapScreenEl.appendChild(btn);
+      });
+    }
+
+    // Called from placeTile() right after a merge. If the item just
+    // created is the "clear" tier (CLEAR_ITEM_LEVEL) and this world
+    // hasn't been marked cleared yet, mark it, unlock the next island
+    // (flipping to the karta6-10 map if that next island is #6), and
+    // drop the player back on the map with the new island pulsing.
+    function checkWorldClear(createdLevel) {
+      if (createdLevel < CLEAR_ITEM_LEVEL) return;
+      if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return;
+      if (isWorldCleared(currentWorldKey)) return;
+
+      clearedWorlds.push(currentWorldKey);
+      const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
+      const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
+      showToast(nextKey ? "Island cleared! A new one has opened" : "Island cleared!");
+      syncToCloud(false);
+      setTimeout(() => showMap(nextKey), 1100);
+    }
+
     function newGarden() {
       board = createEmptyBoard();
       score = 0;
@@ -1302,6 +1540,8 @@ function getItem(level) {
            collection    jsonb not null default '[]',
            current_world text not null default 'lavendelMeadow',
            best          int not null default 0,
+           cleared_worlds jsonb not null default '[]',
+           map_page      int not null default 1,
            updated_at    timestamptz not null default now()
          );
 
@@ -1330,6 +1570,13 @@ function getItem(level) {
          alter table public.garden_saves
            alter column current_world type text using 'lavendelMeadow',
            alter column current_world set default 'lavendelMeadow';
+
+       ADDING THE MAP COLUMNS — if garden_saves already existed before
+       the map screen was added, run this once too:
+
+         alter table public.garden_saves
+           add column if not exists cleared_worlds jsonb not null default '[]',
+           add column if not exists map_page int not null default 1;
     ----------------------------------------------------------------- */
     const GARDEN_TABLE = "garden_saves";
 
@@ -1343,6 +1590,8 @@ function getItem(level) {
         collection,
         current_world: currentWorldKey,
         best,
+        cleared_worlds: clearedWorlds,
+        map_page: mapPage,
         updated_at: new Date().toISOString()
       };
     }
@@ -1384,14 +1633,18 @@ function getItem(level) {
           collection = data.collection || [];
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
+          clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds : [];
+          mapPage = data.map_page === 2 ? 2 : 1;
           history = [];
           setWorld(currentWorldKey);
           bestStatEl.textContent = formatNumber(best);
           render();
+          showMap(null); // land on the map first every time the garden loads
           showToast("Garden restored");
         } else {
           // First time this account plays — start fresh and create the row.
           newGarden();
+          showMap(null);
         }
       } catch (err) {
         console.error("loadFromCloud() error:", err);
@@ -1409,7 +1662,7 @@ function getItem(level) {
       if (createdLevel >= 3) collection.push(createdLevel);
       nextLevel = randomNextLevel();
       updateBest();
-      autoUnlockWorld();
+      checkWorldClear(createdLevel);
       render();
       if (createdLevel >= 7) showToast(`${getItem(7).name} created`);
       else if (createdLevel >= 6) showToast(`${getItem(6).name} awakened`);
@@ -1472,11 +1725,11 @@ function getItem(level) {
       }
     }
 
+    // No longer called from placeTile() — islands 1-10 now unlock via
+    // checkWorldClear() (map progress) instead of a score threshold.
+    // Left here in case you want a score-based fallback for worlds
+    // beyond island 10 (11-20), which don't have map art yet.
     function autoUnlockWorld() {
-      // 4 worlds now (was 10): next world unlocks every 2,500 points,
-      // so the last one (cosmos) opens up around 7,500. Comment this
-      // function's call out in placeTile() if you'd rather worlds only
-      // ever change via the picker / setWorld() and never auto-advance.
       const targetIndex = Math.min(WORLD_KEYS.length - 1, Math.floor(score / 2500));
       const targetKey = WORLD_KEYS[targetIndex];
       if (WORLD_KEYS.indexOf(targetKey) > WORLD_KEYS.indexOf(currentWorldKey)) setWorld(targetKey);
@@ -1615,6 +1868,8 @@ function getItem(level) {
         // lingers on screen for whoever uses this device/browser next.
         board = createEmptyBoard();
         score = 0; moves = 0; history = []; collection = []; nextLevel = 1; best = 0;
+        clearedWorlds = []; mapPage = 1;
+        hideMap();
         setWorld(WORLD_KEYS[0]); // also resets background/name display and re-renders
       }
     }
