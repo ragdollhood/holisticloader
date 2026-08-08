@@ -382,6 +382,24 @@ button {
     .collection .item-icon { width: 26px; height: 26px; }
     .merge-burst .item-icon { width: 56px; height: 56px; }
 
+    /* Small contained placeholder shown when an item-icon 404s, so a
+       missing file is visible (check the console for which one) without
+       ever overflowing its circle the way the raw broken-image + alt
+       text used to. */
+    .icon-fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40%;
+      height: 40%;
+      border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      border: 1px dashed rgba(255,255,255,.4);
+      color: var(--muted, rgba(255,255,255,.7));
+      font-size: 0.85em;
+      font-weight: 700;
+    }
+
     @keyframes pop { from { transform: scale(.55); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     .merge-burst {
@@ -1043,9 +1061,18 @@ function getItem(level) {
       // If an icon file 404s / fails to load, the browser's default
       // fallback (a broken-image glyph plus the alt text rendered at
       // full font size) can overflow way outside its circle and make
-      // the whole board look broken. Hide the element entirely instead
-      // — an empty circle is a much smaller problem than a wall of text.
-      img.addEventListener("error", () => { img.style.display = "none"; }, { once: true });
+      // the whole board look broken. Swap in a small "?" badge instead
+      // — contained, and still visible enough to tell you *something*
+      // is missing (check the console for exactly which file failed).
+      img.addEventListener("error", () => {
+        console.warn(`[item icon] failed to load: ${img.src}`);
+        img.style.display = "none";
+        const fallback = document.createElement("span");
+        fallback.className = "icon-fallback";
+        fallback.textContent = "?";
+        fallback.setAttribute("aria-hidden", "true");
+        img.insertAdjacentElement("afterend", fallback);
+      }, { once: true });
       return img;
     }
 
