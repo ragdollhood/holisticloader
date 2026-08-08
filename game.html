@@ -488,14 +488,16 @@ button {
       100% { transform: translate(-50%, -130%) scale(1.25); opacity: 0; }
     }
 
-    /* Sits just above next-box/actions (which now dock to the very
-       bottom edge) — the .hud class (added in the markup) gives it the
-       same bordered glass-panel look as those, so it reads as a real
-       "frame" instead of icons floating loose over the artwork. */
+    /* Same bottom offset as next-box/actions — confirmed not to collide
+       with them on laptop widths since it's horizontally centered while
+       they sit at the left/right edges. .hud (added in the markup)
+       gives it the same bordered glass-panel look as those, so it
+       reads as a real "frame" instead of icons floating loose over the
+       artwork. */
     .collection {
       left: 50%;
       transform: translateX(-50%);
-      bottom: clamp(78px, 10svh, 108px);
+      bottom: clamp(12px, 3vw, 26px);
       display: flex;
       gap: 6px;
       max-width: min(78%, 520px);
