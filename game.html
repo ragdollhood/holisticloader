@@ -836,15 +836,20 @@ button {
    or .webp — nothing else in the game cares which format you use.
 
    Expected folder layout (create these in images/ next to the HTML):
-     images/game-item1.webp/.jpg ... game-item7.webp/.jpg
+     images/game-item1.webp/.png ... game-item7.webp/.png
        (one icon per level, shared by all worlds — BOTH a .webp and a
-        .jpg are expected for each number; getItemImageUrl() picks
-        whichever the browser actually supports at runtime)
+        .png are expected for each number; getItemImageUrl() picks
+        whichever the browser actually supports at runtime. PNG, not
+        JPG, on purpose: these icons have transparent backgrounds —
+        a JPG fallback would render each one on an opaque square
+        instead of a clean circular icon.)
      images/game-world1.webp/.jpg ... game-world20.webp/.jpg
        (stage backdrop, one per world, numbered in WORLD_BACKGROUNDS'
         declaration order — BOTH a .webp and a .jpg are expected for
         each number; getWorldBackgroundUrl() picks whichever the
-        browser actually supports at runtime)
+        browser actually supports at runtime. JPG is fine here since
+        these are full-bleed opaque backgrounds with no transparency
+        to lose.)
 
    Add a new world by adding one more key to WORLD_BACKGROUNDS and
    WORLD_LABELS below — setWorld() and renderWorldPicker() both
@@ -890,14 +895,15 @@ const WORLD_BACKGROUNDS = {
   auroraPeak:      "images/game-world20"
 };
 
-// ---------- WebP support detection (with .jpg fallback) ----------
+// ---------- WebP support detection (with format fallback) ----------
 // canvas.toDataURL("image/webp") is a synchronous, well-supported way to
 // check this: modern browsers return a real "data:image/webp" string,
 // while browsers that can't encode webp silently fall back to PNG (so the
-// check below correctly evaluates to false for them). Any older browser
-// without webp support then transparently gets the .jpg version instead
-// of a broken/missing image — used for both item icons and world
-// backdrops below.
+// check below correctly evaluates to false for them). Any older/unusual
+// browser (or webview with canvas fingerprinting protection blocking the
+// check) then transparently falls back — to .png for item icons (keeps
+// their transparency) and .jpg for world backdrops (opaque anyway, so
+// jpg's smaller size wins there).
 function supportsWebP() {
   try {
     const canvas = document.createElement("canvas");
@@ -915,7 +921,9 @@ function getWorldBackgroundUrl(key) {
 }
 
 function getItemImageUrl(item) {
-  return item && item.image ? `${item.image}.${WEBP_SUPPORTED ? "webp" : "jpg"}` : null;
+  // .png (not .jpg) fallback: item icons are transparent circular art —
+  // a jpg fallback would show each one on an opaque square instead.
+  return item && item.image ? `${item.image}.${WEBP_SUPPORTED ? "webp" : "png"}` : null;
 }
 
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
