@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,7 +24,7 @@
       --bg: #10091b;
 
   --board-left: 18%;
-  --board-top: 19%;
+  --board-top: calc(19% + 38px);
 
   --board-width: 64%;
   --board-height: 60%;
@@ -512,7 +512,7 @@ button {
 </head>
 <body>
   <main class="screen">
-    <section class="stage" id="stage" aria-label="Wellness Garden spelvärld">
+    <section class="stage" id="stage" aria-label="Wellness Garden game world">
       <div class="stars"></div>
 
       <div id="authRoot"></div>
@@ -524,19 +524,19 @@ button {
         </div>
       </div>
 
-      <div class="hud score" aria-label="Spelstatistik">
+      <div class="hud score" aria-label="Game stats">
         <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
         <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
         <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
       </div>
 
-      <div class="collection" id="collection" aria-label="Skapade belöningar"></div>
+      <div class="collection" id="collection" aria-label="Rewards created"></div>
 
-      <div class="board" id="board" aria-label="Spelplan"></div>
+      <div class="board" id="board" aria-label="Game board"></div>
 
       <div class="hud next-box">
         <div class="next-seed" id="nextTile">🌱</div>
-        <div class="next-copy"><b>Next seed</b><span>Placera på en tom cirkel</span></div>
+        <div class="next-copy"><b>Next seed</b><span>Place on an empty circle</span></div>
       </div>
 
       <div class="hud actions">
@@ -545,7 +545,7 @@ button {
         <button id="newBtn">New</button>
       </div>
 
-      <div class="world-picker" id="worldPicker" aria-label="Välj värld"></div>
+      <div class="world-picker" id="worldPicker" aria-label="Choose world"></div>
 
       <div class="login-gate" id="loginGate">
         <div class="login-gate-card">
@@ -564,7 +564,7 @@ button {
     <div class="modal-card">
       <div class="big">🌙</div>
       <h2>Garden Complete</h2>
-      <p id="gameOverText">Din trädgård är full. Starta en ny och försök skapa ännu mer harmony.</p>
+      <p id="gameOverText">Your garden is full. Start a new one and try to create even more harmony.</p>
       <div class="modal-actions">
         <button id="againBtn">New Garden</button>
         <button class="secondary" id="closeModalBtn">Stay Here</button>
@@ -582,10 +582,10 @@ const WORLDS = [
   { key: "level4", name: "Whispering Bamboo", src: "images/game-world-level4.jpg" },
   { key: "level5", name: "Moonlit Pond", src: "images/game-world-level5.jpg" },
   { key: "level6", name: "Golden Orchard", src: "images/game-world-level6.jpg" },
-  { key: "level7", name: "Misty Mountains", src: "images/game-world-level7.jpg" },
+  { key: "level7", name: "Misty Highlands", src: "images/game-world-level7.jpg" },
   { key: "level8", name: "Coral Sanctuary", src: "images/game-world-level8.jpg" },
   { key: "level9", name: "Starlit Dunes", src: "images/game-world-level9.jpg" },
-  { key: "level10", name: "The Vulcano", src: "images/game-world-level10.jpg" }
+  { key: "level10", name: "Sacred Summit", src: "images/game-world-level10.jpg" }
 ];
     const SIZE = 5;
     const ITEMS = [
@@ -908,7 +908,7 @@ const WORLDS = [
           const cell = document.createElement("button");
           cell.type = "button";
           cell.className = "cell" + (level === 0 ? " empty" : "");
-          cell.setAttribute("aria-label", level === 0 ? "Tom planteringscirkel" : ITEMS[level].name);
+          cell.setAttribute("aria-label", level === 0 ? "Empty planting circle" : ITEMS[level].name);
           cell.addEventListener("click", () => placeTile(r, c));
           if (level > 0) {
             const tile = document.createElement("span");
@@ -952,7 +952,7 @@ const WORLDS = [
     }
 
     function showGameOver() {
-      gameOverTextEl.textContent = `Din trädgård är full. Du fick ${formatNumber(score)} harmony på ${moves} moves.`;
+      gameOverTextEl.textContent = `Your garden is full. You scored ${formatNumber(score)} harmony in ${moves} moves.`;
       modalEl.classList.add("show");
     }
 
