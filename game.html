@@ -635,9 +635,21 @@ button {
         inset: auto;
       }
 
-      #authRoot { align-self: flex-end; order: 0; }
-      .brand { order: 1; max-width: none; width: 100%; }
-      .score { order: 2; width: 100%; justify-content: center; }
+      /* Title + account icon on ONE row, at the very top: .top-bar (not
+         .brand/#authRoot individually) owns the order + row layout, same
+         pattern as .bottom-bar below for next-seed + buttons. */
+      .top-bar {
+        order: 0;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .brand, #authRoot { position: static; inset: auto; }
+      .brand { flex: 1 1 auto; min-width: 0; max-width: none; width: auto; }
+      #authRoot { flex: 0 0 auto; }
+      .score { order: 1; width: 100%; justify-content: center; }
 
       /* Stage sized from a height budget (100svh minus the compact
          chrome rows below + gaps/padding) as well as viewport width,
@@ -645,7 +657,7 @@ button {
          use as much of the screen/image as possible on any phone,
          not just a fixed fraction of the screen. */
       .stage {
-        order: 3;
+        order: 2;
         position: relative;
         inset: auto;
         width: min(98vw, calc(100svh - 150px));
@@ -683,17 +695,18 @@ button {
       .brand small { font-size: 8px; }
       .brand strong { font-size: 15px; }
 
-      .next-box { padding: 6px 8px; gap: 8px; }
+      .next-box { padding: 6px 8px; gap: 6px; }
       .next-seed { width: 40px; height: 40px; font-size: 24px; border-radius: 13px; }
       .next-seed .item-icon { width: 30px; height: 30px; }
-      /* Text label dropped too (not just the subtitle) on this row —
-         the icon alone is enough to read as "what's coming next" once
-         it's sitting directly next to the action buttons on one line. */
-      .next-copy { display: none; }
+      /* "Next item" label kept (the .hud base class already lays the
+         icon + this label out side by side via display:flex) — only the
+         subtitle underneath it is dropped, to keep the row compact. */
+      .next-copy b { font-size: 9px; white-space: nowrap; }
+      .next-copy span { display: none; }
 
       /* Buttons: small tap targets, minimal padding, no extra space. */
-      .actions { padding: 5px; gap: 5px; }
-      button { padding: 7px 9px; font-size: 8.5px; }
+      .actions { padding: 5px; gap: 4px; }
+      button { padding: 6px 8px; font-size: 8px; }
     }
 
     /* Phone held sideways: width alone can exceed 760px on larger
@@ -728,14 +741,23 @@ button {
         inset: auto;
       }
 
-      #authRoot { align-self: flex-end; order: 0; }
-      .brand { order: 1; max-width: none; width: 100%; }
-      .score { order: 2; width: 100%; justify-content: center; }
+      .top-bar {
+        order: 0;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .brand, #authRoot { position: static; inset: auto; }
+      .brand { flex: 1 1 auto; min-width: 0; max-width: none; width: auto; }
+      #authRoot { flex: 0 0 auto; }
+      .score { order: 1; width: 100%; justify-content: center; }
 
       /* Height is the scarce dimension in landscape, so the budget
          calc matters even more here than in portrait. */
       .stage {
-        order: 3;
+        order: 2;
         position: relative;
         inset: auto;
         width: min(98vw, calc(100svh - 120px));
@@ -769,7 +791,8 @@ button {
       .next-box { padding: 5px 7px; gap: 6px; }
       .next-seed { width: 34px; height: 34px; font-size: 20px; border-radius: 11px; }
       .next-seed .item-icon { width: 26px; height: 26px; }
-      .next-copy { display: none; }
+      .next-copy b { font-size: 8px; white-space: nowrap; }
+      .next-copy span { display: none; }
 
       .actions { padding: 4px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
@@ -790,12 +813,18 @@ button {
         <div class="board" id="board" aria-label="Game board"></div>
       </section>
 
-      <div id="authRoot"></div>
+      <!-- Wrapped so mobile can put the title and the account icon on one
+           row at the very top (see .top-bar in the mobile media queries),
+           without touching the desktop layout, which still positions
+           .brand and #authRoot independently. -->
+      <div class="top-bar" id="topBar">
+        <div id="authRoot"></div>
 
-      <div class="hud brand">
-        <div>
-          <small>✦ Holistic Loader</small>
-          <strong id="worldName">Wellness Garden</strong>
+        <div class="hud brand">
+          <div>
+            <small>✦ Holistic Loader</small>
+            <strong id="worldName">Wellness Garden</strong>
+          </div>
         </div>
       </div>
 
@@ -814,7 +843,7 @@ button {
       <div class="bottom-bar" id="bottomBar">
         <div class="hud next-box">
           <div class="next-seed" id="nextTile"></div>
-          <div class="next-copy"><b>Next seed</b><span>Place on an empty circle</span></div>
+          <div class="next-copy"><b>Next item</b><span>Place on an empty circle</span></div>
         </div>
 
         <div class="hud actions">
