@@ -310,7 +310,7 @@ button {
 }
 
   .cell {
-  width: 92%;
+  width: 97%;
   aspect-ratio: 1 / 1; /* forces a true circle even when the grid cell
                            itself isn't square (see .board comment below) */
   overflow: hidden; /* belt-and-suspenders: nothing (broken-image glyph,
@@ -375,7 +375,7 @@ button {
     drop-shadow(0 8px 10px rgba(0,0,0,.25));
 }
 
-    .tile.level-4, .tile.level-5, .tile.level-6 { filter: drop-shadow(0 0 18px rgba(248,217,139,.56)) drop-shadow(0 8px 12px rgba(0,0,0,.32)); }
+    .tile.level-4, .tile.level-5, .tile.level-6, .tile.level-7 { filter: drop-shadow(0 0 18px rgba(248,217,139,.56)) drop-shadow(0 8px 12px rgba(0,0,0,.32)); }
 
     /* ---------- Item icons (PNG/WebP) ----------
        Base class as specced: fixed 80x80 "reference" size. Each usage
@@ -391,7 +391,7 @@ button {
       filter: drop-shadow(0 0 12px rgba(255,255,255,.25));
     }
 
-    .tile .item-icon { width: 95%; height: 95%; }
+    .tile .item-icon { width: 100%; height: 100%; }
     .next-seed .item-icon { width: 76px; height: 76px; }
     .collection .item-icon { width: 50px; height: 50px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
@@ -565,15 +565,33 @@ button {
          becomes a vertical stack (top bar / board / bottom bar), and
          every element that was absolutely overlaid on .stage switches
          to normal document flow so it takes its own space instead of
-         covering the artwork underneath. */
-      .screen { padding: 8px; }
+         covering the artwork underneath.
+
+         Every non-board row here is kept as small/compact as possible
+         (tight padding, small type) specifically so the board itself
+         — the game world image + tiles — can claim as much of the
+         screen as possible. */
+      .screen { padding: 5px; }
+
+      /* The interactive grid only ever occupies --board-width x
+         --board-height of the square stage image (tuned by default for
+         desktop framing) — that, not the cell fill-percentage, is what
+         caps how big each tile/icon can render. Widening it here is
+         what makes items render close to double their previous size
+         on mobile, independent of the .cell/.tile fill % above. */
+      :root {
+        --board-left: 5%;
+        --board-top: 8%;
+        --board-width: 90%;
+        --board-height: 84%;
+      }
 
       .stage-frame {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 8px;
-        width: min(94vw, 620px);
+        gap: 4px;
+        width: min(98vw, 620px);
         height: auto;
       }
 
@@ -589,11 +607,16 @@ button {
       .brand { order: 1; max-width: none; width: 100%; }
       .score { order: 2; width: 100%; justify-content: center; }
 
+      /* Stage sized from a height budget (100svh minus the compact
+         chrome rows below + gaps/padding) as well as viewport width,
+         so whichever is tighter wins — this is what lets the board
+         use as much of the screen/image as possible on any phone,
+         not just a fixed fraction of the screen. */
       .stage {
         order: 3;
         position: relative;
         inset: auto;
-        width: min(94vw, 55svh);
+        width: min(98vw, calc(100svh - 150px));
         aspect-ratio: 1 / 1;
         flex: 0 0 auto;
       }
@@ -605,15 +628,25 @@ button {
          board as much room as possible on a small screen. */
       .collection, .world-picker { display: none; }
 
-      .score { grid-template-columns: 1fr; gap: 6px; right: 10px; top: 54px; }
-      .score .stat { min-width: 54px; padding: 7px 8px; }
-      .brand { left: 10px; top: 10px; padding: 9px 11px; }
-      .brand strong { font-size: 18px; }
-      .next-box { left: 10px; bottom: 10px; padding: 9px 10px; }
-      .next-seed { width: 50px; height: 50px; font-size: 31px; border-radius: 17px; }
+      /* Score / Moves / Best on one row, compact. */
+      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
+      .score .stat { min-width: 0; padding: 5px 6px; }
+      .stat b { font-size: 13px; }
+      .stat span { font-size: 8px; }
+
+      .brand { left: 10px; top: 10px; padding: 6px 9px; }
+      .brand small { font-size: 8px; }
+      .brand strong { font-size: 15px; }
+
+      .next-box { left: 10px; bottom: 10px; padding: 6px 8px; gap: 8px; }
+      .next-seed { width: 40px; height: 40px; font-size: 24px; border-radius: 13px; }
+      .next-seed .item-icon { width: 50px; height: 50px; }
+      .next-copy b { font-size: 9px; }
       .next-copy span { display: none; }
-      .actions { right: 10px; bottom: 10px; padding: 7px; gap: 6px; }
-      button { padding: 9px 10px; font-size: 9px; }
+
+      /* Buttons: small tap targets, minimal padding, no extra space. */
+      .actions { right: 10px; bottom: 10px; padding: 5px; gap: 5px; }
+      button { padding: 7px 9px; font-size: 8.5px; }
     }
 
     /* Phone held sideways: width alone can exceed 760px on larger
@@ -622,14 +655,21 @@ button {
        is actually cramped in landscape — the rules mirror the portrait
        compact-HUD block above. */
     @media (orientation: landscape) and (max-height: 500px) {
-      .screen { padding: 6px; }
+      .screen { padding: 5px; }
+
+      :root {
+        --board-left: 5%;
+        --board-top: 8%;
+        --board-width: 90%;
+        --board-height: 84%;
+      }
 
       .stage-frame {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
-        width: min(94vw, 620px);
+        gap: 4px;
+        width: min(98vw, 620px);
         height: auto;
       }
 
@@ -645,11 +685,13 @@ button {
       .brand { order: 1; max-width: none; width: 100%; }
       .score { order: 2; width: 100%; justify-content: center; }
 
+      /* Height is the scarce dimension in landscape, so the budget
+         calc matters even more here than in portrait. */
       .stage {
         order: 3;
         position: relative;
         inset: auto;
-        width: min(60svh, 94vw);
+        width: min(98vw, calc(100svh - 120px));
         aspect-ratio: 1 / 1;
         flex: 0 0 auto;
       }
@@ -659,15 +701,23 @@ button {
 
       .collection, .world-picker { display: none; }
 
-      .score { grid-template-columns: 1fr; gap: 6px; right: 10px; top: 54px; }
-      .score .stat { min-width: 54px; padding: 7px 8px; }
-      .brand { left: 10px; top: 10px; padding: 9px 11px; }
-      .brand strong { font-size: 18px; }
-      .next-box { left: 10px; bottom: 10px; padding: 9px 10px; }
-      .next-seed { width: 50px; height: 50px; font-size: 31px; border-radius: 17px; }
+      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
+      .score .stat { min-width: 0; padding: 4px 6px; }
+      .stat b { font-size: 12px; }
+      .stat span { font-size: 8px; }
+
+      .brand { left: 10px; top: 10px; padding: 5px 8px; }
+      .brand small { font-size: 8px; }
+      .brand strong { font-size: 14px; }
+
+      .next-box { left: 10px; bottom: 10px; padding: 5px 7px; gap: 6px; }
+      .next-seed { width: 34px; height: 34px; font-size: 20px; border-radius: 11px; }
+      .next-seed .item-icon { width: 42px; height: 42px; }
+      .next-copy b { font-size: 8px; }
       .next-copy span { display: none; }
-      .actions { right: 10px; bottom: 10px; padding: 7px; gap: 6px; }
-      button { padding: 9px 10px; font-size: 9px; }
+
+      .actions { right: 10px; bottom: 10px; padding: 4px; gap: 4px; }
+      button { padding: 6px 8px; font-size: 8px; }
     }
 
     @media (max-height: 650px) {
@@ -753,7 +803,7 @@ button {
    or .webp — nothing else in the game cares which format you use.
 
    Expected folder layout (create these in images/ next to the HTML):
-     images/game-item1.webp ... game-item6.webp    (one icon per level,
+     images/game-item1.webp ... game-item7.webp    (one icon per level,
                                                       shared by all worlds)
      images/game-worlds/<worldKey>-bg.webp          (stage backdrop,
                                                       one per world)
@@ -768,7 +818,8 @@ const ITEMS = [
   { level: 3, image: "images/game-item3.webp", name: "Bloom",    score: 80 },
   { level: 4, image: "images/game-item4.webp", name: "Shard",    score: 260 },
   { level: 5, image: "images/game-item5.webp", name: "Lotus",    score: 780 },
-  { level: 6, image: "images/game-item6.webp", name: "Radiance", score: 1900 }
+  { level: 6, image: "images/game-item6.webp", name: "Radiance", score: 1900 },
+  { level: 7, image: "images/game-item7.webp", name: "Zenith",   score: 4600 }
 ];
 
 // Declaration order of the keys below = world/unlock order everywhere else.
@@ -1090,7 +1141,8 @@ function getItem(level) {
       updateBest();
       autoUnlockWorld();
       render();
-      if (createdLevel >= 6) showToast(`${getItem(6).name} created`);
+      if (createdLevel >= 7) showToast(`${getItem(7).name} created`);
+      else if (createdLevel >= 6) showToast(`${getItem(6).name} awakened`);
       else if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
       else if (createdLevel > 0) showToast("Beautiful merge");
       if (isFull()) showGameOver();
