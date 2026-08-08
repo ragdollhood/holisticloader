@@ -922,35 +922,32 @@ const ITEMS = [
 
 // Declaration order of the keys below = world/unlock order everywhere else.
 // Backdrop art lives at images/game-world<N>, numbered in this same
-// declaration order (1 = LavendelMeadow ... 20 = crystalFalls). No file
+// declaration order (1 = crystalFalls ... 20 = auroraPeak). No file
 // extension here on purpose: getWorldBackgroundUrl() below appends
 // .webp or .jpg depending on what the browser actually supports, so
 // every world needs BOTH a game-world<N>.webp AND a game-world<N>.jpg
 // file present in images/.
 const WORLD_BACKGROUNDS = {
-  sunsetMeadow:    "images/game-world1",
-  magicField:     "images/game-world2",
-  flowerPalace:  "images/game-world3",
-  cherryBlossom:   "images/game-world4",
-  mountainTop:     "images/game-world5",
-  
-  theBeach:    "images/game-world6",
-  underwaterRuins: "images/game-world7",
- treasureCave:     "images/game-world8",
-  dragonValley:    "images/game-world9",
-  volcano:         "images/game-world10",
-  
-iceCavern:       "images/game-world11",
-  theForest:  "images/game-world12",
-  jungleTemple:    "images/game-world13",
-  desertOasis:     "images/game-world14",
-  cosmos:          "images/game-world15",
-
-  crystalFalls:      "images/game-world16"
-  enchantedForest: "images/game-world17",
-  lavendelMeadow:  "images/game-world18",
-moonlitPond:     "images/game-world19",
-  bambooForest:    "images/game-world20"
+  crystalFalls:    "images/game-world1",
+  dragonValley:    "images/game-world2",
+  iceCavern:       "images/game-world3",
+  cosmos:          "images/game-world4",
+  mountainShrine:  "images/game-world5",
+  underwaterRuins: "images/game-world6",
+  desertOasis:     "images/game-world7",
+  volcano:         "images/game-world8",
+  jungleTemple:    "images/game-world9",
+  cherryBlossom:   "images/game-world10",
+  flowerGarden:    "images/game-world11",
+  enchantedForest: "images/game-world12",
+  lavenderGarden:  "images/game-world13",
+  sunsetMeadow:    "images/game-world14",
+  waterfallGrove:  "images/game-world15",
+  bambooForest:    "images/game-world16",
+  moonlitPond:     "images/game-world17",
+  mysticGlade:     "images/game-world18",
+  goldenDunes:     "images/game-world19",
+  auroraPeak:      "images/game-world20"
 };
 
 // ---------- WebP support detection (with format fallback) ----------
@@ -987,26 +984,26 @@ function getItemImageUrl(item) {
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
 const WORLD_LABELS = {
-  lavendelMeadow:    "Lavendel Meadow",
+  crystalFalls:    "Crystal Falls",
   dragonValley:    "Dragon Valley",
   iceCavern:       "Ice Cavern",
   cosmos:          "Cosmos",
-  mountainTop:  "Mountain Top",
+  mountainShrine:  "Mountain Shrine",
   underwaterRuins: "Underwater Ruins",
   desertOasis:     "Desert Oasis",
   volcano:         "Volcano",
   jungleTemple:    "Jungle Temple",
   cherryBlossom:   "Cherry Blossom",
-  theBeach:    "The Beach",
+  flowerGarden:    "Flower Garden",
   enchantedForest: "Enchanted Forest",
-  theForest:  "The Forest",
+  lavenderGarden:  "Lavender Garden",
   sunsetMeadow:    "Sunset Meadow",
-  flowerPalace:  "Flower Palace",
+  waterfallGrove:  "Waterfall Grove",
   bambooForest:    "Bamboo Forest",
   moonlitPond:     "Moonlit Pond",
-  magicField:     "Magic Field",
- treasureCave:     "Treasure Cave",
-  crystalFalls:      "Crystal Falls"
+  mysticGlade:     "Mystic Glade",
+  goldenDunes:     "Golden Dunes",
+  auroraPeak:      "Aurora Peak"
 };
 
 const EMPTY_ITEM = { level: 0, image: null, name: "Empty", score: 0 };
@@ -1077,7 +1074,7 @@ function getItem(level) {
       return 2;
     }
 
-    // setWorld("LavendelMeadow") / setWorld("dragonValley") / setWorld("iceCavern")
+    // setWorld("crystalFalls") / setWorld("dragonValley") / setWorld("iceCavern")
     // / setWorld("cosmos") — call this from anywhere (auto-progression below,
     // the world-picker dots, or your own console/menu) to swap both the
     // stage backdrop AND every tile's icon set at once.
@@ -1218,7 +1215,7 @@ function getItem(level) {
            score         int not null default 0,
            moves         int not null default 0,
            collection    jsonb not null default '[]',
-           current_world text not null default 'LavendelMeadow',
+           current_world text not null default 'crystalFalls',
            best          int not null default 0,
            updated_at    timestamptz not null default now()
          );
@@ -1246,8 +1243,8 @@ function getItem(level) {
        list), run this once instead of the create table above:
 
          alter table public.garden_saves
-           alter column current_world type text using 'LavendelMeadow',
-           alter column current_world set default 'LavendelMeadow';
+           alter column current_world type text using 'crystalFalls',
+           alter column current_world set default 'crystalFalls';
     ----------------------------------------------------------------- */
     const GARDEN_TABLE = "garden_saves";
 
