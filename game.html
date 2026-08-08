@@ -67,17 +67,21 @@
 .stage-frame {
   position: relative;
 
-  /* True square in BOTH orientations: driven by whichever viewport
-     dimension is smaller (vw in portrait, svh in landscape), with
-     aspect-ratio locking width:height so it can never turn into a
-     rectangle the way two independent vw/vh formulas could. svh
-     (not vh) so mobile browser toolbars showing/hiding doesn't
-     resize the stage underneath the player.
-     This wrapper (not .stage) now owns the sizing/positioning math,
-     so the HUD can be pulled outside .stage's overflow:hidden box
-     on small screens without the game-world art resizing under it. */
-  width: min(96vw, 96svh, 1200px);
-  aspect-ratio: 1 / 1;
+  /* --stage-ratio (image width / image height) defaults to a square
+     until applyStageAspectRatio() (JS, below) measures the CURRENT
+     world image's real natural size and overwrites it — so the frame
+     always matches whatever that image's actual proportions are,
+     instead of assuming square. Only touched on desktop/laptop widths;
+     on mobile it's left at its default 1 and the media query further
+     down takes over sizing entirely (own width/height rules, own
+     forced-square .stage), so this doesn't affect the phone layout.
+     The calc(96svh * var(--stage-ratio)) term converts the usual
+     height budget into an equivalent width budget for THIS ratio, so
+     a short/wide browser window still can't make the frame taller
+     than the viewport even once it's no longer square. */
+  --stage-ratio: 1;
+  width: min(96vw, calc(96svh * var(--stage-ratio)), 1200px);
+  aspect-ratio: var(--stage-ratio);
 }
 
 .stage {
@@ -576,19 +580,13 @@ button {
 
     .login-gate-card button { min-width: 210px; }
 
-    @media (min-width: 761px) {
-      /* Laptop/desktop only (mobile keeps "cover" below, unchanged):
-         world backdrops now show at full width instead of "cover"
-         cropping the sides off wide images to fill this square stage's
-         height. If a backdrop is wider than it is tall (the common case
-         for these full-scene images), the stage's own background-color
-         (#1b1030) can show as a thin band above/below it instead —
-         that's the trade-off for never cropping the width. */
-      .stage {
-        background-size: 100% auto;
-        background-position: center;
-      }
-    }
+    /* Desktop stage aspect-ratio is no longer a hardcoded guess — see the
+       applyStageAspectRatio() JS below, which measures each world image's
+       actual width/height once it loads and sets --stage-ratio on
+       .stage-frame to match exactly. With the frame's own proportions
+       equal to the image's, background-size: cover (the shared/mobile
+       rule further down) fills it perfectly with zero cropping and zero
+       letterboxing — no per-image guessing needed. */
 
     @media (max-width: 760px) {
 
@@ -1036,6 +1034,7 @@ function getItem(level) {
     let currentWorldKey = WORLD_KEYS[0];
 
     const stageEl = document.getElementById("stage");
+    const stageFrameEl = document.getElementById("stageFrame");
     const boardEl = document.getElementById("board");
     const nextTileEl = document.getElementById("nextTile");
     const scoreStatEl = document.getElementById("scoreStat");
@@ -1092,7 +1091,59 @@ function getItem(level) {
       renderNext();
       renderCollection();
       syncToCloud(false);
+      applyStageAspectRatio(key);
     }
+
+    /* -----------------------------------------------------------------
+       Desktop/laptop only: shape .stage-frame to match each world
+       image's REAL proportions (measured, not guessed), so
+       background-size: cover (set globally, see .stage in the CSS)
+       fills it with zero cropping and zero letterboxing — the frame's
+       aspect ratio and the image's aspect ratio end up identical.
+       Mobile is left alone entirely: its own media query already forces
+       a square .stage regardless of --stage-ratio (see the CSS), so
+       this function is a no-op there by design (checked via
+       DESKTOP_MEDIA_QUERY below) rather than fighting that layout.
+    ----------------------------------------------------------------- */
+    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px)");
+    const stageRatioCache = {}; // worldKey -> "w / h", so re-selecting a world already measured this session doesn't re-fetch/re-decode its image just to read its size
+
+    function applyStageAspectRatio(key) {
+      if (!DESKTOP_MEDIA_QUERY.matches) return; // mobile forces its own square stage in CSS regardless — don't bother measuring
+      const cached = stageRatioCache[key];
+      if (cached) {
+        stageFrameEl.style.setProperty("--stage-ratio", cached);
+        return;
+      }
+      const url = getWorldBackgroundUrl(key);
+      if (!url) return;
+      const probe = new Image();
+      probe.onload = () => {
+        if (!probe.naturalWidth || !probe.naturalHeight) return;
+        const ratio = probe.naturalWidth / probe.naturalHeight;
+        stageRatioCache[key] = ratio;
+        // Only apply if this world is still the one showing — the
+        // player may have already switched worlds again before this
+        // (possibly slow, uncached) image finished loading.
+        if (currentWorldKey === key) stageFrameEl.style.setProperty("--stage-ratio", ratio);
+      };
+      probe.onerror = () => {
+        console.warn(`[stage aspect ratio] failed to load: ${url} — keeping current --stage-ratio`);
+      };
+      probe.src = url;
+    }
+
+    // Crossing the desktop/mobile breakpoint at runtime (resizing a
+    // browser window, or rotating/un-rotating a foldable) should apply
+    // or clear the measured ratio immediately rather than waiting for
+    // the next world switch.
+    DESKTOP_MEDIA_QUERY.addEventListener("change", (e) => {
+      if (e.matches) {
+        applyStageAspectRatio(currentWorldKey);
+      } else {
+        stageFrameEl.style.removeProperty("--stage-ratio"); // back to the CSS default (square)
+      }
+    });
 
     function renderWorldPicker() {
       worldPickerEl.innerHTML = "";
