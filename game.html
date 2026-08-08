@@ -1259,6 +1259,13 @@ function getItem(level) {
       img.src = getItemImageUrl(item);
       img.alt = item.name;
       img.draggable = false;
+      // decoding="async" lets the browser decode off the main thread instead
+      // of blocking a paint on it — matters most on lower-powered mobile
+      // devices where several tiles can render/re-render in the same frame
+      // (e.g. after a merge). loading="eager" is explicit (not the default
+      // "lazy") because every tile here is already inside the visible board.
+      img.decoding = "async";
+      img.loading = "eager";
       // If an icon file 404s / fails to load, the browser's default
       // fallback (a broken-image glyph plus the alt text rendered at
       // full font size) can overflow way outside its circle and make
@@ -1328,6 +1335,7 @@ function getItem(level) {
       img.src = image;
       img.alt = "";
       img.draggable = false;
+      img.decoding = "async";
       burst.appendChild(img);
       burst.style.left = `${boardRect.left + cellW * (c + .5)}px`;
       burst.style.top = `${boardRect.top + cellH * (r + .5)}px`;
