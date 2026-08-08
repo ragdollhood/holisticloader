@@ -188,7 +188,6 @@
       border-radius: 20px;
       display: grid;
       place-items: center;
-      font-size: 38px;
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(248,217,139,.28);
       box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
@@ -347,13 +346,34 @@ button {
 
     .tile.level-4, .tile.level-5, .tile.level-6 { filter: drop-shadow(0 0 18px rgba(248,217,139,.56)) drop-shadow(0 8px 12px rgba(0,0,0,.32)); }
 
+    /* ---------- Item icons (PNG/WebP) ----------
+       Base class as specced: fixed 80x80 "reference" size. Each usage
+       context below (board tile / next-up preview / collection strip /
+       merge burst) overrides width+height to fit its own box — the
+       object-fit:contain + pointer-events:none + drop-shadow from the
+       base class still apply everywhere. */
+    .item-icon {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      pointer-events: none;
+      filter: drop-shadow(0 0 12px rgba(255,255,255,.25));
+    }
+
+    .tile .item-icon { width: 78%; height: 78%; }
+    .next-seed .item-icon { width: 40px; height: 40px; }
+    .collection .item-icon { width: 26px; height: 26px; }
+    .merge-burst .item-icon { width: 56px; height: 56px; }
+
     @keyframes pop { from { transform: scale(.55); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     .merge-burst {
       position: absolute;
       z-index: 8;
       pointer-events: none;
-      font-size: clamp(28px, 7vw, 54px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       animation: burst .8s ease forwards;
       filter: drop-shadow(0 0 20px rgba(248,217,139,.62));
     }
@@ -376,11 +396,6 @@ button {
       justify-content: center;
       flex-wrap: wrap;
       pointer-events: none;
-    }
-
-    .collection span {
-      font-size: clamp(18px, 3vw, 28px);
-      filter: drop-shadow(0 0 12px rgba(248,217,139,.30));
     }
 
     .toast {
@@ -432,7 +447,12 @@ button {
       text-align: center;
     }
 
-    .modal-card .big { font-size: 60px; margin-bottom: 8px; }
+    .modal-card .big {
+      width: 56px; height: 56px; margin: 0 auto 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(248,217,139,.55), rgba(248,217,139,.08) 70%, transparent 78%);
+      box-shadow: 0 0 30px rgba(248,217,139,.35);
+    }
     .modal-card h2 { margin: 0; color: #fff2d3; font-size: 38px; letter-spacing: -.04em; }
     .modal-card p { margin: 12px auto 22px; max-width: 390px; color: var(--muted); font-family: Arial, sans-serif; line-height: 1.6; font-size: 14px; }
     .modal-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
@@ -466,9 +486,10 @@ button {
     }
 
     .login-gate-icon {
-      font-size: 40px;
-      margin-bottom: 10px;
-      filter: drop-shadow(0 0 16px rgba(248,217,139,.40));
+      width: 40px; height: 40px; margin: 0 auto 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(248,217,139,.65);
+      box-shadow: 0 0 16px rgba(248,217,139,.40), inset 0 0 10px rgba(248,217,139,.25);
     }
 
     .login-gate-card h2 {
@@ -535,7 +556,7 @@ button {
       <div class="board" id="board" aria-label="Game board"></div>
 
       <div class="hud next-box">
-        <div class="next-seed" id="nextTile">🌱</div>
+        <div class="next-seed" id="nextTile"></div>
         <div class="next-copy"><b>Next seed</b><span>Place on an empty circle</span></div>
       </div>
 
@@ -549,7 +570,7 @@ button {
 
       <div class="login-gate" id="loginGate">
         <div class="login-gate-card">
-          <div class="login-gate-icon">🔒</div>
+          <div class="login-gate-icon"></div>
           <h2>Log in to grow your garden</h2>
           <p>Your garden is saved to your account in the cloud, so you need to be logged in to play.</p>
           <button type="button" id="loginGateBtn">Log in / Sign up</button>
@@ -562,7 +583,7 @@ button {
 
   <div class="modal" id="gameOverModal">
     <div class="modal-card">
-      <div class="big">🌙</div>
+      <div class="big"></div>
       <h2>Garden Complete</h2>
       <p id="gameOverText">Your garden is full. Start a new one and try to create even more harmony.</p>
       <div class="modal-actions">
@@ -575,28 +596,95 @@ button {
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="auth.js"></script>
   <script>
-const WORLDS = [
-  { key: "level1", name: "Lavender Meadow", src: "images/game-world-level1.jpg" },
-  { key: "level2", name: "Sunrise Grove", src: "images/game-world-level2.jpg" },
-  { key: "level3", name: "Crystal Falls", src: "images/game-world-level3.jpg" },
-  { key: "level4", name: "Whispering Bamboo", src: "images/game-world-level4.jpg" },
-  { key: "level5", name: "Moonlit Pond", src: "images/game-world-level5.jpg" },
-  { key: "level6", name: "Treasure Cave", src: "images/game-world-level6.jpg" },
-  { key: "level7", name: "Misty Highlands", src: "images/game-world-level7.jpg" },
-  { key: "level8", name: "Coral Sanctuary", src: "images/game-world-level8.jpg" },
-  { key: "level9", name: "Starlit Dunes", src: "images/game-world-level9.jpg?v=2" },
-  { key: "level10", name: "Ice Cave", src: "images/game-world-level10.jpg" }
-];
+/* -----------------------------------------------------------------
+   WORLDS — one array per world, each entry a merge-tile definition:
+   { level, image, name, score }. No emoji anywhere: every tile,
+   the "next up" preview, the collection strip, and the merge burst
+   all render a real <img class="item-icon"> pointed at `image`.
+
+   Swap art without touching any other code: point `image` at .png
+   or .webp files interchangeably, per level, per world — nothing
+   else in the game cares which format you use.
+
+   Expected folder layout (create these in images/ next to the HTML):
+     images/items/crystalFalls/level1.webp ... level6.webp
+     images/items/dragonValley/level1.webp ... level6.webp
+     images/items/iceCavern/level1.png   ... level6.png
+     images/items/cosmos/level1.png      ... level6.png
+     images/worlds/crystalFalls-bg.jpg  (stage backdrop per world)
+     images/worlds/dragonValley-bg.jpg
+     images/worlds/iceCavern-bg.jpg
+     images/worlds/cosmos-bg.jpg
+
+   Add a new world by adding one more key here (and to
+   WORLD_BACKGROUNDS / WORLD_LABELS below) — setWorld() and
+   renderWorldPicker() both iterate WORLDS automatically, no other
+   code changes needed.
+----------------------------------------------------------------- */
+const WORLDS = {
+  crystalFalls: [
+    { level: 1, image: "images/items/crystalFalls/level1.webp", name: "Crystal Seed",     score: 5 },
+    { level: 2, image: "images/items/crystalFalls/level2.webp", name: "Crystal Sprout",   score: 22 },
+    { level: 3, image: "images/items/crystalFalls/level3.webp", name: "Crystal Bloom",    score: 80 },
+    { level: 4, image: "images/items/crystalFalls/level4.webp", name: "Crystal Shard",    score: 260 },
+    { level: 5, image: "images/items/crystalFalls/level5.webp", name: "Crystal Lotus",    score: 780 },
+    { level: 6, image: "images/items/crystalFalls/level6.webp", name: "Crystal Radiance", score: 1900 }
+  ],
+  dragonValley: [
+    { level: 1, image: "images/items/dragonValley/level1.webp", name: "Dragon Egg",      score: 5 },
+    { level: 2, image: "images/items/dragonValley/level2.webp", name: "Hatchling",       score: 22 },
+    { level: 3, image: "images/items/dragonValley/level3.webp", name: "Young Drake",     score: 80 },
+    { level: 4, image: "images/items/dragonValley/level4.webp", name: "Fire Drake",      score: 260 },
+    { level: 5, image: "images/items/dragonValley/level5.webp", name: "Elder Wyrm",      score: 780 },
+    { level: 6, image: "images/items/dragonValley/level6.webp", name: "Ancient Dragon",  score: 1900 }
+  ],
+  iceCavern: [
+    { level: 1, image: "images/items/iceCavern/level1.png", name: "Snowflake",      score: 5 },
+    { level: 2, image: "images/items/iceCavern/level2.png", name: "Icicle",         score: 22 },
+    { level: 3, image: "images/items/iceCavern/level3.png", name: "Frost Bloom",    score: 80 },
+    { level: 4, image: "images/items/iceCavern/level4.png", name: "Glacier Shard",  score: 260 },
+    { level: 5, image: "images/items/iceCavern/level5.png", name: "Aurora Crystal", score: 780 },
+    { level: 6, image: "images/items/iceCavern/level6.png", name: "Frozen Star",    score: 1900 }
+  ],
+  cosmos: [
+    { level: 1, image: "images/items/cosmos/level1.png", name: "Stardust",        score: 5 },
+    { level: 2, image: "images/items/cosmos/level2.png", name: "Comet",           score: 22 },
+    { level: 3, image: "images/items/cosmos/level3.png", name: "Nebula Bloom",    score: 80 },
+    { level: 4, image: "images/items/cosmos/level4.png", name: "Star Core",       score: 260 },
+    { level: 5, image: "images/items/cosmos/level5.png", name: "Galaxy Lotus",    score: 780 },
+    { level: 6, image: "images/items/cosmos/level6.png", name: "Cosmic Radiance", score: 1900 }
+  ]
+};
+
+// Declaration order of the keys above = world/unlock order everywhere else.
+const WORLD_KEYS = Object.keys(WORLDS);
+
+const WORLD_BACKGROUNDS = {
+  crystalFalls: "images/worlds/crystalFalls-bg.jpg",
+  dragonValley: "images/worlds/dragonValley-bg.jpg",
+  iceCavern:    "images/worlds/iceCavern-bg.jpg",
+  cosmos:       "images/worlds/cosmos-bg.jpg"
+};
+
+const WORLD_LABELS = {
+  crystalFalls: "Crystal Falls",
+  dragonValley: "Dragon Valley",
+  iceCavern:    "Ice Cavern",
+  cosmos:       "Cosmos"
+};
+
+const EMPTY_ITEM = { level: 0, image: null, name: "Empty", score: 0 };
+
+function currentWorldItems() { return WORLDS[currentWorldKey]; }
+
+// Single lookup used everywhere a tile needs its icon/name/score —
+// level 0 (empty circle) always resolves to EMPTY_ITEM regardless of world.
+function getItem(level) {
+  if (level <= 0) return EMPTY_ITEM;
+  return currentWorldItems()[level - 1] || EMPTY_ITEM;
+}
+
     const SIZE = 5;
-    const ITEMS = [
-      { level: 0, icon: "", name: "Empty", score: 0 },
-      { level: 1, icon: "🌱", name: "Seed", score: 5 },
-      { level: 2, icon: "🌿", name: "Sprout", score: 22 },
-      { level: 3, icon: "🌸", name: "Bloom", score: 80 },
-      { level: 4, icon: "💎", name: "Crystal", score: 260 },
-      { level: 5, icon: "🪷", name: "Lotus", score: 780 },
-      { level: 6, icon: "✨", name: "Sacred Light", score: 1900 }
-    ];
 
     /* Progress lives in Supabase only (table: garden_saves — see the
        setup notes near GARDEN_TABLE below), not localStorage: playing
@@ -609,7 +697,7 @@ const WORLDS = [
     let best = 0;
     let history = [];
     let collection = [];
-    let currentWorld = 0;
+    let currentWorldKey = WORLD_KEYS[0];
 
     const stageEl = document.getElementById("stage");
     const boardEl = document.getElementById("board");
@@ -651,23 +739,34 @@ const WORLDS = [
       return 2;
     }
 
-    function setWorld(index) {
-      currentWorld = (index + WORLDS.length) % WORLDS.length;
-      const world = WORLDS[currentWorld];
-      stageEl.style.setProperty("--world-bg", `url("${world.src}")`);
-      worldNameEl.textContent = world.name;
+    // setWorld("crystalFalls") / setWorld("dragonValley") / setWorld("iceCavern")
+    // / setWorld("cosmos") — call this from anywhere (auto-progression below,
+    // the world-picker dots, or your own console/menu) to swap both the
+    // stage backdrop AND every tile's icon set at once.
+    function setWorld(key) {
+      if (!WORLDS[key]) {
+        console.error(`setWorld(): unknown world "${key}" — staying on "${currentWorldKey}"`);
+        return;
+      }
+      currentWorldKey = key;
+      stageEl.style.setProperty("--world-bg", `url("${WORLD_BACKGROUNDS[key]}")`);
+      worldNameEl.textContent = WORLD_LABELS[key] || key;
       renderWorldPicker();
+      renderBoard();   // existing tiles must switch to the new world's icons immediately
+      renderNext();
+      renderCollection();
       syncToCloud(false);
     }
 
     function renderWorldPicker() {
       worldPickerEl.innerHTML = "";
-      WORLDS.forEach((world, index) => {
+      WORLD_KEYS.forEach(key => {
+        const label = WORLD_LABELS[key] || key;
         const btn = document.createElement("button");
-        btn.className = "world-dot" + (index === currentWorld ? " active" : "");
-        btn.title = world.name;
-        btn.setAttribute("aria-label", world.name);
-        btn.addEventListener("click", () => setWorld(index));
+        btn.className = "world-dot" + (key === currentWorldKey ? " active" : "");
+        btn.title = label;
+        btn.setAttribute("aria-label", label);
+        btn.addEventListener("click", () => setWorld(key));
         worldPickerEl.appendChild(btn);
       });
     }
@@ -681,7 +780,7 @@ const WORLDS = [
       nextLevel = 1;
       addStartingTiles();
       render();
-      showToast("New garden planted 🌱");
+      showToast("New garden planted");
       syncToCloud(false);
     }
 
@@ -700,14 +799,14 @@ const WORLDS = [
 
     function undo() {
       const previous = history.pop();
-      if (!previous) { showToast("Nothing to undo 🌙"); return; }
+      if (!previous) { showToast("Nothing to undo"); return; }
       board = cloneBoard(previous.board);
       nextLevel = previous.nextLevel;
       score = previous.score;
       moves = previous.moves;
       collection = previous.collection.slice();
       render();
-      showToast("One step back 🌙");
+      showToast("One step back");
       syncToCloud(false);
     }
 
@@ -729,7 +828,7 @@ const WORLDS = [
            score         int not null default 0,
            moves         int not null default 0,
            collection    jsonb not null default '[]',
-           current_world int not null default 0,
+           current_world text not null default 'crystalFalls',
            best          int not null default 0,
            updated_at    timestamptz not null default now()
          );
@@ -751,6 +850,14 @@ const WORLDS = [
          to authenticated
          using (auth.uid() = user_id)
          with check (auth.uid() = user_id);
+
+       MIGRATING AN EXISTING TABLE — if garden_saves already exists from
+       before (current_world was an int index into a 10-world scenery
+       list), run this once instead of the create table above:
+
+         alter table public.garden_saves
+           alter column current_world type text using 'crystalFalls',
+           alter column current_world set default 'crystalFalls';
     ----------------------------------------------------------------- */
     const GARDEN_TABLE = "garden_saves";
 
@@ -762,7 +869,7 @@ const WORLDS = [
         score,
         moves,
         collection,
-        current_world: currentWorld,
+        current_world: currentWorldKey,
         best,
         updated_at: new Date().toISOString()
       };
@@ -773,17 +880,17 @@ const WORLDS = [
       try {
         const { error } = await sb.from(GARDEN_TABLE).upsert(currentSaveRow(), { onConflict: "user_id" });
         if (error) throw error;
-        if (showFeedback) showToast("Garden saved ✨");
+        if (showFeedback) showToast("Garden saved");
       } catch (err) {
         console.error("syncToCloud() error:", err);
-        if (showFeedback) showToast("Could not save — try again 🌙");
+        if (showFeedback) showToast("Could not save — try again");
       }
     }
 
     // "Save" button — same cloud write as the automatic saves below,
     // just with a toast so the user gets explicit confirmation.
     function saveGame() {
-      if (!currentUser) { showToast("Log in to save your garden 🔒"); return; }
+      if (!currentUser) { showToast("Log in to save your garden"); return; }
       syncToCloud(true);
     }
 
@@ -803,20 +910,20 @@ const WORLDS = [
           score = data.score || 0;
           moves = data.moves || 0;
           collection = data.collection || [];
-          currentWorld = typeof data.current_world === "number" ? data.current_world : 0;
+          currentWorldKey = (typeof data.current_world === "string" && WORLDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
           history = [];
-          setWorld(currentWorld);
+          setWorld(currentWorldKey);
           bestStatEl.textContent = formatNumber(best);
           render();
-          showToast("Garden restored 🌿");
+          showToast("Garden restored");
         } else {
           // First time this account plays — start fresh and create the row.
           newGarden();
         }
       } catch (err) {
         console.error("loadFromCloud() error:", err);
-        showToast("Could not load your garden 🌙");
+        showToast("Could not load your garden");
         newGarden();
       }
     }
@@ -832,9 +939,9 @@ const WORLDS = [
       updateBest();
       autoUnlockWorld();
       render();
-      if (createdLevel >= 6) showToast("Sacred Light created ✨");
-      else if (createdLevel >= 5) showToast("Lotus awakened 🪷");
-      else if (createdLevel > 0) showToast("Beautiful merge ✨");
+      if (createdLevel >= 6) showToast(`${getItem(6).name} created`);
+      else if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
+      else if (createdLevel > 0) showToast("Beautiful merge");
       if (isFull()) showGameOver();
       syncToCloud(false);
     }
@@ -847,14 +954,15 @@ const WORLDS = [
       while (keepMerging) {
         keepMerging = false;
         const level = board[currentR][currentC];
-        if (level <= 0 || level >= ITEMS.length - 1) break;
+        if (level <= 0 || level >= currentWorldItems().length) break; // already at this world's max level
         const group = findConnectedGroup(currentR, currentC, level);
         if (group.length >= 3) {
           group.forEach(pos => { board[pos.r][pos.c] = 0; });
           board[currentR][currentC] = level + 1;
-          score += ITEMS[level + 1].score * group.length;
+          const createdItem = getItem(level + 1);
+          score += createdItem.score * group.length;
           highestCreated = Math.max(highestCreated, level + 1);
-          spawnBurst(currentR, currentC, ITEMS[level + 1].icon);
+          spawnBurst(currentR, currentC, createdItem.image);
           keepMerging = true;
         }
       }
@@ -892,28 +1000,43 @@ const WORLDS = [
     }
 
     function autoUnlockWorld() {
-      // Spaced out for 10 worlds (was tuned for 3): last world unlocks
-      // around 12,600 points instead of the old ~2,700.
-      const targetWorld = Math.min(WORLDS.length - 1, Math.floor(score / 1400));
-      if (targetWorld > currentWorld) setWorld(targetWorld);
+      // 4 worlds now (was 10): next world unlocks every 2,500 points,
+      // so the last one (cosmos) opens up around 7,500. Comment this
+      // function's call out in placeTile() if you'd rather worlds only
+      // ever change via the picker / setWorld() and never auto-advance.
+      const targetIndex = Math.min(WORLD_KEYS.length - 1, Math.floor(score / 2500));
+      const targetKey = WORLD_KEYS[targetIndex];
+      if (WORLD_KEYS.indexOf(targetKey) > WORLD_KEYS.indexOf(currentWorldKey)) setWorld(targetKey);
     }
 
     function render() { renderBoard(); renderStats(); renderNext(); renderCollection(); }
+
+    // Small helper so every icon spot (board tile / next-up / collection /
+    // merge burst) creates the same kind of <img class="item-icon"> element.
+    function createItemIcon(item, extraClass) {
+      const img = document.createElement("img");
+      img.className = extraClass ? `item-icon ${extraClass}` : "item-icon";
+      img.src = item.image;
+      img.alt = item.name;
+      img.draggable = false;
+      return img;
+    }
 
     function renderBoard() {
       boardEl.innerHTML = "";
       for (let r = 0; r < SIZE; r++) {
         for (let c = 0; c < SIZE; c++) {
           const level = board[r][c];
+          const item = getItem(level);
           const cell = document.createElement("button");
           cell.type = "button";
           cell.className = "cell" + (level === 0 ? " empty" : "");
-          cell.setAttribute("aria-label", level === 0 ? "Empty planting circle" : ITEMS[level].name);
+          cell.setAttribute("aria-label", level === 0 ? "Empty planting circle" : item.name);
           cell.addEventListener("click", () => placeTile(r, c));
           if (level > 0) {
             const tile = document.createElement("span");
             tile.className = `tile level-${level}`;
-            tile.textContent = ITEMS[level].icon;
+            tile.appendChild(createItemIcon(item));
             cell.appendChild(tile);
           }
           boardEl.appendChild(cell);
@@ -927,24 +1050,30 @@ const WORLDS = [
       bestStatEl.textContent = formatNumber(best);
     }
 
-    function renderNext() { nextTileEl.textContent = ITEMS[nextLevel].icon; }
+    function renderNext() {
+      nextTileEl.innerHTML = "";
+      nextTileEl.appendChild(createItemIcon(getItem(nextLevel)));
+    }
 
     function renderCollection() {
       collectionEl.innerHTML = "";
       collection.slice(-12).forEach(level => {
-        const item = document.createElement("span");
-        item.textContent = ITEMS[level].icon;
-        collectionEl.appendChild(item);
+        collectionEl.appendChild(createItemIcon(getItem(level)));
       });
     }
 
-    function spawnBurst(r, c, icon) {
+    function spawnBurst(r, c, image) {
       const boardRect = boardEl.getBoundingClientRect();
       const cellW = boardRect.width / SIZE;
       const cellH = boardRect.height / SIZE;
       const burst = document.createElement("div");
       burst.className = "merge-burst";
-      burst.textContent = icon;
+      const img = document.createElement("img");
+      img.className = "item-icon";
+      img.src = image;
+      img.alt = "";
+      img.draggable = false;
+      burst.appendChild(img);
       burst.style.left = `${boardRect.left + cellW * (c + .5)}px`;
       burst.style.top = `${boardRect.top + cellH * (r + .5)}px`;
       document.body.appendChild(burst);
@@ -989,13 +1118,12 @@ const WORLDS = [
         // Reset the visible board so a previous account's garden never
         // lingers on screen for whoever uses this device/browser next.
         board = createEmptyBoard();
-        score = 0; moves = 0; history = []; collection = []; nextLevel = 1;
-        best = 0; currentWorld = 0;
-        render();
+        score = 0; moves = 0; history = []; collection = []; nextLevel = 1; best = 0;
+        setWorld(WORLD_KEYS[0]); // also resets background/name display and re-renders
       }
     }
 
-    setWorld(currentWorld); // sets an initial background (and picker dots) before auth resolves
+    setWorld(currentWorldKey); // sets an initial background (and picker dots) before auth resolves
     loginGateEl.classList.add("show"); // default to gated until we hear otherwise
 
     if (typeof onPremiumStatusChange === "function") {
