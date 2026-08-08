@@ -64,7 +64,7 @@
       padding: clamp(8px, 1.6vw, 18px);
       position: relative;
     }
-.stage {
+.stage-frame {
   position: relative;
 
   /* True square in BOTH orientations: driven by whichever viewport
@@ -72,9 +72,17 @@
      aspect-ratio locking width:height so it can never turn into a
      rectangle the way two independent vw/vh formulas could. svh
      (not vh) so mobile browser toolbars showing/hiding doesn't
-     resize the stage underneath the player. */
+     resize the stage underneath the player.
+     This wrapper (not .stage) now owns the sizing/positioning math,
+     so the HUD can be pulled outside .stage's overflow:hidden box
+     on small screens without the game-world art resizing under it. */
   width: min(96vw, 96svh, 1200px);
   aspect-ratio: 1 / 1;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
 
   border-radius: clamp(20px, 3vw, 36px);
 
@@ -383,7 +391,7 @@ button {
       filter: drop-shadow(0 0 12px rgba(255,255,255,.25));
     }
 
-    .tile .item-icon { width: 85%; height: 85%; }
+    .tile .item-icon { width: 95%; height: 95%; }
     .next-seed .item-icon { width: 76px; height: 76px; }
     .collection .item-icon { width: 50px; height: 50px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
@@ -552,6 +560,51 @@ button {
 
     @media (max-width: 760px) {
 
+      /* All HUD chrome moves OUTSIDE the game-world art on small
+         screens instead of floating on top of it: .stage-frame
+         becomes a vertical stack (top bar / board / bottom bar), and
+         every element that was absolutely overlaid on .stage switches
+         to normal document flow so it takes its own space instead of
+         covering the artwork underneath. */
+      .screen { padding: 8px; }
+
+      .stage-frame {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: min(94vw, 620px);
+        height: auto;
+      }
+
+      .stage-frame .hud,
+      .stage-frame .world-picker,
+      .stage-frame .collection,
+      #authRoot {
+        position: static;
+        inset: auto;
+      }
+
+      #authRoot { align-self: flex-end; order: 0; }
+      .brand { order: 1; max-width: none; width: 100%; }
+      .score { order: 2; width: 100%; justify-content: center; }
+
+      .stage {
+        order: 3;
+        position: relative;
+        inset: auto;
+        width: min(94vw, 55svh);
+        aspect-ratio: 1 / 1;
+        flex: 0 0 auto;
+      }
+
+      .next-box { order: 4; width: 100%; }
+      .actions { order: 5; width: 100%; justify-content: center; }
+
+      /* Kept hidden rather than squeezed outside too, to leave the
+         board as much room as possible on a small screen. */
+      .collection, .world-picker { display: none; }
+
       .score { grid-template-columns: 1fr; gap: 6px; right: 10px; top: 54px; }
       .score .stat { min-width: 54px; padding: 7px 8px; }
       .brand { left: 10px; top: 10px; padding: 9px 11px; }
@@ -561,8 +614,6 @@ button {
       .next-copy span { display: none; }
       .actions { right: 10px; bottom: 10px; padding: 7px; gap: 6px; }
       button { padding: 9px 10px; font-size: 9px; }
-      .world-picker { bottom: 75px; }
-      .collection { top: 70px; max-width: 58%; }
     }
 
     /* Phone held sideways: width alone can exceed 760px on larger
@@ -571,6 +622,43 @@ button {
        is actually cramped in landscape — the rules mirror the portrait
        compact-HUD block above. */
     @media (orientation: landscape) and (max-height: 500px) {
+      .screen { padding: 6px; }
+
+      .stage-frame {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        width: min(94vw, 620px);
+        height: auto;
+      }
+
+      .stage-frame .hud,
+      .stage-frame .world-picker,
+      .stage-frame .collection,
+      #authRoot {
+        position: static;
+        inset: auto;
+      }
+
+      #authRoot { align-self: flex-end; order: 0; }
+      .brand { order: 1; max-width: none; width: 100%; }
+      .score { order: 2; width: 100%; justify-content: center; }
+
+      .stage {
+        order: 3;
+        position: relative;
+        inset: auto;
+        width: min(60svh, 94vw);
+        aspect-ratio: 1 / 1;
+        flex: 0 0 auto;
+      }
+
+      .next-box { order: 4; width: 100%; }
+      .actions { order: 5; width: 100%; justify-content: center; }
+
+      .collection, .world-picker { display: none; }
+
       .score { grid-template-columns: 1fr; gap: 6px; right: 10px; top: 54px; }
       .score .stat { min-width: 54px; padding: 7px 8px; }
       .brand { left: 10px; top: 10px; padding: 9px 11px; }
@@ -590,8 +678,12 @@ button {
 </head>
 <body>
   <main class="screen">
-    <section class="stage" id="stage" aria-label="Wellness Garden game world">
-      <div class="stars"></div>
+    <div class="stage-frame" id="stageFrame">
+      <section class="stage" id="stage" aria-label="Wellness Garden game world">
+        <div class="stars"></div>
+
+        <div class="board" id="board" aria-label="Game board"></div>
+      </section>
 
       <div id="authRoot"></div>
 
@@ -609,8 +701,6 @@ button {
       </div>
 
       <div class="collection" id="collection" aria-label="Rewards created"></div>
-
-      <div class="board" id="board" aria-label="Game board"></div>
 
       <div class="hud next-box">
         <div class="next-seed" id="nextTile"></div>
@@ -633,7 +723,7 @@ button {
           <button type="button" id="loginGateBtn">Log in / Sign up</button>
         </div>
       </div>
-    </section>
+    </div>
   </main>
 
   <div class="toast" id="toast">Beautiful merge ✨</div>
@@ -663,7 +753,7 @@ button {
    or .webp — nothing else in the game cares which format you use.
 
    Expected folder layout (create these in images/ next to the HTML):
-     images/game-items1.webp ... game-items6.webp  (one icon per level,
+     images/game-item1.webp ... game-item6.webp    (one icon per level,
                                                       shared by all worlds)
      images/game-worlds/<worldKey>-bg.webp          (stage backdrop,
                                                       one per world)
