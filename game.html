@@ -86,8 +86,9 @@
 
   border-radius: clamp(20px, 3vw, 36px);
 
-  /* Fallback color shows through if a world's image (images/games-world*.webp)
-     is missing or still loading, instead of leaving the stage plain black. */
+  /* Fallback color shows through if a world's image (images/game-world*.webp
+     or .jpg — see getWorldBackgroundUrl() below) is missing or still loading,
+     instead of leaving the stage plain black. */
   background-color: #1b1030;
   background-image: var(--world-bg);
   background-size: cover;
@@ -803,52 +804,87 @@ button {
    or .webp — nothing else in the game cares which format you use.
 
    Expected folder layout (create these in images/ next to the HTML):
-     images/game-item1.webp ... game-item7.webp    (one icon per level,
-                                                      shared by all worlds)
-     images/games-world1.webp ... games-world20.webp (stage backdrop,
-                                                      one per world, numbered
-                                                      in WORLD_BACKGROUNDS'
-                                                      declaration order)
+     images/game-item1.webp/.jpg ... game-item7.webp/.jpg
+       (one icon per level, shared by all worlds — BOTH a .webp and a
+        .jpg are expected for each number; getItemImageUrl() picks
+        whichever the browser actually supports at runtime)
+     images/game-world1.webp/.jpg ... game-world20.webp/.jpg
+       (stage backdrop, one per world, numbered in WORLD_BACKGROUNDS'
+        declaration order — BOTH a .webp and a .jpg are expected for
+        each number; getWorldBackgroundUrl() picks whichever the
+        browser actually supports at runtime)
 
    Add a new world by adding one more key to WORLD_BACKGROUNDS and
    WORLD_LABELS below — setWorld() and renderWorldPicker() both
    iterate WORLD_KEYS automatically, no other code changes needed.
 ----------------------------------------------------------------- */
 const ITEMS = [
-  { level: 1, image: "images/game-item1.webp", name: "Seed",     score: 5 },
-  { level: 2, image: "images/game-item2.webp", name: "Sprout",   score: 22 },
-  { level: 3, image: "images/game-item3.webp", name: "Bloom",    score: 80 },
-  { level: 4, image: "images/game-item4.webp", name: "Shard",    score: 260 },
-  { level: 5, image: "images/game-item5.webp", name: "Lotus",    score: 780 },
-  { level: 6, image: "images/game-item6.webp", name: "Radiance", score: 1900 },
-  { level: 7, image: "images/game-item7.webp", name: "Zenith",   score: 4600 }
+  { level: 1, image: "images/game-item1", name: "Seed",     score: 5 },
+  { level: 2, image: "images/game-item2", name: "Sprout",   score: 22 },
+  { level: 3, image: "images/game-item3", name: "Bloom",    score: 80 },
+  { level: 4, image: "images/game-item4", name: "Shard",    score: 260 },
+  { level: 5, image: "images/game-item5", name: "Lotus",    score: 780 },
+  { level: 6, image: "images/game-item6", name: "Radiance", score: 1900 },
+  { level: 7, image: "images/game-item7", name: "Zenith",   score: 4600 }
 ];
 
 // Declaration order of the keys below = world/unlock order everywhere else.
-// Backdrop art lives at images/games-world<N>.webp, numbered in this same
-// declaration order (1 = crystalFalls ... 20 = auroraPeak).
+// Backdrop art lives at images/game-world<N>, numbered in this same
+// declaration order (1 = crystalFalls ... 20 = auroraPeak). No file
+// extension here on purpose: getWorldBackgroundUrl() below appends
+// .webp or .jpg depending on what the browser actually supports, so
+// every world needs BOTH a game-world<N>.webp AND a game-world<N>.jpg
+// file present in images/.
 const WORLD_BACKGROUNDS = {
-  crystalFalls:    "images/games-world1.webp",
-  dragonValley:    "images/games-world2.webp",
-  iceCavern:       "images/games-world3.webp",
-  cosmos:          "images/games-world4.webp",
-  mountainShrine:  "images/games-world5.webp",
-  underwaterRuins: "images/games-world6.webp",
-  desertOasis:     "images/games-world7.webp",
-  volcano:         "images/games-world8.webp",
-  jungleTemple:    "images/games-world9.webp",
-  cherryBlossom:   "images/games-world10.webp",
-  flowerGarden:    "images/games-world11.webp",
-  enchantedForest: "images/games-world12.webp",
-  lavenderGarden:  "images/games-world13.webp",
-  sunsetMeadow:    "images/games-world14.webp",
-  waterfallGrove:  "images/games-world15.webp",
-  bambooForest:    "images/games-world16.webp",
-  moonlitPond:     "images/games-world17.webp",
-  mysticGlade:     "images/games-world18.webp",
-  goldenDunes:     "images/games-world19.webp",
-  auroraPeak:      "images/games-world20.webp"
+  crystalFalls:    "images/game-world1",
+  dragonValley:    "images/game-world2",
+  iceCavern:       "images/game-world3",
+  cosmos:          "images/game-world4",
+  mountainShrine:  "images/game-world5",
+  underwaterRuins: "images/game-world6",
+  desertOasis:     "images/game-world7",
+  volcano:         "images/game-world8",
+  jungleTemple:    "images/game-world9",
+  cherryBlossom:   "images/game-world10",
+  flowerGarden:    "images/game-world11",
+  enchantedForest: "images/game-world12",
+  lavenderGarden:  "images/game-world13",
+  sunsetMeadow:    "images/game-world14",
+  waterfallGrove:  "images/game-world15",
+  bambooForest:    "images/game-world16",
+  moonlitPond:     "images/game-world17",
+  mysticGlade:     "images/game-world18",
+  goldenDunes:     "images/game-world19",
+  auroraPeak:      "images/game-world20"
 };
+
+// ---------- WebP support detection (with .jpg fallback) ----------
+// canvas.toDataURL("image/webp") is a synchronous, well-supported way to
+// check this: modern browsers return a real "data:image/webp" string,
+// while browsers that can't encode webp silently fall back to PNG (so the
+// check below correctly evaluates to false for them). Any older browser
+// without webp support then transparently gets the .jpg version instead
+// of a broken/missing image — used for both item icons and world
+// backdrops below.
+function supportsWebP() {
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 1;
+    return canvas.toDataURL("image/webp").indexOf("data:image/webp") === 0;
+  } catch (err) {
+    return false;
+  }
+}
+const WEBP_SUPPORTED = supportsWebP();
+
+function getWorldBackgroundUrl(key) {
+  const base = WORLD_BACKGROUNDS[key];
+  return base ? `${base}.${WEBP_SUPPORTED ? "webp" : "jpg"}` : null;
+}
+
+function getItemImageUrl(item) {
+  return item && item.image ? `${item.image}.${WEBP_SUPPORTED ? "webp" : "jpg"}` : null;
+}
 
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
@@ -952,7 +988,7 @@ function getItem(level) {
         return;
       }
       currentWorldKey = key;
-      stageEl.style.setProperty("--world-bg", `url("${WORLD_BACKGROUNDS[key]}")`);
+      stageEl.style.setProperty("--world-bg", `url("${getWorldBackgroundUrl(key)}")`);
       worldNameEl.textContent = WORLD_LABELS[key] || key;
       renderWorldPicker();
       renderBoard();   // existing tiles must switch to the new world's icons immediately
@@ -1166,7 +1202,7 @@ function getItem(level) {
           const createdItem = getItem(level + 1);
           score += createdItem.score * group.length;
           highestCreated = Math.max(highestCreated, level + 1);
-          spawnBurst(currentR, currentC, createdItem.image);
+          spawnBurst(currentR, currentC, getItemImageUrl(createdItem));
           keepMerging = true;
         }
       }
@@ -1220,7 +1256,7 @@ function getItem(level) {
     function createItemIcon(item, extraClass) {
       const img = document.createElement("img");
       img.className = extraClass ? `item-icon ${extraClass}` : "item-icon";
-      img.src = item.image;
+      img.src = getItemImageUrl(item);
       img.alt = item.name;
       img.draggable = false;
       // If an icon file 404s / fails to load, the browser's default
