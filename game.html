@@ -14,7 +14,7 @@
       --muted: rgba(255, 248, 238, 0.72);
       --glass: rgba(20, 10, 30, 0.42);
       --glass-strong: rgba(20, 10, 30, 0.70);
-      --border: rgba(255, 255, 255, 0.20);f
+      --border: rgba(255, 255, 255, 0.20);
       --shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
 
       /* Aliases so auth-ui.css (built against --ink/--line/--bg) reads
@@ -67,8 +67,14 @@
 .stage {
   position: relative;
 
-  width: min(96vw, 1200px);
-  height: min(96vh, 1200px);
+  /* True square in BOTH orientations: driven by whichever viewport
+     dimension is smaller (vw in portrait, svh in landscape), with
+     aspect-ratio locking width:height so it can never turn into a
+     rectangle the way two independent vw/vh formulas could. svh
+     (not vh) so mobile browser toolbars showing/hiding doesn't
+     resize the stage underneath the player. */
+  width: min(96vw, 96svh, 1200px);
+  aspect-ratio: 1 / 1;
 
   border-radius: clamp(20px, 3vw, 36px);
 
@@ -546,7 +552,6 @@ button {
 
     @media (max-width: 760px) {
 
-      .stage { width: min(98vw, 86svh); }
       .score { grid-template-columns: 1fr; gap: 6px; right: 10px; top: 54px; }
       .score .stat { min-width: 54px; padding: 7px 8px; }
       .brand { left: 10px; top: 10px; padding: 9px 11px; }
@@ -558,6 +563,23 @@ button {
       button { padding: 9px 10px; font-size: 9px; }
       .world-picker { bottom: 75px; }
       .collection { top: 70px; max-width: 58%; }
+    }
+
+    /* Phone held sideways: width alone can exceed 760px on larger
+       phones (e.g. ~926px on an iPhone Pro Max in landscape), so this
+       is keyed on the SHORT dimension (height) instead, which is what
+       is actually cramped in landscape — the rules mirror the portrait
+       compact-HUD block above. */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .score { grid-template-columns: 1fr; gap: 6px; right: 10px; top: 54px; }
+      .score .stat { min-width: 54px; padding: 7px 8px; }
+      .brand { left: 10px; top: 10px; padding: 9px 11px; }
+      .brand strong { font-size: 18px; }
+      .next-box { left: 10px; bottom: 10px; padding: 9px 10px; }
+      .next-seed { width: 50px; height: 50px; font-size: 31px; border-radius: 17px; }
+      .next-copy span { display: none; }
+      .actions { right: 10px; bottom: 10px; padding: 7px; gap: 6px; }
+      button { padding: 9px 10px; font-size: 9px; }
     }
 
     @media (max-height: 650px) {
@@ -651,12 +673,12 @@ button {
    iterate WORLD_KEYS automatically, no other code changes needed.
 ----------------------------------------------------------------- */
 const ITEMS = [
-  { level: 1, image: "images/game-item1.webp", name: "Seed",     score: 5 },
-  { level: 2, image: "images/game-item2.webp", name: "Sprout",   score: 22 },
-  { level: 3, image: "images/game-item3.webp", name: "Bloom",    score: 80 },
-  { level: 4, image: "images/game-item4.webp", name: "Shard",    score: 260 },
-  { level: 5, image: "images/game-item5.webp", name: "Lotus",    score: 780 },
-  { level: 6, image: "images/game-item6.webp", name: "Radiance", score: 1900 }
+  { level: 1, image: "images/game-items1.webp", name: "Seed",     score: 5 },
+  { level: 2, image: "images/game-items2.webp", name: "Sprout",   score: 22 },
+  { level: 3, image: "images/game-items3.webp", name: "Bloom",    score: 80 },
+  { level: 4, image: "images/game-items4.webp", name: "Shard",    score: 260 },
+  { level: 5, image: "images/game-items5.webp", name: "Lotus",    score: 780 },
+  { level: 6, image: "images/game-items6.webp", name: "Radiance", score: 1900 }
 ];
 
 // Declaration order of the keys below = world/unlock order everywhere else.
