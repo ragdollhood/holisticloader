@@ -172,15 +172,29 @@
     }
 
     .score {
-      /* Pushed down from the usual top-right HUD spot to leave room for
-         the account icon (#authRoot, from auth-ui.css) above it. */
-      right: clamp(12px, 3vw, 26px);
-      top: clamp(60px, 12vw, 82px);
+      /* Same row as .brand (top: matches .brand's top formula exactly)
+         and #authRoot now sits to the right of it on that row instead
+         of stacked above — see the #authRoot rule below, which reserves
+         the space .score's "right" offset leaves clear. */
+      right: clamp(70px, 11vw, 96px);
+      top: clamp(12px, 3vw, 26px);
       padding: 10px 14px;
       border-radius: 22px;
       display: grid;
       grid-template-columns: repeat(3, auto);
       gap: 10px;
+    }
+
+    /* Account icon (built into #authRoot by auth.js/auth-ui.css) pulled
+       up onto the brand/score row, far right — auth-ui.css is linked
+       before this <style> block, so this rule (same specificity, later
+       in source order) wins the cascade and overrides its own
+       positioning without needing !important. */
+    #authRoot {
+      position: absolute;
+      top: clamp(12px, 3vw, 26px);
+      right: clamp(12px, 3vw, 26px);
+      z-index: 7;
     }
 
     .stat {
@@ -561,6 +575,20 @@ button {
     }
 
     .login-gate-card button { min-width: 210px; }
+
+    @media (min-width: 761px) {
+      /* Laptop/desktop only (mobile keeps "cover" below, unchanged):
+         world backdrops now show at full width instead of "cover"
+         cropping the sides off wide images to fill this square stage's
+         height. If a backdrop is wider than it is tall (the common case
+         for these full-scene images), the stage's own background-color
+         (#1b1030) can show as a thin band above/below it instead —
+         that's the trade-off for never cropping the width. */
+      .stage {
+        background-size: 100% auto;
+        background-position: center;
+      }
+    }
 
     @media (max-width: 760px) {
 
