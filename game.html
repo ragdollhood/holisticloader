@@ -85,6 +85,12 @@
   height: min(96svh, calc(96vw / var(--stage-ratio)));
   width: auto;
   aspect-ratio: var(--stage-ratio);
+
+  /* Column count for the game grid: 5 by default (matches ROWS, which
+     never changes), overridden to 7 on desktop/laptop widths only by
+     JS (see COLS / DESKTOP_MEDIA_QUERY below) — mobile always stays
+     at the original 5x5 board. */
+  --board-cols: 5;
 }
 
 .stage {
@@ -317,14 +323,16 @@ button {
  /* .board-wrap keeps the ORIGINAL bounding box (left/top/width/height —
     which is deliberately non-square, see the vars above) but no longer
     lays out the grid itself. It's a container-query context, so the
-    actual grid (#board, below) can size itself to the largest SQUARE
-    that fits inside that box using cqmin — the smaller of the box's own
-    width/height — instead of stretching to fill a non-square area.
-    That's what was causing the 5x5 grid's rows and columns to come out
-    different sizes (and, since each .cell forces a true circle via
-    aspect-ratio, circles sized off the wider axis to overflow into the
-    next row and visually overlap it). Centered via flex so the square
-    sits in the middle of the old box on whichever axis has slack. */
+    actual grid (#board, below) can size itself to the largest area with
+    the CORRECT --board-cols : 5 (rows) ratio that fits inside that box
+    — using cqw/cqh — instead of stretching to fill a differently-shaped
+    area. That's what was causing rows and columns to come out unequal
+    sizes (and, since each .cell forces a true circle via aspect-ratio,
+    circles sized off the wider axis to overflow into the next row and
+    visually overlap it). Centered via flex so it sits in the middle of
+    the old box on whichever axis has slack. --board-cols is 5 by
+    default and set to 7 on desktop/laptop widths only (see COLS in the
+    JS below) — mobile always keeps the original 5x5 board. */
  .board-wrap {
   position: absolute;
 
@@ -342,12 +350,12 @@ button {
 }
 
  .board {
-  width: 100cqmin;
-  height: 100cqmin;
+  width: min(100cqw, calc(100cqh * var(--board-cols) / 5));
+  height: min(100cqh, calc(100cqw * 5 / var(--board-cols)));
 
   display: grid;
 
-  grid-template-columns: repeat(5,1fr);
+  grid-template-columns: repeat(var(--board-cols), 1fr);
   grid-template-rows: repeat(5,1fr);
 
   gap: 4%;
@@ -480,17 +488,23 @@ button {
       100% { transform: translate(-50%, -130%) scale(1.25); opacity: 0; }
     }
 
+    /* Moved from a floating top-center strip to a framed panel near the
+       bottom (stacked directly above .world-picker, which itself sits
+       above .bottom-bar) — the .hud class (added in the markup) gives
+       it the same bordered glass-panel look as next-box/actions/score,
+       so it now reads as an actual "frame" instead of icons floating
+       loose over the artwork. */
     .collection {
-      position: absolute;
-      z-index: 6;
       left: 50%;
       transform: translateX(-50%);
-      top: clamp(80px, 10svh, 110px);
+      bottom: clamp(132px, 17svh, 172px);
       display: flex;
       gap: 6px;
-      max-width: min(70%, 430px);
+      max-width: min(78%, 520px);
       justify-content: center;
       flex-wrap: wrap;
+      padding: 10px 14px;
+      border-radius: 24px;
       pointer-events: none;
     }
 
@@ -859,7 +873,7 @@ button {
         <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
       </div>
 
-      <div class="collection" id="collection" aria-label="Rewards created"></div>
+      <div class="hud collection" id="collection" aria-label="Rewards created"></div>
 
       <!-- Wrapped so mobile can lay next-seed + all three buttons out as a
            single row (see .bottom-bar in the mobile media queries) without
@@ -1049,7 +1063,16 @@ function getItem(level) {
   return ITEMS[level - 1] || EMPTY_ITEM;
 }
 
-    const SIZE = 5;
+    // Desktop/laptop widths get 2 extra board columns (7 instead of 5) —
+    // rows stay at 5 everywhere. Declared here (not further down, where
+    // applyStageAspectRatio() used to be the only thing reading it) so
+    // COLS below can use it immediately at page load.
+    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px)");
+
+    const ROWS = 5;
+    const COLS_MOBILE = 5;
+    const COLS_DESKTOP = 7;
+    let COLS = DESKTOP_MEDIA_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
 
     /* Progress lives in Supabase only (table: garden_saves — see the
        setup notes near GARDEN_TABLE below), not localStorage: playing
@@ -1092,7 +1115,23 @@ function getItem(level) {
     });
 
     function createEmptyBoard() {
-      return Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => 0));
+      return Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => 0));
+    }
+
+    // Reshapes any board (freshly loaded from the cloud, or already in
+    // play) to exactly ROWS x COLS, preserving whatever tiles already
+    // line up at the same [r][c] position and padding the rest with
+    // empty (0) cells. Needed because COLS differs between mobile (5)
+    // and desktop (7) — the SAME cloud save can be opened on either, or
+    // the browser window can cross the breakpoint mid-session, so the
+    // board array's shape can't be assumed to already match COLS/ROWS.
+    // Tiles beyond the new bounds (e.g. columns 6-7 when shrinking from
+    // desktop's 7 down to mobile's 5) are dropped — there's no sensible
+    // place to move them to without disturbing the rest of the layout.
+    function reshapeBoardToDims(source) {
+      return Array.from({ length: ROWS }, (_, r) =>
+        Array.from({ length: COLS }, (_, c) => (source[r] && source[r][c] !== undefined) ? source[r][c] : 0)
+      );
     }
 
     function cloneBoard(source) { return source.map(row => row.slice()); }
@@ -1136,7 +1175,6 @@ function getItem(level) {
        this function is a no-op there by design (checked via
        DESKTOP_MEDIA_QUERY below) rather than fighting that layout.
     ----------------------------------------------------------------- */
-    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px)");
     const stageRatioCache = {}; // worldKey -> "w / h", so re-selecting a world already measured this session doesn't re-fetch/re-decode its image just to read its size
 
     function applyStageAspectRatio(key) {
@@ -1174,7 +1212,23 @@ function getItem(level) {
       } else {
         stageFrameEl.style.removeProperty("--stage-ratio"); // back to the CSS default (square)
       }
+      setColsForBreakpoint(e.matches);
     });
+
+    // Keeps the live board array's column count in sync with COLS
+    // whenever the mobile/desktop breakpoint is crossed (resizing a
+    // browser window, rotating/un-rotating a foldable) — not just at
+    // page load. Existing tiles are preserved wherever they still fit
+    // (see reshapeBoardToDims); a no-op if the breakpoint didn't
+    // actually change COLS (e.g. only --stage-ratio needed updating).
+    function setColsForBreakpoint(isDesktop) {
+      const nextCols = isDesktop ? COLS_DESKTOP : COLS_MOBILE;
+      if (nextCols === COLS) return;
+      COLS = nextCols;
+      stageFrameEl.style.setProperty("--board-cols", COLS);
+      board = reshapeBoardToDims(board);
+      render();
+    }
 
     function renderWorldPicker() {
       worldPickerEl.innerHTML = "";
@@ -1323,7 +1377,7 @@ function getItem(level) {
         if (error) throw error;
 
         if (data) {
-          board = data.board || createEmptyBoard();
+          board = reshapeBoardToDims(data.board || createEmptyBoard());
           nextLevel = data.next_level || 1;
           score = data.score || 0;
           moves = data.moves || 0;
@@ -1409,7 +1463,7 @@ function getItem(level) {
       return [{ r: r - 1, c }, { r: r + 1, c }, { r, c: c - 1 }, { r, c: c + 1 }].filter(pos => inBounds(pos.r, pos.c));
     }
 
-    function inBounds(r, c) { return r >= 0 && c >= 0 && r < SIZE && c < SIZE; }
+    function inBounds(r, c) { return r >= 0 && c >= 0 && r < ROWS && c < COLS; }
     function isFull() { return board.every(row => row.every(cell => cell !== 0)); }
 
     function updateBest() {
@@ -1465,8 +1519,8 @@ function getItem(level) {
 
     function renderBoard() {
       boardEl.innerHTML = "";
-      for (let r = 0; r < SIZE; r++) {
-        for (let c = 0; c < SIZE; c++) {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
           const level = board[r][c];
           const item = getItem(level);
           const cell = document.createElement("button");
@@ -1505,8 +1559,8 @@ function getItem(level) {
 
     function spawnBurst(r, c, image) {
       const boardRect = boardEl.getBoundingClientRect();
-      const cellW = boardRect.width / SIZE;
-      const cellH = boardRect.height / SIZE;
+      const cellW = boardRect.width / COLS;
+      const cellH = boardRect.height / ROWS;
       const burst = document.createElement("div");
       burst.className = "merge-burst";
       const img = document.createElement("img");
@@ -1565,6 +1619,7 @@ function getItem(level) {
       }
     }
 
+    stageFrameEl.style.setProperty("--board-cols", COLS); // match the CSS var to the COLS this page actually loaded with
     setWorld(currentWorldKey); // sets an initial background (and picker dots) before auth resolves
     loginGateEl.classList.add("show"); // default to gated until we hear otherwise
 
