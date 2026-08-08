@@ -299,6 +299,9 @@ button {
   width: 92%;
   aspect-ratio: 1 / 1; /* forces a true circle even when the grid cell
                            itself isn't square (see .board comment below) */
+  overflow: hidden; /* belt-and-suspenders: nothing (broken-image glyph,
+                        oversized alt text, anything) can spill outside
+                        the circle and disturb the rest of the board */
 
   justify-self: center;
   align-self: center;
@@ -1037,6 +1040,12 @@ function getItem(level) {
       img.src = item.image;
       img.alt = item.name;
       img.draggable = false;
+      // If an icon file 404s / fails to load, the browser's default
+      // fallback (a broken-image glyph plus the alt text rendered at
+      // full font size) can overflow way outside its circle and make
+      // the whole board look broken. Hide the element entirely instead
+      // — an empty circle is a much smaller problem than a wall of text.
+      img.addEventListener("error", () => { img.style.display = "none"; }, { once: true });
       return img;
     }
 
