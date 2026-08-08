@@ -392,8 +392,11 @@ button {
       filter: drop-shadow(0 0 12px rgba(255,255,255,.25));
     }
 
-    .tile .item-icon { width: 100%; height: 100%; }
-    .next-seed .item-icon { width: 76px; height: 76px; }
+    /* 80% (not 100%) so the artwork clears the circle's inscribed
+       edges on every side instead of its corners/tips brushing the
+       clip mask — this is the "items fit inside the circles" sizing. */
+    .tile .item-icon { width: 80%; height: 80%; }
+    .next-seed .item-icon { width: 46px; height: 46px; }
     .collection .item-icon { width: 50px; height: 50px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
 
@@ -622,8 +625,21 @@ button {
         flex: 0 0 auto;
       }
 
-      .next-box { order: 4; width: 100%; }
-      .actions { order: 5; width: 100%; justify-content: center; }
+      /* next-seed + Undo/Save/New all on ONE row: .bottom-bar (not
+         .next-box/.actions individually) now owns the order + full-width
+         + row layout, and its two children sit side by side inside it
+         instead of each claiming a full-width row of their own. */
+      .bottom-bar {
+        order: 4;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .next-box, .actions { position: static; inset: auto; }
+      .next-box { flex: 0 1 auto; min-width: 0; }
+      .actions { flex: 0 0 auto; justify-content: flex-end; }
 
       /* Kept hidden rather than squeezed outside too, to leave the
          board as much room as possible on a small screen. */
@@ -639,14 +655,16 @@ button {
       .brand small { font-size: 8px; }
       .brand strong { font-size: 15px; }
 
-      .next-box { left: 10px; bottom: 10px; padding: 6px 8px; gap: 8px; }
+      .next-box { padding: 6px 8px; gap: 8px; }
       .next-seed { width: 40px; height: 40px; font-size: 24px; border-radius: 13px; }
-      .next-seed .item-icon { width: 50px; height: 50px; }
-      .next-copy b { font-size: 9px; }
-      .next-copy span { display: none; }
+      .next-seed .item-icon { width: 30px; height: 30px; }
+      /* Text label dropped too (not just the subtitle) on this row —
+         the icon alone is enough to read as "what's coming next" once
+         it's sitting directly next to the action buttons on one line. */
+      .next-copy { display: none; }
 
       /* Buttons: small tap targets, minimal padding, no extra space. */
-      .actions { right: 10px; bottom: 10px; padding: 5px; gap: 5px; }
+      .actions { padding: 5px; gap: 5px; }
       button { padding: 7px 9px; font-size: 8.5px; }
     }
 
@@ -697,8 +715,17 @@ button {
         flex: 0 0 auto;
       }
 
-      .next-box { order: 4; width: 100%; }
-      .actions { order: 5; width: 100%; justify-content: center; }
+      .bottom-bar {
+        order: 4;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .next-box, .actions { position: static; inset: auto; }
+      .next-box { flex: 0 1 auto; min-width: 0; }
+      .actions { flex: 0 0 auto; justify-content: flex-end; }
 
       .collection, .world-picker { display: none; }
 
@@ -711,13 +738,12 @@ button {
       .brand small { font-size: 8px; }
       .brand strong { font-size: 14px; }
 
-      .next-box { left: 10px; bottom: 10px; padding: 5px 7px; gap: 6px; }
+      .next-box { padding: 5px 7px; gap: 6px; }
       .next-seed { width: 34px; height: 34px; font-size: 20px; border-radius: 11px; }
-      .next-seed .item-icon { width: 42px; height: 42px; }
-      .next-copy b { font-size: 8px; }
-      .next-copy span { display: none; }
+      .next-seed .item-icon { width: 26px; height: 26px; }
+      .next-copy { display: none; }
 
-      .actions { right: 10px; bottom: 10px; padding: 4px; gap: 4px; }
+      .actions { padding: 4px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
     }
 
@@ -753,15 +779,21 @@ button {
 
       <div class="collection" id="collection" aria-label="Rewards created"></div>
 
-      <div class="hud next-box">
-        <div class="next-seed" id="nextTile"></div>
-        <div class="next-copy"><b>Next seed</b><span>Place on an empty circle</span></div>
-      </div>
+      <!-- Wrapped so mobile can lay next-seed + all three buttons out as a
+           single row (see .bottom-bar in the mobile media queries) without
+           touching the desktop layout, which still positions .next-box and
+           .actions independently via their own absolute left/right rules. -->
+      <div class="bottom-bar" id="bottomBar">
+        <div class="hud next-box">
+          <div class="next-seed" id="nextTile"></div>
+          <div class="next-copy"><b>Next seed</b><span>Place on an empty circle</span></div>
+        </div>
 
-      <div class="hud actions">
-        <button class="secondary" id="undoBtn">Undo</button>
-        <button class="secondary" id="saveBtn">Save</button>
-        <button id="newBtn">New</button>
+        <div class="hud actions">
+          <button class="secondary" id="undoBtn">Undo</button>
+          <button class="secondary" id="saveBtn">Save</button>
+          <button id="newBtn">New</button>
+        </div>
       </div>
 
       <div class="world-picker" id="worldPicker" aria-label="Choose world"></div>
