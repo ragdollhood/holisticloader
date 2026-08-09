@@ -1606,6 +1606,35 @@ button {
       /* Turns the icon on for the map screen only — its base rule
          (display:none) keeps it off on desktop and during gameplay. */
       #gameLayout.on-map .howtoplay-btn { display: inline-flex; }
+
+      /* Title image (images/game-holisticgametiteltext.png) overlaid
+         directly on top of the map artwork itself, the same way
+         desktop's .map-brand already works — instead of only living
+         as a small logo inside the icon bar above the image. Centered
+         horizontally near the top of the map screen. */
+      #gameLayout.on-map .map-brand {
+        display: block;
+        position: absolute;
+        left: 50%;
+        top: clamp(14px, 4vw, 28px);
+        transform: translateX(-50%);
+        z-index: 3;
+        max-width: 72%;
+        text-align: center;
+      }
+
+      #gameLayout.on-map .map-brand-img {
+        max-height: clamp(46px, 14vw, 86px);
+        margin: 0 auto;
+      }
+
+      /* The small logo that used to be the icon bar's only title is now
+         redundant once the big title image sits on the map itself —
+         hide it so there's just the one title, not two stacked on top
+         of each other. The bar keeps only the "how to play" icon. */
+      #gameLayout.on-map .top-row .brand-map-logo {
+        display: none;
+      }
     }
 
     @media (max-height: 650px) {
