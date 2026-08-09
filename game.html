@@ -590,6 +590,43 @@ button {
       -webkit-backdrop-filter: blur(18px);
     }
 
+    /* Desktop/laptop-only box at the bottom of the side panel holding
+       the back-to-map thumbnail above the next-item badge (see
+       layoutSideExtras() in the JS, which moves both elements in here
+       instead of the score row / stage overlay once past the 761px
+       breakpoint). Hidden by default so mobile — which never populates
+       it — never shows an empty pill; the min-width query below is the
+       only thing that turns it on, and only outside the map screen. */
+    .next-box {
+      display: none;
+      width: 100%;
+      padding: 14px;
+      border-radius: 22px;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @media (min-width: 761px) {
+      #gameLayout:not(.on-map) .next-box {
+        display: flex;
+      }
+
+      /* Inside .next-box the badge is normal in-flow content, not the
+         absolute stage overlay mobile still uses. */
+      .next-box .next-item-group {
+        position: static;
+      }
+
+      /* Desktop's .score no longer contains the home-thumb (it now
+         lives in .next-box — see layoutSideExtras()), so it's just the
+         3 stat columns. Mobile's score keeps its original 4-column
+         (home-thumb + 3 stats) layout untouched. */
+      .score {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
     .world-dot {
       width: 12px;
       height: 12px;
@@ -1430,7 +1467,11 @@ button {
           </ol>
         </div>
 
-        <div class="hud score gameplay-only" aria-label="Game stats">
+        <!-- home-thumb ("back to the map") starts out here for mobile;
+             on desktop/laptop layoutSideExtras() (JS) moves it into
+             #nextBox instead, alongside the next-item badge — see that
+             function for the breakpoint logic. -->
+        <div class="hud score gameplay-only" id="scoreBox" aria-label="Game stats">
           <button type="button" class="home-thumb" id="homeBtn" aria-label="Back to the map">
             <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
           </button>
@@ -1448,6 +1489,13 @@ button {
           <button class="secondary" id="saveBtn">Save</button>
           <button id="newBtn">New</button>
         </div>
+
+        <!-- Desktop/laptop-only box at the bottom of the side panel:
+             home-thumb on top, next-item badge below it — see
+             layoutSideExtras() (JS). Stays empty (and hidden) on
+             mobile, which keeps its original stage-overlay + score-row
+             placement untouched. -->
+        <div class="next-box" id="nextBox" aria-label="Back to map and next item"></div>
       </aside>
     </div>
   </main>
@@ -1798,6 +1846,32 @@ function getItem(level) {
     const mapScreenEl = document.getElementById("mapScreen");
     const mapTitleEl = document.getElementById("mapTitle");
     const homeBtnEl = document.getElementById("homeBtn");
+    const nextItemGroupEl = document.getElementById("nextItemGroup");
+    const nextBoxEl = document.getElementById("nextBox");
+    const scoreBoxEl = document.getElementById("scoreBox");
+
+    /* Moves the home-thumb ("back to the map") button and the
+       next-item badge between their two homes depending on the
+       desktop/mobile breakpoint:
+       - Desktop/laptop: both live in #nextBox, home-thumb on top,
+         next-item badge below it, as a normal box at the bottom of the
+         side panel (see .next-box CSS).
+       - Mobile: unchanged from before — home-thumb back inside the
+         score row (left of the stat numbers), next-item badge back as
+         an absolute overlay on the stage image itself.
+       Called once at load and again every time DESKTOP_MEDIA_QUERY's
+       "change" event fires, so resizing across the breakpoint (or
+       rotating a foldable) relocates them immediately. */
+    function layoutSideExtras() {
+      if (DESKTOP_MEDIA_QUERY.matches) {
+        nextBoxEl.appendChild(homeBtnEl);
+        nextBoxEl.appendChild(nextItemGroupEl);
+      } else {
+        scoreBoxEl.insertBefore(homeBtnEl, scoreBoxEl.firstChild);
+        stageEl.appendChild(nextItemGroupEl);
+      }
+    }
+    layoutSideExtras();
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
@@ -1965,6 +2039,7 @@ function getItem(level) {
         stageFrameEl.style.removeProperty("--stage-ratio"); // back to the CSS default (square)
       }
       setColsForBreakpoint(e.matches);
+      layoutSideExtras();
     });
 
     // Keeps the live board array's column count in sync with COLS
