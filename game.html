@@ -687,6 +687,14 @@ button {
          title row instead. */
       #gameLayout:not(.on-map) .side-panel .score.gameplay-only {
         order: 0;
+        /* .side-panel .gameplay-only (higher specificity than the plain
+           .score rule up above) forces display:flex on every gameplay-
+           only box, which left the 3 stat pills as un-stretched flex
+           items hugging the left edge instead of filling/centering
+           across the box. Reassert grid here, scoped to desktop
+           gameplay only, so the repeat(3, 1fr) columns above actually
+           take effect and the pills fill the row evenly. */
+        display: grid;
       }
 
       /* ---------- "Back to start" card ----------
@@ -721,7 +729,11 @@ button {
         width: 100%;
         height: 120px;
         border-radius: 16px;
-        object-fit: cover;
+        /* contain (not cover) so the map thumbnail is never cropped —
+           the full image always fits inside the 120px-tall frame,
+           letterboxed if its own proportions don't match exactly. */
+        object-fit: contain;
+        background: rgba(0,0,0,.18);
       }
 
       /* ---------- "Next item" card ----------
