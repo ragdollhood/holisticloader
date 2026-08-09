@@ -226,6 +226,7 @@
       container-type: inline-size;
       display: flex;
       align-items: center;
+      justify-content: center;
     }
 
     .brand small {
@@ -303,6 +304,22 @@
       #gameLayout.on-map .brand-map-logo { display: none; }
     }
     #gameLayout.on-map .brand-gameplay { display: none; }
+
+    /* Laptop/desktop only: show the same brand box (logo + world name)
+       and stats/account box on the start-map screen as during
+       gameplay — not just gameplay-only anymore. Mobile keeps the
+       original map/gameplay swap untouched. */
+    @media (min-width: 761px) {
+      #gameLayout.on-map .brand-gameplay { display: flex; }
+      #gameLayout.on-map .score.gameplay-only { display: grid; }
+    }
+
+    /* Score box sits above the how-to-play box on the start screen —
+       both are flex children of .side-panel, reordered here instead
+       of in the markup so gameplay's own DOM order (used for the
+       score/account readouts) doesn't need to change. */
+    .score { order: 1; }
+    .how-to-play { order: 2; }
 
     /* On the map screen the logo stands on its own — no glass "pill"
        box behind it (the .hud look is right for text/stat readouts,
@@ -1297,12 +1314,11 @@ button {
         </div>
 
         <div class="hud how-to-play map-only" aria-label="How to play">
-          <h3>Så funkar spelet</h3>
+          <h3>How to Play</h3>
           <ol>
-            <li>Klicka på en tom ruta för att placera nästa föremål (visas i förhandsvisningen).</li>
-            <li>Tre eller fler likadana föremål intill varandra slås ihop till nästa nivå.</li>
-            <li>Fyll på och slå samman för att samla poäng och låsa upp fler öar.</li>
-            <li>Klart bräde utan drag kvar avslutar rundan — ångra med Undo eller spara med Save.</li>
+            <li>Tap an empty tile to place the item shown in the preview.</li>
+            <li>Match 3+ of the same item to merge them into the next level.</li>
+            <li>Keep merging to score points and unlock new islands.</li>
           </ol>
         </div>
 
