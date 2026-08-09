@@ -2489,15 +2489,19 @@ function getItem(level) {
 }
 
     // Desktop/laptop widths get 2 extra board columns (7 instead of 5) —
-    // rows stay at 5 everywhere. Declared here (not further down, where
+    // rows stay at 5 there. Declared here (not further down, where
     // applyStageAspectRatio() used to be the only thing reading it) so
     // COLS below can use it immediately at page load.
     const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px)");
 
+    // Mobile only: +1 row (added at the TOP — see addStartingTiles()
+    // below, which shifts its fixed cluster down/right to match) and +2
+    // columns (one added on each side) versus the previous 5x5 mobile
+    // board. Desktop/laptop is untouched (still 5 rows x 7 cols).
     const ROWS_DESKTOP = 5;
-    const ROWS_MOBILE = 5;
+    const ROWS_MOBILE = 6;
     let ROWS = DESKTOP_MEDIA_QUERY.matches ? ROWS_DESKTOP : ROWS_MOBILE;
-    const COLS_MOBILE = 5;
+    const COLS_MOBILE = 7;
     const COLS_DESKTOP = 7;
     let COLS = DESKTOP_MEDIA_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
 
@@ -2990,11 +2994,18 @@ function getItem(level) {
     }
 
     function addStartingTiles() {
+      // Same 3-tile cluster on both breakpoints, just shifted by
+      // (+1 row, +1 col) on mobile to land in the same relative spot
+      // now that mobile has an extra row added at the TOP and an extra
+      // column added on the LEFT (see ROWS_MOBILE/COLS_MOBILE above) —
+      // without the shift the cluster would render hugging the new top
+      // edge and the new left edge instead of staying centered-ish.
+      const shift = DESKTOP_MEDIA_QUERY.matches ? 0 : 1;
       [
         { r: 2, c: 1, level: 1 },
         { r: 2, c: 2, level: 1 },
         { r: 3, c: 2, level: 1 }
-      ].forEach(item => { board[item.r][item.c] = item.level; });
+      ].forEach(item => { board[item.r + shift][item.c + shift] = item.level; });
     }
 
     function saveHistory() {
