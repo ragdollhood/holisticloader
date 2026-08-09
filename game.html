@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wellness Garden Premium | Holistic Loader</title>
+  <!-- Opens the connection to the CDN the supabase-js script tag (bottom of
+       body) loads from ahead of time, so that request doesn't also have to
+       pay for DNS + TLS handshake once the parser finally reaches it. -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="auth-ui.css">
   <style>
     :root {
@@ -1188,8 +1192,6 @@ button {
       font-weight: 700;
     }
 
-    @keyframes pop { from { transform: scale(.55); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
     .merge-burst {
       position: absolute;
       z-index: 8;
@@ -2259,15 +2261,47 @@ button {
    one-shot (no drag/shimmer/voice-switching, since the game only ever
    needs one clean strike per merge).
 
+   Two things this version guards against that a naive port wouldn't:
+   - Chain merges: resolveMerges() can call this several times within
+     the same millisecond (a single tap that cascades level 3 -> 4 -> 5).
+     A compressor on the output bus plus a short amplitude "duck" on
+     back-to-back strikes (mirrors instruments.html's own duck logic)
+     stops those overlapping hits from summing into clipping/distortion.
+   - The noise "shimmer" burst used to build a fresh ~22K-sample random
+     buffer on every single call — real, avoidable CPU work sitting
+     right in the placeTile() hot path. It's now built once lazily and
+     reused (safe: multiple simultaneous AudioBufferSourceNodes can
+     share one AudioBuffer).
+
    The AudioContext is created lazily on the first merge, inside a
    click-driven call stack (placeTile → resolveMerges), which counts
    as a user gesture so autoplay policies won't block it.
 ----------------------------------------------------------------- */
 let mergeAc = null;
+let mergeLimiter = null; // shared DynamicsCompressor all strikes route through
+let mergeNoiseBuf = null; // shared, built once on first use
 function getMergeAc() {
-  if (!mergeAc) mergeAc = new (window.AudioContext || window.webkitAudioContext)();
+  if (!mergeAc) {
+    mergeAc = new (window.AudioContext || window.webkitAudioContext)();
+    mergeLimiter = mergeAc.createDynamicsCompressor();
+    mergeLimiter.threshold.value = -12;
+    mergeLimiter.knee.value = 6;
+    mergeLimiter.ratio.value = 12;
+    mergeLimiter.attack.value = 0.003;
+    mergeLimiter.release.value = 0.25;
+    mergeLimiter.connect(mergeAc.destination);
+  }
   if (mergeAc.state === "suspended") mergeAc.resume();
   return mergeAc;
+}
+function getMergeNoiseBuf(ac, dur) {
+  if (!mergeNoiseBuf) {
+    const buf = ac.createBuffer(1, Math.max(1, Math.floor(ac.sampleRate * dur)), ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+    mergeNoiseBuf = buf;
+  }
+  return mergeNoiseBuf;
 }
 const GONG_PARTIALS = [
   [.497, .24], [.503, .24], [.994, .42], [1, .85], [1.008, .42], [1.34, .24],
@@ -2277,17 +2311,25 @@ const GONG_PARTIALS = [
 const GONG_DEC = 11, GONG_ATT = .03, GONG_LP = 5200, GONG_PEAK = .13,
   GONG_NOISE = .42, GONG_NOISE_F = 1.7, GONG_NOISE_DUR = .5, GONG_HZ = 80;
 
+// Rapid-succession ducking, same idea as strikeGong() in instruments.html:
+// a chain of merges within ~1.2s of each other gets a quieter strike so the
+// overlapping decay tails don't pile up into an overloud/distorted stack.
+let lastMergeGongTime = -Infinity;
+
 function playMergeGong() {
   const ac = getMergeAc();
   const t0 = ac.currentTime + 0.02;
-  const v = 0.9; // overall one-shot level
+  const nowMs = performance.now();
+  const duck = (nowMs - lastMergeGongTime) < 1200 ? .62 : 1;
+  lastMergeGongTime = nowMs;
+  const v = 0.9 * duck; // overall one-shot level
 
   const lp = ac.createBiquadFilter();
   lp.type = "lowpass";
   lp.frequency.value = GONG_LP;
   const vg = ac.createGain();
   vg.connect(lp);
-  lp.connect(ac.destination);
+  lp.connect(mergeLimiter);
   vg.gain.setValueAtTime(0.0001, t0);
   vg.gain.linearRampToValueAtTime(v * GONG_PEAK, t0 + GONG_ATT);
   vg.gain.exponentialRampToValueAtTime(0.0001, t0 + GONG_ATT + GONG_DEC);
@@ -2308,13 +2350,12 @@ function playMergeGong() {
     o.stop(t0 + GONG_ATT + GONG_DEC + 0.15);
   });
 
-  // Soft noise "shimmer" burst at the strike, same as instruments.html
+  // Soft noise "shimmer" burst at the strike, same as instruments.html —
+  // reuses the single shared buffer built by getMergeNoiseBuf() instead of
+  // generating a fresh one on every call.
   const ndur = GONG_NOISE_DUR;
   const nb = ac.createBufferSource();
-  const buf = ac.createBuffer(1, Math.max(1, Math.floor(ac.sampleRate * ndur)), ac.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
-  nb.buffer = buf;
+  nb.buffer = getMergeNoiseBuf(ac, ndur);
   const nf = ac.createBiquadFilter();
   nf.type = "bandpass";
   nf.frequency.value = GONG_HZ * GONG_NOISE_F;
@@ -2835,6 +2876,7 @@ function getItem(level) {
       stageEl.style.setProperty("--world-bg", `url("${getWorldBackgroundUrl(key)}")`);
       worldNameEl.textContent = WORLD_LABELS[key] || key;
       renderWorldPicker();
+      invalidateBoardRenderCache(); // same levels can look different in the new world (WORLD_ITEM_IMAGES) — force a full repaint
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
       renderCollection();
@@ -3426,33 +3468,81 @@ function getItem(level) {
       return img;
     }
 
+    // renderBoard() used to wipe #board with innerHTML="" and rebuild
+    // every single cell/tile/icon from scratch on every call — and it's
+    // called after every tap (via render(), from placeTile()). For a
+    // 25-42 cell board that meant destroying and recreating dozens of
+    // DOM nodes (several of them <img>, forcing a fresh decode each
+    // time) even for the ~24-41 cells that didn't change on that move.
+    // Now the grid of <button class="cell"> elements is built ONCE and
+    // reused; each render only touches the cells whose level actually
+    // changed since the last render, tracked in lastRenderedLevels.
+    // A full rebuild still happens automatically whenever ROWS/COLS
+    // themselves change (crossing the desktop/mobile breakpoint), since
+    // that's the one case the cached grid no longer matches.
+    let boardCellEls = null;       // ROWS x COLS grid of <button class="cell"> elements, reused across renders
+    let lastRenderedLevels = null; // ROWS x COLS grid of the level last painted into each cell
+
+    function paintCell(cell, level) {
+      const item = getItem(level);
+      cell.className = "cell" + (level === 0 ? " empty" : "");
+      cell.setAttribute("aria-label", level === 0 ? "Empty planting circle" : item.name);
+      cell.innerHTML = "";
+      if (level > 0) {
+        const tile = document.createElement("span");
+        tile.className = `tile level-${level}`;
+        tile.appendChild(createItemIcon(item));
+        cell.appendChild(tile);
+      }
+    }
+
     function renderBoard() {
-      boardEl.innerHTML = "";
+      const dimsMatch = boardCellEls && boardCellEls.length === ROWS && boardCellEls[0] && boardCellEls[0].length === COLS;
+      if (!dimsMatch) {
+        boardEl.innerHTML = "";
+        boardCellEls = [];
+        for (let r = 0; r < ROWS; r++) {
+          const cellRow = [];
+          for (let c = 0; c < COLS; c++) {
+            const cell = document.createElement("button");
+            cell.type = "button";
+            // Position stored as data-attributes and read by a single
+            // delegated listener on #board (added once, outside this
+            // function) — now set just once per cell (at creation)
+            // instead of on every render, since the cell element itself
+            // persists across renders.
+            cell.dataset.r = r;
+            cell.dataset.c = c;
+            boardEl.appendChild(cell);
+            cellRow.push(cell);
+          }
+          boardCellEls.push(cellRow);
+        }
+        lastRenderedLevels = null; // grid was rebuilt from scratch — repaint every cell below too
+      }
+      if (!lastRenderedLevels) {
+        lastRenderedLevels = boardCellEls.map(row => row.map(() => undefined));
+      }
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
           const level = board[r][c];
-          const item = getItem(level);
-          const cell = document.createElement("button");
-          cell.type = "button";
-          cell.className = "cell" + (level === 0 ? " empty" : "");
-          cell.setAttribute("aria-label", level === 0 ? "Empty planting circle" : item.name);
-          // Position stored as data-attributes and read by a single
-          // delegated listener on #board (added once, outside this
-          // function) instead of one new closure per cell per render —
-          // cuts listener churn on every move/merge, which matters most
-          // on the frequent re-renders after a chain of merges.
-          cell.dataset.r = r;
-          cell.dataset.c = c;
-          if (level > 0) {
-            const tile = document.createElement("span");
-            tile.className = `tile level-${level}`;
-            tile.appendChild(createItemIcon(item));
-            cell.appendChild(tile);
-          }
-          boardEl.appendChild(cell);
+          if (lastRenderedLevels[r][c] === level) continue; // nothing changed in this circle — leave its DOM alone
+          lastRenderedLevels[r][c] = level;
+          paintCell(boardCellEls[r][c], level);
         }
       }
     }
+
+    // Call before renderBoard() whenever something OTHER than the `board`
+    // array itself changes what a given level should look like — right
+    // now that's just switching worlds (each world reuses the same level
+    // numbers but has its own item art via WORLD_ITEM_IMAGES). Without
+    // this, renderBoard()'s diff would see the same levels as last time
+    // and skip repainting cells whose icon actually needs to change.
+    function invalidateBoardRenderCache() {
+      lastRenderedLevels = null;
+    }
+
 
     function renderStats() {
       scoreStatEl.textContent = formatNumber(score);
