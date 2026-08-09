@@ -107,8 +107,9 @@
 
   /* Column/row counts for the game grid: 5x5 by default, overridden by
      JS (see COLS/ROWS + DESKTOP_MEDIA_QUERY below) — 7x5 on desktop/
-     laptop widths, 5x4 on mobile (mobile drops the top row of the
-     board, see ROWS_MOBILE). */
+     laptop widths, 5x5 on mobile too now (mobile used to drop the top
+     row of the board — see ROWS_MOBILE — but that row has been added
+     back). */
   --board-cols: 5;
   --board-rows: 5;
 }
@@ -1051,7 +1052,10 @@ button {
   grid-template-columns: repeat(var(--board-cols), 1fr);
   grid-template-rows: repeat(var(--board-rows), 1fr);
 
-  gap: 4%;
+  /* Reduced from 4% so circles sit closer together (laptop/desktop —
+     mobile tightens this further still, see the max-width:760px
+     override below). */
+  gap: 2%;
 }
 
   .cell {
@@ -1671,14 +1675,13 @@ button {
       .actions { padding: 5px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
 
-      /* Planting circles sized down a bit on mobile — same grid/gap,
-         just a smaller fraction of each grid square so there's a
-         little more visible space between neighboring circles. Doesn't
-         touch the shared .cell rule (that stays 97% for desktop). */
-      /* Reduced from 86% to 80% (paired with the smaller board bounding
-         box above) so each circle is ~20% smaller while the empty gap
-         between neighboring circles stays visually the same as before. */
-      .cell { width: 80%; }
+      /* Planting circles sized up and pulled much closer together on
+         mobile so they nearly touch: a bigger cell-fill percentage
+         (was 80%, now 96%) plus a much tighter grid gap (see .board
+         override below) closes almost all the empty space between
+         neighboring circles. */
+      .cell { width: 96%; }
+      .board { gap: 1%; }
 
       /* ---------- Mobile map screen ----------
          The side panel becomes a slim icon bar sitting ABOVE the map
@@ -1987,7 +1990,7 @@ button {
         <div class="hud premium-box map-only" id="premiumBox" aria-label="Get Premium">
           <span class="premium-eyebrow">14 Days Free</span>
           <h3 class="premium-headline">Unlock Every Island</h3>
-          <p class="premium-sub">World 1 is free to play, forever. Log in to save your garden and unlock every island, plus get full Premium access on holisticloader.com.</p>
+          <p class="premium-sub">The first level is free to play. Log in to save your garden and start your 14 days free trial that also includes full Premium access on www.holisticloader.com.</p>
           <ul class="premium-checklist">
             <li><span class="chk">✓</span>All Islands Unlocked</li>
             <li><span class="chk">✓</span>Cloud Save &amp; Sync</li>
@@ -2213,6 +2216,16 @@ const WORLD_ITEM_IMAGES = {
     3: "images/game-item-treasure3",
     4: "images/game-item-treasure4",
     5: "images/game-item-treasure5"
+  },
+  // Growth progression: speckled egg → hatching chick → fluffy fledgling
+  // → young bird → fully-plumed phoenix-like adult, matching the
+  // level-1-to-5 rarity/value ramp the shared ITEMS array uses.
+  beachBirds: {
+    1: "images/game-item-bird3",
+    2: "images/game-item-bird4",
+    3: "images/game-item-bird5",
+    4: "images/game-item-bird1",
+    5: "images/game-item-bird2"
   }
 };
 
@@ -2425,7 +2438,7 @@ function getItem(level) {
     const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px)");
 
     const ROWS_DESKTOP = 5;
-    const ROWS_MOBILE = 4;
+    const ROWS_MOBILE = 5;
     let ROWS = DESKTOP_MEDIA_QUERY.matches ? ROWS_DESKTOP : ROWS_MOBILE;
     const COLS_MOBILE = 5;
     const COLS_DESKTOP = 7;
