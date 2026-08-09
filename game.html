@@ -1535,15 +1535,16 @@ button {
            circles AND the space between them down together, so the
            circles end up both smaller and closer to each other in
            absolute terms, not just smaller with the same-size gaps. */
-        /* Bounding box widened and heightened (55%/54% -> 74%/66%) so
-           the 6x5 board renders noticeably bigger — both wider and
-           taller — while staying centered on the same midpoint as
-           before (left/top shifted inward/upward by half of each
-           size increase: -9.5% left, -6% top). */
-        --board-left: 13%;
-        --board-top: calc(36.5% - 30px);
-        --board-width: 74%;
-        --board-height: 66%;
+        /* Bounding box nudged in a touch (74%/66% -> 72%/64%) and moved
+           up (top reduced) per request — re-centered horizontally for
+           the narrower width. The cell fill-% and grid gap just below
+           (97% -> 99%, 0.7% -> 0.4%) are tightened to compensate, so
+           the planting circles themselves render at essentially the
+           same size as before; only the empty margin/gap shrinks. */
+        --board-left: 14%;
+        --board-top: calc(32% - 30px);
+        --board-width: 72%;
+        --board-height: 64%;
       }
 
       .game-layout {
@@ -1769,8 +1770,8 @@ button {
          neighboring circles. Combined with the smaller mobile
          --board-width/--board-height bounding box above, the circles
          themselves also render much smaller overall. */
-      .cell { width: 97%; }
-      .board { gap: 0.7%; }
+      .cell { width: 99%; }
+      .board { gap: 0.4%; }
 
       /* ---------- Mobile map screen ----------
          The side panel becomes a slim icon bar sitting ABOVE the map
