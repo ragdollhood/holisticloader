@@ -1797,10 +1797,10 @@ button {
         width: 100vw;
       }
 
-      #gameLayout.on-map .stage,
-      #gameLayout.on-map .map-screen {
-        border-radius: 0;
-      }
+      /* Corners rounded to match the same radius .stage/.map-screen
+         already use everywhere else (base clamp(20px,3vw,36px)) —
+         previously squared off (border-radius:0) here for the
+         full-bleed mobile map, per request now rounded instead. */
 
       /* The map art now fills the full width of the frame edge-to-edge
          (cover, not contain) — any extra height the image doesn't fit
@@ -1813,11 +1813,11 @@ button {
         background-position: center bottom;
       }
 
-      /* The 1px border inherited from .stage was barely visible once
-         the art goes full-bleed to the screen edge — thickened and
-         tinted gold so it reads as an intentional frame instead of a
-         stray hairline. */
-      #gameLayout.on-map .stage {
+      /* Frame border (thickness + gold tint) is on the shared .stage
+         rule now (see below) instead of scoped to on-map, so the
+         exact same frame surrounds the game world during gameplay
+         too — not just the map. */
+      .stage {
         border-width: 3px;
         border-color: rgba(248, 217, 139, .45);
       }
