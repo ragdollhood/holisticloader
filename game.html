@@ -2251,6 +2251,84 @@ button {
   <script src="auth.js"></script>
   <script>
 /* -----------------------------------------------------------------
+   MERGE SOUND — a symphonic gong struck at 80 Hz, played every time
+   three (or more) matching items merge into a new one. The synth
+   below is ported straight from instruments.html's GONG_VOICES.symphonic
+   recipe (same partials/decay/lowpass/noise-shimmer) so it's the exact
+   same gong timbre, just simplified into a single self-contained
+   one-shot (no drag/shimmer/voice-switching, since the game only ever
+   needs one clean strike per merge).
+
+   The AudioContext is created lazily on the first merge, inside a
+   click-driven call stack (placeTile → resolveMerges), which counts
+   as a user gesture so autoplay policies won't block it.
+----------------------------------------------------------------- */
+let mergeAc = null;
+function getMergeAc() {
+  if (!mergeAc) mergeAc = new (window.AudioContext || window.webkitAudioContext)();
+  if (mergeAc.state === "suspended") mergeAc.resume();
+  return mergeAc;
+}
+const GONG_PARTIALS = [
+  [.497, .24], [.503, .24], [.994, .42], [1, .85], [1.008, .42], [1.34, .24],
+  [1.78, .16], [2.68, .14, .45], [2.71, .13, .5], [3.36, .10, .55],
+  [4.07, .075, .62], [4.97, .05, .7], [6.1, .032, .78], [7.35, .02, .85]
+];
+const GONG_DEC = 11, GONG_ATT = .03, GONG_LP = 5200, GONG_PEAK = .13,
+  GONG_NOISE = .42, GONG_NOISE_F = 1.7, GONG_NOISE_DUR = .5, GONG_HZ = 80;
+
+function playMergeGong() {
+  const ac = getMergeAc();
+  const t0 = ac.currentTime + 0.02;
+  const v = 0.9; // overall one-shot level
+
+  const lp = ac.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = GONG_LP;
+  const vg = ac.createGain();
+  vg.connect(lp);
+  lp.connect(ac.destination);
+  vg.gain.setValueAtTime(0.0001, t0);
+  vg.gain.linearRampToValueAtTime(v * GONG_PEAK, t0 + GONG_ATT);
+  vg.gain.exponentialRampToValueAtTime(0.0001, t0 + GONG_ATT + GONG_DEC);
+
+  GONG_PARTIALS.forEach(([ratio, amp, pAtt]) => {
+    const o = ac.createOscillator();
+    o.type = "sine";
+    o.frequency.value = GONG_HZ * ratio;
+    const g = ac.createGain();
+    if (pAtt != null) {
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.linearRampToValueAtTime(amp, t0 + pAtt);
+    } else {
+      g.gain.value = amp;
+    }
+    o.connect(g).connect(vg);
+    o.start(t0);
+    o.stop(t0 + GONG_ATT + GONG_DEC + 0.15);
+  });
+
+  // Soft noise "shimmer" burst at the strike, same as instruments.html
+  const ndur = GONG_NOISE_DUR;
+  const nb = ac.createBufferSource();
+  const buf = ac.createBuffer(1, Math.max(1, Math.floor(ac.sampleRate * ndur)), ac.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+  nb.buffer = buf;
+  const nf = ac.createBiquadFilter();
+  nf.type = "bandpass";
+  nf.frequency.value = GONG_HZ * GONG_NOISE_F;
+  nf.Q.value = 0.7;
+  const ng = ac.createGain();
+  ng.gain.setValueAtTime(0.0001, t0);
+  ng.gain.linearRampToValueAtTime(v * GONG_PEAK * GONG_NOISE, t0 + 0.003);
+  ng.gain.exponentialRampToValueAtTime(0.0001, t0 + ndur);
+  nb.connect(nf).connect(ng).connect(vg);
+  nb.start(t0);
+  nb.stop(t0 + ndur + 0.05);
+}
+
+/* -----------------------------------------------------------------
    ITEMS — a single shared set of merge-tile art used in every world:
    { level, image, name, score }. No emoji anywhere: every tile,
    the "next up" preview, the collection strip, and the merge burst
@@ -3266,6 +3344,7 @@ function getItem(level) {
           score += createdItem.score * group.length;
           highestCreated = Math.max(highestCreated, level + 1);
           spawnBurst(currentR, currentC, getItemImageUrl(createdItem));
+          playMergeGong();
           keepMerging = true;
         }
       }
