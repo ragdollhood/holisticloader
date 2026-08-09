@@ -1607,8 +1607,14 @@ button {
       #gameLayout:not(.on-map) .side-panel .top-row .brand {
         position: absolute;
         left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
+        /* Was vertically centered on the row (top:50% + translateY
+           -50%) — with the row itself sitting right at the screen's
+           top edge, that let the top of the title image overflow
+           above the row and get clipped by the screen edge. Anchored
+           to a small fixed offset from the row's own top instead, so
+           there's always a few px of clear air above it. */
+        top: 6px;
+        transform: translateX(-50%);
         flex: none;
         max-width: calc(100% - 60px);
         background: none;
@@ -1627,6 +1633,13 @@ button {
            px below), so turning containment off here lets the box
            size to fit its content again. */
         container-type: normal;
+      }
+
+      /* Title image itself sized down a touch on mobile (was capped at
+         36px via the base clamp's floor) so it comfortably clears the
+         row without needing to hug the very top edge. */
+      .top-row .brand-logo-text {
+        max-height: 28px;
       }
 
       .top-row { gap: 6px; }
@@ -1734,31 +1747,26 @@ button {
         padding: 5px 6px;
       }
       .next-item-label {
-        display: block;
-        order: 1;
-        font-family: Arial, sans-serif;
-        font-weight: 800;
-        font-size: 9px;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-        white-space: nowrap;
-        color: var(--gold2);
-        text-shadow: 0 1px 4px rgba(0,0,0,.6);
+        display: none;
       }
       /* Inner icon frame's own background/border/glow (see base
          .next-seed above) is switched off here — with the badge now
          boxed itself, keeping both would nest a small box inside a
          bigger one instead of the single flat pill Score/Moves/Best
-         use. */
+         use. Sized to fill the pill (which stretches to match the
+         Score/Moves/Best row height via .score's align-items:stretch)
+         now that the "Next item" label is gone and isn't claiming any
+         of that space, so the icon can render as large as the box
+         allows. */
       .next-seed {
-        width: 40px; height: 40px; border-radius: 13px; order: 0;
+        width: 100%; height: 100%; border-radius: 13px; order: 0;
         background: none;
         border: none;
         box-shadow: none;
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
       }
-      .next-seed .item-icon { width: 30px; height: 30px; }
+      .next-seed .item-icon { width: 90%; height: 90%; }
 
       .actions { padding: 5px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
