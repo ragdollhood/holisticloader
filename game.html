@@ -322,8 +322,10 @@ button {
 
     /* ---------- Map screen ----------
        Shown instead of the board on first load (and any time the player
-       taps "Map") — images/game-karta1-5.jpg for islands 1-5, then
-       images/game-karta6-10.jpg once every world 1-5 has been cleared.
+       taps "Map") — a single map image with all 10 islands.
+       images/game-karta1-10mobile.webp/.jpg on phones (portrait),
+       images/game-karta1-10laptop.webp/.jpg on desktop/laptop widths
+       (landscape) — see getMapBackgroundUrl() below.
        Sits on top of the stage (same layer the login-gate uses) so the
        board underneath keeps its own state untouched while hidden. */
     .map-screen {
@@ -1133,6 +1135,18 @@ function getItemImageUrl(item) {
   return item && item.image ? `${item.image}.${WEBP_SUPPORTED ? "webp" : "png"}` : null;
 }
 
+// Map background is responsive on top of the webp/jpg format swap: phones
+// get the portrait images/game-karta1-10mobile.*, desktop/laptop widths
+// (DESKTOP_MEDIA_QUERY, declared further down) get the landscape
+// images/game-karta1-10laptop.*. Called both up front and again any time
+// the mobile/desktop breakpoint is crossed at runtime — see the
+// DESKTOP_MEDIA_QUERY "change" listener below.
+function getMapBackgroundUrl(page) {
+  if (!MAP_PAGES[page]) return null;
+  const base = (typeof DESKTOP_MEDIA_QUERY !== "undefined" && DESKTOP_MEDIA_QUERY.matches) ? MAP_IMAGE_LAPTOP : MAP_IMAGE_MOBILE;
+  return `${base}.${WEBP_SUPPORTED ? "webp" : "jpg"}`;
+}
+
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
 const WORLD_LABELS = {
@@ -1159,28 +1173,49 @@ const WORLD_LABELS = {
 };
 
 /* -----------------------------------------------------------------
-   MAP SCREENS — images/game-karta1-5.jpg covers islands 1-5 (the
-   first 5 WORLD_KEYS), images/game-karta6-10.jpg covers islands 6-10
-   (the next 5 WORLD_KEYS). The map is the landing screen after login;
-   tapping an unlocked island calls enterWorld() to open that world's
-   board. "Clearing" an island = creating CLEAR_ITEM_LEVEL's item
-   (level 5, "Lotus") at least once while that world is active — see
-   checkWorldClear() in placeTile(). Clearing island N unlocks island
-   N+1; clearing island 5 additionally reveals the karta6-10 map.
+   MAP SCREEN — a single artwork holds all 10 islands, so there's only
+   ever one "page" now (kept as an object/mapPage variable purely so
+   the rest of the map plumbing below — and the existing map_page
+   cloud column — doesn't need to change shape). The map is the
+   landing screen after login; tapping an unlocked island calls
+   enterWorld() to open that world's board. "Clearing" an island =
+   creating CLEAR_ITEM_LEVEL's item (level 5, "Lotus") at least once
+   while that world is active — see checkWorldClear() in placeTile().
+   Clearing island N unlocks island N+1.
+
+   The map background image is responsive — see getMapBackgroundUrl()
+   below — using images/game-karta1-10mobile.* (portrait) on phones
+   and images/game-karta1-10laptop.* (landscape) on desktop/laptop
+   widths, each with a .webp (preferred) and .jpg fallback.
 
    Positions are percentages (of the map image's width/height) for
-   each numbered circle in the artwork — eyeball-adjust these if the
-   final art shifts the islands at all.
+   each numbered circle in the artwork, numbered from the bottom of
+   the image (island 1, the beach) up to the top (island 10, the ice
+   temple) — eyeball-adjust these if the final art shifts the islands
+   at all. NOTE: these positions are measured against the MOBILE
+   (portrait) artwork; once the laptop (landscape) image is uploaded,
+   these will likely need a second, landscape-specific position set,
+   since a landscape crop/layout of the same scene won't put the
+   islands at the same percentages.
 ----------------------------------------------------------------- */
 const CLEAR_ITEM_LEVEL = 5;
 const MAP_WORLD_KEYS = WORLD_KEYS.slice(0, 10); // islands 1-10
 const MAP_PAGES = {
-  1: { image: "images/game-karta1-5.jpg", keys: MAP_WORLD_KEYS.slice(0, 5), offset: 0 },
-  2: { image: "images/game-karta6-10.jpg", keys: MAP_WORLD_KEYS.slice(5, 10), offset: 5 }
+  1: { keys: MAP_WORLD_KEYS, offset: 0 }
 };
+const MAP_IMAGE_MOBILE = "images/game-karta1-10mobile";
+const MAP_IMAGE_LAPTOP = "images/game-karta1-10laptop";
 const ISLAND_POSITIONS = {
-  1: { x: 18, y: 40 }, 2: { x: 41, y: 40 }, 3: { x: 76, y: 35 }, 4: { x: 20, y: 89 }, 5: { x: 76, y: 89 },
-  6: { x: 9,  y: 55 }, 7: { x: 27, y: 55 }, 8: { x: 48, y: 54 }, 9: { x: 69, y: 55 }, 10: { x: 89, y: 46 }
+  1:  { x: 72, y: 90 }, // beach with dock — bottom right, journey start
+  2:  { x: 15, y: 88 }, // underwater glass dome — bottom left
+  3:  { x: 47, y: 82 }, // sunset tree with lanterns
+  4:  { x: 62, y: 69 }, // crystal cave portal
+  5:  { x: 17, y: 57 }, // jungle ruins/temple
+  6:  { x: 80, y: 57 }, // snowy mountain
+  7:  { x: 48, y: 43 }, // cherry blossom fountain garden
+  8:  { x: 17, y: 29 }, // village with waterfalls
+  9:  { x: 78, y: 29 }, // dragon volcano castle
+  10: { x: 48, y: 16 }  // ice/crystal temple — top, journey end
 };
 
 const EMPTY_ITEM = { level: 0, image: null, name: "Empty", score: 0 };
@@ -1222,7 +1257,7 @@ function getItem(level) {
     // Map progression state — persisted to Supabase alongside the rest
     // of the save (see currentSaveRow() / loadFromCloud()).
     let clearedWorlds = [];   // world keys that have been "cleared" (see CLEAR_ITEM_LEVEL)
-    let mapPage = 1;          // 1 = karta1-5.jpg unlocked, 2 = karta6-10.jpg also unlocked
+    let mapPage = 1;          // always 1 now — single map image holds all 10 islands (var kept for the cloud row's shape)
     let onMap = true;         // true while the map screen is showing instead of the board
     let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
 
@@ -1361,16 +1396,20 @@ function getItem(level) {
     function applyMapAspectRatio(page) {
       const info = MAP_PAGES[page];
       if (!info) return;
-      measureAndApplyRatio(`map:${page}`, info.image, () => onMap && mapPage === page);
+      const cacheKey = `map:${page}:${DESKTOP_MEDIA_QUERY.matches ? "laptop" : "mobile"}`;
+      measureAndApplyRatio(cacheKey, getMapBackgroundUrl(page), () => onMap && mapPage === page);
     }
 
-    // Both map images are needed the moment login resolves (the map is
-    // the landing screen) and are otherwise only fetched lazily on
-    // first display — warm the browser cache for both up front so
-    // flipping from karta1-5 to karta6-10 (or reloading mid-session)
-    // never shows a blank/loading frame.
+    // Both the mobile (portrait) and laptop (landscape) map images are
+    // needed the moment login resolves (the map is the landing screen)
+    // and are otherwise only fetched lazily on first display — warm the
+    // browser cache for both up front so crossing the mobile/desktop
+    // breakpoint (or reloading mid-session) never shows a blank/loading
+    // frame.
     function preloadMapImages() {
-      Object.values(MAP_PAGES).forEach(page => { new Image().src = page.image; });
+      [MAP_IMAGE_MOBILE, MAP_IMAGE_LAPTOP].forEach(base => {
+        new Image().src = `${base}.${WEBP_SUPPORTED ? "webp" : "jpg"}`;
+      });
     }
     preloadMapImages();
 
@@ -1379,6 +1418,7 @@ function getItem(level) {
     // or clear the measured ratio immediately rather than waiting for
     // the next world switch.
     DESKTOP_MEDIA_QUERY.addEventListener("change", (e) => {
+      if (onMap) updateMapBackground(); // mobile/laptop map art swap regardless of which way the breakpoint just crossed
       if (e.matches) {
         if (onMap) applyMapAspectRatio(mapPage); else applyStageAspectRatio(currentWorldKey);
       } else {
@@ -1449,10 +1489,6 @@ function getItem(level) {
       onMap = true;
       stageFrameEl.classList.add("on-map");
       justUnlockedKey = highlightKey || null;
-      if (justUnlockedKey) {
-        const page = MAP_WORLD_KEYS.indexOf(justUnlockedKey) < 5 ? 1 : 2;
-        mapPage = Math.max(mapPage, page);
-      }
       renderMap();
       mapScreenEl.classList.add("show");
       applyMapAspectRatio(mapPage);
@@ -1462,6 +1498,13 @@ function getItem(level) {
           renderMap();
         }, 3000);
       }
+    }
+
+    // Just the background swap (mobile <-> laptop art), without rebuilding
+    // the island buttons — used when only the breakpoint changed, not the
+    // map's unlock state.
+    function updateMapBackground() {
+      mapScreenEl.style.setProperty("--map-bg", `url("${getMapBackgroundUrl(mapPage)}")`);
     }
 
     function hideMap() {
@@ -1478,8 +1521,8 @@ function getItem(level) {
 
     function renderMap() {
       const page = MAP_PAGES[mapPage] || MAP_PAGES[1];
-      mapScreenEl.style.setProperty("--map-bg", `url("${page.image}")`);
-      mapTitleEl.textContent = mapPage === 1 ? "Islands 1 - 5" : "Islands 6 - 10";
+      updateMapBackground();
+      mapTitleEl.textContent = "Choose an island";
 
       // Re-render every button (cheap: at most 10) rather than diffing —
       // this only runs when the map is opened, an island is cleared, or
@@ -1515,9 +1558,8 @@ function getItem(level) {
 
     // Called from placeTile() right after a merge. If the item just
     // created is the "clear" tier (CLEAR_ITEM_LEVEL) and this world
-    // hasn't been marked cleared yet, mark it, unlock the next island
-    // (flipping to the karta6-10 map if that next island is #6), and
-    // drop the player back on the map with the new island pulsing.
+    // hasn't been marked cleared yet, mark it, unlock the next island,
+    // and drop the player back on the map with the new island pulsing.
     function checkWorldClear(createdLevel) {
       if (createdLevel < CLEAR_ITEM_LEVEL) return;
       if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return;
@@ -1728,7 +1770,7 @@ function getItem(level) {
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
           clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds : [];
-          mapPage = data.map_page === 2 ? 2 : 1;
+          mapPage = 1; // only one map page now (all 10 islands on one image) — kept as a var for the cloud row's shape
           history = [];
           setWorld(currentWorldKey);
           bestStatEl.textContent = formatNumber(best);
