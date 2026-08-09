@@ -1535,21 +1535,15 @@ button {
            circles AND the space between them down together, so the
            circles end up both smaller and closer to each other in
            absolute terms, not just smaller with the same-size gaps. */
-        --board-left: 22.5%;
-        /* Pushed down by one full row's height (one planting circle):
-           original baseline was calc(11% - 30px); board-height (78%)
-           over the mobile board's 4 rows is 19.5% per row, so the new
-           top is 11% + 19.5% = 30.5%. Written as a plain percentage
-           (not derived from var(--board-rows), which depends on a
-           JS-set inline style timing out correctly and previously
-           caused the board to jump the WRONG way — upward instead of
-           downward — when it failed to resolve) so this is guaranteed
-           to always push the board down, never up. Then shifted a
-           further +12% to keep the (now smaller) box centered on the
-           same vertical midpoint as before. */
-        --board-top: calc(42.5% - 30px);
-        --board-width: 55%;
-        --board-height: 54%;
+        /* Bounding box widened and heightened (55%/54% -> 74%/66%) so
+           the 6x5 board renders noticeably bigger — both wider and
+           taller — while staying centered on the same midpoint as
+           before (left/top shifted inward/upward by half of each
+           size increase: -9.5% left, -6% top). */
+        --board-left: 13%;
+        --board-top: calc(36.5% - 30px);
+        --board-width: 74%;
+        --board-height: 66%;
       }
 
       .game-layout {
@@ -1622,12 +1616,22 @@ button {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
         padding: 0;
+        /* .brand's base rule sets container-type: inline-size for the
+           cqw-based desktop sizing above — under that containment an
+           auto/shrink-to-fit width (this box is absolutely positioned
+           with no explicit width) can no longer size itself from its
+           own content, which was collapsing the box narrower than the
+           world-name text and forcing it to wrap onto a second line.
+           Mobile doesn't use cqw sizing anyway (font-size is a fixed
+           px below), so turning containment off here lets the box
+           size to fit its content again. */
+        container-type: normal;
       }
 
       .top-row { gap: 6px; }
       .brand { padding: 6px 9px; }
       .brand small { font-size: 8px; }
-      .brand strong { font-size: 15px; }
+      .brand strong { font-size: 15px; white-space: nowrap; }
 
       /* 5 columns now: the next-item badge (sized to its own content,
          not stretched), then the 3 stats, then "Back to start" — those
@@ -2047,7 +2051,7 @@ button {
         <div class="hud premium-box map-only" id="premiumBox" aria-label="Get Premium">
           <span class="premium-eyebrow">14 Days Free</span>
           <h3 class="premium-headline">Unlock Every Island</h3>
-          <p class="premium-sub">Free trial for 14 days.</p>
+          <p class="premium-sub">The first level is free to play. Log in to save your garden and start your 14 days free trial that also includes full Premium access on www.holisticloader.com.</p>
           <ul class="premium-checklist">
             <li><span class="chk">✓</span>All Islands Unlocked</li>
             <li><span class="chk">✓</span>Cloud Save &amp; Sync</li>
@@ -2499,9 +2503,9 @@ function getItem(level) {
     // columns (one added on each side) versus the previous 5x5 mobile
     // board. Desktop/laptop is untouched (still 5 rows x 7 cols).
     const ROWS_DESKTOP = 5;
-    const ROWS_MOBILE = 6;
+    const ROWS_MOBILE = 5;
     let ROWS = DESKTOP_MEDIA_QUERY.matches ? ROWS_DESKTOP : ROWS_MOBILE;
-    const COLS_MOBILE = 7;
+    const COLS_MOBILE = 6;
     const COLS_DESKTOP = 7;
     let COLS = DESKTOP_MEDIA_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
 
@@ -2994,13 +2998,10 @@ function getItem(level) {
     }
 
     function addStartingTiles() {
-      // Same 3-tile cluster on both breakpoints, just shifted by
-      // (+1 row, +1 col) on mobile to land in the same relative spot
-      // now that mobile has an extra row added at the TOP and an extra
-      // column added on the LEFT (see ROWS_MOBILE/COLS_MOBILE above) —
-      // without the shift the cluster would render hugging the new top
-      // edge and the new left edge instead of staying centered-ish.
-      const shift = DESKTOP_MEDIA_QUERY.matches ? 0 : 1;
+      // Same 3-tile cluster on both breakpoints — mobile's board is
+      // 6 cols x 5 rows now (see ROWS_MOBILE/COLS_MOBILE above), close
+      // enough to desktop's proportions that no extra shift is needed.
+      const shift = 0;
       [
         { r: 2, c: 1, level: 1 },
         { r: 2, c: 2, level: 1 },
