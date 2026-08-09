@@ -1465,11 +1465,20 @@ button {
     @media (max-width: 760px), (orientation: landscape) and (max-height: 500px) {
       .screen { padding: 5px; }
 
+      /* Board bounding box shrunk to ~86% of its previous size (and
+         re-centered — left/top adjusted to keep equal margins) so that,
+         combined with the smaller .cell fill % below, the planting
+         circles render about 20% smaller while the gap BETWEEN them
+         stays the same as before. Just shrinking .cell on its own would
+         make that gap grow (less circle, same grid square = more empty
+         margin) since the grid's own gap% and the board's overall pixel
+         size wouldn't change — shrinking the whole board's footprint by
+         the right amount compensates for that. */
       :root {
-        --board-left: 4%;
-        --board-top: 5%;
-        --board-width: 92%;
-        --board-height: 90%;
+        --board-left: 10.5%;
+        --board-top: 11%;
+        --board-width: 79%;
+        --board-height: 78%;
       }
 
       .game-layout {
@@ -1531,6 +1540,15 @@ button {
          below and layoutSideExtras() in the JS, which now inserts the
          next-item badge as this row's first child, mobile only). Login
          moved out of this row entirely — see .actions #authRoot below. */
+      /* Pull the score/next-item/back-to-start row out of its default
+         end-of-panel position (.score { order: 1 } near the top of this
+         stylesheet, meant for the start screen's how-to-play/premium
+         stacking order) so on mobile gameplay it renders immediately
+         after .stage-frame instead of after world-picker/collection/
+         actions — i.e. directly under the game-world image, matching
+         the desktop/laptop behavior above. */
+      #gameLayout:not(.on-map) .side-panel .score.gameplay-only { order: 0; }
+
       .score { padding: 6px 8px; gap: 6px; grid-template-columns: auto repeat(4, 1fr); align-items: center; }
       .score .stat { min-width: 0; padding: 5px 6px; }
       .stat b { font-size: 13px; }
@@ -1590,7 +1608,10 @@ button {
          just a smaller fraction of each grid square so there's a
          little more visible space between neighboring circles. Doesn't
          touch the shared .cell rule (that stays 97% for desktop). */
-      .cell { width: 86%; }
+      /* Reduced from 86% to 80% (paired with the smaller board bounding
+         box above) so each circle is ~20% smaller while the empty gap
+         between neighboring circles stays visually the same as before. */
+      .cell { width: 80%; }
 
       /* ---------- Mobile map screen ----------
          The side panel becomes a slim icon bar sitting ABOVE the map
@@ -1617,18 +1638,22 @@ button {
          placed first via order so it renders above the image instead
          of below it — .stage-frame comes first in the markup, but
          visually the bar needs to sit on top. */
+      /* Padding/gap trimmed down to the minimum this header actually
+         needs (icon row + title logo, nothing more) so the map image
+         below gets as much of the fixed 100svh height as possible. */
       #gameLayout.on-map .side-panel {
         order: -1;
         position: static;
         flex: 0 0 auto;
         max-height: none;
-        padding: 10px 16px;
+        padding: 2px 16px 0;
+        gap: 0;
       }
 
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
         justify-content: space-between;
-        min-height: 44px;
+        min-height: 30px;
       }
 
       #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
@@ -1675,7 +1700,7 @@ button {
         z-index: auto;
         max-width: 100%;
         width: 100%;
-        margin-top: 6px;
+        margin-top: 0;
         text-align: center;
       }
 
@@ -1708,7 +1733,7 @@ button {
         display: flex;
         width: auto;
         flex: 0 0 auto;
-        margin: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
+        margin: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
       }
     }
 
@@ -2345,15 +2370,23 @@ function getItem(level) {
     const authRootEl = document.getElementById("authRoot");
     const topRowEl = document.querySelector(".top-row");
 
-    /* Moves the home-thumb ("back to the map") button, the next-item
-       badge, and the login/account icon between their homes depending
-       on the desktop/mobile breakpoint:
+    /* Moves the home-thumb ("back to the map") button and the next-item
+       badge between their homes depending on the desktop/mobile
+       breakpoint:
        - Desktop/laptop: home-thumb + next-item badge both live in
          #nextBox (see .next-box CSS); login icon stays in .top-row.
        - Mobile: home-thumb + next-item badge live in the score row
          alongside the 3 stats (next-item badge first, home-thumb
-         last); login icon moves into the actions row instead, at the
-         far right of the Undo/New buttons.
+         last). The login/account icon now ALWAYS stays put in
+         .top-row (its original markup position) on every breakpoint —
+         it used to get pulled into #actionsBox on mobile, but
+         #actionsBox is a "gameplay-only" box that's display:none while
+         the map/start screen is showing (see
+         "#gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand)"),
+         so the icon disappeared entirely on the mobile start screen.
+         Keeping it in .top-row means it's visible in both the map
+         screen (top-right of the icon bar) and during gameplay (top-row
+         is reordered to the very top there too).
        Also relocates the big map-screen title image (#mapBrand):
        - Desktop/laptop: unchanged — stays inside .map-screen itself,
          overlaid on top of the map artwork.
@@ -2364,25 +2397,19 @@ function getItem(level) {
        "change" event fires, so resizing across the breakpoint (or
        rotating a foldable) relocates them immediately. */
     function layoutSideExtras() {
+      topRowEl.appendChild(authRootEl);
       if (DESKTOP_MEDIA_QUERY.matches) {
         nextBoxEl.appendChild(homeBtnEl);
         nextBoxEl.appendChild(nextItemGroupEl);
-        // Account icon stays put in .top-row on desktop/laptop too (see
-        // #authRoot markup) — it no longer gets pulled into the score
-        // box, so it stands alone in the top-right corner instead of
-        // sharing space with the score/moves/best stats.
-        topRowEl.appendChild(authRootEl);
         mapScreenEl.insertBefore(mapBrandEl, mapTitleEl);
       } else {
         // Mobile: next-item badge sits first in the score row (directly
         // under the board image, no longer overlaid on top of it),
         // then the 3 stats, then "Back to start" at the very end — see
         // the max-width:760px .score rules for the matching 5-column
-        // layout. Login/account icon moves into the actions row
-        // instead, after Undo/New, at the far right.
+        // layout.
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.appendChild(homeBtnEl);
-        actionsBoxEl.appendChild(authRootEl);
         sidePanelEl.insertBefore(mapBrandEl, topRowEl.nextSibling);
       }
     }
