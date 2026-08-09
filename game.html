@@ -1489,12 +1489,16 @@ button {
          the right amount compensates for that. */
       :root {
         --board-left: 10.5%;
-        /* Pushed down an extra row's worth (--board-height / --board-rows,
-           i.e. the height of one full planting circle) so the board sits
-           lower in the stage image on mobile. --board-rows resolves via
-           inheritance from #stageFrame's inline style (ROWS_MOBILE, see
-           the JS below), so this stays correct if that value ever changes. */
-        --board-top: calc(11% - 30px + (var(--board-height) / var(--board-rows)));
+        /* Pushed down by one full row's height (one planting circle):
+           original baseline was calc(11% - 30px); board-height (78%)
+           over the mobile board's 4 rows is 19.5% per row, so the new
+           top is 11% + 19.5% = 30.5%. Written as a plain percentage
+           (not derived from var(--board-rows), which depends on a
+           JS-set inline style timing out correctly and previously
+           caused the board to jump the WRONG way — upward instead of
+           downward — when it failed to resolve) so this is guaranteed
+           to always push the board down, never up. */
+        --board-top: calc(30.5% - 30px);
         --board-width: 79%;
         --board-height: 78%;
       }
@@ -1697,11 +1701,15 @@ button {
         border-radius: 0;
       }
 
-      /* Kept as contain (matches desktop/laptop) so the start-screen art
-         is never cropped vertically on mobile — it letterboxes left/right
-         instead of losing any of the image's height. */
+      /* The map art now fills the full width of the frame edge-to-edge
+         (cover, not contain) — any extra height the image doesn't fit
+         gets cropped from the TOP only (background-position anchored to
+         the bottom keeps the image's bottom edge fixed to the frame's
+         bottom edge, so overflow is trimmed above instead of split
+         evenly top/bottom). */
       #gameLayout.on-map .map-screen {
-        background-size: contain;
+        background-size: cover;
+        background-position: center bottom;
       }
 
       /* The 1px border inherited from .stage was barely visible once
@@ -1732,7 +1740,16 @@ button {
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
         justify-content: space-between;
+        align-items: center;
         min-height: 26px;
+      }
+
+      /* Explicitly center the "how to play" and login icons on the
+         cross-axis within the icon bar's own height, regardless of any
+         difference in their intrinsic sizes (auth.js's injected
+         #accountBtn vs. the fixed 34px howtoplay-btn). */
+      #gameLayout.on-map .side-panel .top-row > * {
+        align-self: center;
       }
 
       #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
@@ -1783,9 +1800,15 @@ button {
         text-align: center;
       }
 
+      /* Nearly doubled from clamp(30px, 8vw, 52px) — sized up, still
+         horizontally centered via .map-brand's text-align:center + this
+         image's own auto side-margins. margin-top is 0 (not the 6px
+         tried previously, which added visible empty space above the
+         logo) so the image sits flush against the icon bar right above
+         it, as high up the screen as the layout allows. */
       #gameLayout.on-map .map-brand-img {
-        max-height: clamp(30px, 8vw, 52px);
-        margin: -6px auto 0;
+        max-height: clamp(56px, 15vw, 98px);
+        margin: 0 auto;
       }
 
       /* The small logo that used to be the icon bar's only title is now
