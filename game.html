@@ -1715,7 +1715,20 @@ button {
          row. Label is placed after the icon in markup, but reordered
          (order:1) to render below it here, matching the icon-then-
          label pattern the stat pills and home button use. */
-      .next-item-group { position: static; left: auto; right: auto; bottom: auto; z-index: auto; justify-content: center; }
+      /* Boxed the same way the Score/Moves/Best stat pills are (see
+         .stat above) — background, border, radius, padding — so the
+         next-item badge reads as one more pill in the row instead of
+         a bare floating icon+label. flex:1 1 0 matches .score .stat's
+         mobile override so it claims an even share of the row. */
+      .next-item-group {
+        position: static; left: auto; right: auto; bottom: auto; z-index: auto; justify-content: center;
+        flex: 1 1 0;
+        min-width: 0;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 16px;
+        padding: 5px 6px;
+      }
       .next-item-label {
         display: block;
         order: 1;
@@ -1728,7 +1741,19 @@ button {
         color: var(--gold2);
         text-shadow: 0 1px 4px rgba(0,0,0,.6);
       }
-      .next-seed { width: 40px; height: 40px; border-radius: 13px; order: 0; }
+      /* Inner icon frame's own background/border/glow (see base
+         .next-seed above) is switched off here — with the badge now
+         boxed itself, keeping both would nest a small box inside a
+         bigger one instead of the single flat pill Score/Moves/Best
+         use. */
+      .next-seed {
+        width: 40px; height: 40px; border-radius: 13px; order: 0;
+        background: none;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
       .next-seed .item-icon { width: 30px; height: 30px; }
 
       .actions { padding: 5px; gap: 4px; }
