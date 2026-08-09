@@ -1537,6 +1537,31 @@ button {
 
       #gameLayout:not(.on-map) .side-panel .top-row {
         order: -1;
+        position: relative;
+        justify-content: flex-end;
+      }
+
+      /* Title (wordmark image + world name) no longer sits in a glass
+         "pill" box on the gameplay screen — same idea as the map
+         screen's borderless logo, just scoped to gameplay instead.
+         Taken out of flex flow and centered on the row itself (not
+         centered within whatever space is left after the login icon),
+         so it stays visually centered regardless of that icon's width;
+         the login icon (#authRoot), still a normal flex item, is
+         pushed to the far right by .top-row's justify-content above. */
+      #gameLayout:not(.on-map) .side-panel .top-row .brand {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        flex: none;
+        max-width: calc(100% - 60px);
+        background: none;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        padding: 0;
       }
 
       .top-row { gap: 6px; }
