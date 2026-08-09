@@ -1585,12 +1585,19 @@ button {
          the desktop/laptop behavior above. */
       #gameLayout:not(.on-map) .side-panel .score.gameplay-only { order: 0; }
 
-      .score { padding: 6px 8px; gap: 6px; grid-template-columns: auto repeat(4, 1fr); align-items: center; }
-      .score .stat { min-width: 0; padding: 5px 6px; }
+      .score { padding: 6px 8px; gap: 6px; grid-template-columns: auto repeat(4, 1fr); align-items: stretch; }
+      .score .stat {
+        min-width: 0;
+        padding: 5px 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      .home-thumb { flex-direction: column; align-items: center; justify-content: center; padding: 5px 6px; gap: 3px; width: 100%; }
+      .home-thumb { flex-direction: column; align-items: center; justify-content: center; padding: 5px 6px; gap: 3px; width: 100%; height: 100%; }
       .home-thumb-img,
       .home-thumb-label { display: none; }
       .home-thumb-icon { display: block; width: 17px; height: 17px; color: var(--gold2); }
@@ -1631,10 +1638,13 @@ button {
          #nextItemGroup into #scoreBox instead of into the stage on
          mobile), directly under the image and to the left of the
          login icon / stats / home button. Shrunk a bit to fit that
-         row, and still shows the "Next item" caption above the icon. */
-      .next-item-group { position: static; left: auto; right: auto; bottom: auto; z-index: auto; }
+         row. Label is placed after the icon in markup, but reordered
+         (order:1) to render below it here, matching the icon-then-
+         label pattern the stat pills and home button use. */
+      .next-item-group { position: static; left: auto; right: auto; bottom: auto; z-index: auto; justify-content: center; }
       .next-item-label {
         display: block;
+        order: 1;
         font-family: Arial, sans-serif;
         font-weight: 800;
         font-size: 9px;
@@ -1644,7 +1654,7 @@ button {
         color: var(--gold2);
         text-shadow: 0 1px 4px rgba(0,0,0,.6);
       }
-      .next-seed { width: 40px; height: 40px; border-radius: 13px; }
+      .next-seed { width: 40px; height: 40px; border-radius: 13px; order: 0; }
       .next-seed .item-icon { width: 30px; height: 30px; }
 
       .actions { padding: 5px; gap: 4px; }
@@ -1772,7 +1782,7 @@ button {
       }
 
       #gameLayout.on-map .map-brand-img {
-        max-height: clamp(40px, 12vw, 72px);
+        max-height: clamp(30px, 8vw, 52px);
         margin: -6px auto 0;
       }
 
