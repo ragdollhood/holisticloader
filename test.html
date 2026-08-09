@@ -288,6 +288,14 @@
     }
 
     #gameLayout.on-map .brand-map-logo { display: flex; }
+
+    /* Laptop/desktop only: the start-map title now sits directly on
+       top of the map image itself (see .map-brand below), so the old
+       side-panel logo pill is hidden here instead. Mobile keeps the
+       side-panel version untouched (see the max-width:760px query). */
+    @media (min-width: 761px) {
+      #gameLayout.on-map .brand-map-logo { display: none; }
+    }
     #gameLayout.on-map .brand-gameplay { display: none; }
 
     /* On the map screen the logo stands on its own — no glass "pill"
@@ -591,6 +599,47 @@ button {
     }
 
     .map-screen.show { display: block; }
+
+    /* Title image sitting directly on top of the map artwork, top-left
+       corner — laptop/desktop only (see the min-width query below).
+       Replaces images/game-holistigametitel.png, which used to show in
+       the side panel instead (see #gameLayout.on-map .brand-map-logo
+       above). Falls back to plain "Holistic Game" text (see the inline
+       onerror handler on the <img> in the markup) if the file is
+       missing or fails to load. */
+    .map-brand {
+      display: none;
+    }
+
+    @media (min-width: 761px) {
+      .map-brand {
+        display: block;
+        position: absolute;
+        top: clamp(12px, 2.4vw, 26px);
+        left: clamp(12px, 2.4vw, 26px);
+        z-index: 3;
+        max-width: 46%;
+      }
+    }
+
+    .map-brand-img {
+      display: block;
+      width: 100%;
+      max-height: clamp(70px, 16vw, 190px);
+      height: auto;
+      object-fit: contain;
+      object-position: left top;
+    }
+
+    .map-brand-fallback {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: clamp(18px, 3.2vw, 30px);
+      color: #fff4d5;
+    }
 
     .map-title {
       position: absolute;
@@ -1134,6 +1183,16 @@ button {
           </div>
 
           <div class="map-screen" id="mapScreen" aria-label="World map">
+            <div class="map-brand" id="mapBrand">
+              <img
+                class="map-brand-img"
+                id="mapBrandImg"
+                src="images/game-holisticgametiteltext.png"
+                alt="Holistic Game"
+                onerror="this.style.display='none'; document.getElementById('mapBrandFallback').style.display='block';"
+              >
+              <span class="map-brand-fallback" id="mapBrandFallback">Holistic Game</span>
+            </div>
             <div class="map-title" id="mapTitle">Choose an island</div>
           </div>
 
