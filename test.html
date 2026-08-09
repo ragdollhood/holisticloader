@@ -216,7 +216,10 @@
       flex: 1 1 auto;
       min-width: 0;
       padding: 10px 14px;
-      border-radius: 999px;
+      border-radius: 20px;
+      container-type: inline-size;
+      display: flex;
+      align-items: center;
     }
 
     .brand small {
@@ -232,10 +235,99 @@
     .brand strong {
       display: block;
       margin-top: 2px;
-      font-size: clamp(18px, 3vw, 28px);
-      letter-spacing: -.04em;
+      font-size: clamp(16px, 8cqw, 26px);
+      line-height: 1.1;
+      letter-spacing: -.02em;
       color: #fff4d5;
-      white-space: nowrap;
+      white-space: normal;
+      overflow-wrap: break-word;
+    }
+
+    /* Logo image that replaces the old "Holistic Loader" text on the
+       MAP screen, where it stands alone (no world name shown there).
+       Sized to the brand pill's own height via cqw/clamp so it scales
+       with the layout instead of a fixed pixel size. Falls back to a
+       plain "HOLISTIC GAME" text label (see the inline onerror handler
+       on the <img> in the markup) if the file is missing or fails to
+       load. */
+    .brand-logo {
+      display: block;
+      max-width: 100%;
+      max-height: clamp(64px, 30cqw, 150px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .brand-fallback {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      font-size: clamp(15px, 7cqw, 22px);
+      color: #fff4d5;
+    }
+
+    /* Map-screen brand group (full logo, or its text fallback) vs.
+       gameplay brand group (small wordmark image + the current world's
+       name, stacked the same way the old "Holistic Loader" / world-name
+       text pair used to be). Only one group is ever visible at a time —
+       toggled by #gameLayout.on-map, the same class used to hide the
+       rest of the gameplay-only side-panel chrome while the map shows. */
+    .brand-map-logo {
+      display: none;
+      align-items: center;
+    }
+
+    .brand-gameplay {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    #gameLayout.on-map .brand-map-logo { display: flex; }
+    #gameLayout.on-map .brand-gameplay { display: none; }
+
+    /* On the map screen the logo stands on its own — no glass "pill"
+       box behind it (the .hud look is right for text/stat readouts,
+       but just clips/cramps a big logo image). Border, background,
+       blur and shadow all come from the shared .hud class, so they're
+       switched off here with a more specific selector rather than
+       touching .hud itself (which the score/collection/etc. panels
+       still rely on). */
+    #gameLayout.on-map .brand {
+      background: none;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      padding: 0;
+    }
+
+    /* Small wordmark image that replaces just the old "Holistic Loader"
+       label on the gameplay view — sits above the world name, so it's
+       sized like that old small-caps label rather than the big map
+       logo. Falls back to plain "HOLISTIC GAME" text (see the inline
+       onerror handler) if the file is missing or fails to load. */
+    .brand-logo-text {
+      display: block;
+      max-width: 100%;
+      max-height: clamp(12px, 6cqw, 20px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .brand-fallback-text {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--gold2);
     }
 
     .score {
@@ -288,23 +380,24 @@
        board. Same click destination as the Map button (showMap(null)). */
     .home-thumb {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
       gap: 10px;
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.12);
-      border-radius: 18px;
-      padding: 8px 12px;
+      border-radius: 22px;
+      padding: 14px;
       cursor: pointer;
       width: 100%;
     }
 
     .home-thumb-img {
       display: block;
-      width: 44px;
-      height: 44px;
+      width: 100%;
+      max-width: 220px;
+      aspect-ratio: 1 / 1;
       flex: 0 0 auto;
-      border-radius: 14px;
+      border-radius: 20px;
       object-fit: cover;
       border: 2px solid rgba(248,217,139,.55);
       box-shadow:
@@ -330,7 +423,7 @@
       letter-spacing: .06em;
       text-transform: uppercase;
       color: var(--gold2);
-      text-align: left;
+      text-align: center;
     }
 
     /* The single HUD element allowed to remain on top of the game-world
@@ -353,6 +446,55 @@
       box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* Desktop/laptop only: the on-stage next-item overlay is hidden
+       (see .next-seed-panel below, which replaces it in the side panel
+       — the mobile media query further down restores this back to a
+       small on-stage badge, since mobile keeps the old layout). */
+    .next-seed { display: none; }
+
+    /* Large "next item" readout that fills the side panel's own
+       leftover height (the panel is a flex column with content stacked
+       at the top, so on desktop/laptop widths — where it's taller than
+       its content — this grows to soak up ALL the empty space at the
+       bottom, reaching the same bottom edge as the game board next to
+       it, instead of just sitting at a fixed minimum size). */
+    .next-seed-panel {
+      flex: 1 1 auto;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 22px;
+    }
+
+    .next-seed-panel-label {
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--gold2);
+    }
+
+    .next-seed-panel-icon {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .next-seed-panel .item-icon {
+      width: min(70%, 170px);
+      height: min(70%, 170px);
+      max-width: 100%;
+      max-height: 100%;
+      filter: drop-shadow(0 0 22px rgba(248,217,139,.40)) drop-shadow(0 8px 14px rgba(0,0,0,.30));
     }
 
   .actions {
@@ -572,16 +714,12 @@ button {
 
     .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
 
-    .map-btn {
-      width: 100%;
-    }
-
     /* While the map is showing, hide the gameplay-only side-panel chrome
-       (score, home thumbnail, map button, world picker, collection,
-       actions) — the map screen has its own title and doesn't need any
-       of it. Brand/title + account icon stay visible. Targets
-       #gameLayout now (not .stage-frame), since that chrome lives in
-       the side panel, not on top of the image, anymore. */
+       (score, home thumbnail, world picker, collection, actions) — the
+       map screen has its own title and doesn't need any of it. Brand/
+       title + account icon stay visible. Targets #gameLayout now (not
+       .stage-frame), since that chrome lives in the side panel, not on
+       top of the image, anymore. */
     #gameLayout.on-map .gameplay-only {
       display: none;
     }
@@ -639,8 +777,12 @@ button {
   align-self: center;
 
   border-radius: 50%;
-  background: transparent;
-  border: none;
+  background: radial-gradient(circle, rgba(255,255,255,.07), rgba(255,255,255,.02) 55%, transparent 78%);
+  border: 1px solid rgba(255,242,189,.18);
+  box-shadow:
+    0 0 16px 2px rgba(248,217,139,.38),
+    0 0 32px rgba(248,217,139,.22),
+    inset 0 0 14px rgba(248,217,139,.14);
 
   display: grid;
   place-items: center;
@@ -649,8 +791,12 @@ button {
     .cell:hover, .cell:focus-visible {
       outline: none;
       transform: scale(1.08);
-      background: radial-gradient(circle, rgba(248,217,139,.22), rgba(248,217,139,.05) 46%, transparent 72%);
-      box-shadow: 0 0 22px rgba(248,217,139,.20);
+      border-color: rgba(255,242,189,.32);
+      background: radial-gradient(circle, rgba(248,217,139,.28), rgba(248,217,139,.06) 46%, transparent 72%);
+      box-shadow:
+        0 0 22px 3px rgba(248,217,139,.55),
+        0 0 44px rgba(248,217,139,.32),
+        inset 0 0 18px rgba(248,217,139,.22);
     }
 
     /* Keyboard-only ring on top of the shared hover look above, so
@@ -943,19 +1089,20 @@ button {
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      .home-thumb { padding: 6px 8px; gap: 8px; }
-      .home-thumb-img { width: 34px; height: 34px; border-radius: 10px; }
-      .home-thumb-label { font-size: 9px; }
-
-      .map-btn { padding: 8px; }
+      .home-thumb { flex-direction: row; align-items: center; padding: 6px 8px; gap: 8px; }
+      .home-thumb-img { width: 34px; height: 34px; max-width: none; border-radius: 10px; order: -1; }
+      .home-thumb-label { font-size: 9px; text-align: left; }
 
       .world-picker { padding: 6px; gap: 6px; }
       .collection { padding: 6px 8px; gap: 5px; }
 
       /* Next-item badge on the image itself, and the panel's action
-         buttons: small tap targets, minimal padding. */
-      .next-seed { width: 40px; height: 40px; border-radius: 13px; }
+         buttons: small tap targets, minimal padding. Mobile keeps the
+         original small on-stage badge (desktop/laptop uses the large
+         side-panel version instead — see .next-seed-panel above). */
+      .next-seed { display: grid; width: 40px; height: 40px; border-radius: 13px; }
       .next-seed .item-icon { width: 30px; height: 30px; }
+      .next-seed-panel { display: none; }
 
       .actions { padding: 5px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
@@ -1012,8 +1159,31 @@ button {
         <div class="top-row">
           <div id="authRoot"></div>
           <div class="hud brand">
-            <div>
-              <small>✦ Holistic Loader</small>
+            <!-- Shown only on the map screen (full logo, no world name —
+                 see #gameLayout.on-map .brand-map-logo in the CSS). -->
+            <div class="brand-map-logo" id="brandMapLogo">
+              <img
+                class="brand-logo"
+                id="brandLogo"
+                src="images/game-holisticgametitel.png"
+                alt="Holistic Game"
+                onerror="this.style.display='none'; document.getElementById('brandFallback').style.display='block';"
+              >
+              <span class="brand-fallback" id="brandFallback">Holistic Game</span>
+            </div>
+
+            <!-- Shown only during gameplay (small wordmark image above
+                 the current world's name, replacing the old "Holistic
+                 Loader" text label). -->
+            <div class="brand-gameplay" id="brandGameplay">
+              <img
+                class="brand-logo-text"
+                id="brandLogoText"
+                src="images/game-holisticgametiteltext.png"
+                alt="Holistic Game"
+                onerror="this.style.display='none'; document.getElementById('brandFallbackText').style.display='block';"
+              >
+              <span class="brand-fallback-text" id="brandFallbackText">Holistic Game</span>
               <strong id="worldName">Wellness Garden</strong>
             </div>
           </div>
@@ -1025,13 +1195,6 @@ button {
           <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
         </div>
 
-        <button type="button" class="home-thumb gameplay-only" id="homeBtn" aria-label="Back to the map">
-          <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
-          <span class="home-thumb-label">Back to start</span>
-        </button>
-
-        <button type="button" class="hud map-btn gameplay-only" id="mapBtn" aria-label="Show world map">Map</button>
-
         <div class="world-picker gameplay-only" id="worldPicker" aria-label="Choose world"></div>
 
         <div class="hud collection gameplay-only" id="collection" aria-label="Rewards created"></div>
@@ -1040,6 +1203,19 @@ button {
           <button class="secondary" id="undoBtn">Undo</button>
           <button class="secondary" id="saveBtn">Save</button>
           <button id="newBtn">New</button>
+        </div>
+
+        <button type="button" class="home-thumb gameplay-only" id="homeBtn" aria-label="Back to the map">
+          <span class="home-thumb-label">Back to start</span>
+          <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
+        </button>
+
+        <!-- Desktop/laptop-only large "next item" readout, filling the
+             panel's remaining height. Hidden on mobile (see CSS), where
+             the small on-stage .next-seed badge is used instead. -->
+        <div class="hud next-seed-panel gameplay-only" id="nextTilePanel" aria-label="Next item to place">
+          <span class="next-seed-panel-label">Next item</span>
+          <div class="next-seed-panel-icon" id="nextTilePanelIcon"></div>
         </div>
       </aside>
     </div>
@@ -1099,27 +1275,50 @@ const ITEMS = [
   { level: 5, image: "images/game-item5", name: "Lotus",    score: 780 }
 ];
 
+// Per-world item-art overrides — keyed by world key, then indexed by
+// level (1-5). Any world not listed here falls back to the shared ITEMS
+// art above, unchanged. Add more worlds the same way if/when they get
+// their own themed item set. Same webp/png fallback rule as the shared
+// art (see getItemImageUrl() below) — every image here needs BOTH a
+// .webp AND a .png file present in images/.
+const WORLD_ITEM_IMAGES = {
+  underwaterKingdom: {
+    1: "images/game-item-underwater1",
+    2: "images/game-item-underwater2",
+    3: "images/game-item-underwater3",
+    4: "images/game-item-underwater4",
+    5: "images/game-item-underwater5"
+  },
+  treasureCave: {
+    1: "images/game-item-treasure1",
+    2: "images/game-item-treasure2",
+    3: "images/game-item-treasure3",
+    4: "images/game-item-treasure4",
+    5: "images/game-item-treasure5"
+  }
+};
+
 // Declaration order of the keys below = world/unlock order everywhere else.
 // Backdrop art lives at images/game-world<N>, numbered in this same
-// declaration order (1 = lavendelMeadow ... 20 = crystalFalls). No file
+// declaration order (1 = underwaterKingdom ... 20 = crystalFalls). No file
 // extension here on purpose: getWorldBackgroundUrl() below appends
 // .webp or .jpg depending on what the browser actually supports, so
 // every world needs BOTH a game-world<N>.webp AND a game-world<N>.jpg
 // file present in images/.
 const WORLD_BACKGROUNDS = {
 
-  sunsetMeadow:    "images/game-world1",
-  magicField:  "images/game-world2",
-  flowerPalace:    "images/game-world3",
-  cherryBlossom:   "images/game-world4",
-  mountainTop:  "images/game-world5",
-  
-theBeach:     "images/game-world6",
-  underwaterRuins: "images/game-world7",
-  treasureCave:     "images/game-world8",
-  dragonValley:    "images/game-world9",
-  volcano:         "images/game-world10",
-  
+  underwaterKingdom: "images/game-world1",
+  sunsetPlace:       "images/game-world2",
+  beachBirds:        "images/game-world3",
+  treasureCave:      "images/game-world4",
+  cherryBlossom:     "images/game-world5",
+
+  jungleRuins:       "images/game-world6",
+  mountainTop:       "images/game-world7",
+  theForest:         "images/game-world8",
+  dragonsValley:     "images/game-world9",
+  crystalPalace:     "images/game-world10",
+
   iceCavern:       "images/game-world11",
   lavenderGarden:  "images/game-world12",
   jungleTemple:    "images/game-world13",
@@ -1161,7 +1360,10 @@ function getWorldBackgroundUrl(key) {
 function getItemImageUrl(item) {
   // .png (not .jpg) fallback: item icons are transparent circular art —
   // a jpg fallback would show each one on an opaque square instead.
-  return item && item.image ? `${item.image}.${WEBP_SUPPORTED ? "webp" : "png"}` : null;
+  if (!item || !item.image) return null;
+  const override = WORLD_ITEM_IMAGES[currentWorldKey] && WORLD_ITEM_IMAGES[currentWorldKey][item.level];
+  const base = override || item.image;
+  return `${base}.${WEBP_SUPPORTED ? "webp" : "png"}`;
 }
 
 // Map background is responsive on top of the webp/jpg format swap: phones
@@ -1179,21 +1381,21 @@ function getMapBackgroundUrl(page) {
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
 const WORLD_LABELS = {
-  // Islands 1-10 (map order) — renamed per the new episode titles:
+  // Islands 1-10 (map order) — key names now match their theme directly:
   // 1. Underwater Kingdom  2. Sunset Place  3. Beach Birds
   // 4. Treasure Cave       5. Cherry Blossom  6. Jungle Ruins
   // 7. Mountain Top        8. The Forest      9. Dragons Valley
   // 10. Crystal Palace
-  sunsetMeadow:    "Underwater Kingdom", // island 1
-  magicField:      "Sunset Place",       // island 2
-  flowerPalace:    "Beach Birds",        // island 3
-  cherryBlossom:   "Treasure Cave",      // island 4
-  mountainTop:     "Cherry Blossom",     // island 5
-  theBeach:        "Jungle Ruins",       // island 6
-  underwaterRuins: "Mountain Top",       // island 7
-  treasureCave:    "The Forest",         // island 8
-  dragonValley:    "Dragons Valley",     // island 9
-  volcano:         "Crystal Palace",     // island 10
+  underwaterKingdom: "Underwater Kingdom", // island 1
+  sunsetPlace:       "Sunset Place",       // island 2
+  beachBirds:        "Beach Birds",        // island 3
+  treasureCave:      "Treasure Cave",      // island 4
+  cherryBlossom:     "Cherry Blossom",     // island 5
+  jungleRuins:       "Jungle Ruins",       // island 6
+  mountainTop:       "Mountain Top",       // island 7
+  theForest:         "The Forest",         // island 8
+  dragonsValley:     "Dragons Valley",     // island 9
+  crystalPalace:     "Crystal Palace",     // island 10
 
   // Islands 11-20 — not on the current map art, names unchanged.
   lavendelMeadow:    "Lavendel Meadow",
@@ -1334,6 +1536,7 @@ function getItem(level) {
     const stageFrameEl = document.getElementById("stageFrame");
     const boardEl = document.getElementById("board");
     const nextTileEl = document.getElementById("nextTile");
+    const nextTilePanelIconEl = document.getElementById("nextTilePanelIcon");
     const scoreStatEl = document.getElementById("scoreStat");
     const movesStatEl = document.getElementById("movesStat");
     const bestStatEl = document.getElementById("bestStat");
@@ -1346,7 +1549,6 @@ function getItem(level) {
     const loginGateEl = document.getElementById("loginGate");
     const mapScreenEl = document.getElementById("mapScreen");
     const mapTitleEl = document.getElementById("mapTitle");
-    const mapBtnEl = document.getElementById("mapBtn");
     const homeBtnEl = document.getElementById("homeBtn");
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
@@ -1354,8 +1556,7 @@ function getItem(level) {
     document.getElementById("closeModalBtn").addEventListener("click", hideModal);
     document.getElementById("undoBtn").addEventListener("click", undo);
     document.getElementById("saveBtn").addEventListener("click", saveGame);
-    mapBtnEl.addEventListener("click", () => showMap(null));
-    homeBtnEl.addEventListener("click", () => showMap(null)); // same destination as the Map button — just a second, always-visible entry point outside the board
+    homeBtnEl.addEventListener("click", () => showMap(null)); // opens the map screen — the only entry point to it now that the separate Map button is gone
     boardEl.addEventListener("click", (e) => {
       const cell = e.target.closest(".cell");
       if (!cell || !boardEl.contains(cell)) return;
@@ -1398,7 +1599,7 @@ function getItem(level) {
       return 2;
     }
 
-    // setWorld("lavendelMeadow") / setWorld("dragonValley") / setWorld("iceCavern")
+    // setWorld("underwaterKingdom") / setWorld("dragonsValley") / setWorld("iceCavern")
     // / setWorld("cosmos") — call this from anywhere (auto-progression below,
     // the world-picker dots, or your own console/menu) to swap both the
     // stage backdrop AND every tile's icon set at once.
@@ -2015,8 +2216,13 @@ function getItem(level) {
     }
 
     function renderNext() {
+      const item = getItem(nextLevel);
       nextTileEl.innerHTML = "";
-      nextTileEl.appendChild(createItemIcon(getItem(nextLevel)));
+      nextTileEl.appendChild(createItemIcon(item));
+      if (nextTilePanelIconEl) {
+        nextTilePanelIconEl.innerHTML = "";
+        nextTilePanelIconEl.appendChild(createItemIcon(item));
+      }
     }
 
     function renderCollection() {
