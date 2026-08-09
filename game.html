@@ -134,6 +134,50 @@
       gap: 8px;
     }
 
+    /* Mobile-only "How to play" info icon (see #howToPlayBtn in the
+       markup) — hidden everywhere by default; the mobile media query
+       further down turns it on for the map screen only. Sized and
+       styled to match the account icon it sits next to. */
+    .howtoplay-btn {
+      display: none;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.06)), var(--glass);
+      color: var(--gold2);
+      cursor: pointer;
+    }
+
+    .howtoplay-btn:hover, .howtoplay-btn:focus-visible {
+      background: linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.10)), var(--glass);
+      outline: none;
+    }
+
+    /* Copy inside the mobile How to Play modal — reuses .modal-card's
+       look but left-aligns the list instead of the card's default
+       centered text. */
+    .how-to-play-card {
+      text-align: center;
+    }
+
+    .how-to-play-card ol {
+      margin: 14px 0 20px;
+      padding-left: 20px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
     .side-panel .hud,
     .side-panel .world-picker {
       position: static;
@@ -312,6 +356,11 @@
     @media (min-width: 761px) {
       #gameLayout.on-map .brand-gameplay { display: flex; }
       #gameLayout.on-map .score.gameplay-only { display: grid; }
+      /* Map screen only: show just the small wordmark image, not the
+         current-world name text underneath it (that text still shows
+         normally once actual gameplay starts — see .brand-gameplay
+         above, which is only ever visible on-map on desktop). */
+      #gameLayout.on-map #worldName { display: none; }
     }
 
     /* Score box sits above the how-to-play box on the start screen —
@@ -366,7 +415,7 @@
       padding: 10px 14px;
       border-radius: 22px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr) auto;
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
 
@@ -640,11 +689,10 @@ button {
         display: block;
         position: absolute;
         top: clamp(12px, 2.4vw, 26px);
-        left: 50%;
-        transform: translateX(-50%);
+        left: clamp(16px, 3vw, 32px);
         z-index: 3;
-        max-width: 46%;
-        text-align: center;
+        max-width: 40%;
+        text-align: left;
       }
     }
 
@@ -654,8 +702,8 @@ button {
       max-height: clamp(35px, 8vw, 95px);
       height: auto;
       object-fit: contain;
-      object-position: center top;
-      margin: 0 auto;
+      object-position: left top;
+      margin: 0;
     }
 
     .map-brand-fallback {
@@ -1221,6 +1269,53 @@ button {
 
       .actions { padding: 5px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
+
+      /* ---------- Mobile map screen: full-bleed ----------
+         While the map is showing, the map image should cover the
+         entire screen instead of sharing it with a side panel
+         stacked underneath. The side panel is pulled out of flow and
+         laid over the top of the stage as a slim icon row instead
+         (logo top-left, how-to-play + account icon top-right); every
+         other side-panel box (score/world-picker/collection/actions,
+         plus the old text how-to-play box) is hidden here since none
+         of it applies before a board is open. */
+      .screen:has(#gameLayout.on-map) { padding: 0; }
+
+      #gameLayout.on-map { width: 100vw; max-width: 100vw; height: 100svh; }
+
+      #gameLayout.on-map .stage-frame {
+        width: 100vw;
+        height: 100svh;
+      }
+
+      #gameLayout.on-map .stage,
+      #gameLayout.on-map .map-screen {
+        border-radius: 0;
+      }
+
+      #gameLayout.on-map .side-panel {
+        position: absolute;
+        inset: 0 0 auto 0;
+        z-index: 20;
+        max-height: none;
+        padding: 14px 16px;
+        pointer-events: none;
+      }
+
+      #gameLayout.on-map .side-panel .top-row {
+        justify-content: space-between;
+        pointer-events: auto;
+      }
+
+      #gameLayout.on-map .side-panel > *:not(.top-row) {
+        display: none !important;
+      }
+
+      #gameLayout.on-map .top-row .brand { justify-content: flex-start; }
+
+      /* Turns the icon on for the map screen only — its base rule
+         (display:none) keeps it off on desktop and during gameplay. */
+      #gameLayout.on-map .howtoplay-btn { display: inline-flex; }
     }
 
     @media (max-height: 650px) {
@@ -1289,7 +1384,7 @@ button {
               <img
                 class="brand-logo"
                 id="brandLogo"
-                src="images/game-holisticgametitel.png"
+                src="images/game-holisticgametiteltext.png"
                 alt="Holistic Game"
                 onerror="this.style.display='none'; document.getElementById('brandFallback').style.display='block';"
               >
@@ -1311,6 +1406,21 @@ button {
               <strong id="worldName">Wellness Garden</strong>
             </div>
           </div>
+
+          <!-- Mobile-only "How to play" info icon — opens #howToPlayModal.
+               Sits between the brand/logo and the account icon so the
+               top row reads: logo (left) ... how-to-play, account (right). -->
+          <button type="button" class="howtoplay-btn" id="howToPlayBtn" aria-label="How to play" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9.25"></circle>
+              <path d="M9.4 9.2a2.6 2.6 0 0 1 5 .95c0 1.75-2.5 2.05-2.5 3.55"></path>
+              <line x1="12" y1="16.9" x2="12.01" y2="16.9"></line>
+            </svg>
+          </button>
+
+          <!-- Moved out of .score so the account icon is always part of the
+               top row (visible on the map screen too, not just gameplay). -->
+          <div id="authRoot"></div>
         </div>
 
         <div class="hud how-to-play map-only" aria-label="How to play">
@@ -1326,7 +1436,6 @@ button {
           <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
           <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
           <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
-          <div id="authRoot"></div>
         </div>
 
         <div class="world-picker gameplay-only" id="worldPicker" aria-label="Choose world"></div>
@@ -1365,6 +1474,24 @@ button {
       <div class="modal-actions">
         <button id="againBtn">New Garden</button>
         <button class="secondary" id="closeModalBtn">Stay Here</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile "How to play" popup, opened via the top-row info icon
+       (#howToPlayBtn). Same copy as the desktop side-panel .how-to-play
+       box, just presented as a modal since mobile has no room for a
+       standing text panel once the map fills the whole screen. -->
+  <div class="modal" id="howToPlayModal">
+    <div class="modal-card how-to-play-card">
+      <h2>How to Play</h2>
+      <ol>
+        <li>Tap an empty tile to place the item shown in the preview.</li>
+        <li>Match 3+ of the same item to merge them into the next level.</li>
+        <li>Keep merging to score points and unlock new islands.</li>
+      </ol>
+      <div class="modal-actions">
+        <button type="button" id="howToPlayCloseBtn">Got it</button>
       </div>
     </div>
   </div>
@@ -1688,6 +1815,21 @@ function getItem(level) {
     document.getElementById("newBtn").addEventListener("click", newGarden);
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
     document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+
+    // Mobile "How to play" info icon → modal (see .howtoplay-btn in the
+    // CSS/markup). Desktop never shows the icon, so this only ever
+    // opens on phones, where the standing side-panel text box is
+    // replaced by this popup.
+    const howToPlayModalEl = document.getElementById("howToPlayModal");
+    document.getElementById("howToPlayBtn").addEventListener("click", () => {
+      howToPlayModalEl.classList.add("show");
+    });
+    document.getElementById("howToPlayCloseBtn").addEventListener("click", () => {
+      howToPlayModalEl.classList.remove("show");
+    });
+    howToPlayModalEl.addEventListener("click", (e) => {
+      if (e.target === howToPlayModalEl) howToPlayModalEl.classList.remove("show");
+    });
     document.getElementById("undoBtn").addEventListener("click", undo);
     document.getElementById("saveBtn").addEventListener("click", saveGame);
     homeBtnEl.addEventListener("click", () => showMap(null)); // opens the map screen — the only entry point to it now that the separate Map button is gone
