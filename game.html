@@ -866,16 +866,16 @@ button {
       .screen { padding: 5px; }
 
       /* The interactive grid only ever occupies --board-width x
-         --board-height of the square stage image (tuned by default for
-         desktop framing) — that, not the cell fill-percentage, is what
-         caps how big each tile/icon can render. Widening it here is
-         what makes items render close to double their previous size
-         on mobile, independent of the .cell/.tile fill % above. */
+         --board-height of the stage image — that, not the cell
+         fill-percentage, is what caps how big each tile/icon can
+         render. Sized larger than the desktop box on purpose, since
+         the mobile stage is now a tall portrait rectangle (see .stage
+         below) rather than a square, so there's more room to give it. */
       :root {
-        --board-left: 5%;
-        --board-top: 8%;
-        --board-width: 90%;
-        --board-height: 84%;
+        --board-left: 4%;
+        --board-top: 5%;
+        --board-width: 92%;
+        --board-height: 90%;
       }
 
       .stage-frame {
@@ -884,12 +884,13 @@ button {
         align-items: center;
         gap: 4px;
         width: min(98vw, 620px);
-        height: auto;
+        height: calc(100svh - 10px);
       }
 
       .stage-frame .hud,
       .stage-frame .world-picker,
       .stage-frame .collection,
+      .stage-frame .home-thumb,
       #authRoot {
         position: static;
         inset: auto;
@@ -911,18 +912,17 @@ button {
       #authRoot { flex: 0 0 auto; }
       .score { order: 1; width: 100%; justify-content: center; }
 
-      /* Stage sized from a height budget (100svh minus the compact
-         chrome rows below + gaps/padding) as well as viewport width,
-         so whichever is tighter wins — this is what lets the board
-         use as much of the screen/image as possible on any phone,
-         not just a fixed fraction of the screen. */
+      /* Stage now grows to fill whatever vertical space is left over
+         in the column after the other (auto-height) rows — that's what
+         makes the world art stretch from the very top of the screen to
+         the very bottom, instead of being boxed into a fixed square. */
       .stage {
         order: 2;
         position: relative;
         inset: auto;
-        width: min(98vw, calc(100svh - 150px));
-        aspect-ratio: 1 / 1;
-        flex: 0 0 auto;
+        width: 100%;
+        flex: 1 1 auto;
+        min-height: 0;
       }
 
       /* next-seed + Undo/Save/New all on ONE row: .bottom-bar (not
@@ -941,13 +941,18 @@ button {
       .next-box { flex: 0 1 auto; min-width: 0; }
       .actions { flex: 0 0 auto; justify-content: flex-end; }
 
-      /* Kept hidden rather than squeezed outside too, to leave the
-         board as much room as possible on a small screen. The home
-         thumbnail is hidden here too — on a phone the margin outside
-         the board is only 5-16% wide, nowhere near enough room for it
-         without overlapping the grid, and the Map button (top-right)
-         already goes to the same place in far less space. */
-      .collection, .world-picker, .home-thumb { display: none; }
+      /* Kept hidden to leave the board as much room as possible on a
+         small screen. The Map button is hidden here too — the home
+         thumbnail (below) is now the only way back to the map on
+         mobile, so there's no need for both. */
+      .collection, .world-picker, .map-btn { display: none; }
+
+      /* Home thumbnail becomes its own compact row instead of floating
+         in the (now much narrower) side margin — small icon + tiny
+         label, same tap target either way. */
+      .home-thumb { order: 3; flex-direction: row; gap: 6px; padding: 2px 0; transform: none; }
+      .home-thumb-img { width: 30px; height: 30px; border-radius: 9px; }
+      .home-thumb-label { font-size: 9px; max-width: none; }
 
       /* Score / Moves / Best on one row, compact. */
       .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
@@ -982,10 +987,10 @@ button {
       .screen { padding: 5px; }
 
       :root {
-        --board-left: 5%;
-        --board-top: 8%;
-        --board-width: 90%;
-        --board-height: 84%;
+        --board-left: 4%;
+        --board-top: 5%;
+        --board-width: 92%;
+        --board-height: 90%;
       }
 
       .stage-frame {
@@ -994,12 +999,13 @@ button {
         align-items: center;
         gap: 4px;
         width: min(98vw, 620px);
-        height: auto;
+        height: calc(100svh - 10px);
       }
 
       .stage-frame .hud,
       .stage-frame .world-picker,
       .stage-frame .collection,
+      .stage-frame .home-thumb,
       #authRoot {
         position: static;
         inset: auto;
@@ -1018,15 +1024,16 @@ button {
       #authRoot { flex: 0 0 auto; }
       .score { order: 1; width: 100%; justify-content: center; }
 
-      /* Height is the scarce dimension in landscape, so the budget
-         calc matters even more here than in portrait. */
+      /* Same fill-the-remaining-space approach as portrait, so the
+         world art still stretches top to bottom even in this cramped
+         orientation. */
       .stage {
         order: 2;
         position: relative;
         inset: auto;
-        width: min(98vw, calc(100svh - 120px));
-        aspect-ratio: 1 / 1;
-        flex: 0 0 auto;
+        width: 100%;
+        flex: 1 1 auto;
+        min-height: 0;
       }
 
       .bottom-bar {
@@ -1041,7 +1048,11 @@ button {
       .next-box { flex: 0 1 auto; min-width: 0; }
       .actions { flex: 0 0 auto; justify-content: flex-end; }
 
-      .collection, .world-picker, .home-thumb { display: none; }
+      .collection, .world-picker, .map-btn { display: none; }
+
+      .home-thumb { order: 3; flex-direction: row; gap: 5px; padding: 1px 0; transform: none; }
+      .home-thumb-img { width: 26px; height: 26px; border-radius: 8px; }
+      .home-thumb-label { font-size: 8px; max-width: none; }
 
       .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
       .score .stat { min-width: 0; padding: 4px 6px; }
@@ -1198,9 +1209,7 @@ const ITEMS = [
   { level: 2, image: "images/game-item2", name: "Sprout",   score: 22 },
   { level: 3, image: "images/game-item3", name: "Bloom",    score: 80 },
   { level: 4, image: "images/game-item4", name: "Shard",    score: 260 },
-  { level: 5, image: "images/game-item5", name: "Lotus",    score: 780 },
-  { level: 6, image: "images/game-item6", name: "Radiance", score: 1900 },
-  { level: 7, image: "images/game-item7", name: "Zenith",   score: 4600 }
+  { level: 5, image: "images/game-item5", name: "Lotus",    score: 780 }
 ];
 
 // Declaration order of the keys below = world/unlock order everywhere else.
@@ -1527,7 +1536,7 @@ function getItem(level) {
     const ratioCache = {}; // cache key ("world:<key>" / "map:<page>") -> width/height, so re-showing something already measured this session doesn't re-fetch/re-decode its image just to read its size
 
     function measureAndApplyRatio(cacheKey, url, isStillRelevant) {
-      if (!DESKTOP_MEDIA_QUERY.matches) return; // mobile forces its own square stage in CSS regardless — don't bother measuring
+      if (!DESKTOP_MEDIA_QUERY.matches) return; // mobile sizes its own stage in CSS (flex-fill, no fixed aspect-ratio) — don't bother measuring
       const cached = ratioCache[cacheKey];
       if (cached) {
         stageFrameEl.style.setProperty("--stage-ratio", cached);
@@ -1966,9 +1975,7 @@ function getItem(level) {
       updateBest();
       checkWorldClear(createdLevel);
       render();
-      if (createdLevel >= 7) showToast(`${getItem(7).name} created`);
-      else if (createdLevel >= 6) showToast(`${getItem(6).name} awakened`);
-      else if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
+      if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
       else if (createdLevel > 0) showToast("Beautiful merge");
       if (isFull()) showGameOver();
       syncToCloud(false);
