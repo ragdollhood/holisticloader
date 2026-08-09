@@ -66,6 +66,23 @@
       padding: clamp(8px, 1.6vw, 18px);
       position: relative;
     }
+
+    /* ---------- Game layout ----------
+       Two siblings, side by side: .stage-frame (the game-world image —
+       board of planting circles + the "next item" preview, nothing
+       else) and .side-panel (a tall vertical strip holding every button
+       and readout that used to float on top of the artwork). Stacked
+       instead (image on top, panel below) on narrow/mobile widths — see
+       the max-width:760px and landscape media queries further down. */
+    .game-layout {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: clamp(10px, 1.8vw, 22px);
+      max-width: 100%;
+      max-height: 100%;
+    }
+
 .stage-frame {
   position: relative;
 
@@ -77,12 +94,14 @@
      on mobile it's left at its default 1 and the media query further
      down takes over sizing entirely (own width/height rules, own
      forced-square .stage), so this doesn't affect the phone layout.
-     The calc(96svh * var(--stage-ratio)) term converts the usual
+     The calc(78svh * var(--stage-ratio)) term converts the usual
      height budget into an equivalent width budget for THIS ratio, so
      a short/wide browser window still can't make the frame taller
-     than the viewport even once it's no longer square. */
+     than the viewport even once it's no longer square. Uses a smaller
+     share of the viewport width than before (78vw, not 96vw) now that
+     the side panel sits next to it and also needs horizontal room. */
   --stage-ratio: 1;
-  height: min(96svh, calc(96vw / var(--stage-ratio)));
+  height: min(96svh, calc(78vw / var(--stage-ratio)));
   width: auto;
   aspect-ratio: var(--stage-ratio);
 
@@ -92,6 +111,42 @@
      at the original 5x5 board. */
   --board-cols: 5;
 }
+
+    /* The vertical panel itself — everything inside it stacks top to
+       bottom in normal flow (no absolute positioning), so it grows
+       exactly as tall as its content needs and simply scrolls if a
+       very short viewport can't fit all of it. */
+    .side-panel {
+      position: relative;
+      width: clamp(200px, 21vw, 300px);
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 4px 2px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .side-panel .top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .side-panel .hud,
+    .side-panel .world-picker {
+      position: static;
+      inset: auto;
+      left: auto; right: auto; top: auto; bottom: auto;
+      transform: none;
+    }
+
+    /* Hidden while the map screen is showing (see #gameLayout.on-map
+       below) — only the brand/title row + account icon stay visible,
+       matching the original overlay behaviour where the map had its
+       own title and no other HUD chrome. */
+    .side-panel .gameplay-only { display: flex; }
 
 .stage {
   position: absolute;
@@ -158,11 +213,10 @@
     }
 
     .brand {
-      left: clamp(12px, 3vw, 26px);
-      top: clamp(12px, 3vw, 26px);
+      flex: 1 1 auto;
+      min-width: 0;
       padding: 10px 14px;
       border-radius: 999px;
-      max-width: calc(100% - 28px);
     }
 
     .brand small {
@@ -185,29 +239,35 @@
     }
 
     .score {
-      /* Same row as .brand (top: matches .brand's top formula exactly)
-         and #authRoot now sits to the right of it on that row instead
-         of stacked above — see the #authRoot rule below, which reserves
-         the space .score's "right" offset leaves clear. */
-      right: clamp(70px, 11vw, 96px);
-      top: clamp(12px, 3vw, 26px);
+      width: 100%;
       padding: 10px 14px;
       border-radius: 22px;
       display: grid;
-      grid-template-columns: repeat(3, auto);
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
 
-    /* Account icon (built into #authRoot by auth.js/auth-ui.css) pulled
-       up onto the brand/score row, far right — auth-ui.css is linked
-       before this <style> block, so this rule (same specificity, later
-       in source order) wins the cascade and overrides its own
-       positioning without needing !important. */
+    /* Account icon (built into #authRoot by auth.js/auth-ui.css), now
+       just the last flex item on the side panel's top row next to the
+       brand pill instead of an absolutely-positioned corner element —
+       auth-ui.css is linked before this <style> block, so this rule
+       (same specificity, later in source order) wins the cascade and
+       overrides its own positioning without needing !important. */
     #authRoot {
-      position: absolute;
-      top: clamp(12px, 3vw, 26px);
-      right: clamp(12px, 3vw, 26px);
-      z-index: 7;
+      flex: 0 0 auto;
+      position: static;
+    }
+
+    /* auth-ui.css draws a rounded-rectangle frame (border + background)
+       around the account button, which sits right at this page's own
+       rounded stage corner and ends up looking clipped/misaligned.
+       Strip that frame here so only the circular person icon itself
+       (part of the icon's own SVG artwork, not a CSS border) shows. */
+    #accountBtn {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
     }
 
     .stat {
@@ -222,14 +282,67 @@
     .stat b { display: block; color: var(--gold2); font-family: Arial, sans-serif; font-size: 15px; }
     .stat span { display: block; margin-top: 2px; color: var(--muted); font-family: Arial, sans-serif; font-weight: 800; font-size: 9px; letter-spacing: .10em; text-transform: uppercase; }
 
-    .next-box {
-      left: clamp(12px, 3vw, 26px);
-      bottom: clamp(12px, 3vw, 26px);
-      padding: 12px 14px;
-      border-radius: 24px;
+    /* HOME THUMBNAIL — a snapshot of the world map (images/thumbs/game-home.jpg),
+       now a normal row in the side panel (icon + label side by side)
+       instead of an absolutely-positioned margin element next to the
+       board. Same click destination as the Map button (showMap(null)). */
+    .home-thumb {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 8px 12px;
+      cursor: pointer;
+      width: 100%;
     }
 
+    .home-thumb-img {
+      display: block;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 2px solid rgba(248,217,139,.55);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.10),
+        0 10px 26px rgba(0,0,0,.45),
+        0 0 22px rgba(248,217,139,.28);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .home-thumb:hover .home-thumb-img,
+    .home-thumb:focus-visible .home-thumb-img {
+      transform: scale(1.06);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.16),
+        0 12px 30px rgba(0,0,0,.5),
+        0 0 30px rgba(248,217,139,.42);
+    }
+
+    .home-thumb-label {
+      font-family: Arial, sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--gold2);
+      text-align: left;
+    }
+
+    /* The single HUD element allowed to remain on top of the game-world
+       image itself: just the next-item artwork, no caption/label box
+       around it (that copy now lives in the side panel's "Next item"
+       readout... actually it doesn't need one — the icon speaks for
+       itself). Positioned bottom-left, same spot the old next-box sat. */
     .next-seed {
+      position: absolute;
+      z-index: 6;
+      left: clamp(12px, 3vw, 26px);
+      bottom: clamp(12px, 3vw, 26px);
       width: 62px;
       height: 62px;
       border-radius: 20px;
@@ -238,26 +351,24 @@
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(248,217,139,.28);
       box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
-    .next-copy { font-family: Arial, sans-serif; line-height: 1.25; }
-    .next-copy b { display: block; color: var(--gold2); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
-    .next-copy span { color: var(--muted); font-size: 12px; }
-
   .actions {
-  position: absolute;
-
-  right: 20px;
-  bottom: clamp(12px, 3vw, 26px);
+  width: 100%;
 
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
 
   padding: 8px;
 
   border-radius: 999px;
 }
+
+.actions button { flex: 1 1 0; }
 
 button {
   min-width: auto;
@@ -293,15 +404,11 @@ button {
     }
 
     .world-picker {
-      position: absolute;
-      z-index: 7;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: clamp(144px, 19svh, 184px);
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
-      padding: 8px;
-      border-radius: 999px;
+      padding: 10px;
+      border-radius: 20px;
       background: rgba(18, 9, 28, .45);
       border: 1px solid rgba(255,255,255,.14);
       backdrop-filter: blur(18px);
@@ -322,21 +429,10 @@ button {
 
     /* ---------- Map screen ----------
        Shown instead of the board on first load (and any time the player
-       taps "Map"). Two real <img> pages live inside #mapScroll at all
-       times — game-karta1-5.jpg (islands 1-5) and game-karta6-10.jpg
-       (islands 6-10) — never one shared <div> background, specifically
-       so neither image is ever cropped:
-         - Desktop (>=761px, see the map-page/.active rule far below):
-           only the current page is shown, sized via object-fit: cover
-           inside a box whose aspect-ratio is measured to match the
-           image exactly (applyMapAspectRatio()) — cover then fills
-           edge-to-edge with zero cropping, same trick used for world
-           backgrounds.
-         - Mobile (<=760px, the default/base rules right here): BOTH
-           pages are shown stacked full-width (height: auto, so the
-           whole image is always visible, nothing cover-cropped) inside
-           a vertically scrolling column — karta6-10 on top, karta1-5
-           below it, per how the islands are meant to read as you climb.
+       taps "Map") — a single map image with all 10 islands.
+       images/game-karta1-10mobile.webp/.jpg on phones (portrait),
+       images/game-karta1-10laptop.webp/.jpg on desktop/laptop widths
+       (landscape) — see getMapBackgroundUrl() below.
        Sits on top of the stage (same layer the login-gate uses) so the
        board underneath keeps its own state untouched while hidden. */
     .map-screen {
@@ -345,32 +441,14 @@ button {
       z-index: 15;
       display: none;
       background-color: #1b1030;
+      background-image: var(--map-bg);
+      background-size: cover;
+      background-position: center;
       border-radius: clamp(20px, 3vw, 36px);
       overflow: hidden;
     }
 
     .map-screen.show { display: block; }
-
-    .map-scroll {
-      width: 100%;
-      height: 100%;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      display: flex;
-      flex-direction: column;
-      scroll-behavior: smooth;
-    }
-
-    .map-page { position: relative; width: 100%; flex: 0 0 auto; }
-
-    .map-img {
-      display: block;
-      width: 100%;
-      height: auto;
-      -webkit-user-drag: none;
-      user-select: none;
-    }
 
     .map-title {
       position: absolute;
@@ -394,78 +472,117 @@ button {
 
     .island-btn {
       position: absolute;
-      transform: translate(-50%, -50%);
-      width: clamp(38px, 7vw, 58px);
-      height: clamp(38px, 7vw, 58px);
+      /* translateY(-50%) would center the button exactly ON the x/y
+         point from ISLAND_POSITIONS_*. Using a smaller upward shift
+         instead (-32% instead of -50%) leaves the x/y point nearer the
+         button's TOP edge, so the whole number badge renders a bit
+         below that point — i.e. a little below the island's center,
+         closer to the bottom of the island — instead of sitting dead
+         center on it. Every other .island-btn transform below
+         (hover/focus, locked, the unlock pulse) uses this same
+         translateY value so the badge doesn't jump position on
+         hover/unlock. */
+      transform: translate(-50%, -32%);
+      width: clamp(40px, 7.4vw, 60px);
+      height: clamp(40px, 7.4vw, 60px);
       border-radius: 50%;
-      border: 2px solid rgba(248,217,139,.65);
-      background: radial-gradient(circle, rgba(248,217,139,.30), rgba(20,10,30,.55) 70%);
-      color: var(--gold2);
+
+      /* Unlocked (clickable) state — bright glowing gold ring + gold
+         number. Dark backing behind the number so it stays legible no
+         matter how busy the artwork underneath is. */
+      border: 3px solid #ffd85c;
+      background: radial-gradient(circle, rgba(18,10,28,.88), rgba(18,10,28,.94) 68%);
+      color: #ffe27a;
       font-family: Arial, sans-serif;
       font-weight: 900;
-      font-size: clamp(14px, 2.4vw, 20px);
-      box-shadow: 0 0 20px rgba(248,217,139,.30), 0 10px 26px rgba(0,0,0,.4);
+      font-size: clamp(16px, 2.8vw, 24px);
+      text-shadow: 0 0 6px rgba(0,0,0,.85), 0 1px 2px rgba(0,0,0,.9);
+      box-shadow:
+        0 0 0 1px rgba(255,216,92,.35),
+        0 0 12px 3px rgba(255,216,92,.85),
+        0 0 26px rgba(255,216,92,.55),
+        0 10px 22px rgba(0,0,0,.5);
       cursor: pointer;
       z-index: 1;
       display: grid;
       place-items: center;
+      transition: transform .15s ease;
     }
 
-    .island-btn:hover, .island-btn:focus-visible { transform: translate(-50%, -50%) scale(1.1); }
+    .island-btn:hover, .island-btn:focus-visible { transform: translate(-50%, -32%) scale(1.12); }
 
-    .island-btn.cleared {
-      border-color: rgba(154,255,180,.85);
-      background: radial-gradient(circle, rgba(154,255,180,.30), rgba(20,10,30,.55) 70%);
-      box-shadow: 0 0 20px rgba(154,255,180,.35), 0 10px 26px rgba(0,0,0,.4);
+    /* Cleared keeps the same clickable gold treatment (it's still
+       tappable — replaying is fine) plus a small green check badge so
+       progress is visible at a glance without losing the always-on
+       gold "you can tap this" signal. */
+    .island-btn.cleared { border-color: #9dffc0; }
+    .island-btn.cleared::after {
+      content: "✓";
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #34c77a;
+      color: #0c2016;
+      font-size: 12px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 8px rgba(52,199,122,.85), 0 2px 6px rgba(0,0,0,.5);
     }
 
+    /* Locked (not clickable) state — glowing red ring + dimmed grey
+       number, so it reads as "off-limits" at a glance but the number
+       itself stays fully legible (no heavy blur/grayscale hiding it). */
     .island-btn.locked {
-      opacity: .42;
-      filter: grayscale(.6);
+      border-color: #ff6b6b;
+      background: radial-gradient(circle, rgba(18,10,28,.88), rgba(18,10,28,.94) 68%);
+      color: #9a95a3;
+      text-shadow: 0 0 6px rgba(0,0,0,.85), 0 1px 2px rgba(0,0,0,.9);
+      box-shadow:
+        0 0 0 1px rgba(255,107,107,.30),
+        0 0 12px 3px rgba(255,107,107,.65),
+        0 0 26px rgba(255,107,107,.40),
+        0 10px 22px rgba(0,0,0,.5);
       cursor: not-allowed;
-      box-shadow: none;
     }
 
-    .island-btn.locked:hover, .island-btn.locked:focus-visible { transform: translate(-50%, -50%); }
+    .island-btn.locked:hover, .island-btn.locked:focus-visible { transform: translate(-50%, -32%); }
 
     @keyframes islandPulse {
-      0%, 100% { box-shadow: 0 0 20px rgba(248,217,139,.30), 0 10px 26px rgba(0,0,0,.4); transform: translate(-50%, -50%) scale(1); }
-      50% { box-shadow: 0 0 40px rgba(248,217,139,.85), 0 10px 26px rgba(0,0,0,.4); transform: translate(-50%, -50%) scale(1.22); }
+      0%, 100% {
+        box-shadow:
+          0 0 0 1px rgba(255,216,92,.35),
+          0 0 12px 3px rgba(255,216,92,.85),
+          0 0 26px rgba(255,216,92,.55),
+          0 10px 22px rgba(0,0,0,.5);
+        transform: translate(-50%, -32%) scale(1);
+      }
+      50% {
+        box-shadow:
+          0 0 0 1px rgba(255,216,92,.5),
+          0 0 20px 6px rgba(255,216,92,1),
+          0 0 44px rgba(255,216,92,.85),
+          0 10px 22px rgba(0,0,0,.5);
+        transform: translate(-50%, -32%) scale(1.22);
+      }
     }
 
     .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
 
     .map-btn {
-      position: absolute;
-      right: clamp(12px, 3vw, 26px);
-      top: clamp(12px, 3vw, 26px);
-      z-index: 6;
+      width: 100%;
     }
 
-    /* Desktop only: one page at a time, filling the frame edge-to-edge
-       (see the class comment on .map-screen above for why this stays
-       crop-free). Mobile keeps the base rules above — both pages
-       stacked, full width, scrollable. */
-    @media (min-width: 761px) {
-      .map-scroll { overflow: hidden; display: block; }
-      .map-page {
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity .25s ease;
-      }
-      .map-page.active { opacity: 1; pointer-events: auto; }
-      .map-img { width: 100%; height: 100%; object-fit: cover; }
-    }
-
-    /* While the map is showing, hide the board-only HUD chrome so it
-       doesn't float over the map art (the map has its own title). */
-    .stage-frame.on-map .map-btn,
-    .stage-frame.on-map .world-picker,
-    .stage-frame.on-map .collection,
-    .stage-frame.on-map .bottom-bar,
-    .stage-frame.on-map .score {
+    /* While the map is showing, hide the gameplay-only side-panel chrome
+       (score, home thumbnail, map button, world picker, collection,
+       actions) — the map screen has its own title and doesn't need any
+       of it. Brand/title + account icon stay visible. Targets
+       #gameLayout now (not .stage-frame), since that chrome lives in
+       the side panel, not on top of the image, anymore. */
+    #gameLayout.on-map .gameplay-only {
       display: none;
     }
 
@@ -637,19 +754,12 @@ button {
       100% { transform: translate(-50%, -130%) scale(1.25); opacity: 0; }
     }
 
-    /* Same bottom offset as next-box/actions — confirmed not to collide
-       with them on laptop widths since it's horizontally centered while
-       they sit at the left/right edges. .hud (added in the markup)
-       gives it the same bordered glass-panel look as those, so it
-       reads as a real "frame" instead of icons floating loose over the
-       artwork. */
+    /* .hud (added in the markup) gives it the same bordered glass-panel
+       look as the other side-panel readouts. */
     .collection {
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: clamp(12px, 3vw, 26px);
+      width: 100%;
       display: flex;
       gap: 6px;
-      max-width: min(78%, 520px);
       justify-content: center;
       flex-wrap: wrap;
       padding: 10px 14px;
@@ -776,216 +886,78 @@ button {
        rule further down) fills it perfectly with zero cropping and zero
        letterboxing — no per-image guessing needed. */
 
-    @media (max-width: 760px) {
-
-      /* All HUD chrome moves OUTSIDE the game-world art on small
-         screens instead of floating on top of it: .stage-frame
-         becomes a vertical stack (top bar / board / bottom bar), and
-         every element that was absolutely overlaid on .stage switches
-         to normal document flow so it takes its own space instead of
-         covering the artwork underneath.
-
-         Every non-board row here is kept as small/compact as possible
-         (tight padding, small type) specifically so the board itself
-         — the game world image + tiles — can claim as much of the
-         screen as possible. */
+    /* Shared "compact" rules for both narrow-width and short-height
+       phones: .game-layout stacks vertically (image on top, the side
+       panel — still a vertical box, just a compact one — underneath),
+       and every readout/button inside the panel shrinks its padding
+       and type so the image can still claim most of the screen. */
+    @media (max-width: 760px), (orientation: landscape) and (max-height: 500px) {
       .screen { padding: 5px; }
 
-      /* The interactive grid only ever occupies --board-width x
-         --board-height of the square stage image (tuned by default for
-         desktop framing) — that, not the cell fill-percentage, is what
-         caps how big each tile/icon can render. Widening it here is
-         what makes items render close to double their previous size
-         on mobile, independent of the .cell/.tile fill % above. */
       :root {
-        --board-left: 5%;
-        --board-top: 8%;
-        --board-width: 90%;
-        --board-height: 84%;
+        --board-left: 4%;
+        --board-top: 5%;
+        --board-width: 92%;
+        --board-height: 90%;
       }
 
-      .stage-frame {
-        display: flex;
+      .game-layout {
         flex-direction: column;
-        align-items: center;
-        gap: 4px;
         width: min(98vw, 620px);
-        height: auto;
-      }
-
-      .stage-frame .hud,
-      .stage-frame .world-picker,
-      .stage-frame .collection,
-      #authRoot {
-        position: static;
-        inset: auto;
-      }
-
-      /* Title + account icon on ONE row, at the very top: .top-bar (not
-         .brand/#authRoot individually) owns the order + row layout, same
-         pattern as .bottom-bar below for next-seed + buttons. */
-      .top-bar {
-        order: 0;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-      }
-      .brand, #authRoot { position: static; inset: auto; }
-      .brand { flex: 1 1 auto; min-width: 0; max-width: none; width: auto; }
-      #authRoot { flex: 0 0 auto; }
-      .score { order: 1; width: 100%; justify-content: center; }
-
-      /* Stage sized from a height budget (100svh minus the compact
-         chrome rows below + gaps/padding) as well as viewport width,
-         so whichever is tighter wins — this is what lets the board
-         use as much of the screen/image as possible on any phone,
-         not just a fixed fraction of the screen. */
-      .stage {
-        order: 2;
-        position: relative;
-        inset: auto;
-        width: min(98vw, calc(100svh - 150px));
-        aspect-ratio: 1 / 1;
-        flex: 0 0 auto;
-      }
-
-      /* next-seed + Undo/Save/New all on ONE row: .bottom-bar (not
-         .next-box/.actions individually) now owns the order + full-width
-         + row layout, and its two children sit side by side inside it
-         instead of each claiming a full-width row of their own. */
-      .bottom-bar {
-        order: 4;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        height: calc(100svh - 10px);
         gap: 6px;
       }
-      .next-box, .actions { position: static; inset: auto; }
-      .next-box { flex: 0 1 auto; min-width: 0; }
-      .actions { flex: 0 0 auto; justify-content: flex-end; }
 
-      /* Kept hidden rather than squeezed outside too, to leave the
-         board as much room as possible on a small screen. */
-      .collection, .world-picker { display: none; }
+      /* The interactive grid only ever occupies --board-width x
+         --board-height of the stage image — that, not the cell
+         fill-percentage, is what caps how big each tile/icon can
+         render. Sized larger than the desktop box on purpose, since
+         the mobile stage is now a tall portrait rectangle rather than
+         a square, so there's more room to give it. */
+      .stage-frame {
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+      }
 
-      /* Both map pages are visible at once here (see .map-screen /
-         .map-page for why), so a single "which page" label doesn't
-         apply the way it does on desktop — drop it. */
-      .map-title { display: none; }
+      /* Side panel becomes a compact strip below the image instead of a
+         tall column beside it — still a vertical stack of rows, just
+         capped in height and scrollable if content overflows. */
+      .side-panel {
+        width: 100%;
+        flex: 0 0 auto;
+        max-height: 46svh;
+        gap: 6px;
+        padding: 2px;
+      }
 
-      /* Score / Moves / Best on one row, compact. */
-      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
+      .top-row { gap: 6px; }
+      .brand { padding: 6px 9px; }
+      .brand small { font-size: 8px; }
+      .brand strong { font-size: 15px; }
+
+      .score { padding: 6px 8px; gap: 6px; }
       .score .stat { min-width: 0; padding: 5px 6px; }
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      .brand { left: 10px; top: 10px; padding: 6px 9px; }
-      .brand small { font-size: 8px; }
-      .brand strong { font-size: 15px; }
+      .home-thumb { padding: 6px 8px; gap: 8px; }
+      .home-thumb-img { width: 34px; height: 34px; border-radius: 10px; }
+      .home-thumb-label { font-size: 9px; }
 
-      .next-box { padding: 6px 8px; gap: 6px; }
-      .next-seed { width: 40px; height: 40px; font-size: 24px; border-radius: 13px; }
+      .map-btn { padding: 8px; }
+
+      .world-picker { padding: 6px; gap: 6px; }
+      .collection { padding: 6px 8px; gap: 5px; }
+
+      /* Next-item badge on the image itself, and the panel's action
+         buttons: small tap targets, minimal padding. */
+      .next-seed { width: 40px; height: 40px; border-radius: 13px; }
       .next-seed .item-icon { width: 30px; height: 30px; }
-      /* "Next item" label kept (the .hud base class already lays the
-         icon + this label out side by side via display:flex) — only the
-         subtitle underneath it is dropped, to keep the row compact. */
-      .next-copy b { font-size: 9px; white-space: nowrap; }
-      .next-copy span { display: none; }
 
-      /* Buttons: small tap targets, minimal padding, no extra space. */
       .actions { padding: 5px; gap: 4px; }
-      button { padding: 6px 8px; font-size: 8px; }
-    }
-
-    /* Phone held sideways: width alone can exceed 760px on larger
-       phones (e.g. ~926px on an iPhone Pro Max in landscape), so this
-       is keyed on the SHORT dimension (height) instead, which is what
-       is actually cramped in landscape — the rules mirror the portrait
-       compact-HUD block above. */
-    @media (orientation: landscape) and (max-height: 500px) {
-      .screen { padding: 5px; }
-
-      :root {
-        --board-left: 5%;
-        --board-top: 8%;
-        --board-width: 90%;
-        --board-height: 84%;
-      }
-
-      .stage-frame {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        width: min(98vw, 620px);
-        height: auto;
-      }
-
-      .stage-frame .hud,
-      .stage-frame .world-picker,
-      .stage-frame .collection,
-      #authRoot {
-        position: static;
-        inset: auto;
-      }
-
-      .top-bar {
-        order: 0;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 6px;
-      }
-      .brand, #authRoot { position: static; inset: auto; }
-      .brand { flex: 1 1 auto; min-width: 0; max-width: none; width: auto; }
-      #authRoot { flex: 0 0 auto; }
-      .score { order: 1; width: 100%; justify-content: center; }
-
-      /* Height is the scarce dimension in landscape, so the budget
-         calc matters even more here than in portrait. */
-      .stage {
-        order: 2;
-        position: relative;
-        inset: auto;
-        width: min(98vw, calc(100svh - 120px));
-        aspect-ratio: 1 / 1;
-        flex: 0 0 auto;
-      }
-
-      .bottom-bar {
-        order: 4;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 6px;
-      }
-      .next-box, .actions { position: static; inset: auto; }
-      .next-box { flex: 0 1 auto; min-width: 0; }
-      .actions { flex: 0 0 auto; justify-content: flex-end; }
-
-      .collection, .world-picker { display: none; }
-
-      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
-      .score .stat { min-width: 0; padding: 4px 6px; }
-      .stat b { font-size: 12px; }
-      .stat span { font-size: 8px; }
-
-      .brand { left: 10px; top: 10px; padding: 5px 8px; }
-      .brand small { font-size: 8px; }
-      .brand strong { font-size: 14px; }
-
-      .next-box { padding: 5px 7px; gap: 6px; }
-      .next-seed { width: 34px; height: 34px; font-size: 20px; border-radius: 11px; }
-      .next-seed .item-icon { width: 26px; height: 26px; }
-      .next-copy b { font-size: 8px; white-space: nowrap; }
-      .next-copy span { display: none; }
-
-      .actions { padding: 4px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
     }
 
@@ -997,86 +969,79 @@ button {
 </head>
 <body>
   <main class="screen">
-    <div class="stage-frame" id="stageFrame">
-      <section class="stage" id="stage" aria-label="Wellness Garden game world">
-        <div class="stars"></div>
+    <!-- game-layout holds two siblings side by side (stacked on mobile):
+         .stage-frame, which now contains ONLY the game world image, the
+         board of planting circles, the map screen and the "next item"
+         preview — and .side-panel, a tall vertical panel that holds every
+         button and HUD readout that used to float on top of the artwork.
+         Toggling "on-map" on THIS element (not .stage-frame anymore — see
+         showMap()/hideMap() in the JS) hides the gameplay-only controls in
+         the side panel while the map screen is showing. -->
+    <div class="game-layout" id="gameLayout">
+      <div class="stage-frame" id="stageFrame">
+        <section class="stage" id="stage" aria-label="Wellness Garden game world">
+          <div class="stars"></div>
 
-        <div class="board-wrap">
-          <div class="board" id="board" aria-label="Game board"></div>
-        </div>
-
-        <div class="map-screen" id="mapScreen" aria-label="World map">
-          <div class="map-title" id="mapTitle">Choose an island</div>
-          <div class="map-scroll" id="mapScroll">
-            <!-- DOM order matters on mobile: this is a normal-flow
-                 stacked column there, karta6-10 above karta1-5 (see
-                 .map-screen CSS comment). Desktop absolutely-positions
-                 both and only shows the .active one, so order there
-                 is irrelevant. Keep these two src values in sync with
-                 MAP_PAGES in the script below if you ever rename the
-                 image files. -->
-            <div class="map-page" id="mapPage2" data-page="2">
-              <img class="map-img" src="images/game-karta6-10.jpg" alt="Islands 6-10 map" draggable="false">
-            </div>
-            <div class="map-page" id="mapPage1" data-page="1">
-              <img class="map-img" src="images/game-karta1-5.jpg" alt="Islands 1-5 map" draggable="false">
-            </div>
+          <div class="board-wrap">
+            <div class="board" id="board" aria-label="Game board"></div>
           </div>
-        </div>
-      </section>
 
-      <!-- Wrapped so mobile can put the title and the account icon on one
-           row at the very top (see .top-bar in the mobile media queries),
-           without touching the desktop layout, which still positions
-           .brand and #authRoot independently. -->
-      <div class="top-bar" id="topBar">
-        <div id="authRoot"></div>
+          <div class="map-screen" id="mapScreen" aria-label="World map">
+            <div class="map-title" id="mapTitle">Choose an island</div>
+          </div>
 
-        <div class="hud brand">
-          <div>
-            <small>✦ Holistic Loader</small>
-            <strong id="worldName">Wellness Garden</strong>
+          <!-- The ONLY HUD element left over the image itself, per spec:
+               just the next-item artwork in its little frame, no caption. -->
+          <div class="next-seed" id="nextTile" aria-label="Next item to place"></div>
+        </section>
+
+        <div class="login-gate" id="loginGate">
+          <div class="login-gate-card">
+            <div class="login-gate-icon"></div>
+            <h2>Log in to grow your garden</h2>
+            <p>Your garden is saved to your account in the cloud, so you need to be logged in to play.</p>
+            <button type="button" id="loginGateBtn">Log in / Sign up</button>
           </div>
         </div>
       </div>
 
-      <div class="hud score" aria-label="Game stats">
-        <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
-        <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
-        <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
-      </div>
-
-      <div class="hud collection" id="collection" aria-label="Rewards created"></div>
-
-      <!-- Wrapped so mobile can lay next-seed + all three buttons out as a
-           single row (see .bottom-bar in the mobile media queries) without
-           touching the desktop layout, which still positions .next-box and
-           .actions independently via their own absolute left/right rules. -->
-      <div class="bottom-bar" id="bottomBar">
-        <div class="hud next-box">
-          <div class="next-seed" id="nextTile"></div>
-          <div class="next-copy"><b>Next item</b><span>Place on an empty circle</span></div>
+      <!-- ---------- Side panel ---------- everything that used to be an
+           absolutely-positioned overlay on the game-world image now lives
+           here instead, laid out top-to-bottom in normal document flow. -->
+      <aside class="side-panel" id="sidePanel" aria-label="Garden controls">
+        <div class="top-row">
+          <div id="authRoot"></div>
+          <div class="hud brand">
+            <div>
+              <small>✦ Holistic Loader</small>
+              <strong id="worldName">Wellness Garden</strong>
+            </div>
+          </div>
         </div>
 
-        <div class="hud actions">
+        <div class="hud score gameplay-only" aria-label="Game stats">
+          <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
+          <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
+          <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
+        </div>
+
+        <button type="button" class="home-thumb gameplay-only" id="homeBtn" aria-label="Back to the map">
+          <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
+          <span class="home-thumb-label">Back to start</span>
+        </button>
+
+        <button type="button" class="hud map-btn gameplay-only" id="mapBtn" aria-label="Show world map">Map</button>
+
+        <div class="world-picker gameplay-only" id="worldPicker" aria-label="Choose world"></div>
+
+        <div class="hud collection gameplay-only" id="collection" aria-label="Rewards created"></div>
+
+        <div class="hud actions gameplay-only">
           <button class="secondary" id="undoBtn">Undo</button>
           <button class="secondary" id="saveBtn">Save</button>
           <button id="newBtn">New</button>
         </div>
-      </div>
-
-      <button type="button" class="hud map-btn" id="mapBtn" aria-label="Show world map">Map</button>
-
-      <div class="world-picker" id="worldPicker" aria-label="Choose world"></div>
-
-      <div class="login-gate" id="loginGate">
-        <div class="login-gate-card">
-          <div class="login-gate-icon"></div>
-          <h2>Log in to grow your garden</h2>
-          <p>Your garden is saved to your account in the cloud, so you need to be logged in to play.</p>
-          <button type="button" id="loginGateBtn">Log in / Sign up</button>
-        </div>
-      </div>
+      </aside>
     </div>
   </main>
 
@@ -1131,9 +1096,7 @@ const ITEMS = [
   { level: 2, image: "images/game-item2", name: "Sprout",   score: 22 },
   { level: 3, image: "images/game-item3", name: "Bloom",    score: 80 },
   { level: 4, image: "images/game-item4", name: "Shard",    score: 260 },
-  { level: 5, image: "images/game-item5", name: "Lotus",    score: 780 },
-  { level: 6, image: "images/game-item6", name: "Radiance", score: 1900 },
-  { level: 7, image: "images/game-item7", name: "Zenith",   score: 4600 }
+  { level: 5, image: "images/game-item5", name: "Lotus",    score: 780 }
 ];
 
 // Declaration order of the keys below = world/unlock order everywhere else.
@@ -1201,55 +1164,127 @@ function getItemImageUrl(item) {
   return item && item.image ? `${item.image}.${WEBP_SUPPORTED ? "webp" : "png"}` : null;
 }
 
+// Map background is responsive on top of the webp/jpg format swap: phones
+// get the portrait images/game-karta1-10mobile.*, desktop/laptop widths
+// (DESKTOP_MEDIA_QUERY, declared further down) get the landscape
+// images/game-karta1-10laptop.*. Called both up front and again any time
+// the mobile/desktop breakpoint is crossed at runtime — see the
+// DESKTOP_MEDIA_QUERY "change" listener below.
+function getMapBackgroundUrl(page) {
+  if (!MAP_PAGES[page]) return null;
+  const base = (typeof DESKTOP_MEDIA_QUERY !== "undefined" && DESKTOP_MEDIA_QUERY.matches) ? MAP_IMAGE_LAPTOP : MAP_IMAGE_MOBILE;
+  return `${base}.${WEBP_SUPPORTED ? "webp" : "jpg"}`;
+}
+
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
 const WORLD_LABELS = {
+  // Islands 1-10 (map order) — renamed per the new episode titles:
+  // 1. Underwater Kingdom  2. Sunset Place  3. Beach Birds
+  // 4. Treasure Cave       5. Cherry Blossom  6. Jungle Ruins
+  // 7. Mountain Top        8. The Forest      9. Dragons Valley
+  // 10. Crystal Palace
+  sunsetMeadow:    "Underwater Kingdom", // island 1
+  magicField:      "Sunset Place",       // island 2
+  flowerPalace:    "Beach Birds",        // island 3
+  cherryBlossom:   "Treasure Cave",      // island 4
+  mountainTop:     "Cherry Blossom",     // island 5
+  theBeach:        "Jungle Ruins",       // island 6
+  underwaterRuins: "Mountain Top",       // island 7
+  treasureCave:    "The Forest",         // island 8
+  dragonValley:    "Dragons Valley",     // island 9
+  volcano:         "Crystal Palace",     // island 10
+
+  // Islands 11-20 — not on the current map art, names unchanged.
   lavendelMeadow:    "Lavendel Meadow",
-  dragonValley:    "Dragon Valley",
   iceCavern:       "Ice Cavern",
   cosmos:          "Cosmos",
-  mountainTop:  "Mountain Top",
-  underwaterRuins: "Underwater Ruins",
   desertOasis:     "Desert Oasis",
-  volcano:         "The Volcano",
   jungleTemple:    "Jungle Temple",
-  cherryBlossom:   "Cherry Blossom",
-  flowerPalace:    "Flower Garden",
   enchantedForest: "Enchanted Forest",
   lavenderGarden:  "Lavender Garden",
-  sunsetMeadow:    "Sunset Meadow",
-  magicField:  "Magic Field",
   bambooForest:    "Bamboo Forest",
   moonlitPond:     "Moonlit Pond",
-  theBeach:     "The Beach",
-  treasureCave:     "Treasure Cave",
   crystalFalls:      "Crystal Falls"
 };
 
 /* -----------------------------------------------------------------
-   MAP SCREENS — images/game-karta1-5.jpg covers islands 1-5 (the
-   first 5 WORLD_KEYS), images/game-karta6-10.jpg covers islands 6-10
-   (the next 5 WORLD_KEYS). The map is the landing screen after login;
-   tapping an unlocked island calls enterWorld() to open that world's
-   board. "Clearing" an island = creating CLEAR_ITEM_LEVEL's item
-   (level 5, "Lotus") at least once while that world is active — see
-   checkWorldClear() in placeTile(). Clearing island N unlocks island
-   N+1; clearing island 5 additionally reveals the karta6-10 map.
+   MAP SCREEN — a single artwork holds all 10 islands, so there's only
+   ever one "page" now (kept as an object/mapPage variable purely so
+   the rest of the map plumbing below — and the existing map_page
+   cloud column — doesn't need to change shape). The map is the
+   landing screen after login; tapping an unlocked island calls
+   enterWorld() to open that world's board. "Clearing" an island =
+   creating CLEAR_ITEM_LEVEL's item (level 5, "Lotus") at least once
+   while that world is active — see checkWorldClear() in placeTile().
+   Clearing island N unlocks island N+1.
+
+   The map background image is responsive — see getMapBackgroundUrl()
+   below — using images/game-karta1-10mobile.* (portrait) on phones
+   and images/game-karta1-10laptop.* (landscape) on desktop/laptop
+   widths, each with a .webp (preferred) and .jpg fallback.
 
    Positions are percentages (of the map image's width/height) for
-   each numbered circle in the artwork — eyeball-adjust these if the
-   final art shifts the islands at all.
+   each numbered circle in the artwork, laid out as a snaking 3-column
+   path (boustrophedon) bottom -> top: 1, 2, 3 left-to-right along the
+   bottom row; 4 above 3, 5 left of 4, 6 above 1 along the next row
+   (right-to-left); 7 above 6, 8 right of 7, 9 right of 8 along the row
+   above that (left-to-right); 10 alone at the very top. Both the
+   mobile (portrait) and laptop (landscape) artwork use the same
+   number-to-slot order — only the actual pixel percentages differ
+   between the two images. See ISLAND_POSITIONS_MOBILE /
+   ISLAND_POSITIONS_LAPTOP and getIslandPositions() below — the x/y
+   values there are a best-guess grid and may need eyeballing against
+   the real map artwork to land each numbered circle exactly on its
+   island.
 ----------------------------------------------------------------- */
 const CLEAR_ITEM_LEVEL = 5;
 const MAP_WORLD_KEYS = WORLD_KEYS.slice(0, 10); // islands 1-10
 const MAP_PAGES = {
-  1: { image: "images/game-karta1-5.jpg", keys: MAP_WORLD_KEYS.slice(0, 5), offset: 0 },
-  2: { image: "images/game-karta6-10.jpg", keys: MAP_WORLD_KEYS.slice(5, 10), offset: 5 }
+  1: { keys: MAP_WORLD_KEYS, offset: 0 }
 };
-const ISLAND_POSITIONS = {
-  1: { x: 18, y: 40 }, 2: { x: 41, y: 40 }, 3: { x: 76, y: 35 }, 4: { x: 20, y: 89 }, 5: { x: 76, y: 89 },
-  6: { x: 9,  y: 55 }, 7: { x: 27, y: 55 }, 8: { x: 48, y: 54 }, 9: { x: 69, y: 55 }, 10: { x: 89, y: 46 }
+const MAP_IMAGE_MOBILE = "images/game-karta1-10mobile";
+const MAP_IMAGE_LAPTOP = "images/game-karta1-10laptop";
+
+// Snaking 3-column path, bottom -> top (boustrophedon):
+//   row 1 (bottom, left -> right):  1, 2, 3
+//   row 2 (right -> left):          4 (above 3), 5 (left of 4), 6 (above 1)
+//   row 3 (left -> right):          7 (above 6), 8 (right of 7), 9 (right of 8)
+//   row 4 (top, single, centered):  10
+// Portrait artwork:
+const ISLAND_POSITIONS_MOBILE = {
+  1:  { x: 20, y: 88 }, // bottom row, left — journey start
+  2:  { x: 50, y: 88 }, // bottom row, middle
+  3:  { x: 80, y: 88 }, // bottom row, right
+  4:  { x: 80, y: 64 }, // row 2, right — above 3
+  5:  { x: 50, y: 64 }, // row 2, middle — left of 4
+  6:  { x: 20, y: 64 }, // row 2, left — above 1
+  7:  { x: 20, y: 40 }, // row 3, left — above 6
+  8:  { x: 50, y: 40 }, // row 3, middle — right of 7
+  9:  { x: 80, y: 40 }, // row 3, right — right of 8
+  10: { x: 50, y: 16 }  // top, single — journey end
 };
+
+// Landscape artwork: same snake pattern/order, laid out across the
+// wider 3-column grid.
+const ISLAND_POSITIONS_LAPTOP = {
+  1:  { x: 22, y: 85 }, // bottom row, left — journey start
+  2:  { x: 50, y: 85 }, // bottom row, middle
+  3:  { x: 78, y: 85 }, // bottom row, right
+  4:  { x: 78, y: 58 }, // row 2, right — above 3
+  5:  { x: 50, y: 58 }, // row 2, middle — left of 4
+  6:  { x: 22, y: 58 }, // row 2, left — above 1
+  7:  { x: 22, y: 31 }, // row 3, left — above 6
+  8:  { x: 50, y: 31 }, // row 3, middle — right of 7
+  9:  { x: 78, y: 31 }, // row 3, right — right of 8
+  10: { x: 50, y: 15 }  // top, single — journey end
+};
+
+// Picks whichever position set matches the map image currently showing
+// (see getMapBackgroundUrl(), same breakpoint check).
+function getIslandPositions() {
+  return (typeof DESKTOP_MEDIA_QUERY !== "undefined" && DESKTOP_MEDIA_QUERY.matches) ? ISLAND_POSITIONS_LAPTOP : ISLAND_POSITIONS_MOBILE;
+}
 
 const EMPTY_ITEM = { level: 0, image: null, name: "Empty", score: 0 };
 
@@ -1290,11 +1325,12 @@ function getItem(level) {
     // Map progression state — persisted to Supabase alongside the rest
     // of the save (see currentSaveRow() / loadFromCloud()).
     let clearedWorlds = [];   // world keys that have been "cleared" (see CLEAR_ITEM_LEVEL)
-    let mapPage = 1;          // 1 = karta1-5.jpg unlocked, 2 = karta6-10.jpg also unlocked
+    let mapPage = 1;          // always 1 now — single map image holds all 10 islands (var kept for the cloud row's shape)
     let onMap = true;         // true while the map screen is showing instead of the board
     let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
 
     const stageEl = document.getElementById("stage");
+    const gameLayoutEl = document.getElementById("gameLayout");
     const stageFrameEl = document.getElementById("stageFrame");
     const boardEl = document.getElementById("board");
     const nextTileEl = document.getElementById("nextTile");
@@ -1309,10 +1345,9 @@ function getItem(level) {
     const worldPickerEl = document.getElementById("worldPicker");
     const loginGateEl = document.getElementById("loginGate");
     const mapScreenEl = document.getElementById("mapScreen");
-    const mapScrollEl = document.getElementById("mapScroll");
     const mapTitleEl = document.getElementById("mapTitle");
     const mapBtnEl = document.getElementById("mapBtn");
-    const mapPageEls = { 1: document.getElementById("mapPage1"), 2: document.getElementById("mapPage2") };
+    const homeBtnEl = document.getElementById("homeBtn");
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
@@ -1320,6 +1355,7 @@ function getItem(level) {
     document.getElementById("undoBtn").addEventListener("click", undo);
     document.getElementById("saveBtn").addEventListener("click", saveGame);
     mapBtnEl.addEventListener("click", () => showMap(null));
+    homeBtnEl.addEventListener("click", () => showMap(null)); // same destination as the Map button — just a second, always-visible entry point outside the board
     boardEl.addEventListener("click", (e) => {
       const cell = e.target.closest(".cell");
       if (!cell || !boardEl.contains(cell)) return;
@@ -1401,7 +1437,7 @@ function getItem(level) {
     const ratioCache = {}; // cache key ("world:<key>" / "map:<page>") -> width/height, so re-showing something already measured this session doesn't re-fetch/re-decode its image just to read its size
 
     function measureAndApplyRatio(cacheKey, url, isStillRelevant) {
-      if (!DESKTOP_MEDIA_QUERY.matches) return; // mobile forces its own square stage in CSS regardless — don't bother measuring
+      if (!DESKTOP_MEDIA_QUERY.matches) return; // mobile sizes its own stage in CSS (flex-fill, no fixed aspect-ratio) — don't bother measuring
       const cached = ratioCache[cacheKey];
       if (cached) {
         stageFrameEl.style.setProperty("--stage-ratio", cached);
@@ -1431,16 +1467,20 @@ function getItem(level) {
     function applyMapAspectRatio(page) {
       const info = MAP_PAGES[page];
       if (!info) return;
-      measureAndApplyRatio(`map:${page}`, info.image, () => onMap && mapPage === page);
+      const cacheKey = `map:${page}:${DESKTOP_MEDIA_QUERY.matches ? "laptop" : "mobile"}`;
+      measureAndApplyRatio(cacheKey, getMapBackgroundUrl(page), () => onMap && mapPage === page);
     }
 
-    // Both map images are needed the moment login resolves (the map is
-    // the landing screen) and are otherwise only fetched lazily on
-    // first display — warm the browser cache for both up front so
-    // flipping from karta1-5 to karta6-10 (or reloading mid-session)
-    // never shows a blank/loading frame.
+    // Both the mobile (portrait) and laptop (landscape) map images are
+    // needed the moment login resolves (the map is the landing screen)
+    // and are otherwise only fetched lazily on first display — warm the
+    // browser cache for both up front so crossing the mobile/desktop
+    // breakpoint (or reloading mid-session) never shows a blank/loading
+    // frame.
     function preloadMapImages() {
-      Object.values(MAP_PAGES).forEach(page => { new Image().src = page.image; });
+      [MAP_IMAGE_MOBILE, MAP_IMAGE_LAPTOP].forEach(base => {
+        new Image().src = `${base}.${WEBP_SUPPORTED ? "webp" : "jpg"}`;
+      });
     }
     preloadMapImages();
 
@@ -1449,6 +1489,12 @@ function getItem(level) {
     // or clear the measured ratio immediately rather than waiting for
     // the next world switch.
     DESKTOP_MEDIA_QUERY.addEventListener("change", (e) => {
+      // mobile/laptop map art swap AND island button positions both
+      // depend on this breakpoint — re-render the whole map (not just
+      // the background) so the numbered circles jump to their other
+      // layout's spots immediately instead of staying put on the new
+      // art. Cheap either way: at most 10 buttons.
+      if (onMap) renderMap();
       if (e.matches) {
         if (onMap) applyMapAspectRatio(mapPage); else applyStageAspectRatio(currentWorldKey);
       } else {
@@ -1517,25 +1563,11 @@ function getItem(level) {
 
     function showMap(highlightKey) {
       onMap = true;
-      stageFrameEl.classList.add("on-map");
+      gameLayoutEl.classList.add("on-map");
       justUnlockedKey = highlightKey || null;
-      if (justUnlockedKey) {
-        const page = MAP_WORLD_KEYS.indexOf(justUnlockedKey) < 5 ? 1 : 2;
-        mapPage = Math.max(mapPage, page);
-      }
       renderMap();
       mapScreenEl.classList.add("show");
-      applyMapAspectRatio(mapPage); // desktop only — no-op on mobile, see measureAndApplyRatio()
-
-      // Mobile shows both pages stacked in one scroller — jump to
-      // whichever page is relevant so the player isn't dropped on the
-      // wrong one. Desktop ignores this scroll (it shows one page,
-      // full-bleed, via the .active class instead).
-      if (!DESKTOP_MEDIA_QUERY.matches) {
-        const target = mapPageEls[mapPage];
-        if (target) target.scrollIntoView({ block: "start" });
-      }
-
+      applyMapAspectRatio(mapPage);
       if (justUnlockedKey) {
         setTimeout(() => {
           justUnlockedKey = null;
@@ -1544,9 +1576,16 @@ function getItem(level) {
       }
     }
 
+    // Just the background swap (mobile <-> laptop art), without rebuilding
+    // the island buttons — used when only the breakpoint changed, not the
+    // map's unlock state.
+    function updateMapBackground() {
+      mapScreenEl.style.setProperty("--map-bg", `url("${getMapBackgroundUrl(mapPage)}")`);
+    }
+
     function hideMap() {
       onMap = false;
-      stageFrameEl.classList.remove("on-map");
+      gameLayoutEl.classList.remove("on-map");
       mapScreenEl.classList.remove("show");
     }
 
@@ -1556,45 +1595,34 @@ function getItem(level) {
       setWorld(key); // already flushes an immediate sync internally
     }
 
-    // Renders BOTH pages' islands every time (cheap: 10 buttons total)
-    // rather than only the "current" one — mobile shows both pages at
-    // once (stacked/scrollable), so both always need live hotspots.
-    // Desktop only reveals the active page (see the .map-page.active
-    // CSS), so rendering the inactive one's buttons too costs nothing
-    // visible there, and keeps this one code path correct on both
-    // breakpoints instead of branching.
     function renderMap() {
-      mapTitleEl.textContent = mapPage === 1 ? "Islands 1 - 5" : "Islands 6 - 10";
-      Object.entries(mapPageEls).forEach(([pageNum, pageEl]) => {
-        pageEl.classList.toggle("active", Number(pageNum) === mapPage);
-      });
+      const page = MAP_PAGES[mapPage] || MAP_PAGES[1];
+      updateMapBackground();
+      mapTitleEl.textContent = "Choose an island";
 
-      // Re-render every button (cheap: at most 10 total) rather than
-      // diffing — this only runs when the map is opened, an island is
-      // cleared, or the 3s "just unlocked" pulse expires.
+      // Re-render every button (cheap: at most 10) rather than diffing —
+      // this only runs when the map is opened, an island is cleared, or
+      // the 3s "just unlocked" pulse expires.
       mapScreenEl.querySelectorAll(".island-btn").forEach(el => el.remove());
 
-      Object.entries(MAP_PAGES).forEach(([pageNum, page]) => {
-        const pageEl = mapPageEls[pageNum];
-        page.keys.forEach((key, i) => {
-          const islandNumber = page.offset + i + 1;
-          const pos = ISLAND_POSITIONS[islandNumber];
-          if (!pos) return;
-          const unlocked = isWorldUnlocked(key);
-          const cleared = isWorldCleared(key);
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "island-btn"
-            + (unlocked ? "" : " locked")
-            + (cleared ? " cleared" : "")
-            + (key === justUnlockedKey ? " just-unlocked" : "");
-          btn.style.left = `${pos.x}%`;
-          btn.style.top = `${pos.y}%`;
-          btn.textContent = String(islandNumber);
-          btn.setAttribute("aria-label", `${WORLD_LABELS[key] || key} — island ${islandNumber}${cleared ? ", cleared" : unlocked ? "" : ", locked"}`);
-          btn.dataset.worldKey = key; // read by the single delegated listener below, added once
-          pageEl.appendChild(btn);
-        });
+      page.keys.forEach((key, i) => {
+        const islandNumber = page.offset + i + 1;
+        const pos = getIslandPositions()[islandNumber];
+        if (!pos) return;
+        const unlocked = isWorldUnlocked(key);
+        const cleared = isWorldCleared(key);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "island-btn"
+          + (unlocked ? "" : " locked")
+          + (cleared ? " cleared" : "")
+          + (key === justUnlockedKey ? " just-unlocked" : "");
+        btn.style.left = `${pos.x}%`;
+        btn.style.top = `${pos.y}%`;
+        btn.textContent = String(islandNumber);
+        btn.setAttribute("aria-label", `${WORLD_LABELS[key] || key} — island ${islandNumber}${cleared ? ", cleared" : unlocked ? "" : ", locked"}`);
+        btn.dataset.worldKey = key; // read by the single delegated listener below, added once
+        mapScreenEl.appendChild(btn);
       });
     }
 
@@ -1606,9 +1634,8 @@ function getItem(level) {
 
     // Called from placeTile() right after a merge. If the item just
     // created is the "clear" tier (CLEAR_ITEM_LEVEL) and this world
-    // hasn't been marked cleared yet, mark it, unlock the next island
-    // (flipping to the karta6-10 map if that next island is #6), and
-    // drop the player back on the map with the new island pulsing.
+    // hasn't been marked cleared yet, mark it, unlock the next island,
+    // and drop the player back on the map with the new island pulsing.
     function checkWorldClear(createdLevel) {
       if (createdLevel < CLEAR_ITEM_LEVEL) return;
       if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return;
@@ -1819,7 +1846,7 @@ function getItem(level) {
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
           clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds : [];
-          mapPage = data.map_page === 2 ? 2 : 1;
+          mapPage = 1; // only one map page now (all 10 islands on one image) — kept as a var for the cloud row's shape
           history = [];
           setWorld(currentWorldKey);
           bestStatEl.textContent = formatNumber(best);
@@ -1849,9 +1876,7 @@ function getItem(level) {
       updateBest();
       checkWorldClear(createdLevel);
       render();
-      if (createdLevel >= 7) showToast(`${getItem(7).name} created`);
-      else if (createdLevel >= 6) showToast(`${getItem(6).name} awakened`);
-      else if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
+      if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
       else if (createdLevel > 0) showToast("Beautiful merge");
       if (isFull()) showGameOver();
       syncToCloud(false);
