@@ -126,6 +126,16 @@
       padding: 4px 2px;
       overflow-y: auto;
       overflow-x: hidden;
+      scrollbar-width: none;      /* Firefox */
+      -ms-overflow-style: none;   /* old Edge/IE */
+    }
+
+    /* Chrome / Safari / new Edge — same "scrollable but no visible
+       scrollbar" effect as scrollbar-width:none above. */
+    .side-panel::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
     }
 
     .side-panel .top-row {
@@ -762,22 +772,23 @@ button {
       .map-brand {
         display: block;
         position: absolute;
-        top: clamp(12px, 2.4vw, 26px);
-        left: clamp(16px, 3vw, 32px);
+        top: clamp(8px, 2vw, 22px);
+        left: 58%;
+        transform: translateX(-50%);
         z-index: 3;
-        max-width: 40%;
-        text-align: left;
+        max-width: 60%;
+        text-align: center;
       }
     }
 
     .map-brand-img {
       display: block;
       width: 100%;
-      max-height: clamp(35px, 8vw, 95px);
+      max-height: clamp(64px, 15vw, 190px);
       height: auto;
       object-fit: contain;
-      object-position: left top;
-      margin: 0;
+      object-position: center top;
+      margin: 0 auto;
     }
 
     .map-brand-fallback {
@@ -1666,7 +1677,7 @@ button {
           <span class="premium-badge">Premium</span>
           <h3>Unlock everything</h3>
           <p class="premium-price">$4.99 <span>/ month</span></p>
-          <p>Get full access to every world and every level on Holistic Loader — this game and all the others.</p>
+          <p>Get full access to every world including full premium on Holistic Loader, www.holisticloader.com</p>
           <button type="button" class="secondary" id="premiumBoxBtn">Unlock Premium</button>
         </div>
 
@@ -1690,7 +1701,6 @@ button {
 
         <div class="hud actions gameplay-only">
           <button class="secondary" id="undoBtn">Undo</button>
-          <button class="secondary" id="saveBtn">Save</button>
           <button id="newBtn">New</button>
         </div>
 
@@ -2131,7 +2141,6 @@ function getItem(level) {
       if (e.target === howToPlayModalEl) howToPlayModalEl.classList.remove("show");
     });
     document.getElementById("undoBtn").addEventListener("click", undo);
-    document.getElementById("saveBtn").addEventListener("click", saveGame);
     homeBtnEl.addEventListener("click", () => showMap(null)); // opens the map screen — the only entry point to it now that the separate Map button is gone
     boardEl.addEventListener("click", (e) => {
       const cell = e.target.closest(".cell");
@@ -2603,14 +2612,6 @@ function getItem(level) {
     }
     document.addEventListener("visibilitychange", () => { if (document.hidden) flushPendingSync(); });
     window.addEventListener("pagehide", flushPendingSync);
-
-    // "Save" button — same cloud write as the automatic saves below,
-    // just forced to go immediately (not debounced) with a toast so the
-    // user gets explicit confirmation.
-    function saveGame() {
-      if (!currentUser) { showToast("Log in to save your garden"); return; }
-      syncToCloud(true, true);
-    }
 
     async function loadFromCloud() {
       if (!currentUser || typeof sb === "undefined") { newGarden(); return; }
