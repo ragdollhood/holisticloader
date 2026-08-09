@@ -633,6 +633,19 @@ button {
     @media (min-width: 761px) {
       #gameLayout:not(.on-map) .next-box {
         display: flex;
+
+        /* Pin the box so its OWN bottom edge lines up with the game
+           board's bottom edge, instead of just trailing the side
+           panel's normal document flow. .side-panel is position:relative
+           and (thanks to .game-layout's align-items:stretch) is always
+           exactly as tall as .stage-frame, so a bottom offset expressed
+           in the same terms as the board's own top+height (see
+           --board-top / --board-height on :root, and .board-wrap which
+           uses them) lands on the identical line inside the image. */
+        position: absolute;
+        left: 2px;
+        right: 2px;
+        bottom: calc(100% - var(--board-top) - var(--board-height));
       }
 
       /* Inside .next-box the badge is normal in-flow content, not the
@@ -642,18 +655,21 @@ button {
       }
 
       /* Desktop's .score no longer contains the home-thumb (it now
-         lives in .next-box — see layoutSideExtras()), so it's just the
-         3 stat columns plus a trailing column for the account icon
-         (moved in here from the top row — see layoutSideExtras()). */
+         lives in .next-box — see layoutSideExtras()) or the account
+         icon (that stays in .top-row — see layoutSideExtras()), so
+         it's just the 3 stat columns. */
       .score {
-        grid-template-columns: repeat(3, 1fr) auto;
+        grid-template-columns: repeat(3, 1fr);
         align-items: center;
       }
 
-      .score #authRoot {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      /* Gameplay only (not the start/map screen): pull the score box
+         out of its default position at the bottom of the side panel
+         (see the .score { order: 1 } rule above, which is what the
+         start screen still relies on) so it sits directly under the
+         title row instead. */
+      #gameLayout:not(.on-map) .side-panel .score.gameplay-only {
+        order: 0;
       }
 
       /* ---------- "Back to start" card ----------
@@ -773,11 +789,11 @@ button {
         display: block;
         position: absolute;
         top: clamp(8px, 2vw, 22px);
-        left: 58%;
-        transform: translateX(-50%);
+        left: clamp(10px, 2.4vw, 26px);
+        transform: none;
         z-index: 3;
-        max-width: 60%;
-        text-align: center;
+        max-width: 30%;
+        text-align: left;
       }
     }
 
@@ -789,6 +805,16 @@ button {
       object-fit: contain;
       object-position: center top;
       margin: 0 auto;
+    }
+
+    /* Laptop/desktop only: smaller + left-aligned wordmark on the start
+       screen (see .map-brand above, which handles the left placement —
+       this just shrinks the image itself). */
+    @media (min-width: 761px) {
+      .map-brand-img {
+        max-height: clamp(40px, 8vw, 110px);
+        margin: 0;
+      }
     }
 
     .map-brand-fallback {
@@ -2115,7 +2141,11 @@ function getItem(level) {
       if (DESKTOP_MEDIA_QUERY.matches) {
         nextBoxEl.appendChild(homeBtnEl);
         nextBoxEl.appendChild(nextItemGroupEl);
-        scoreBoxEl.appendChild(authRootEl);
+        // Account icon stays put in .top-row on desktop/laptop too (see
+        // #authRoot markup) — it no longer gets pulled into the score
+        // box, so it stands alone in the top-right corner instead of
+        // sharing space with the score/moves/best stats.
+        topRowEl.appendChild(authRootEl);
       } else {
         scoreBoxEl.insertBefore(homeBtnEl, scoreBoxEl.firstChild);
         stageEl.appendChild(nextItemGroupEl);
