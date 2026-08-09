@@ -840,7 +840,8 @@ button {
         display: block;
         position: absolute;
         top: clamp(8px, 2vw, 22px);
-        left: clamp(10px, 2.4vw, 26px);
+        /* +1cm (≈38px) to the right of the original clamp(10px, 2.4vw, 26px). */
+        left: calc(clamp(10px, 2.4vw, 26px) + 38px);
         transform: none;
         z-index: 3;
         max-width: 30%;
@@ -863,7 +864,8 @@ button {
        this just shrinks the image itself). */
     @media (min-width: 761px) {
       .map-brand-img {
-        max-height: clamp(40px, 8vw, 110px);
+        /* +10% over the original clamp(40px, 8vw, 110px). */
+        max-height: clamp(44px, 8.8vw, 121px);
         margin: 0;
       }
     }
@@ -1487,7 +1489,12 @@ button {
          the right amount compensates for that. */
       :root {
         --board-left: 10.5%;
-        --board-top: calc(11% - 30px);
+        /* Pushed down an extra row's worth (--board-height / --board-rows,
+           i.e. the height of one full planting circle) so the board sits
+           lower in the stage image on mobile. --board-rows resolves via
+           inheritance from #stageFrame's inline style (ROWS_MOBILE, see
+           the JS below), so this stays correct if that value ever changes. */
+        --board-top: calc(11% - 30px + (var(--board-height) / var(--board-rows)));
         --board-width: 79%;
         --board-height: 78%;
       }
@@ -1597,7 +1604,7 @@ button {
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      .home-thumb { flex-direction: column; align-items: center; justify-content: center; padding: 5px 6px; gap: 3px; width: 100%; height: 100%; }
+      .home-thumb { flex-direction: column; align-items: center; justify-content: center; padding: 5px 6px; gap: 3px; width: 100%; height: 100%; min-width: 0; }
       .home-thumb-img,
       .home-thumb-label { display: none; }
       .home-thumb-icon { display: block; width: 17px; height: 17px; color: var(--gold2); }
@@ -1690,16 +1697,15 @@ button {
         border-radius: 0;
       }
 
-      /* The map art used background-size:contain, which letterboxed it
-         inside the frame and left the plain stage background-color
-         showing as empty margin down both sides — that's the "map
-         doesn't reach the edge" gap. Switching to cover (mobile map
-         screen only; desktop/laptop keeps contain, untouched) fills
-         the full width edge-to-edge, at the cost of a little top/bottom
-         crop where the box's aspect ratio doesn't exactly match the
-         art's — an acceptable trade-off for a true full-bleed image. */
+      /* The map art now fills the full width of the frame edge-to-edge
+         (cover, not contain) — any extra height the image doesn't fit
+         gets cropped from the TOP only (background-position anchored to
+         the bottom keeps the image's bottom edge fixed to the frame's
+         bottom edge, so overflow is trimmed above instead of split
+         evenly top/bottom). */
       #gameLayout.on-map .map-screen {
         background-size: cover;
+        background-position: center bottom;
       }
 
       /* The 1px border inherited from .stage was barely visible once
@@ -1730,7 +1736,16 @@ button {
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
         justify-content: space-between;
+        align-items: center;
         min-height: 26px;
+      }
+
+      /* Explicitly center the "how to play" and login icons on the
+         cross-axis within the icon bar's own height, regardless of any
+         difference in their intrinsic sizes (auth.js's injected
+         #accountBtn vs. the fixed 34px howtoplay-btn). */
+      #gameLayout.on-map .side-panel .top-row > * {
+        align-self: center;
       }
 
       #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
@@ -1781,9 +1796,16 @@ button {
         text-align: center;
       }
 
+      /* Nearly doubled from clamp(30px, 8vw, 52px) — sized up and
+         re-centered (both axes) in the header area between the icon bar
+         and the map frame below it: horizontally via .map-brand's
+         text-align:center + this image's own auto side-margins, and
+         vertically via the small symmetric top/bottom margin here
+         (replacing the old tight negative pull-up, which only worked at
+         the smaller size). */
       #gameLayout.on-map .map-brand-img {
-        max-height: clamp(40px, 12vw, 72px);
-        margin: -6px auto 0;
+        max-height: clamp(56px, 15vw, 98px);
+        margin: 6px auto;
       }
 
       /* The small logo that used to be the icon bar's only title is now
