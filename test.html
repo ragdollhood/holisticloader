@@ -283,7 +283,7 @@
     .brand-gameplay {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       gap: 0;
     }
 
@@ -322,7 +322,7 @@
     .brand-logo-text {
       display: block;
       max-width: 100%;
-      max-height: clamp(12px, 6cqw, 20px);
+      max-height: clamp(36px, 18cqw, 60px);
       width: auto;
       height: auto;
       object-fit: contain;
@@ -343,7 +343,7 @@
       padding: 10px 14px;
       border-radius: 22px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, 1fr) auto;
       gap: 10px;
     }
 
@@ -592,7 +592,8 @@ button {
       display: none;
       background-color: #1b1030;
       background-image: var(--map-bg);
-      background-size: cover;
+      background-size: contain;
+      background-repeat: no-repeat;
       background-position: center;
       border-radius: clamp(20px, 3vw, 36px);
       overflow: hidden;
@@ -618,14 +619,14 @@ button {
         top: clamp(12px, 2.4vw, 26px);
         left: clamp(12px, 2.4vw, 26px);
         z-index: 3;
-        max-width: 46%;
+        max-width: 23%;
       }
     }
 
     .map-brand-img {
       display: block;
       width: 100%;
-      max-height: clamp(70px, 16vw, 190px);
+      max-height: clamp(35px, 8vw, 95px);
       height: auto;
       object-fit: contain;
       object-position: left top;
@@ -642,6 +643,7 @@ button {
     }
 
     .map-title {
+      display: none;
       position: absolute;
       left: 50%;
       top: clamp(10px, 2.4vw, 22px);
@@ -1216,7 +1218,6 @@ button {
            here instead, laid out top-to-bottom in normal document flow. -->
       <aside class="side-panel" id="sidePanel" aria-label="Garden controls">
         <div class="top-row">
-          <div id="authRoot"></div>
           <div class="hud brand">
             <!-- Shown only on the map screen (full logo, no world name —
                  see #gameLayout.on-map .brand-map-logo in the CSS). -->
@@ -1252,6 +1253,7 @@ button {
           <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
           <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
           <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
+          <div id="authRoot"></div>
         </div>
 
         <div class="world-picker gameplay-only" id="worldPicker" aria-label="Choose world"></div>
