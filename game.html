@@ -1519,13 +1519,14 @@ button {
       .brand small { font-size: 8px; }
       .brand strong { font-size: 15px; }
 
-      /* 5 equal columns now: login/account icon, the 3 stats, then
-         "Back to start" — every button in the row stretches to fill
-         its own slice of the box instead of sizing to its content
-         (see the .home-thumb / #authRoot width:100% overrides below
-         and layoutSideExtras() in the JS, which puts them in this
-         order for mobile only). */
-      .score { padding: 6px 8px; gap: 6px; grid-template-columns: repeat(5, 1fr); }
+      /* 6 columns now: the next-item badge (sized to its own content,
+         not stretched), then login/account icon, the 3 stats, then
+         "Back to start" — those last 5 stretch to fill their own
+         slice of the remaining width just like before (see the
+         .home-thumb / #authRoot width:100% overrides below and
+         layoutSideExtras() in the JS, which now inserts the next-item
+         badge as this row's first child, mobile only). */
+      .score { padding: 6px 8px; gap: 6px; grid-template-columns: auto repeat(5, 1fr); align-items: center; }
       .score .stat { min-width: 0; padding: 5px 6px; }
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
@@ -1553,11 +1554,14 @@ button {
       .world-picker { padding: 6px; gap: 6px; }
       .collection { padding: 6px 8px; gap: 5px; }
 
-      /* Mobile keeps the on-image next-item badge but shrinks it a
-         bit to fit the smaller stage, moves it to the bottom-right
-         corner (desktop stays bottom-left), and reveals the "Next item"
-         caption stacked above it. */
-      .next-item-group { left: auto; right: clamp(12px, 3vw, 26px); }
+      /* Mobile no longer overlays the next-item badge on top of the
+         board image — it now sits in normal flow as the first cell of
+         the score row (see layoutSideExtras() in the JS, which moves
+         #nextItemGroup into #scoreBox instead of into the stage on
+         mobile), directly under the image and to the left of the
+         login icon / stats / home button. Shrunk a bit to fit that
+         row, and still shows the "Next item" caption above the icon. */
+      .next-item-group { position: static; left: auto; right: auto; bottom: auto; z-index: auto; }
       .next-item-label {
         display: block;
         font-family: Arial, sans-serif;
@@ -2308,14 +2312,14 @@ function getItem(level) {
         // sharing space with the score/moves/best stats.
         topRowEl.appendChild(authRootEl);
       } else {
-        // Mobile: login/account icon sits first in the score row (bottom
-        // left, right next to the Score stat), "Back to start" moves to
-        // the very end of that row (bottom right) instead of its old
-        // spot on the left — see the max-width:760px .score rules for
-        // the matching 5-column layout.
-        scoreBoxEl.insertBefore(authRootEl, scoreBoxEl.firstChild);
+        // Mobile: next-item badge sits first in the score row (directly
+        // under the board image, no longer overlaid on top of it),
+        // then login/account icon, then the 3 stats, then "Back to
+        // start" at the very end — see the max-width:760px .score rules
+        // for the matching 6-column layout.
+        scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
+        scoreBoxEl.insertBefore(authRootEl, nextItemGroupEl.nextSibling);
         scoreBoxEl.appendChild(homeBtnEl);
-        stageEl.appendChild(nextItemGroupEl);
       }
     }
     layoutSideExtras();
