@@ -366,42 +366,91 @@ button {
     .island-btn {
       position: absolute;
       transform: translate(-50%, -50%);
-      width: clamp(38px, 7vw, 58px);
-      height: clamp(38px, 7vw, 58px);
+      width: clamp(40px, 7.4vw, 60px);
+      height: clamp(40px, 7.4vw, 60px);
       border-radius: 50%;
-      border: 2px solid rgba(248,217,139,.65);
-      background: radial-gradient(circle, rgba(248,217,139,.30), rgba(20,10,30,.55) 70%);
-      color: var(--gold2);
+
+      /* Unlocked (clickable) state — bright glowing gold ring + gold
+         number. Dark backing behind the number so it stays legible no
+         matter how busy the artwork underneath is. */
+      border: 3px solid #ffd85c;
+      background: radial-gradient(circle, rgba(18,10,28,.88), rgba(18,10,28,.94) 68%);
+      color: #ffe27a;
       font-family: Arial, sans-serif;
       font-weight: 900;
-      font-size: clamp(14px, 2.4vw, 20px);
-      box-shadow: 0 0 20px rgba(248,217,139,.30), 0 10px 26px rgba(0,0,0,.4);
+      font-size: clamp(16px, 2.8vw, 24px);
+      text-shadow: 0 0 6px rgba(0,0,0,.85), 0 1px 2px rgba(0,0,0,.9);
+      box-shadow:
+        0 0 0 1px rgba(255,216,92,.35),
+        0 0 12px 3px rgba(255,216,92,.85),
+        0 0 26px rgba(255,216,92,.55),
+        0 10px 22px rgba(0,0,0,.5);
       cursor: pointer;
       z-index: 1;
       display: grid;
       place-items: center;
+      transition: transform .15s ease;
     }
 
-    .island-btn:hover, .island-btn:focus-visible { transform: translate(-50%, -50%) scale(1.1); }
+    .island-btn:hover, .island-btn:focus-visible { transform: translate(-50%, -50%) scale(1.12); }
 
-    .island-btn.cleared {
-      border-color: rgba(154,255,180,.85);
-      background: radial-gradient(circle, rgba(154,255,180,.30), rgba(20,10,30,.55) 70%);
-      box-shadow: 0 0 20px rgba(154,255,180,.35), 0 10px 26px rgba(0,0,0,.4);
+    /* Cleared keeps the same clickable gold treatment (it's still
+       tappable — replaying is fine) plus a small green check badge so
+       progress is visible at a glance without losing the always-on
+       gold "you can tap this" signal. */
+    .island-btn.cleared { border-color: #9dffc0; }
+    .island-btn.cleared::after {
+      content: "✓";
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #34c77a;
+      color: #0c2016;
+      font-size: 12px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 8px rgba(52,199,122,.85), 0 2px 6px rgba(0,0,0,.5);
     }
 
+    /* Locked (not clickable) state — glowing red ring + dimmed grey
+       number, so it reads as "off-limits" at a glance but the number
+       itself stays fully legible (no heavy blur/grayscale hiding it). */
     .island-btn.locked {
-      opacity: .42;
-      filter: grayscale(.6);
+      border-color: #ff6b6b;
+      background: radial-gradient(circle, rgba(18,10,28,.88), rgba(18,10,28,.94) 68%);
+      color: #9a95a3;
+      text-shadow: 0 0 6px rgba(0,0,0,.85), 0 1px 2px rgba(0,0,0,.9);
+      box-shadow:
+        0 0 0 1px rgba(255,107,107,.30),
+        0 0 12px 3px rgba(255,107,107,.65),
+        0 0 26px rgba(255,107,107,.40),
+        0 10px 22px rgba(0,0,0,.5);
       cursor: not-allowed;
-      box-shadow: none;
     }
 
     .island-btn.locked:hover, .island-btn.locked:focus-visible { transform: translate(-50%, -50%); }
 
     @keyframes islandPulse {
-      0%, 100% { box-shadow: 0 0 20px rgba(248,217,139,.30), 0 10px 26px rgba(0,0,0,.4); transform: translate(-50%, -50%) scale(1); }
-      50% { box-shadow: 0 0 40px rgba(248,217,139,.85), 0 10px 26px rgba(0,0,0,.4); transform: translate(-50%, -50%) scale(1.22); }
+      0%, 100% {
+        box-shadow:
+          0 0 0 1px rgba(255,216,92,.35),
+          0 0 12px 3px rgba(255,216,92,.85),
+          0 0 26px rgba(255,216,92,.55),
+          0 10px 22px rgba(0,0,0,.5);
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        box-shadow:
+          0 0 0 1px rgba(255,216,92,.5),
+          0 0 20px 6px rgba(255,216,92,1),
+          0 0 44px rgba(255,216,92,.85),
+          0 10px 22px rgba(0,0,0,.5);
+        transform: translate(-50%, -50%) scale(1.22);
+      }
     }
 
     .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
