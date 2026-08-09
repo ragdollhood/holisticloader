@@ -66,6 +66,23 @@
       padding: clamp(8px, 1.6vw, 18px);
       position: relative;
     }
+
+    /* ---------- Game layout ----------
+       Two siblings, side by side: .stage-frame (the game-world image —
+       board of planting circles + the "next item" preview, nothing
+       else) and .side-panel (a tall vertical strip holding every button
+       and readout that used to float on top of the artwork). Stacked
+       instead (image on top, panel below) on narrow/mobile widths — see
+       the max-width:760px and landscape media queries further down. */
+    .game-layout {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: clamp(10px, 1.8vw, 22px);
+      max-width: 100%;
+      max-height: 100%;
+    }
+
 .stage-frame {
   position: relative;
 
@@ -77,12 +94,14 @@
      on mobile it's left at its default 1 and the media query further
      down takes over sizing entirely (own width/height rules, own
      forced-square .stage), so this doesn't affect the phone layout.
-     The calc(96svh * var(--stage-ratio)) term converts the usual
+     The calc(78svh * var(--stage-ratio)) term converts the usual
      height budget into an equivalent width budget for THIS ratio, so
      a short/wide browser window still can't make the frame taller
-     than the viewport even once it's no longer square. */
+     than the viewport even once it's no longer square. Uses a smaller
+     share of the viewport width than before (78vw, not 96vw) now that
+     the side panel sits next to it and also needs horizontal room. */
   --stage-ratio: 1;
-  height: min(96svh, calc(96vw / var(--stage-ratio)));
+  height: min(96svh, calc(78vw / var(--stage-ratio)));
   width: auto;
   aspect-ratio: var(--stage-ratio);
 
@@ -92,6 +111,42 @@
      at the original 5x5 board. */
   --board-cols: 5;
 }
+
+    /* The vertical panel itself — everything inside it stacks top to
+       bottom in normal flow (no absolute positioning), so it grows
+       exactly as tall as its content needs and simply scrolls if a
+       very short viewport can't fit all of it. */
+    .side-panel {
+      position: relative;
+      width: clamp(200px, 21vw, 300px);
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 4px 2px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .side-panel .top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .side-panel .hud,
+    .side-panel .world-picker {
+      position: static;
+      inset: auto;
+      left: auto; right: auto; top: auto; bottom: auto;
+      transform: none;
+    }
+
+    /* Hidden while the map screen is showing (see #gameLayout.on-map
+       below) — only the brand/title row + account icon stay visible,
+       matching the original overlay behaviour where the map had its
+       own title and no other HUD chrome. */
+    .side-panel .gameplay-only { display: flex; }
 
 .stage {
   position: absolute;
@@ -158,11 +213,10 @@
     }
 
     .brand {
-      left: clamp(12px, 3vw, 26px);
-      top: clamp(12px, 3vw, 26px);
+      flex: 1 1 auto;
+      min-width: 0;
       padding: 10px 14px;
       border-radius: 999px;
-      max-width: calc(100% - 28px);
     }
 
     .brand small {
@@ -185,29 +239,23 @@
     }
 
     .score {
-      /* Same row as .brand (top: matches .brand's top formula exactly)
-         and #authRoot now sits to the right of it on that row instead
-         of stacked above — see the #authRoot rule below, which reserves
-         the space .score's "right" offset leaves clear. */
-      right: clamp(70px, 11vw, 96px);
-      top: clamp(12px, 3vw, 26px);
+      width: 100%;
       padding: 10px 14px;
       border-radius: 22px;
       display: grid;
-      grid-template-columns: repeat(3, auto);
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
 
-    /* Account icon (built into #authRoot by auth.js/auth-ui.css) pulled
-       up onto the brand/score row, far right — auth-ui.css is linked
-       before this <style> block, so this rule (same specificity, later
-       in source order) wins the cascade and overrides its own
-       positioning without needing !important. */
+    /* Account icon (built into #authRoot by auth.js/auth-ui.css), now
+       just the last flex item on the side panel's top row next to the
+       brand pill instead of an absolutely-positioned corner element —
+       auth-ui.css is linked before this <style> block, so this rule
+       (same specificity, later in source order) wins the cascade and
+       overrides its own positioning without needing !important. */
     #authRoot {
-      position: absolute;
-      top: clamp(12px, 3vw, 26px);
-      right: clamp(12px, 3vw, 26px);
-      z-index: 7;
+      flex: 0 0 auto;
+      position: static;
     }
 
     /* auth-ui.css draws a rounded-rectangle frame (border + background)
@@ -235,33 +283,28 @@
     .stat span { display: block; margin-top: 2px; color: var(--muted); font-family: Arial, sans-serif; font-weight: 800; font-size: 9px; letter-spacing: .10em; text-transform: uppercase; }
 
     /* HOME THUMBNAIL — a snapshot of the world map (images/thumbs/game-home.jpg),
-       sitting OUTSIDE the board's own box (--board-left/--board-top/
-       --board-width/--board-height) in the quiet left-hand margin,
-       vertically centered so it never overlaps the board grid — instead
-       of the old text-only "HOME" stat that used to sit inside the
-       Score/Moves/Best strip. Same click destination as the Map button
-       (showMap(null)); the label underneath just spells that out. */
+       now a normal row in the side panel (icon + label side by side)
+       instead of an absolutely-positioned margin element next to the
+       board. Same click destination as the Map button (showMap(null)). */
     .home-thumb {
-      position: absolute;
-      z-index: 6;
-      left: clamp(10px, 2.4vw, 22px);
-      top: 50%;
-      transform: translateY(-50%);
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      gap: 6px;
-      background: none;
-      border: none;
-      padding: 0;
+      gap: 10px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 8px 12px;
       cursor: pointer;
+      width: 100%;
     }
 
     .home-thumb-img {
       display: block;
-      width: clamp(52px, 8vw, 78px);
-      height: clamp(52px, 8vw, 78px);
-      border-radius: 18px;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      border-radius: 14px;
       object-fit: cover;
       border: 2px solid rgba(248,217,139,.55);
       box-shadow:
@@ -283,23 +326,23 @@
     .home-thumb-label {
       font-family: Arial, sans-serif;
       font-weight: 800;
-      font-size: 10px;
+      font-size: 11px;
       letter-spacing: .06em;
       text-transform: uppercase;
       color: var(--gold2);
-      text-shadow: 0 2px 6px rgba(0,0,0,.6);
-      text-align: center;
-      max-width: 84px;
+      text-align: left;
     }
 
-    .next-box {
+    /* The single HUD element allowed to remain on top of the game-world
+       image itself: just the next-item artwork, no caption/label box
+       around it (that copy now lives in the side panel's "Next item"
+       readout... actually it doesn't need one — the icon speaks for
+       itself). Positioned bottom-left, same spot the old next-box sat. */
+    .next-seed {
+      position: absolute;
+      z-index: 6;
       left: clamp(12px, 3vw, 26px);
       bottom: clamp(12px, 3vw, 26px);
-      padding: 12px 14px;
-      border-radius: 24px;
-    }
-
-    .next-seed {
       width: 62px;
       height: 62px;
       border-radius: 20px;
@@ -308,26 +351,24 @@
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(248,217,139,.28);
       box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
-    .next-copy { font-family: Arial, sans-serif; line-height: 1.25; }
-    .next-copy b { display: block; color: var(--gold2); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
-    .next-copy span { color: var(--muted); font-size: 12px; }
-
   .actions {
-  position: absolute;
-
-  right: 20px;
-  bottom: clamp(12px, 3vw, 26px);
+  width: 100%;
 
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
 
   padding: 8px;
 
   border-radius: 999px;
 }
+
+.actions button { flex: 1 1 0; }
 
 button {
   min-width: auto;
@@ -363,15 +404,11 @@ button {
     }
 
     .world-picker {
-      position: absolute;
-      z-index: 7;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: clamp(144px, 19svh, 184px);
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
-      padding: 8px;
-      border-radius: 999px;
+      padding: 10px;
+      border-radius: 20px;
       background: rgba(18, 9, 28, .45);
       border: 1px solid rgba(255,255,255,.14);
       backdrop-filter: blur(18px);
@@ -526,20 +563,16 @@ button {
     .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
 
     .map-btn {
-      position: absolute;
-      right: clamp(12px, 3vw, 26px);
-      top: clamp(12px, 3vw, 26px);
-      z-index: 6;
+      width: 100%;
     }
 
-    /* While the map is showing, hide the board-only HUD chrome so it
-       doesn't float over the map art (the map has its own title). */
-    .stage-frame.on-map .map-btn,
-    .stage-frame.on-map .world-picker,
-    .stage-frame.on-map .collection,
-    .stage-frame.on-map .bottom-bar,
-    .stage-frame.on-map .score,
-    .stage-frame.on-map .home-thumb {
+    /* While the map is showing, hide the gameplay-only side-panel chrome
+       (score, home thumbnail, map button, world picker, collection,
+       actions) — the map screen has its own title and doesn't need any
+       of it. Brand/title + account icon stay visible. Targets
+       #gameLayout now (not .stage-frame), since that chrome lives in
+       the side panel, not on top of the image, anymore. */
+    #gameLayout.on-map .gameplay-only {
       display: none;
     }
 
@@ -711,19 +744,12 @@ button {
       100% { transform: translate(-50%, -130%) scale(1.25); opacity: 0; }
     }
 
-    /* Same bottom offset as next-box/actions — confirmed not to collide
-       with them on laptop widths since it's horizontally centered while
-       they sit at the left/right edges. .hud (added in the markup)
-       gives it the same bordered glass-panel look as those, so it
-       reads as a real "frame" instead of icons floating loose over the
-       artwork. */
+    /* .hud (added in the markup) gives it the same bordered glass-panel
+       look as the other side-panel readouts. */
     .collection {
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: clamp(12px, 3vw, 26px);
+      width: 100%;
       display: flex;
       gap: 6px;
-      max-width: min(78%, 520px);
       justify-content: center;
       flex-wrap: wrap;
       padding: 10px 14px;
@@ -850,226 +876,78 @@ button {
        rule further down) fills it perfectly with zero cropping and zero
        letterboxing — no per-image guessing needed. */
 
-    @media (max-width: 760px) {
-
-      /* All HUD chrome moves OUTSIDE the game-world art on small
-         screens instead of floating on top of it: .stage-frame
-         becomes a vertical stack (top bar / board / bottom bar), and
-         every element that was absolutely overlaid on .stage switches
-         to normal document flow so it takes its own space instead of
-         covering the artwork underneath.
-
-         Every non-board row here is kept as small/compact as possible
-         (tight padding, small type) specifically so the board itself
-         — the game world image + tiles — can claim as much of the
-         screen as possible. */
+    /* Shared "compact" rules for both narrow-width and short-height
+       phones: .game-layout stacks vertically (image on top, the side
+       panel — still a vertical box, just a compact one — underneath),
+       and every readout/button inside the panel shrinks its padding
+       and type so the image can still claim most of the screen. */
+    @media (max-width: 760px), (orientation: landscape) and (max-height: 500px) {
       .screen { padding: 5px; }
+
+      :root {
+        --board-left: 4%;
+        --board-top: 5%;
+        --board-width: 92%;
+        --board-height: 90%;
+      }
+
+      .game-layout {
+        flex-direction: column;
+        width: min(98vw, 620px);
+        height: calc(100svh - 10px);
+        gap: 6px;
+      }
 
       /* The interactive grid only ever occupies --board-width x
          --board-height of the stage image — that, not the cell
          fill-percentage, is what caps how big each tile/icon can
          render. Sized larger than the desktop box on purpose, since
-         the mobile stage is now a tall portrait rectangle (see .stage
-         below) rather than a square, so there's more room to give it. */
-      :root {
-        --board-left: 4%;
-        --board-top: 5%;
-        --board-width: 92%;
-        --board-height: 90%;
-      }
-
+         the mobile stage is now a tall portrait rectangle rather than
+         a square, so there's more room to give it. */
       .stage-frame {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        width: min(98vw, 620px);
-        height: calc(100svh - 10px);
-      }
-
-      .stage-frame .hud,
-      .stage-frame .world-picker,
-      .stage-frame .collection,
-      .stage-frame .home-thumb,
-      #authRoot {
-        position: static;
-        inset: auto;
-      }
-
-      /* Title + account icon on ONE row, at the very top: .top-bar (not
-         .brand/#authRoot individually) owns the order + row layout, same
-         pattern as .bottom-bar below for next-seed + buttons. */
-      .top-bar {
-        order: 0;
         width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-      }
-      .brand, #authRoot { position: static; inset: auto; }
-      .brand { flex: 1 1 auto; min-width: 0; max-width: none; width: auto; }
-      #authRoot { flex: 0 0 auto; }
-      .score { order: 1; width: 100%; justify-content: center; }
-
-      /* Stage now grows to fill whatever vertical space is left over
-         in the column after the other (auto-height) rows — that's what
-         makes the world art stretch from the very top of the screen to
-         the very bottom, instead of being boxed into a fixed square. */
-      .stage {
-        order: 2;
-        position: relative;
-        inset: auto;
-        width: 100%;
+        height: auto;
+        aspect-ratio: auto;
         flex: 1 1 auto;
         min-height: 0;
       }
 
-      /* next-seed + Undo/Save/New all on ONE row: .bottom-bar (not
-         .next-box/.actions individually) now owns the order + full-width
-         + row layout, and its two children sit side by side inside it
-         instead of each claiming a full-width row of their own. */
-      .bottom-bar {
-        order: 4;
+      /* Side panel becomes a compact strip below the image instead of a
+         tall column beside it — still a vertical stack of rows, just
+         capped in height and scrollable if content overflows. */
+      .side-panel {
         width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex: 0 0 auto;
+        max-height: 46svh;
         gap: 6px;
+        padding: 2px;
       }
-      .next-box, .actions { position: static; inset: auto; }
-      .next-box { flex: 0 1 auto; min-width: 0; }
-      .actions { flex: 0 0 auto; justify-content: flex-end; }
 
-      /* Kept hidden to leave the board as much room as possible on a
-         small screen. The Map button is hidden here too — the home
-         thumbnail (below) is now the only way back to the map on
-         mobile, so there's no need for both. */
-      .collection, .world-picker, .map-btn { display: none; }
+      .top-row { gap: 6px; }
+      .brand { padding: 6px 9px; }
+      .brand small { font-size: 8px; }
+      .brand strong { font-size: 15px; }
 
-      /* Home thumbnail becomes its own compact row instead of floating
-         in the (now much narrower) side margin — small icon + tiny
-         label, same tap target either way. */
-      .home-thumb { order: 3; flex-direction: row; gap: 6px; padding: 2px 0; transform: none; }
-      .home-thumb-img { width: 30px; height: 30px; border-radius: 9px; }
-      .home-thumb-label { font-size: 9px; max-width: none; }
-
-      /* Score / Moves / Best on one row, compact. */
-      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
+      .score { padding: 6px 8px; gap: 6px; }
       .score .stat { min-width: 0; padding: 5px 6px; }
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      .brand { left: 10px; top: 10px; padding: 6px 9px; }
-      .brand small { font-size: 8px; }
-      .brand strong { font-size: 15px; }
+      .home-thumb { padding: 6px 8px; gap: 8px; }
+      .home-thumb-img { width: 34px; height: 34px; border-radius: 10px; }
+      .home-thumb-label { font-size: 9px; }
 
-      .next-box { padding: 6px 8px; gap: 6px; }
-      .next-seed { width: 40px; height: 40px; font-size: 24px; border-radius: 13px; }
+      .map-btn { padding: 8px; }
+
+      .world-picker { padding: 6px; gap: 6px; }
+      .collection { padding: 6px 8px; gap: 5px; }
+
+      /* Next-item badge on the image itself, and the panel's action
+         buttons: small tap targets, minimal padding. */
+      .next-seed { width: 40px; height: 40px; border-radius: 13px; }
       .next-seed .item-icon { width: 30px; height: 30px; }
-      /* "Next item" label kept (the .hud base class already lays the
-         icon + this label out side by side via display:flex) — only the
-         subtitle underneath it is dropped, to keep the row compact. */
-      .next-copy b { font-size: 9px; white-space: nowrap; }
-      .next-copy span { display: none; }
 
-      /* Buttons: small tap targets, minimal padding, no extra space. */
       .actions { padding: 5px; gap: 4px; }
-      button { padding: 6px 8px; font-size: 8px; }
-    }
-
-    /* Phone held sideways: width alone can exceed 760px on larger
-       phones (e.g. ~926px on an iPhone Pro Max in landscape), so this
-       is keyed on the SHORT dimension (height) instead, which is what
-       is actually cramped in landscape — the rules mirror the portrait
-       compact-HUD block above. */
-    @media (orientation: landscape) and (max-height: 500px) {
-      .screen { padding: 5px; }
-
-      :root {
-        --board-left: 4%;
-        --board-top: 5%;
-        --board-width: 92%;
-        --board-height: 90%;
-      }
-
-      .stage-frame {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        width: min(98vw, 620px);
-        height: calc(100svh - 10px);
-      }
-
-      .stage-frame .hud,
-      .stage-frame .world-picker,
-      .stage-frame .collection,
-      .stage-frame .home-thumb,
-      #authRoot {
-        position: static;
-        inset: auto;
-      }
-
-      .top-bar {
-        order: 0;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 6px;
-      }
-      .brand, #authRoot { position: static; inset: auto; }
-      .brand { flex: 1 1 auto; min-width: 0; max-width: none; width: auto; }
-      #authRoot { flex: 0 0 auto; }
-      .score { order: 1; width: 100%; justify-content: center; }
-
-      /* Same fill-the-remaining-space approach as portrait, so the
-         world art still stretches top to bottom even in this cramped
-         orientation. */
-      .stage {
-        order: 2;
-        position: relative;
-        inset: auto;
-        width: 100%;
-        flex: 1 1 auto;
-        min-height: 0;
-      }
-
-      .bottom-bar {
-        order: 4;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 6px;
-      }
-      .next-box, .actions { position: static; inset: auto; }
-      .next-box { flex: 0 1 auto; min-width: 0; }
-      .actions { flex: 0 0 auto; justify-content: flex-end; }
-
-      .collection, .world-picker, .map-btn { display: none; }
-
-      .home-thumb { order: 3; flex-direction: row; gap: 5px; padding: 1px 0; transform: none; }
-      .home-thumb-img { width: 26px; height: 26px; border-radius: 8px; }
-      .home-thumb-label { font-size: 8px; max-width: none; }
-
-      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
-      .score .stat { min-width: 0; padding: 4px 6px; }
-      .stat b { font-size: 12px; }
-      .stat span { font-size: 8px; }
-
-      .brand { left: 10px; top: 10px; padding: 5px 8px; }
-      .brand small { font-size: 8px; }
-      .brand strong { font-size: 14px; }
-
-      .next-box { padding: 5px 7px; gap: 6px; }
-      .next-seed { width: 34px; height: 34px; font-size: 20px; border-radius: 11px; }
-      .next-seed .item-icon { width: 26px; height: 26px; }
-      .next-copy b { font-size: 8px; white-space: nowrap; }
-      .next-copy span { display: none; }
-
-      .actions { padding: 4px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
     }
 
@@ -1081,80 +959,79 @@ button {
 </head>
 <body>
   <main class="screen">
-    <div class="stage-frame" id="stageFrame">
-      <section class="stage" id="stage" aria-label="Wellness Garden game world">
-        <div class="stars"></div>
+    <!-- game-layout holds two siblings side by side (stacked on mobile):
+         .stage-frame, which now contains ONLY the game world image, the
+         board of planting circles, the map screen and the "next item"
+         preview — and .side-panel, a tall vertical panel that holds every
+         button and HUD readout that used to float on top of the artwork.
+         Toggling "on-map" on THIS element (not .stage-frame anymore — see
+         showMap()/hideMap() in the JS) hides the gameplay-only controls in
+         the side panel while the map screen is showing. -->
+    <div class="game-layout" id="gameLayout">
+      <div class="stage-frame" id="stageFrame">
+        <section class="stage" id="stage" aria-label="Wellness Garden game world">
+          <div class="stars"></div>
 
-        <div class="board-wrap">
-          <div class="board" id="board" aria-label="Game board"></div>
-        </div>
+          <div class="board-wrap">
+            <div class="board" id="board" aria-label="Game board"></div>
+          </div>
 
-        <div class="map-screen" id="mapScreen" aria-label="World map">
-          <div class="map-title" id="mapTitle">Choose an island</div>
-        </div>
-      </section>
+          <div class="map-screen" id="mapScreen" aria-label="World map">
+            <div class="map-title" id="mapTitle">Choose an island</div>
+          </div>
 
-      <!-- Wrapped so mobile can put the title and the account icon on one
-           row at the very top (see .top-bar in the mobile media queries),
-           without touching the desktop layout, which still positions
-           .brand and #authRoot independently. -->
-      <div class="top-bar" id="topBar">
-        <div id="authRoot"></div>
+          <!-- The ONLY HUD element left over the image itself, per spec:
+               just the next-item artwork in its little frame, no caption. -->
+          <div class="next-seed" id="nextTile" aria-label="Next item to place"></div>
+        </section>
 
-        <div class="hud brand">
-          <div>
-            <small>✦ Holistic Loader</small>
-            <strong id="worldName">Wellness Garden</strong>
+        <div class="login-gate" id="loginGate">
+          <div class="login-gate-card">
+            <div class="login-gate-icon"></div>
+            <h2>Log in to grow your garden</h2>
+            <p>Your garden is saved to your account in the cloud, so you need to be logged in to play.</p>
+            <button type="button" id="loginGateBtn">Log in / Sign up</button>
           </div>
         </div>
       </div>
 
-      <div class="hud score" aria-label="Game stats">
-        <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
-        <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
-        <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
-      </div>
-
-      <!-- Home thumbnail — a snapshot of the world map, sitting outside
-           the board's own box instead of as a text stat next to Best.
-           Same id (homeBtn) as before, so the existing click handler
-           below needs no changes. -->
-      <button type="button" class="home-thumb" id="homeBtn" aria-label="Back to the map">
-        <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
-        <span class="home-thumb-label">Back to start</span>
-      </button>
-
-      <div class="hud collection" id="collection" aria-label="Rewards created"></div>
-
-      <!-- Wrapped so mobile can lay next-seed + all three buttons out as a
-           single row (see .bottom-bar in the mobile media queries) without
-           touching the desktop layout, which still positions .next-box and
-           .actions independently via their own absolute left/right rules. -->
-      <div class="bottom-bar" id="bottomBar">
-        <div class="hud next-box">
-          <div class="next-seed" id="nextTile"></div>
-          <div class="next-copy"><b>Next item</b><span>Place on an empty circle</span></div>
+      <!-- ---------- Side panel ---------- everything that used to be an
+           absolutely-positioned overlay on the game-world image now lives
+           here instead, laid out top-to-bottom in normal document flow. -->
+      <aside class="side-panel" id="sidePanel" aria-label="Garden controls">
+        <div class="top-row">
+          <div id="authRoot"></div>
+          <div class="hud brand">
+            <div>
+              <small>✦ Holistic Loader</small>
+              <strong id="worldName">Wellness Garden</strong>
+            </div>
+          </div>
         </div>
 
-        <div class="hud actions">
+        <div class="hud score gameplay-only" aria-label="Game stats">
+          <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
+          <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
+          <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
+        </div>
+
+        <button type="button" class="home-thumb gameplay-only" id="homeBtn" aria-label="Back to the map">
+          <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
+          <span class="home-thumb-label">Back to start</span>
+        </button>
+
+        <button type="button" class="hud map-btn gameplay-only" id="mapBtn" aria-label="Show world map">Map</button>
+
+        <div class="world-picker gameplay-only" id="worldPicker" aria-label="Choose world"></div>
+
+        <div class="hud collection gameplay-only" id="collection" aria-label="Rewards created"></div>
+
+        <div class="hud actions gameplay-only">
           <button class="secondary" id="undoBtn">Undo</button>
           <button class="secondary" id="saveBtn">Save</button>
           <button id="newBtn">New</button>
         </div>
-      </div>
-
-      <button type="button" class="hud map-btn" id="mapBtn" aria-label="Show world map">Map</button>
-
-      <div class="world-picker" id="worldPicker" aria-label="Choose world"></div>
-
-      <div class="login-gate" id="loginGate">
-        <div class="login-gate-card">
-          <div class="login-gate-icon"></div>
-          <h2>Log in to grow your garden</h2>
-          <p>Your garden is saved to your account in the cloud, so you need to be logged in to play.</p>
-          <button type="button" id="loginGateBtn">Log in / Sign up</button>
-        </div>
-      </div>
+      </aside>
     </div>
   </main>
 
@@ -1292,25 +1169,32 @@ function getMapBackgroundUrl(page) {
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
 const WORLD_LABELS = {
+  // Islands 1-10 (map order) — renamed per the new episode titles:
+  // 1. Underwater Kingdom  2. Sunset Place  3. Beach Birds
+  // 4. Treasure Cave       5. Cherry Blossom  6. Jungle Ruins
+  // 7. Mountain Top        8. The Forest      9. Dragons Valley
+  // 10. Crystal Palace
+  sunsetMeadow:    "Underwater Kingdom", // island 1
+  magicField:      "Sunset Place",       // island 2
+  flowerPalace:    "Beach Birds",        // island 3
+  cherryBlossom:   "Treasure Cave",      // island 4
+  mountainTop:     "Cherry Blossom",     // island 5
+  theBeach:        "Jungle Ruins",       // island 6
+  underwaterRuins: "Mountain Top",       // island 7
+  treasureCave:    "The Forest",         // island 8
+  dragonValley:    "Dragons Valley",     // island 9
+  volcano:         "Crystal Palace",     // island 10
+
+  // Islands 11-20 — not on the current map art, names unchanged.
   lavendelMeadow:    "Lavendel Meadow",
-  dragonValley:    "Dragon Valley",
   iceCavern:       "Ice Cavern",
   cosmos:          "Cosmos",
-  mountainTop:  "Mountain Top",
-  underwaterRuins: "Underwater Ruins",
   desertOasis:     "Desert Oasis",
-  volcano:         "The Volcano",
   jungleTemple:    "Jungle Temple",
-  cherryBlossom:   "Cherry Blossom",
-  flowerPalace:    "Flower Garden",
   enchantedForest: "Enchanted Forest",
   lavenderGarden:  "Lavender Garden",
-  sunsetMeadow:    "Sunset Meadow",
-  magicField:  "Magic Field",
   bambooForest:    "Bamboo Forest",
   moonlitPond:     "Moonlit Pond",
-  theBeach:     "The Beach",
-  treasureCave:     "Treasure Cave",
   crystalFalls:      "Crystal Falls"
 };
 
@@ -1331,17 +1215,18 @@ const WORLD_LABELS = {
    widths, each with a .webp (preferred) and .jpg fallback.
 
    Positions are percentages (of the map image's width/height) for
-   each numbered circle in the artwork, numbered from the bottom of
-   the image (island 1, the beach) up to the top (island 10, the ice
-   temple). The same island's artwork (beach, dome, tree, crystal cave,
-   ruins, mountain, cherry blossom, village, volcano, ice temple) keeps
-   the same number across BOTH map images — only its on-screen
-   position differs, since the laptop (landscape) artwork lays the
-   same 10 islands out in a 3-column grid instead of the mobile
-   (portrait) artwork's single snaking path. See
-   ISLAND_POSITIONS_MOBILE / ISLAND_POSITIONS_LAPTOP and
-   getIslandPositions() below — eyeball-adjust either set if its art
-   ever shifts the islands at all.
+   each numbered circle in the artwork, laid out as a snaking 3-column
+   path (boustrophedon) bottom -> top: 1, 2, 3 left-to-right along the
+   bottom row; 4 above 3, 5 left of 4, 6 above 1 along the next row
+   (right-to-left); 7 above 6, 8 right of 7, 9 right of 8 along the row
+   above that (left-to-right); 10 alone at the very top. Both the
+   mobile (portrait) and laptop (landscape) artwork use the same
+   number-to-slot order — only the actual pixel percentages differ
+   between the two images. See ISLAND_POSITIONS_MOBILE /
+   ISLAND_POSITIONS_LAPTOP and getIslandPositions() below — the x/y
+   values there are a best-guess grid and may need eyeballing against
+   the real map artwork to land each numbered circle exactly on its
+   island.
 ----------------------------------------------------------------- */
 const CLEAR_ITEM_LEVEL = 5;
 const MAP_WORLD_KEYS = WORLD_KEYS.slice(0, 10); // islands 1-10
@@ -1351,33 +1236,38 @@ const MAP_PAGES = {
 const MAP_IMAGE_MOBILE = "images/game-karta1-10mobile";
 const MAP_IMAGE_LAPTOP = "images/game-karta1-10laptop";
 
-// Portrait artwork: a single path snaking bottom -> top.
+// Snaking 3-column path, bottom -> top (boustrophedon):
+//   row 1 (bottom, left -> right):  1, 2, 3
+//   row 2 (right -> left):          4 (above 3), 5 (left of 4), 6 (above 1)
+//   row 3 (left -> right):          7 (above 6), 8 (right of 7), 9 (right of 8)
+//   row 4 (top, single, centered):  10
+// Portrait artwork:
 const ISLAND_POSITIONS_MOBILE = {
-  1:  { x: 72, y: 90 }, // beach with dock — bottom right, journey start
-  2:  { x: 15, y: 88 }, // underwater glass dome — bottom left
-  3:  { x: 47, y: 82 }, // sunset tree with lanterns
-  4:  { x: 62, y: 69 }, // crystal cave portal
-  5:  { x: 17, y: 57 }, // jungle ruins/temple
-  6:  { x: 80, y: 57 }, // snowy mountain
-  7:  { x: 48, y: 43 }, // cherry blossom fountain garden
-  8:  { x: 17, y: 29 }, // village with waterfalls
-  9:  { x: 78, y: 29 }, // dragon volcano castle
-  10: { x: 48, y: 16 }  // ice/crystal temple — top, journey end
+  1:  { x: 20, y: 88 }, // bottom row, left — journey start
+  2:  { x: 50, y: 88 }, // bottom row, middle
+  3:  { x: 80, y: 88 }, // bottom row, right
+  4:  { x: 80, y: 64 }, // row 2, right — above 3
+  5:  { x: 50, y: 64 }, // row 2, middle — left of 4
+  6:  { x: 20, y: 64 }, // row 2, left — above 1
+  7:  { x: 20, y: 40 }, // row 3, left — above 6
+  8:  { x: 50, y: 40 }, // row 3, middle — right of 7
+  9:  { x: 80, y: 40 }, // row 3, right — right of 8
+  10: { x: 50, y: 16 }  // top, single — journey end
 };
 
-// Landscape artwork: same 10 islands, laid out as a 3-column grid
-// (bottom row of 3, two middle rows of 3, one island alone up top).
+// Landscape artwork: same snake pattern/order, laid out across the
+// wider 3-column grid.
 const ISLAND_POSITIONS_LAPTOP = {
-  1:  { x: 78, y: 85 }, // beach with dock — bottom right, journey start
-  2:  { x: 16, y: 80 }, // underwater glass dome — bottom left
-  3:  { x: 50, y: 79 }, // sunset tree with lanterns
-  4:  { x: 81, y: 57 }, // crystal cave portal
-  5:  { x: 16, y: 55 }, // jungle ruins/temple
-  6:  { x: 82, y: 31 }, // snowy mountain
-  7:  { x: 50, y: 56 }, // cherry blossom fountain garden
-  8:  { x: 48, y: 31 }, // village with waterfalls
-  9:  { x: 18, y: 29 }, // dragon volcano castle
-  10: { x: 50, y: 15 }  // ice/crystal temple — top, journey end
+  1:  { x: 22, y: 85 }, // bottom row, left — journey start
+  2:  { x: 50, y: 85 }, // bottom row, middle
+  3:  { x: 78, y: 85 }, // bottom row, right
+  4:  { x: 78, y: 58 }, // row 2, right — above 3
+  5:  { x: 50, y: 58 }, // row 2, middle — left of 4
+  6:  { x: 22, y: 58 }, // row 2, left — above 1
+  7:  { x: 22, y: 31 }, // row 3, left — above 6
+  8:  { x: 50, y: 31 }, // row 3, middle — right of 7
+  9:  { x: 78, y: 31 }, // row 3, right — right of 8
+  10: { x: 50, y: 15 }  // top, single — journey end
 };
 
 // Picks whichever position set matches the map image currently showing
@@ -1430,6 +1320,7 @@ function getItem(level) {
     let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
 
     const stageEl = document.getElementById("stage");
+    const gameLayoutEl = document.getElementById("gameLayout");
     const stageFrameEl = document.getElementById("stageFrame");
     const boardEl = document.getElementById("board");
     const nextTileEl = document.getElementById("nextTile");
@@ -1662,7 +1553,7 @@ function getItem(level) {
 
     function showMap(highlightKey) {
       onMap = true;
-      stageFrameEl.classList.add("on-map");
+      gameLayoutEl.classList.add("on-map");
       justUnlockedKey = highlightKey || null;
       renderMap();
       mapScreenEl.classList.add("show");
@@ -1684,7 +1575,7 @@ function getItem(level) {
 
     function hideMap() {
       onMap = false;
-      stageFrameEl.classList.remove("on-map");
+      gameLayoutEl.classList.remove("on-map");
       mapScreenEl.classList.remove("show");
     }
 
