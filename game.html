@@ -1634,14 +1634,14 @@ button {
         position: static;
         flex: 0 0 auto;
         max-height: none;
-        padding: 4px 16px 0;
+        padding: 2px 16px 0;
         gap: 0;
       }
 
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
         justify-content: space-between;
-        min-height: 34px;
+        min-height: 30px;
       }
 
       #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
@@ -2358,15 +2358,23 @@ function getItem(level) {
     const authRootEl = document.getElementById("authRoot");
     const topRowEl = document.querySelector(".top-row");
 
-    /* Moves the home-thumb ("back to the map") button, the next-item
-       badge, and the login/account icon between their homes depending
-       on the desktop/mobile breakpoint:
+    /* Moves the home-thumb ("back to the map") button and the next-item
+       badge between their homes depending on the desktop/mobile
+       breakpoint:
        - Desktop/laptop: home-thumb + next-item badge both live in
          #nextBox (see .next-box CSS); login icon stays in .top-row.
        - Mobile: home-thumb + next-item badge live in the score row
          alongside the 3 stats (next-item badge first, home-thumb
-         last); login icon moves into the actions row instead, at the
-         far right of the Undo/New buttons.
+         last). The login/account icon now ALWAYS stays put in
+         .top-row (its original markup position) on every breakpoint —
+         it used to get pulled into #actionsBox on mobile, but
+         #actionsBox is a "gameplay-only" box that's display:none while
+         the map/start screen is showing (see
+         "#gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand)"),
+         so the icon disappeared entirely on the mobile start screen.
+         Keeping it in .top-row means it's visible in both the map
+         screen (top-right of the icon bar) and during gameplay (top-row
+         is reordered to the very top there too).
        Also relocates the big map-screen title image (#mapBrand):
        - Desktop/laptop: unchanged — stays inside .map-screen itself,
          overlaid on top of the map artwork.
@@ -2377,25 +2385,19 @@ function getItem(level) {
        "change" event fires, so resizing across the breakpoint (or
        rotating a foldable) relocates them immediately. */
     function layoutSideExtras() {
+      topRowEl.appendChild(authRootEl);
       if (DESKTOP_MEDIA_QUERY.matches) {
         nextBoxEl.appendChild(homeBtnEl);
         nextBoxEl.appendChild(nextItemGroupEl);
-        // Account icon stays put in .top-row on desktop/laptop too (see
-        // #authRoot markup) — it no longer gets pulled into the score
-        // box, so it stands alone in the top-right corner instead of
-        // sharing space with the score/moves/best stats.
-        topRowEl.appendChild(authRootEl);
         mapScreenEl.insertBefore(mapBrandEl, mapTitleEl);
       } else {
         // Mobile: next-item badge sits first in the score row (directly
         // under the board image, no longer overlaid on top of it),
         // then the 3 stats, then "Back to start" at the very end — see
         // the max-width:760px .score rules for the matching 5-column
-        // layout. Login/account icon moves into the actions row
-        // instead, after Undo/New, at the far right.
+        // layout.
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.appendChild(homeBtnEl);
-        actionsBoxEl.appendChild(authRootEl);
         sidePanelEl.insertBefore(mapBrandEl, topRowEl.nextSibling);
       }
     }
