@@ -415,7 +415,8 @@
       padding: 10px 14px;
       border-radius: 22px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: auto repeat(3, 1fr);
+      align-items: stretch;
       gap: 10px;
     }
 
@@ -454,56 +455,34 @@
     .stat b { display: block; color: var(--gold2); font-family: Arial, sans-serif; font-size: 15px; }
     .stat span { display: block; margin-top: 2px; color: var(--muted); font-family: Arial, sans-serif; font-weight: 800; font-size: 9px; letter-spacing: .10em; text-transform: uppercase; }
 
-    /* HOME THUMBNAIL — a snapshot of the world map (images/thumbs/game-home.jpg),
-       now a normal row in the side panel (icon + label side by side)
-       instead of an absolutely-positioned margin element next to the
-       board. Same click destination as the Map button (showMap(null)). */
+    /* HOME THUMBNAIL — a snapshot of the world map (images/thumbs/
+       game-home.jpg), now a compact square icon sitting to the left of
+       the score stats instead of its own big card. Same click
+       destination as the Map button (showMap(null)). */
     .home-thumb {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      background: rgba(255,255,255,.06);
+      justify-content: center;
+      padding: 0;
+      background: rgba(255,255,255,.08);
       border: 1px solid rgba(255,255,255,.12);
-      border-radius: 22px;
-      padding: 14px;
+      border-radius: 16px;
+      overflow: hidden;
       cursor: pointer;
-      width: 100%;
+      width: 50px;
     }
 
     .home-thumb-img {
       display: block;
       width: 100%;
-      max-width: 220px;
-      height: auto;
-      flex: 0 0 auto;
-      border-radius: 20px;
-      object-fit: contain;
-      border: 2px solid rgba(248,217,139,.55);
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,.10),
-        0 10px 26px rgba(0,0,0,.45),
-        0 0 22px rgba(248,217,139,.28);
-      transition: transform .15s ease, box-shadow .15s ease;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .15s ease;
     }
 
     .home-thumb:hover .home-thumb-img,
     .home-thumb:focus-visible .home-thumb-img {
-      transform: scale(1.06);
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,.16),
-        0 12px 30px rgba(0,0,0,.5),
-        0 0 30px rgba(248,217,139,.42);
-    }
-
-    .home-thumb-label {
-      font-family: Arial, sans-serif;
-      font-weight: 800;
-      font-size: 11px;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      color: var(--gold2);
-      text-align: center;
+      transform: scale(1.08);
     }
 
     /* The single HUD element allowed to remain on top of the game-world
@@ -511,11 +490,30 @@
        around it (that copy now lives in the side panel's "Next item"
        readout... actually it doesn't need one — the icon speaks for
        itself). Positioned bottom-left, same spot the old next-box sat. */
-    .next-seed {
+    /* Wrapper around the next-item badge — lets a mobile-only "Next item"
+       label be stacked above the icon (see .next-item-label) without
+       touching the icon's own absolute-position math. On desktop this
+       wrapper simply carries the exact same position .next-seed used to
+       have, so desktop looks byte-for-byte identical. */
+    .next-item-group {
       position: absolute;
       z-index: 6;
       left: clamp(12px, 3vw, 26px);
       bottom: clamp(12px, 3vw, 26px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Mobile-only caption shown above the next-item icon — hidden on
+       desktop/laptop (see the max-width:760px query further down, which
+       turns it on and repositions the group to the bottom-right). */
+    .next-item-label {
+      display: none;
+    }
+
+    .next-seed {
       width: 62px;
       height: 62px;
       border-radius: 20px;
@@ -528,54 +526,9 @@
       -webkit-backdrop-filter: blur(10px);
     }
 
-    /* Desktop/laptop only: the on-stage next-item overlay is hidden
-       (see .next-seed-panel below, which replaces it in the side panel
-       — the mobile media query further down restores this back to a
-       small on-stage badge, since mobile keeps the old layout). */
-    .next-seed { display: none; }
-
-    /* Large "next item" readout that fills the side panel's own
-       leftover height (the panel is a flex column with content stacked
-       at the top, so on desktop/laptop widths — where it's taller than
-       its content — this grows to soak up ALL the empty space at the
-       bottom, reaching the same bottom edge as the game board next to
-       it, instead of just sitting at a fixed minimum size). */
-    .next-seed-panel {
-      flex: 1 1 auto;
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px;
-      border-radius: 22px;
-    }
-
-    .next-seed-panel-label {
-      font-family: Arial, sans-serif;
-      font-weight: 900;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      font-size: 11px;
-      color: var(--gold2);
-    }
-
-    .next-seed-panel-icon {
-      display: grid;
-      place-items: center;
-      width: 100%;
-      flex: 1 1 auto;
-      min-height: 0;
-    }
-
-    .next-seed-panel .item-icon {
-      width: min(70%, 170px);
-      height: min(70%, 170px);
-      max-width: 100%;
-      max-height: 100%;
-      filter: drop-shadow(0 0 22px rgba(248,217,139,.40)) drop-shadow(0 8px 14px rgba(0,0,0,.30));
-    }
+    /* The "Next item" readout lives only as a small badge over the
+       game-world image itself, bottom-left (see .next-seed above) —
+       the old side-panel box has been removed. */
 
   .actions {
   width: 100%;
@@ -1242,6 +1195,21 @@ button {
         padding: 2px;
       }
 
+      /* Gameplay only (not the map screen, which already has its own
+         top-row-above-map handling further below): let .side-panel's
+         children flow as if they were direct children of .game-layout
+         itself, so the top-row (world logo + world name) can be
+         reordered to sit above .stage-frame while the rest of the
+         panel (score/home thumb, world picker, collection, actions)
+         stays below the image, right where it already was. */
+      #gameLayout:not(.on-map) .side-panel {
+        display: contents;
+      }
+
+      #gameLayout:not(.on-map) .side-panel .top-row {
+        order: -1;
+      }
+
       .top-row { gap: 6px; }
       .brand { padding: 6px 9px; }
       .brand small { font-size: 8px; }
@@ -1259,33 +1227,42 @@ button {
       .world-picker { padding: 6px; gap: 6px; }
       .collection { padding: 6px 8px; gap: 5px; }
 
-      /* Next-item badge on the image itself, and the panel's action
-         buttons: small tap targets, minimal padding. Mobile keeps the
-         original small on-stage badge (desktop/laptop uses the large
-         side-panel version instead — see .next-seed-panel above). */
-      .next-seed { display: grid; width: 40px; height: 40px; border-radius: 13px; }
+      /* Mobile keeps the on-image next-item badge but shrinks it a
+         bit to fit the smaller stage, moves it to the bottom-right
+         corner (desktop stays bottom-left), and reveals the "Next item"
+         caption stacked above it. */
+      .next-item-group { left: auto; right: clamp(12px, 3vw, 26px); }
+      .next-item-label {
+        display: block;
+        font-family: Arial, sans-serif;
+        font-weight: 800;
+        font-size: 9px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: var(--gold2);
+        text-shadow: 0 1px 4px rgba(0,0,0,.6);
+      }
+      .next-seed { width: 40px; height: 40px; border-radius: 13px; }
       .next-seed .item-icon { width: 30px; height: 30px; }
-      .next-seed-panel { display: none; }
 
       .actions { padding: 5px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
 
-      /* ---------- Mobile map screen: full-bleed ----------
-         While the map is showing, the map image should cover the
-         entire screen instead of sharing it with a side panel
-         stacked underneath. The side panel is pulled out of flow and
-         laid over the top of the stage as a slim icon row instead
-         (logo top-left, how-to-play + account icon top-right); every
-         other side-panel box (score/world-picker/collection/actions,
-         plus the old text how-to-play box) is hidden here since none
-         of it applies before a board is open. */
+      /* ---------- Mobile map screen ----------
+         The side panel becomes a slim icon bar sitting ABOVE the map
+         image (not overlaid on top of it) — logo centered in the bar,
+         how-to-play + account icon pinned to its right edge. The map
+         image itself fills whatever height is left below that bar.
+         Every other side-panel box (score/world-picker/collection/
+         actions, plus the old text how-to-play box) is hidden here
+         since none of it applies before a board is open. */
       .screen:has(#gameLayout.on-map) { padding: 0; }
 
       #gameLayout.on-map { width: 100vw; max-width: 100vw; height: 100svh; }
 
       #gameLayout.on-map .stage-frame {
         width: 100vw;
-        height: 100svh;
       }
 
       #gameLayout.on-map .stage,
@@ -1293,25 +1270,41 @@ button {
         border-radius: 0;
       }
 
+      /* Back in normal flow (not absolutely positioned over the stage),
+         placed first via order so it renders above the image instead
+         of below it — .stage-frame comes first in the markup, but
+         visually the bar needs to sit on top. */
       #gameLayout.on-map .side-panel {
-        position: absolute;
-        inset: 0 0 auto 0;
-        z-index: 20;
+        order: -1;
+        position: static;
+        flex: 0 0 auto;
         max-height: none;
-        padding: 14px 16px;
-        pointer-events: none;
+        padding: 10px 16px;
       }
 
       #gameLayout.on-map .side-panel .top-row {
-        justify-content: space-between;
-        pointer-events: auto;
+        position: relative;
+        justify-content: flex-end;
+        min-height: 44px;
       }
 
       #gameLayout.on-map .side-panel > *:not(.top-row) {
         display: none !important;
       }
 
-      #gameLayout.on-map .top-row .brand { justify-content: flex-start; }
+      /* Centered independently of the icon buttons on the right, so it
+         stays truly centered in the bar no matter how wide those
+         buttons render. */
+      #gameLayout.on-map .top-row .brand {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        flex: none;
+        justify-content: center;
+      }
+
+      #gameLayout.on-map .brand-logo { max-height: 38px; }
 
       /* Turns the icon on for the map screen only — its base rule
          (display:none) keeps it off on desktop and during gameplay. */
@@ -1358,8 +1351,13 @@ button {
           </div>
 
           <!-- The ONLY HUD element left over the image itself, per spec:
-               just the next-item artwork in its little frame, no caption. -->
-          <div class="next-seed" id="nextTile" aria-label="Next item to place"></div>
+               just the next-item artwork in its little frame. The
+               "Next item" caption is mobile-only (see .next-item-label)
+               and stays hidden/desktop-inert otherwise. -->
+          <div class="next-item-group" id="nextItemGroup">
+            <span class="next-item-label" id="nextItemLabel">Next item</span>
+            <div class="next-seed" id="nextTile" aria-label="Next item to place"></div>
+          </div>
         </section>
 
         <div class="login-gate" id="loginGate">
@@ -1433,6 +1431,9 @@ button {
         </div>
 
         <div class="hud score gameplay-only" aria-label="Game stats">
+          <button type="button" class="home-thumb" id="homeBtn" aria-label="Back to the map">
+            <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
+          </button>
           <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
           <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
           <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
@@ -1446,19 +1447,6 @@ button {
           <button class="secondary" id="undoBtn">Undo</button>
           <button class="secondary" id="saveBtn">Save</button>
           <button id="newBtn">New</button>
-        </div>
-
-        <button type="button" class="home-thumb gameplay-only" id="homeBtn" aria-label="Back to the map">
-          <span class="home-thumb-label">Back to start</span>
-          <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
-        </button>
-
-        <!-- Desktop/laptop-only large "next item" readout, filling the
-             panel's remaining height. Hidden on mobile (see CSS), where
-             the small on-stage .next-seed badge is used instead. -->
-        <div class="hud next-seed-panel gameplay-only" id="nextTilePanel" aria-label="Next item to place">
-          <span class="next-seed-panel-label">Next item</span>
-          <div class="next-seed-panel-icon" id="nextTilePanelIcon"></div>
         </div>
       </aside>
     </div>
@@ -1725,7 +1713,7 @@ const ISLAND_POSITIONS_MOBILE = {
   7:  { x: 20, y: 40 }, // row 3, left — above 6
   8:  { x: 50, y: 40 }, // row 3, middle — right of 7
   9:  { x: 80, y: 40 }, // row 3, right — right of 8
-  10: { x: 50, y: 16 }  // top, single — journey end
+  10: { x: 50, y: 20 }  // top, single — journey end
 };
 
 // Landscape artwork: same snake pattern/order, laid out across the
@@ -1797,7 +1785,6 @@ function getItem(level) {
     const stageFrameEl = document.getElementById("stageFrame");
     const boardEl = document.getElementById("board");
     const nextTileEl = document.getElementById("nextTile");
-    const nextTilePanelIconEl = document.getElementById("nextTilePanelIcon");
     const scoreStatEl = document.getElementById("scoreStat");
     const movesStatEl = document.getElementById("movesStat");
     const bestStatEl = document.getElementById("bestStat");
@@ -2495,10 +2482,6 @@ function getItem(level) {
       const item = getItem(nextLevel);
       nextTileEl.innerHTML = "";
       nextTileEl.appendChild(createItemIcon(item));
-      if (nextTilePanelIconEl) {
-        nextTilePanelIconEl.innerHTML = "";
-        nextTilePanelIconEl.appendChild(createItemIcon(item));
-      }
     }
 
     function renderCollection() {
