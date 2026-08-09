@@ -1780,35 +1780,34 @@ button {
       #gameLayout.on-map .howtoplay-btn { display: inline-flex; order: -1; }
 
       /* Title image (images/game-holisticgametiteltext.png) — moved by
-         JS (see the mobile branch of layoutSideExtras()) out of the
-         map artwork and into the side panel, right below the icon bar,
-         so it renders as a normal header ABOVE the map image instead
-         of floating on top of it. That relocation is also what shrinks
-         the map image itself: the side panel's real content height
-         (icon bar + this title) simply leaves less of the fixed 100svh
-         layout for the map's flex-grow area below it. */
-      #gameLayout.on-map .map-brand {
-        display: block;
+         JS (see the mobile branch of layoutSideExtras()) into the icon
+         bar itself, between the "how to play" and login icons, so all
+         three now sit on the same row instead of the logo getting its
+         own row below. */
+      #gameLayout.on-map .top-row .map-brand {
+        display: flex;
         position: static;
         left: auto;
         top: auto;
         transform: none;
         z-index: auto;
-        max-width: 100%;
-        width: 100%;
-        margin-top: 0;
+        align-items: center;
+        justify-content: center;
+        flex: 0 1 auto;
+        max-width: none;
+        width: auto;
+        margin: 0;
         text-align: center;
       }
 
-      /* Nearly doubled from clamp(30px, 8vw, 52px) — sized up, still
-         horizontally centered via .map-brand's text-align:center + this
-         image's own auto side-margins. margin-top is 0 (not the 6px
-         tried previously, which added visible empty space above the
-         logo) so the image sits flush against the icon bar right above
-         it, as high up the screen as the layout allows. */
-      #gameLayout.on-map .map-brand-img {
-        max-height: clamp(56px, 15vw, 98px);
-        margin: 0 auto;
+      /* Sized to fit inside the icon row's own height (howtoplay-btn is
+         34px) rather than the old full-width header block — width:auto
+         lets it keep its natural aspect ratio instead of the base
+         rule's width:100%, which would otherwise force it to stretch. */
+      #gameLayout.on-map .top-row .map-brand-img {
+        width: auto;
+        max-height: 30px;
+        margin: 0;
       }
 
       /* The small logo that used to be the icon bar's only title is now
@@ -2499,9 +2498,10 @@ function getItem(level) {
        Also relocates the big map-screen title image (#mapBrand):
        - Desktop/laptop: unchanged — stays inside .map-screen itself,
          overlaid on top of the map artwork.
-       - Mobile: moved into the side panel, right after the icon bar,
-         so it renders as a normal header ABOVE the map image (see the
-         max-width:760px .map-brand rules) instead of floating over it.
+       - Mobile: moved into the icon bar itself (.top-row), between the
+         "how to play" and login icons, so all three sit on the same row
+         (see the max-width:760px .top-row .map-brand rules) instead of
+         the logo getting its own row below the icons.
        Called once at load and again every time DESKTOP_MEDIA_QUERY's
        "change" event fires, so resizing across the breakpoint (or
        rotating a foldable) relocates them immediately. */
@@ -2519,7 +2519,10 @@ function getItem(level) {
         // layout.
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.appendChild(homeBtnEl);
-        sidePanelEl.insertBefore(mapBrandEl, topRowEl.nextSibling);
+        // Logo goes inside the icon bar, before the login icon — its
+        // default flex order (0) naturally lands it between
+        // howtoplay-btn's order:-1 and #authRoot's order:1.
+        topRowEl.insertBefore(mapBrandEl, authRootEl);
       }
     }
     layoutSideExtras();
