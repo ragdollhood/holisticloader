@@ -178,6 +178,18 @@
       color: var(--muted);
     }
 
+    /* Small illustration under "match 3+" (step 2) in both How to Play
+       lists — the same items merged whether they sit in a straight line
+       or at an angle to each other, so the diagram shows both layouts
+       feeding into the same merged result. */
+    .merge-demo {
+      display: block;
+      width: 100%;
+      max-width: 240px;
+      height: auto;
+      margin-top: 8px;
+    }
+
     .side-panel .hud,
     .side-panel .world-picker {
       position: static;
@@ -369,6 +381,7 @@
        score/account readouts) doesn't need to change. */
     .score { order: 1; }
     .how-to-play { order: 2; }
+    .premium-box { order: 3; }
 
     /* On the map screen the logo stands on its own — no glass "pill"
        box behind it (the .hud look is right for text/stat readouts,
@@ -1137,6 +1150,83 @@ button {
       color: var(--text);
     }
 
+    /* ---------- Premium upsell box ----------
+       Sits right under the How to Play panel (same map-only visibility
+       window — see .how-to-play above), but ONLY while logged out.
+       #gameLayout gets an "is-logged-in" class in onAuthOrPremiumChange()
+       (JS below); that's what the second half of the selector below
+       hides it on. Hidden by default (no map-only class needed) so it
+       never flashes visible before that class is set. */
+    .premium-box {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 16px 16px 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(248,217,139,.34);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(248,217,139,.20), transparent 55%),
+        linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03)), var(--glass);
+    }
+
+    #gameLayout.on-map:not(.is-logged-in) .premium-box {
+      display: flex;
+    }
+
+    .premium-box .premium-badge {
+      display: inline-flex;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 9.5px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #2a1c05;
+      background: linear-gradient(135deg, #ffe3a3, #d9a441);
+      padding: 5px 11px;
+      border-radius: 999px;
+    }
+
+    .premium-box h3 {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing: -.01em;
+      color: #fff4d5;
+    }
+
+    .premium-box .premium-price {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--gold2);
+    }
+
+    .premium-box .premium-price span {
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: lowercase;
+      letter-spacing: normal;
+    }
+
+    .premium-box p {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .premium-box button {
+      align-self: stretch;
+      margin-top: 4px;
+    }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -1533,9 +1623,51 @@ button {
           <h3>How to Play</h3>
           <ol>
             <li>Tap an empty tile to place the item shown in the preview.</li>
-            <li>Match 3+ of the same item to merge them into the next level.</li>
+            <li>
+              Match 3+ of the same item to merge them into the next level.
+              <svg class="merge-demo" viewBox="0 0 240 132" xmlns="http://www.w3.org/2000/svg" aria-label="Three matching items merge into one new item, whether lined up straight or at an angle">
+                <defs>
+                  <marker id="mergeArrow" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto">
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--gold)"></path>
+                  </marker>
+                </defs>
+
+                <!-- Row 1: three items in a straight line -->
+                <circle cx="20" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+                <circle cx="46" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+                <circle cx="72" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+                <line x1="88" y1="24" x2="112" y2="24" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#mergeArrow)"></line>
+                <circle cx="134" cy="24" r="15" fill="rgba(201,167,255,.22)" stroke="var(--lav)" stroke-width="1.6"></circle>
+                <path d="M134 16 l2.6 5.4 5.9.8 -4.3 4.1 1 5.8 -5.2 -2.8 -5.2 2.8 1 -5.8 -4.3 -4.1 5.9 -.8 Z" fill="var(--lav)"></path>
+                <text x="180" y="20" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">In a</text>
+                <text x="180" y="32" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">row</text>
+
+                <!-- Row 2: three items at an angle to each other -->
+                <circle cx="18" cy="82" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+                <circle cx="46" cy="96" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+                <circle cx="42" cy="66" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+                <line x1="88" y1="88" x2="112" y2="88" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#mergeArrow)"></line>
+                <circle cx="134" cy="88" r="15" fill="rgba(201,167,255,.22)" stroke="var(--lav)" stroke-width="1.6"></circle>
+                <path d="M134 80 l2.6 5.4 5.9.8 -4.3 4.1 1 5.8 -5.2 -2.8 -5.2 2.8 1 -5.8 -4.3 -4.1 5.9 -.8 Z" fill="var(--lav)"></path>
+                <text x="180" y="84" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">At an</text>
+                <text x="180" y="96" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">angle</text>
+
+                <text x="10" y="122" fill="var(--muted)" font-size="9.5" font-family="Arial, sans-serif">Any arrangement of 3+ touching neighbors works.</text>
+              </svg>
+            </li>
             <li>Keep merging to score points and unlock new islands.</li>
           </ol>
+        </div>
+
+        <!-- Premium upsell — shown only while logged out (see
+             onAuthOrPremiumChange()), same map-only visibility window
+             as the How to Play box just above it. -->
+        <div class="hud premium-box map-only" id="premiumBox" aria-label="Get Premium">
+          <span class="premium-badge">Premium</span>
+          <h3>Unlock everything</h3>
+          <p class="premium-price">$4.99 <span>/ month</span></p>
+          <p>Get full access to every world and every level on Holistic Loader — this game and all the others.</p>
+          <button type="button" class="secondary" id="premiumBoxBtn">Unlock Premium</button>
         </div>
 
         <!-- home-thumb ("back to the map") starts out here for mobile;
@@ -1595,7 +1727,38 @@ button {
       <h2>How to Play</h2>
       <ol>
         <li>Tap an empty tile to place the item shown in the preview.</li>
-        <li>Match 3+ of the same item to merge them into the next level.</li>
+        <li>
+          Match 3+ of the same item to merge them into the next level.
+          <svg class="merge-demo" viewBox="0 0 240 132" xmlns="http://www.w3.org/2000/svg" aria-label="Three matching items merge into one new item, whether lined up straight or at an angle">
+            <defs>
+              <marker id="mergeArrowModal" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto">
+                <path d="M0 0 L8 4 L0 8 Z" fill="var(--gold)"></path>
+              </marker>
+            </defs>
+
+            <!-- Row 1: three items in a straight line -->
+            <circle cx="20" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+            <circle cx="46" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+            <circle cx="72" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+            <line x1="88" y1="24" x2="112" y2="24" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#mergeArrowModal)"></line>
+            <circle cx="134" cy="24" r="15" fill="rgba(201,167,255,.22)" stroke="var(--lav)" stroke-width="1.6"></circle>
+            <path d="M134 16 l2.6 5.4 5.9.8 -4.3 4.1 1 5.8 -5.2 -2.8 -5.2 2.8 1 -5.8 -4.3 -4.1 5.9 -.8 Z" fill="var(--lav)"></path>
+            <text x="180" y="20" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">In a</text>
+            <text x="180" y="32" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">row</text>
+
+            <!-- Row 2: three items at an angle to each other -->
+            <circle cx="18" cy="82" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+            <circle cx="46" cy="96" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+            <circle cx="42" cy="66" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
+            <line x1="88" y1="88" x2="112" y2="88" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#mergeArrowModal)"></line>
+            <circle cx="134" cy="88" r="15" fill="rgba(201,167,255,.22)" stroke="var(--lav)" stroke-width="1.6"></circle>
+            <path d="M134 80 l2.6 5.4 5.9.8 -4.3 4.1 1 5.8 -5.2 -2.8 -5.2 2.8 1 -5.8 -4.3 -4.1 5.9 -.8 Z" fill="var(--lav)"></path>
+            <text x="180" y="84" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">At an</text>
+            <text x="180" y="96" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">angle</text>
+
+            <text x="10" y="122" fill="var(--muted)" font-size="9.5" font-family="Arial, sans-serif">Any arrangement of 3+ touching neighbors works.</text>
+          </svg>
+        </li>
         <li>Keep merging to score points and unlock new islands.</li>
       </ol>
       <div class="modal-actions">
@@ -1978,6 +2141,13 @@ function getItem(level) {
     document.getElementById("loginGateBtn").addEventListener("click", () => {
       // #accountBtn is built by auth.js into #authRoot; logged out, a
       // click on it opens the login/sign-up modal directly.
+      const accountBtn = document.getElementById("accountBtn");
+      if (accountBtn) accountBtn.click();
+    });
+    document.getElementById("premiumBoxBtn").addEventListener("click", () => {
+      // Same destination as the login gate above: opens the login modal,
+      // which itself has "Free Trial" and "Unlock Premium ($4.99/month)"
+      // buttons (see auth.js) that start the real checkout flow.
       const accountBtn = document.getElementById("accountBtn");
       if (accountBtn) accountBtn.click();
     });
@@ -2687,6 +2857,10 @@ function getItem(level) {
     let gardenLoadedForUser = null; // tracks which user_id we've already loaded, to avoid reloading on unrelated premium-status refreshes
 
     function onAuthOrPremiumChange() {
+      // Drives the CSS rule that shows/hides #premiumBox — see
+      // `#gameLayout.on-map:not(.is-logged-in) .premium-box` above.
+      gameLayoutEl.classList.toggle("is-logged-in", !!currentUser);
+
       if (currentUser) {
         loginGateEl.classList.remove("show");
         if (gardenLoadedForUser !== currentUser.id) {
