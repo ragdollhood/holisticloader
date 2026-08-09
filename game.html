@@ -358,6 +358,54 @@
       -webkit-backdrop-filter: blur(10px);
     }
 
+    /* Desktop/laptop only: the on-stage next-item overlay is hidden
+       (see .next-seed-panel below, which replaces it in the side panel
+       — the mobile media query further down restores this back to a
+       small on-stage badge, since mobile keeps the old layout). */
+    .next-seed { display: none; }
+
+    /* Large "next item" readout that fills the side panel's own
+       leftover height (the panel is a flex column with content stacked
+       at the top, so on desktop/laptop widths — where it's taller than
+       its content — this grows to soak up the empty space at the
+       bottom instead of leaving it blank). */
+    .next-seed-panel {
+      flex: 1 1 auto;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px;
+      border-radius: 26px;
+    }
+
+    .next-seed-panel-label {
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--gold2);
+    }
+
+    .next-seed-panel-icon {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .next-seed-panel .item-icon {
+      width: min(60%, 170px);
+      height: min(60%, 170px);
+      max-width: 100%;
+      max-height: 100%;
+      filter: drop-shadow(0 0 22px rgba(248,217,139,.40)) drop-shadow(0 8px 14px rgba(0,0,0,.30));
+    }
+
   .actions {
   width: 100%;
 
@@ -638,8 +686,12 @@ button {
   align-self: center;
 
   border-radius: 50%;
-  background: transparent;
-  border: none;
+  background: radial-gradient(circle, rgba(255,255,255,.07), rgba(255,255,255,.02) 55%, transparent 78%);
+  border: 2px solid rgba(255,242,189,.55);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.25),
+    0 0 14px rgba(248,217,139,.22),
+    inset 0 0 10px rgba(248,217,139,.10);
 
   display: grid;
   place-items: center;
@@ -648,8 +700,12 @@ button {
     .cell:hover, .cell:focus-visible {
       outline: none;
       transform: scale(1.08);
-      background: radial-gradient(circle, rgba(248,217,139,.22), rgba(248,217,139,.05) 46%, transparent 72%);
-      box-shadow: 0 0 22px rgba(248,217,139,.20);
+      border-color: rgba(255,242,189,.9);
+      background: radial-gradient(circle, rgba(248,217,139,.28), rgba(248,217,139,.06) 46%, transparent 72%);
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.25),
+        0 0 26px rgba(248,217,139,.38),
+        inset 0 0 14px rgba(248,217,139,.18);
     }
 
     /* Keyboard-only ring on top of the shared hover look above, so
@@ -950,9 +1006,12 @@ button {
       .collection { padding: 6px 8px; gap: 5px; }
 
       /* Next-item badge on the image itself, and the panel's action
-         buttons: small tap targets, minimal padding. */
-      .next-seed { width: 40px; height: 40px; border-radius: 13px; }
+         buttons: small tap targets, minimal padding. Mobile keeps the
+         original small on-stage badge (desktop/laptop uses the large
+         side-panel version instead — see .next-seed-panel above). */
+      .next-seed { display: grid; width: 40px; height: 40px; border-radius: 13px; }
       .next-seed .item-icon { width: 30px; height: 30px; }
+      .next-seed-panel { display: none; }
 
       .actions { padding: 5px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
@@ -1035,6 +1094,14 @@ button {
           <button class="secondary" id="undoBtn">Undo</button>
           <button class="secondary" id="saveBtn">Save</button>
           <button id="newBtn">New</button>
+        </div>
+
+        <!-- Desktop/laptop-only large "next item" readout, filling the
+             panel's remaining height. Hidden on mobile (see CSS), where
+             the small on-stage .next-seed badge is used instead. -->
+        <div class="hud next-seed-panel gameplay-only" id="nextTilePanel" aria-label="Next item to place">
+          <span class="next-seed-panel-label">Next item</span>
+          <div class="next-seed-panel-icon" id="nextTilePanelIcon"></div>
         </div>
       </aside>
     </div>
@@ -1329,6 +1396,7 @@ function getItem(level) {
     const stageFrameEl = document.getElementById("stageFrame");
     const boardEl = document.getElementById("board");
     const nextTileEl = document.getElementById("nextTile");
+    const nextTilePanelIconEl = document.getElementById("nextTilePanelIcon");
     const scoreStatEl = document.getElementById("scoreStat");
     const movesStatEl = document.getElementById("movesStat");
     const bestStatEl = document.getElementById("bestStat");
@@ -2008,8 +2076,13 @@ function getItem(level) {
     }
 
     function renderNext() {
+      const item = getItem(nextLevel);
       nextTileEl.innerHTML = "";
-      nextTileEl.appendChild(createItemIcon(getItem(nextLevel)));
+      nextTileEl.appendChild(createItemIcon(item));
+      if (nextTilePanelIconEl) {
+        nextTilePanelIconEl.innerHTML = "";
+        nextTilePanelIconEl.appendChild(createItemIcon(item));
+      }
     }
 
     function renderCollection() {
