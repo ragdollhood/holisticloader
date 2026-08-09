@@ -1487,7 +1487,12 @@ button {
          the right amount compensates for that. */
       :root {
         --board-left: 10.5%;
-        --board-top: calc(11% - 30px);
+        /* Pushed down an extra row's worth (--board-height / --board-rows,
+           i.e. the height of one full planting circle) so the board sits
+           lower in the stage image on mobile. --board-rows resolves via
+           inheritance from #stageFrame's inline style (ROWS_MOBILE, see
+           the JS below), so this stays correct if that value ever changes. */
+        --board-top: calc(11% - 30px + (var(--board-height) / var(--board-rows)));
         --board-width: 79%;
         --board-height: 78%;
       }
@@ -1597,7 +1602,7 @@ button {
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      .home-thumb { flex-direction: column; align-items: center; justify-content: center; padding: 5px 6px; gap: 3px; width: 100%; height: 100%; }
+      .home-thumb { flex-direction: column; align-items: center; justify-content: center; padding: 5px 6px; gap: 3px; width: 100%; height: 100%; min-width: 0; }
       .home-thumb-img,
       .home-thumb-label { display: none; }
       .home-thumb-icon { display: block; width: 17px; height: 17px; color: var(--gold2); }
@@ -1690,16 +1695,11 @@ button {
         border-radius: 0;
       }
 
-      /* The map art used background-size:contain, which letterboxed it
-         inside the frame and left the plain stage background-color
-         showing as empty margin down both sides — that's the "map
-         doesn't reach the edge" gap. Switching to cover (mobile map
-         screen only; desktop/laptop keeps contain, untouched) fills
-         the full width edge-to-edge, at the cost of a little top/bottom
-         crop where the box's aspect ratio doesn't exactly match the
-         art's — an acceptable trade-off for a true full-bleed image. */
+      /* Kept as contain (matches desktop/laptop) so the start-screen art
+         is never cropped vertically on mobile — it letterboxes left/right
+         instead of losing any of the image's height. */
       #gameLayout.on-map .map-screen {
-        background-size: cover;
+        background-size: contain;
       }
 
       /* The 1px border inherited from .stage was barely visible once
