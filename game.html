@@ -291,23 +291,24 @@
        board. Same click destination as the Map button (showMap(null)). */
     .home-thumb {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.12);
-      border-radius: 20px;
-      padding: 10px 14px;
+      border-radius: 22px;
+      padding: 14px;
       cursor: pointer;
       width: 100%;
     }
 
     .home-thumb-img {
       display: block;
-      width: 68px;
-      height: 68px;
+      width: 100%;
+      max-width: 220px;
+      aspect-ratio: 1 / 1;
       flex: 0 0 auto;
-      border-radius: 18px;
+      border-radius: 20px;
       object-fit: cover;
       border: 2px solid rgba(248,217,139,.55);
       box-shadow:
@@ -333,7 +334,7 @@
       letter-spacing: .06em;
       text-transform: uppercase;
       color: var(--gold2);
-      text-align: left;
+      text-align: center;
     }
 
     /* The single HUD element allowed to remain on top of the game-world
@@ -371,7 +372,7 @@
        bottom instead of leaving it blank). */
     .next-seed-panel {
       flex: 0 1 auto;
-      min-height: 70px;
+      min-height: 140px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -399,8 +400,8 @@
     }
 
     .next-seed-panel .item-icon {
-      width: min(42%, 100px);
-      height: min(42%, 100px);
+      width: min(70%, 170px);
+      height: min(70%, 170px);
       max-width: 100%;
       max-height: 100%;
       filter: drop-shadow(0 0 22px rgba(248,217,139,.40)) drop-shadow(0 8px 14px rgba(0,0,0,.30));
@@ -998,9 +999,9 @@ button {
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      .home-thumb { padding: 6px 8px; gap: 8px; }
-      .home-thumb-img { width: 34px; height: 34px; border-radius: 10px; }
-      .home-thumb-label { font-size: 9px; }
+      .home-thumb { flex-direction: row; align-items: center; padding: 6px 8px; gap: 8px; }
+      .home-thumb-img { width: 34px; height: 34px; max-width: none; border-radius: 10px; order: -1; }
+      .home-thumb-label { font-size: 9px; text-align: left; }
 
       .world-picker { padding: 6px; gap: 6px; }
       .collection { padding: 6px 8px; gap: 5px; }
@@ -1092,8 +1093,8 @@ button {
         </div>
 
         <button type="button" class="home-thumb gameplay-only" id="homeBtn" aria-label="Back to the map">
-          <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
           <span class="home-thumb-label">Back to start</span>
+          <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
         </button>
 
         <!-- Desktop/laptop-only large "next item" readout, filling the
@@ -1162,12 +1163,11 @@ const ITEMS = [
 ];
 
 // Per-world item-art overrides — keyed by world key, then indexed by
-// level (1-5). Any world not listed here (i.e. every world except
-// underwaterKingdom right now) falls back to the shared ITEMS art above,
-// unchanged. Add more worlds the same way if/when they get their own
-// themed item set. Same webp/png fallback rule as the shared art (see
-// getItemImageUrl() below) — every image here needs BOTH a .webp AND a
-// .png file present in images/.
+// level (1-5). Any world not listed here falls back to the shared ITEMS
+// art above, unchanged. Add more worlds the same way if/when they get
+// their own themed item set. Same webp/png fallback rule as the shared
+// art (see getItemImageUrl() below) — every image here needs BOTH a
+// .webp AND a .png file present in images/.
 const WORLD_ITEM_IMAGES = {
   underwaterKingdom: {
     1: "images/game-item-underwater1",
@@ -1175,6 +1175,13 @@ const WORLD_ITEM_IMAGES = {
     3: "images/game-item-underwater3",
     4: "images/game-item-underwater4",
     5: "images/game-item-underwater5"
+  },
+  treasureCave: {
+    1: "images/game-item-treasure1",
+    2: "images/game-item-treasure2",
+    3: "images/game-item-treasure3",
+    4: "images/game-item-treasure4",
+    5: "images/game-item-treasure5"
   }
 };
 
