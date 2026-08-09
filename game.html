@@ -148,6 +148,12 @@
        own title and no other HUD chrome. */
     .side-panel .gameplay-only { display: flex; }
 
+    /* Opposite of .gameplay-only above: hidden during gameplay, shown
+       only while the map screen is showing. Used for the "how to
+       play" info box, which only makes sense before a board is open. */
+    .side-panel .map-only { display: none; }
+    #gameLayout.on-map .side-panel .map-only { display: flex; }
+
 .stage {
   position: absolute;
   inset: 0;
@@ -967,6 +973,44 @@ button {
       pointer-events: none;
     }
 
+    /* Map-screen-only info panel explaining how to play — same glass
+       HUD look as the gameplay readouts (.hud gives border/background/
+       blur/shadow), laid out as a small heading + short list instead
+       of stat numbers. */
+    .how-to-play {
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 14px 16px;
+      border-radius: 22px;
+    }
+
+    .how-to-play h3 {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      font-size: 13px;
+      color: var(--gold2);
+    }
+
+    .how-to-play ol {
+      margin: 0;
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .how-to-play li {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -1250,6 +1294,16 @@ button {
               <strong id="worldName">Wellness Garden</strong>
             </div>
           </div>
+        </div>
+
+        <div class="hud how-to-play map-only" aria-label="How to play">
+          <h3>Så funkar spelet</h3>
+          <ol>
+            <li>Klicka på en tom ruta för att placera nästa föremål (visas i förhandsvisningen).</li>
+            <li>Tre eller fler likadana föremål intill varandra slås ihop till nästa nivå.</li>
+            <li>Fyll på och slå samman för att samla poäng och låsa upp fler öar.</li>
+            <li>Klart bräde utan drag kvar avslutar rundan — ångra med Undo eller spara med Save.</li>
+          </ol>
         </div>
 
         <div class="hud score gameplay-only" aria-label="Game stats">
