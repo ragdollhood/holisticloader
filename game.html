@@ -1191,12 +1191,15 @@ const WORLD_LABELS = {
    Positions are percentages (of the map image's width/height) for
    each numbered circle in the artwork, numbered from the bottom of
    the image (island 1, the beach) up to the top (island 10, the ice
-   temple) — eyeball-adjust these if the final art shifts the islands
-   at all. NOTE: these positions are measured against the MOBILE
-   (portrait) artwork; once the laptop (landscape) image is uploaded,
-   these will likely need a second, landscape-specific position set,
-   since a landscape crop/layout of the same scene won't put the
-   islands at the same percentages.
+   temple). The same island's artwork (beach, dome, tree, crystal cave,
+   ruins, mountain, cherry blossom, village, volcano, ice temple) keeps
+   the same number across BOTH map images — only its on-screen
+   position differs, since the laptop (landscape) artwork lays the
+   same 10 islands out in a 3-column grid instead of the mobile
+   (portrait) artwork's single snaking path. See
+   ISLAND_POSITIONS_MOBILE / ISLAND_POSITIONS_LAPTOP and
+   getIslandPositions() below — eyeball-adjust either set if its art
+   ever shifts the islands at all.
 ----------------------------------------------------------------- */
 const CLEAR_ITEM_LEVEL = 5;
 const MAP_WORLD_KEYS = WORLD_KEYS.slice(0, 10); // islands 1-10
@@ -1205,7 +1208,9 @@ const MAP_PAGES = {
 };
 const MAP_IMAGE_MOBILE = "images/game-karta1-10mobile";
 const MAP_IMAGE_LAPTOP = "images/game-karta1-10laptop";
-const ISLAND_POSITIONS = {
+
+// Portrait artwork: a single path snaking bottom -> top.
+const ISLAND_POSITIONS_MOBILE = {
   1:  { x: 72, y: 90 }, // beach with dock — bottom right, journey start
   2:  { x: 15, y: 88 }, // underwater glass dome — bottom left
   3:  { x: 47, y: 82 }, // sunset tree with lanterns
@@ -1217,6 +1222,27 @@ const ISLAND_POSITIONS = {
   9:  { x: 78, y: 29 }, // dragon volcano castle
   10: { x: 48, y: 16 }  // ice/crystal temple — top, journey end
 };
+
+// Landscape artwork: same 10 islands, laid out as a 3-column grid
+// (bottom row of 3, two middle rows of 3, one island alone up top).
+const ISLAND_POSITIONS_LAPTOP = {
+  1:  { x: 78, y: 85 }, // beach with dock — bottom right, journey start
+  2:  { x: 16, y: 80 }, // underwater glass dome — bottom left
+  3:  { x: 50, y: 79 }, // sunset tree with lanterns
+  4:  { x: 81, y: 57 }, // crystal cave portal
+  5:  { x: 16, y: 55 }, // jungle ruins/temple
+  6:  { x: 82, y: 31 }, // snowy mountain
+  7:  { x: 50, y: 56 }, // cherry blossom fountain garden
+  8:  { x: 48, y: 31 }, // village with waterfalls
+  9:  { x: 18, y: 29 }, // dragon volcano castle
+  10: { x: 50, y: 15 }  // ice/crystal temple — top, journey end
+};
+
+// Picks whichever position set matches the map image currently showing
+// (see getMapBackgroundUrl(), same breakpoint check).
+function getIslandPositions() {
+  return (typeof DESKTOP_MEDIA_QUERY !== "undefined" && DESKTOP_MEDIA_QUERY.matches) ? ISLAND_POSITIONS_LAPTOP : ISLAND_POSITIONS_MOBILE;
+}
 
 const EMPTY_ITEM = { level: 0, image: null, name: "Empty", score: 0 };
 
@@ -1418,7 +1444,12 @@ function getItem(level) {
     // or clear the measured ratio immediately rather than waiting for
     // the next world switch.
     DESKTOP_MEDIA_QUERY.addEventListener("change", (e) => {
-      if (onMap) updateMapBackground(); // mobile/laptop map art swap regardless of which way the breakpoint just crossed
+      // mobile/laptop map art swap AND island button positions both
+      // depend on this breakpoint — re-render the whole map (not just
+      // the background) so the numbered circles jump to their other
+      // layout's spots immediately instead of staying put on the new
+      // art. Cheap either way: at most 10 buttons.
+      if (onMap) renderMap();
       if (e.matches) {
         if (onMap) applyMapAspectRatio(mapPage); else applyStageAspectRatio(currentWorldKey);
       } else {
@@ -1531,7 +1562,7 @@ function getItem(level) {
 
       page.keys.forEach((key, i) => {
         const islandNumber = page.offset + i + 1;
-        const pos = ISLAND_POSITIONS[islandNumber];
+        const pos = getIslandPositions()[islandNumber];
         if (!pos) return;
         const unlocked = isWorldUnlocked(key);
         const cleared = isWorldCleared(key);
