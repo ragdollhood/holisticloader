@@ -795,8 +795,8 @@ button {
        images/game-karta1-10mobile.webp/.jpg on phones (portrait),
        images/game-karta1-10laptop.webp/.jpg on desktop/laptop widths
        (landscape) — see getMapBackgroundUrl() below.
-       Sits on top of the stage (same layer the login-gate uses) so the
-       board underneath keeps its own state untouched while hidden. */
+       Sits on top of the stage so the board underneath keeps its own
+       state untouched while hidden. */
     .map-screen {
       position: absolute;
       inset: 0;
@@ -1233,19 +1233,27 @@ button {
        #gameLayout gets an "is-logged-in" class in onAuthOrPremiumChange()
        (JS below); that's what the second half of the selector below
        hides it on. Hidden by default (no map-only class needed) so it
-       never flashes visible before that class is set. */
+       never flashes visible before that class is set.
+       Styled to mirror the #premiumCard "free trial" card on index.html
+       (gold eyebrow pill, gradient serif headline, checklist, blue
+       trial CTA + gold outline buy button) — see the shared .premium-*
+       / .gcm-* rules further below, used by both this box and
+       #guestClearModal. */
     .premium-box {
       display: none;
+      position: relative;
+      overflow: hidden;
       width: 100%;
       flex-direction: column;
       align-items: flex-start;
-      gap: 8px;
-      padding: 16px 16px 18px;
+      gap: 0;
+      padding: 18px 16px 16px;
       border-radius: 22px;
-      border: 1px solid rgba(248,217,139,.34);
+      border: 1px solid rgba(248,217,139,.36);
       background:
-        radial-gradient(circle at 20% 0%, rgba(248,217,139,.20), transparent 55%),
+        radial-gradient(circle at 20% 0%, rgba(248,217,139,.22), transparent 55%),
         linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03)), var(--glass);
+      box-shadow: 0 16px 40px rgba(0,0,0,.28), 0 0 0 1px rgba(255,217,138,.06) inset;
     }
 
     #gameLayout.on-map:not(.is-logged-in) .premium-box {
@@ -1266,31 +1274,6 @@ button {
       border-radius: 999px;
     }
 
-    .premium-box h3 {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      font-weight: 900;
-      font-size: 15px;
-      letter-spacing: -.01em;
-      color: #fff4d5;
-    }
-
-    .premium-box .premium-price {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      font-weight: 900;
-      font-size: 15px;
-      color: var(--gold2);
-    }
-
-    .premium-box .premium-price span {
-      font-weight: 700;
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: lowercase;
-      letter-spacing: normal;
-    }
-
     .premium-box p {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -1302,6 +1285,104 @@ button {
     .premium-box button {
       align-self: stretch;
       margin-top: 4px;
+    }
+
+    /* ---------- Shared "premium card" building blocks ----------
+       Used by the sidebar .premium-box AND #guestClearModal, so the
+       upsell always reads as the same product across the game — a
+       smaller cousin of index.html's #premiumCard free-trial card. */
+    .premium-eyebrow, .gcm-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: Arial, sans-serif; font-weight: 900; font-size: 9.5px;
+      letter-spacing: .16em; text-transform: uppercase; color: #2a1c05;
+      background: linear-gradient(135deg, #ffe8b0, #dcaa48);
+      padding: 6px 14px; border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(248,217,139,.4);
+      margin-bottom: 10px;
+    }
+
+    .premium-headline, .gcm-headline {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700; font-style: italic;
+      line-height: 1.16;
+      background: linear-gradient(100deg, #fff8ec 0%, #f0d19f 45%, #fff8ec 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .premium-headline { font-size: 18.5px; }
+    .gcm-headline { font-size: clamp(22px, 5vw, 27px); }
+
+    .premium-sub, .gcm-sub {
+      margin: 0 0 14px;
+      font-family: Arial, sans-serif;
+      font-size: 12px; line-height: 1.5; color: var(--muted);
+    }
+
+    .premium-checklist, .gcm-checklist {
+      list-style: none; display: flex; flex-direction: column; gap: 7px;
+      margin: 0 0 16px; padding: 0; text-align: left; width: 100%;
+    }
+    .premium-checklist li, .gcm-checklist li {
+      display: flex; align-items: center; gap: 8px;
+      font-family: Arial, sans-serif; font-weight: 600; font-size: 12px;
+      color: var(--text);
+    }
+    .premium-checklist .chk, .gcm-checklist .chk {
+      flex: 0 0 auto; width: 17px; height: 17px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%; background: rgba(248,217,139,.18);
+      border: 1px solid rgba(248,217,139,.45);
+      color: var(--gold); font-size: 9.5px; font-weight: 900;
+    }
+
+    .premium-trial-btn, .gcm-trial-btn {
+      width: 100%; display: flex; flex-direction: column; align-items: center;
+      gap: 2px; padding: 12px 14px; border-radius: 999px; cursor: pointer;
+      border: none; background: linear-gradient(135deg, #5EA8FF, #7C6BFF);
+      color: #fff; box-shadow: 0 12px 30px rgba(124,107,255,.4);
+      margin-bottom: 8px; text-decoration: none;
+    }
+    .premium-trial-btn .ptCta, .gcm-trial-btn .ptCta {
+      font-family: Arial, sans-serif; font-weight: 900; font-size: 12px;
+      letter-spacing: .01em; text-transform: none;
+    }
+    .premium-trial-btn .ptNote, .gcm-trial-btn .ptNote {
+      font-family: Arial, sans-serif; font-weight: 700; font-size: 9.5px;
+      letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.88);
+    }
+
+    .premium-buy-btn, .gcm-buy-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 11px 12px; border-radius: 999px;
+      font-family: Arial, sans-serif; font-weight: 900; font-size: 11px;
+      letter-spacing: .04em; text-transform: uppercase;
+      color: var(--gold); background: transparent; border: 1px solid var(--gold);
+      text-decoration: none; margin-bottom: 8px; cursor: pointer;
+      transition: background .2s ease, color .2s ease;
+    }
+    .premium-buy-btn:hover, .gcm-buy-btn:hover { background: var(--gold); color: #24162c; }
+
+    .premium-login-link, .gcm-login-link {
+      display: block; width: 100%; text-align: center;
+      background: none; border: none; padding: 4px 0; cursor: pointer;
+      font-family: Arial, sans-serif; font-size: 11px; color: var(--muted);
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .premium-login-link:hover, .gcm-login-link:hover { color: var(--text); }
+
+    /* ---------- #guestClearModal specifics ---------- */
+    .guest-clear-card { text-align: center; }
+    .gcm-kicker {
+      margin: 0 0 4px; font-family: Arial, sans-serif; font-weight: 900;
+      font-size: 15px; color: #fff4d5;
+    }
+    .gcm-warning {
+      margin: 0 0 18px; font-family: Arial, sans-serif; font-size: 12.5px;
+      line-height: 1.5; color: #f3c48f;
+    }
+    .gcm-block {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 18px 4px 4px; border-top: 1px solid rgba(248,217,139,.22);
     }
 
     .toast {
@@ -1362,58 +1443,6 @@ button {
     .modal-card h2 { margin: 0; color: #fff2d3; font-size: 38px; letter-spacing: -.04em; }
     .modal-card p { margin: 12px auto 22px; max-width: 390px; color: var(--muted); font-family: Arial, sans-serif; line-height: 1.6; font-size: 14px; }
     .modal-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-
-    /* ---------- Login gate ----------
-       Covers the whole stage until a Supabase session exists — this
-       game is cloud-saved only, so playing without an account would
-       just lose progress on refresh. */
-    .login-gate {
-      position: absolute;
-      inset: 0;
-      z-index: 20;
-      display: none;
-      place-items: center;
-      padding: 24px;
-      text-align: center;
-      background: rgba(9, 5, 16, .74);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    .login-gate.show { display: grid; }
-
-    .login-gate-card {
-      max-width: 340px;
-      padding: 32px 26px;
-      border-radius: 28px;
-      border: 1px solid rgba(248,217,139,.30);
-      background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03)), var(--glass-strong);
-      box-shadow: 0 24px 80px rgba(0,0,0,.5);
-    }
-
-    .login-gate-icon {
-      width: 40px; height: 40px; margin: 0 auto 14px;
-      border-radius: 50%;
-      border: 2px solid rgba(248,217,139,.65);
-      box-shadow: 0 0 16px rgba(248,217,139,.40), inset 0 0 10px rgba(248,217,139,.25);
-    }
-
-    .login-gate-card h2 {
-      margin: 0 0 8px;
-      font-size: 22px;
-      letter-spacing: -.02em;
-      color: #fff4d5;
-    }
-
-    .login-gate-card p {
-      margin: 0 0 20px;
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-
-    .login-gate-card button { min-width: 210px; }
 
     /* Desktop stage aspect-ratio is no longer a hardcoded guess — see the
        applyStageAspectRatio() JS below, which measures each world image's
@@ -1686,14 +1715,6 @@ button {
           </div>
         </section>
 
-        <div class="login-gate" id="loginGate">
-          <div class="login-gate-card">
-            <div class="login-gate-icon"></div>
-            <h2>Log in to grow your garden</h2>
-            <p>Your garden is saved to your account in the cloud, so you need to be logged in to play.</p>
-            <button type="button" id="loginGateBtn">Log in / Sign up</button>
-          </div>
-        </div>
       </div>
 
       <!-- ---------- Side panel ---------- everything that used to be an
@@ -1792,11 +1813,20 @@ button {
              onAuthOrPremiumChange()), same map-only visibility window
              as the How to Play box just above it. -->
         <div class="hud premium-box map-only" id="premiumBox" aria-label="Get Premium">
-          <span class="premium-badge">Premium</span>
-          <h3>Unlock everything</h3>
-          <p class="premium-price">$4.99 <span>/ month</span></p>
-          <p>Get full access to every world including full premium on Holistic Loader, www.holisticloader.com</p>
-          <button type="button" class="secondary" id="premiumBoxBtn">Unlock Premium</button>
+          <span class="premium-eyebrow">14 Days Free</span>
+          <h3 class="premium-headline">Unlock Every Island</h3>
+          <p class="premium-sub">World 1 is free to play, forever. Log in to save your garden and unlock every island, plus get full Premium access on holisticloader.com.</p>
+          <ul class="premium-checklist">
+            <li><span class="chk">✓</span>All Islands Unlocked</li>
+            <li><span class="chk">✓</span>Cloud Save &amp; Sync</li>
+            <li><span class="chk">✓</span>Full Premium on holisticloader.com</li>
+          </ul>
+          <button type="button" class="premium-trial-btn" id="premiumBoxTrialBtn">
+            <span class="ptCta">Start Free 14-Day Trial</span>
+            <span class="ptNote">No card required</span>
+          </button>
+          <a class="premium-buy-btn" id="premiumBoxBuyBtn" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00" target="_blank" rel="noopener">Get Premium — $4.99/mo</a>
+          <button type="button" class="premium-login-link" id="premiumBoxLoginBtn">Already have an account? Log in</button>
         </div>
 
         <!-- home-thumb ("back to the map") starts out here for mobile;
@@ -1892,6 +1922,39 @@ button {
       </ol>
       <div class="modal-actions">
         <button type="button" id="howToPlayCloseBtn">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guest "level 1 complete" / locked-island upsell — shown to
+       logged-out players (see openGuestUpsellModal() in the script
+       below). Reuses the .modal / .modal-card shell but mirrors
+       index.html's #premiumCard styling for the actual pitch (see the
+       shared .gcm-* rules in the CSS above). -->
+  <div class="modal" id="guestClearModal" role="dialog" aria-modal="true" aria-labelledby="guestClearModalTitle">
+    <div class="modal-card guest-clear-card">
+      <p class="gcm-kicker" id="guestClearKicker">Island 1 cleared! 🌱</p>
+      <p class="gcm-warning">Heads up — your progress won't be saved unless you log in.</p>
+
+      <div class="gcm-block">
+        <span class="gcm-eyebrow">14 Days Free</span>
+        <h2 class="gcm-headline" id="guestClearModalTitle">Unlock the Full Experience</h2>
+        <p class="gcm-sub">Create a free account to save your garden and unlock every island.</p>
+        <ul class="gcm-checklist">
+          <li><span class="chk">✓</span>All 10 Islands Unlocked</li>
+          <li><span class="chk">✓</span>Cloud Save &amp; Sync</li>
+          <li><span class="chk">✓</span>Full Premium on holisticloader.com</li>
+        </ul>
+        <button type="button" class="gcm-trial-btn" id="guestClearTrialBtn">
+          <span class="ptCta">Start Free 14-Day Trial</span>
+          <span class="ptNote">No card required</span>
+        </button>
+        <a class="gcm-buy-btn" id="guestClearBuyBtn" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00" target="_blank" rel="noopener">Get Premium for $4.99/month</a>
+        <button type="button" class="gcm-login-link" id="guestClearLoginBtn">Already have an account? Log in</button>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary" id="guestClearLaterBtn">Keep playing without saving</button>
       </div>
     </div>
   </div>
@@ -2180,9 +2243,10 @@ function getItem(level) {
     let COLS = DESKTOP_MEDIA_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
 
     /* Progress lives in Supabase only (table: garden_saves — see the
-       setup notes near GARDEN_TABLE below), not localStorage: playing
-       requires an account, so the cloud row is always the source of
-       truth and there's nothing useful to cache offline. */
+       setup notes near GARDEN_TABLE below), not localStorage. Logged-in
+       players' cloud row is always the source of truth; guests (no
+       account) just play island 1 in memory for the session — see
+       syncToCloud()'s currentUser guard and onAuthOrPremiumChange(). */
     let board = createEmptyBoard();
     let nextLevel = 1;
     let score = 0;
@@ -2213,7 +2277,6 @@ function getItem(level) {
     const gameOverTextEl = document.getElementById("gameOverText");
     const worldNameEl = document.getElementById("worldName");
     const worldPickerEl = document.getElementById("worldPicker");
-    const loginGateEl = document.getElementById("loginGate");
     const mapScreenEl = document.getElementById("mapScreen");
     const mapTitleEl = document.getElementById("mapTitle");
     const homeBtnEl = document.getElementById("homeBtn");
@@ -2282,18 +2345,47 @@ function getItem(level) {
       if (!cell || !boardEl.contains(cell)) return;
       placeTile(Number(cell.dataset.r), Number(cell.dataset.c));
     });
-    document.getElementById("loginGateBtn").addEventListener("click", () => {
-      // #accountBtn is built by auth.js into #authRoot; logged out, a
-      // click on it opens the login/sign-up modal directly.
+    // Opens the login/sign-up modal directly — #accountBtn is built by
+    // auth.js into #authRoot; logged out, a click on it does exactly that.
+    function openLoginModal() {
       const accountBtn = document.getElementById("accountBtn");
       if (accountBtn) accountBtn.click();
+    }
+
+    // Sidebar "Unlock Every Island" info box (map-only, logged-out-only —
+    // see .premium-box CSS). Trial goes straight into register mode,
+    // Buy is a plain link to Stripe, Login opens the login modal.
+    document.getElementById("premiumBoxTrialBtn").addEventListener("click", () => {
+      if (typeof window.openFreeTrialSignup === "function") window.openFreeTrialSignup();
+      else openLoginModal();
     });
-    document.getElementById("premiumBoxBtn").addEventListener("click", () => {
-      // Same destination as the login gate above: opens the login modal,
-      // which itself has "Free Trial" and "Unlock Premium ($4.99/month)"
-      // buttons (see auth.js) that start the real checkout flow.
-      const accountBtn = document.getElementById("accountBtn");
-      if (accountBtn) accountBtn.click();
+    document.getElementById("premiumBoxLoginBtn").addEventListener("click", openLoginModal);
+
+    // "Level cleared" / "island locked" upsell popup for guests — see
+    // openGuestUpsellModal() / checkWorldClear() / enterWorld() below.
+    const guestClearModalEl = document.getElementById("guestClearModal");
+    function closeGuestUpsellModal() { guestClearModalEl.classList.remove("show"); }
+    function openGuestUpsellModal(reason) {
+      const kicker = document.getElementById("guestClearKicker");
+      if (kicker) {
+        kicker.textContent = reason === "locked"
+          ? "This island is locked"
+          : "Island 1 cleared! 🌱";
+      }
+      guestClearModalEl.classList.add("show");
+    }
+    document.getElementById("guestClearTrialBtn").addEventListener("click", () => {
+      closeGuestUpsellModal();
+      if (typeof window.openFreeTrialSignup === "function") window.openFreeTrialSignup();
+      else openLoginModal();
+    });
+    document.getElementById("guestClearLoginBtn").addEventListener("click", () => {
+      closeGuestUpsellModal();
+      openLoginModal();
+    });
+    document.getElementById("guestClearLaterBtn").addEventListener("click", closeGuestUpsellModal);
+    guestClearModalEl.addEventListener("click", (e) => {
+      if (e.target === guestClearModalEl) closeGuestUpsellModal();
     });
 
     function createEmptyBoard() {
@@ -2481,12 +2573,15 @@ function getItem(level) {
     ----------------------------------------------------------------- */
     function isWorldCleared(key) { return clearedWorlds.includes(key); }
 
-    // Island 1 of each page is always open once that page is unlocked;
-    // every later island needs the one before it (in MAP_WORLD_KEYS
-    // order) cleared first.
+    // Island 1 is always free to play, even without an account. Every
+    // later island needs (a) the one before it (in MAP_WORLD_KEYS order)
+    // cleared, AND (b) an account — logged-out players never unlock
+    // island 2+, no matter how many times they clear island 1 in a
+    // single session, since guest progress isn't saved anyway.
     function isWorldUnlocked(key) {
       const idx = MAP_WORLD_KEYS.indexOf(key);
       if (idx <= 0) return true;
+      if (!currentUser) return false;
       return isWorldCleared(MAP_WORLD_KEYS[idx - 1]);
     }
 
@@ -2519,7 +2614,13 @@ function getItem(level) {
     }
 
     function enterWorld(key) {
-      if (!isWorldUnlocked(key)) { showToast("Clear the island before this one first"); return; }
+      if (!isWorldUnlocked(key)) {
+        // Guests always hit the account upsell here, since island 2+ is
+        // locked for them regardless of clearedWorlds progress.
+        if (!currentUser) { openGuestUpsellModal("locked"); return; }
+        showToast("Clear the island before this one first");
+        return;
+      }
       hideMap();
       setWorld(key); // already flushes an immediate sync internally
     }
@@ -2573,6 +2674,16 @@ function getItem(level) {
       clearedWorlds.push(currentWorldKey);
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
       const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
+
+      if (!currentUser) {
+        // Guests can clear island 1, but island 2 stays locked until
+        // they have an account — surface the upsell instead of
+        // pretending the next island just opened.
+        showToast("Island cleared!");
+        setTimeout(() => { showMap(null); openGuestUpsellModal("cleared"); }, 1100);
+        return;
+      }
+
       showToast(nextKey ? "Island cleared! A new one has opened" : "Island cleared!");
       syncToCloud(false, true);
       setTimeout(() => showMap(nextKey), 1100);
@@ -2983,12 +3094,12 @@ function getItem(level) {
     function formatNumber(value) { return new Intl.NumberFormat("sv-SE").format(value); }
 
     /* -----------------------------------------------------------------
-       LOGIN GATE — this game only exists in the cloud, so nothing
-       plays or renders a real board until auth.js confirms a session.
-       onPremiumStatusChange() (from auth.js) fires on initial load,
-       login, and logout alike (it's driven by sb.auth.onAuthStateChange),
-       so it doubles as a general "auth state changed" hook here even
-       though its name is about premium status.
+       AUTH STATE — island 1 is playable by anyone, no account needed;
+       only islands 2+ (and cloud saving) require being logged in. This
+       hook (from auth.js, driven by sb.auth.onAuthStateChange) fires on
+       initial load, login, and logout alike, so it doubles as a general
+       "auth state changed" hook here even though its name is about
+       premium status.
     ----------------------------------------------------------------- */
     let gardenLoadedForUser = null; // tracks which user_id we've already loaded, to avoid reloading on unrelated premium-status refreshes
 
@@ -2998,32 +3109,39 @@ function getItem(level) {
       gameLayoutEl.classList.toggle("is-logged-in", !!currentUser);
 
       if (currentUser) {
-        loginGateEl.classList.remove("show");
+        closeGuestUpsellModal();
         if (gardenLoadedForUser !== currentUser.id) {
           gardenLoadedForUser = currentUser.id;
           loadFromCloud();
         }
       } else {
         gardenLoadedForUser = null;
-        loginGateEl.classList.add("show");
         // Reset the visible board so a previous account's garden never
-        // lingers on screen for whoever uses this device/browser next.
+        // lingers on screen for whoever uses this device/browser next,
+        // then drop the guest onto a fresh, playable island 1 — no
+        // account required. Progress here is session-only (never synced
+        // to Supabase, see syncToCloud()'s currentUser guard).
         board = createEmptyBoard();
         score = 0; moves = 0; history = []; collection = []; nextLevel = 1; best = 0;
         clearedWorlds = []; mapPage = 1;
-        hideMap();
+        addStartingTiles();
         setWorld(WORLD_KEYS[0]); // also resets background/name display and re-renders
+        bestStatEl.textContent = formatNumber(best);
+        render();
+        showMap(null);
       }
     }
 
     stageFrameEl.style.setProperty("--board-cols", COLS); // match the CSS var to the COLS this page actually loaded with
     setWorld(currentWorldKey); // sets an initial background (and picker dots) before auth resolves
-    loginGateEl.classList.add("show"); // default to gated until we hear otherwise
+    addStartingTiles();
+    render();
+    showMap(null); // land on the map immediately — island 1 is playable before auth even resolves
 
     if (typeof onPremiumStatusChange === "function") {
       onPremiumStatusChange(onAuthOrPremiumChange);
     } else {
-      console.error("auth.js did not load — cloud saves are unavailable.");
+      console.error("auth.js did not load — playing as guest only.");
     }
   </script>
 
