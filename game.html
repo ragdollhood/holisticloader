@@ -216,7 +216,8 @@
       flex: 1 1 auto;
       min-width: 0;
       padding: 10px 14px;
-      border-radius: 999px;
+      border-radius: 20px;
+      container-type: inline-size;
     }
 
     .brand small {
@@ -232,10 +233,12 @@
     .brand strong {
       display: block;
       margin-top: 2px;
-      font-size: clamp(18px, 3vw, 28px);
-      letter-spacing: -.04em;
+      font-size: clamp(16px, 8cqw, 26px);
+      line-height: 1.1;
+      letter-spacing: -.02em;
       color: #fff4d5;
-      white-space: nowrap;
+      white-space: normal;
+      overflow-wrap: break-word;
     }
 
     .score {
@@ -472,7 +475,17 @@ button {
 
     .island-btn {
       position: absolute;
-      transform: translate(-50%, -50%);
+      /* translateY(-50%) would center the button exactly ON the x/y
+         point from ISLAND_POSITIONS_*. Using a smaller upward shift
+         instead (-32% instead of -50%) leaves the x/y point nearer the
+         button's TOP edge, so the whole number badge renders a bit
+         below that point — i.e. a little below the island's center,
+         closer to the bottom of the island — instead of sitting dead
+         center on it. Every other .island-btn transform below
+         (hover/focus, locked, the unlock pulse) uses this same
+         translateY value so the badge doesn't jump position on
+         hover/unlock. */
+      transform: translate(-50%, -32%);
       width: clamp(40px, 7.4vw, 60px);
       height: clamp(40px, 7.4vw, 60px);
       border-radius: 50%;
@@ -499,7 +512,7 @@ button {
       transition: transform .15s ease;
     }
 
-    .island-btn:hover, .island-btn:focus-visible { transform: translate(-50%, -50%) scale(1.12); }
+    .island-btn:hover, .island-btn:focus-visible { transform: translate(-50%, -32%) scale(1.12); }
 
     /* Cleared keeps the same clickable gold treatment (it's still
        tappable — replaying is fine) plus a small green check badge so
@@ -539,7 +552,7 @@ button {
       cursor: not-allowed;
     }
 
-    .island-btn.locked:hover, .island-btn.locked:focus-visible { transform: translate(-50%, -50%); }
+    .island-btn.locked:hover, .island-btn.locked:focus-visible { transform: translate(-50%, -32%); }
 
     @keyframes islandPulse {
       0%, 100% {
@@ -548,7 +561,7 @@ button {
           0 0 12px 3px rgba(255,216,92,.85),
           0 0 26px rgba(255,216,92,.55),
           0 10px 22px rgba(0,0,0,.5);
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -32%) scale(1);
       }
       50% {
         box-shadow:
@@ -556,22 +569,18 @@ button {
           0 0 20px 6px rgba(255,216,92,1),
           0 0 44px rgba(255,216,92,.85),
           0 10px 22px rgba(0,0,0,.5);
-        transform: translate(-50%, -50%) scale(1.22);
+        transform: translate(-50%, -32%) scale(1.22);
       }
     }
 
     .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
 
-    .map-btn {
-      width: 100%;
-    }
-
     /* While the map is showing, hide the gameplay-only side-panel chrome
-       (score, home thumbnail, map button, world picker, collection,
-       actions) — the map screen has its own title and doesn't need any
-       of it. Brand/title + account icon stay visible. Targets
-       #gameLayout now (not .stage-frame), since that chrome lives in
-       the side panel, not on top of the image, anymore. */
+       (score, home thumbnail, world picker, collection, actions) — the
+       map screen has its own title and doesn't need any of it. Brand/
+       title + account icon stay visible. Targets #gameLayout now (not
+       .stage-frame), since that chrome lives in the side panel, not on
+       top of the image, anymore. */
     #gameLayout.on-map .gameplay-only {
       display: none;
     }
@@ -937,8 +946,6 @@ button {
       .home-thumb-img { width: 34px; height: 34px; border-radius: 10px; }
       .home-thumb-label { font-size: 9px; }
 
-      .map-btn { padding: 8px; }
-
       .world-picker { padding: 6px; gap: 6px; }
       .collection { padding: 6px 8px; gap: 5px; }
 
@@ -1020,8 +1027,6 @@ button {
           <span class="home-thumb-label">Back to start</span>
         </button>
 
-        <button type="button" class="hud map-btn gameplay-only" id="mapBtn" aria-label="Show world map">Map</button>
-
         <div class="world-picker gameplay-only" id="worldPicker" aria-label="Choose world"></div>
 
         <div class="hud collection gameplay-only" id="collection" aria-label="Rewards created"></div>
@@ -1091,25 +1096,25 @@ const ITEMS = [
 
 // Declaration order of the keys below = world/unlock order everywhere else.
 // Backdrop art lives at images/game-world<N>, numbered in this same
-// declaration order (1 = lavendelMeadow ... 20 = crystalFalls). No file
+// declaration order (1 = underwaterKingdom ... 20 = crystalFalls). No file
 // extension here on purpose: getWorldBackgroundUrl() below appends
 // .webp or .jpg depending on what the browser actually supports, so
 // every world needs BOTH a game-world<N>.webp AND a game-world<N>.jpg
 // file present in images/.
 const WORLD_BACKGROUNDS = {
 
-  sunsetMeadow:    "images/game-world1",
-  magicField:  "images/game-world2",
-  flowerPalace:    "images/game-world3",
-  cherryBlossom:   "images/game-world4",
-  mountainTop:  "images/game-world5",
-  
-theBeach:     "images/game-world6",
-  underwaterRuins: "images/game-world7",
-  treasureCave:     "images/game-world8",
-  dragonValley:    "images/game-world9",
-  volcano:         "images/game-world10",
-  
+  underwaterKingdom: "images/game-world1",
+  sunsetPlace:       "images/game-world2",
+  beachBirds:        "images/game-world3",
+  treasureCave:      "images/game-world4",
+  cherryBlossom:     "images/game-world5",
+
+  jungleRuins:       "images/game-world6",
+  mountainTop:       "images/game-world7",
+  theForest:         "images/game-world8",
+  dragonsValley:     "images/game-world9",
+  crystalPalace:     "images/game-world10",
+
   iceCavern:       "images/game-world11",
   lavenderGarden:  "images/game-world12",
   jungleTemple:    "images/game-world13",
@@ -1169,21 +1174,21 @@ function getMapBackgroundUrl(page) {
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
 const WORLD_LABELS = {
-  // Islands 1-10 (map order) — renamed per the new episode titles:
+  // Islands 1-10 (map order) — key names now match their theme directly:
   // 1. Underwater Kingdom  2. Sunset Place  3. Beach Birds
   // 4. Treasure Cave       5. Cherry Blossom  6. Jungle Ruins
   // 7. Mountain Top        8. The Forest      9. Dragons Valley
   // 10. Crystal Palace
-  sunsetMeadow:    "Underwater Kingdom", // island 1
-  magicField:      "Sunset Place",       // island 2
-  flowerPalace:    "Beach Birds",        // island 3
-  cherryBlossom:   "Treasure Cave",      // island 4
-  mountainTop:     "Cherry Blossom",     // island 5
-  theBeach:        "Jungle Ruins",       // island 6
-  underwaterRuins: "Mountain Top",       // island 7
-  treasureCave:    "The Forest",         // island 8
-  dragonValley:    "Dragons Valley",     // island 9
-  volcano:         "Crystal Palace",     // island 10
+  underwaterKingdom: "Underwater Kingdom", // island 1
+  sunsetPlace:       "Sunset Place",       // island 2
+  beachBirds:        "Beach Birds",        // island 3
+  treasureCave:      "Treasure Cave",      // island 4
+  cherryBlossom:     "Cherry Blossom",     // island 5
+  jungleRuins:       "Jungle Ruins",       // island 6
+  mountainTop:       "Mountain Top",       // island 7
+  theForest:         "The Forest",         // island 8
+  dragonsValley:     "Dragons Valley",     // island 9
+  crystalPalace:     "Crystal Palace",     // island 10
 
   // Islands 11-20 — not on the current map art, names unchanged.
   lavendelMeadow:    "Lavendel Meadow",
@@ -1336,7 +1341,6 @@ function getItem(level) {
     const loginGateEl = document.getElementById("loginGate");
     const mapScreenEl = document.getElementById("mapScreen");
     const mapTitleEl = document.getElementById("mapTitle");
-    const mapBtnEl = document.getElementById("mapBtn");
     const homeBtnEl = document.getElementById("homeBtn");
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
@@ -1344,8 +1348,7 @@ function getItem(level) {
     document.getElementById("closeModalBtn").addEventListener("click", hideModal);
     document.getElementById("undoBtn").addEventListener("click", undo);
     document.getElementById("saveBtn").addEventListener("click", saveGame);
-    mapBtnEl.addEventListener("click", () => showMap(null));
-    homeBtnEl.addEventListener("click", () => showMap(null)); // same destination as the Map button — just a second, always-visible entry point outside the board
+    homeBtnEl.addEventListener("click", () => showMap(null)); // opens the map screen — the only entry point to it now that the separate Map button is gone
     boardEl.addEventListener("click", (e) => {
       const cell = e.target.closest(".cell");
       if (!cell || !boardEl.contains(cell)) return;
@@ -1388,7 +1391,7 @@ function getItem(level) {
       return 2;
     }
 
-    // setWorld("lavendelMeadow") / setWorld("dragonValley") / setWorld("iceCavern")
+    // setWorld("underwaterKingdom") / setWorld("dragonsValley") / setWorld("iceCavern")
     // / setWorld("cosmos") — call this from anywhere (auto-progression below,
     // the world-picker dots, or your own console/menu) to swap both the
     // stage backdrop AND every tile's icon set at once.
