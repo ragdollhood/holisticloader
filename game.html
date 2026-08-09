@@ -218,6 +218,8 @@
       padding: 10px 14px;
       border-radius: 20px;
       container-type: inline-size;
+      display: flex;
+      align-items: center;
     }
 
     .brand small {
@@ -239,6 +241,77 @@
       color: #fff4d5;
       white-space: normal;
       overflow-wrap: break-word;
+    }
+
+    /* Logo image that replaces the old "Holistic Loader" text on the
+       MAP screen, where it stands alone (no world name shown there).
+       Sized to the brand pill's own height via cqw/clamp so it scales
+       with the layout instead of a fixed pixel size. Falls back to a
+       plain "HOLISTIC GAME" text label (see the inline onerror handler
+       on the <img> in the markup) if the file is missing or fails to
+       load. */
+    .brand-logo {
+      display: block;
+      max-width: 100%;
+      max-height: clamp(28px, 14cqw, 54px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .brand-fallback {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      font-size: clamp(15px, 7cqw, 22px);
+      color: #fff4d5;
+    }
+
+    /* Map-screen brand group (full logo, or its text fallback) vs.
+       gameplay brand group (small wordmark image + the current world's
+       name, stacked the same way the old "Holistic Loader" / world-name
+       text pair used to be). Only one group is ever visible at a time —
+       toggled by #gameLayout.on-map, the same class used to hide the
+       rest of the gameplay-only side-panel chrome while the map shows. */
+    .brand-map-logo {
+      display: none;
+      align-items: center;
+    }
+
+    .brand-gameplay {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    #gameLayout.on-map .brand-map-logo { display: flex; }
+    #gameLayout.on-map .brand-gameplay { display: none; }
+
+    /* Small wordmark image that replaces just the old "Holistic Loader"
+       label on the gameplay view — sits above the world name, so it's
+       sized like that old small-caps label rather than the big map
+       logo. Falls back to plain "HOLISTIC GAME" text (see the inline
+       onerror handler) if the file is missing or fails to load. */
+    .brand-logo-text {
+      display: block;
+      max-width: 100%;
+      max-height: clamp(12px, 6cqw, 20px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .brand-fallback-text {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--gold2);
     }
 
     .score {
@@ -1069,8 +1142,31 @@ button {
         <div class="top-row">
           <div id="authRoot"></div>
           <div class="hud brand">
-            <div>
-              <small>✦ Holistic Loader</small>
+            <!-- Shown only on the map screen (full logo, no world name —
+                 see #gameLayout.on-map .brand-map-logo in the CSS). -->
+            <div class="brand-map-logo" id="brandMapLogo">
+              <img
+                class="brand-logo"
+                id="brandLogo"
+                src="images/game-holisticgametitel.png"
+                alt="Holistic Game"
+                onerror="this.style.display='none'; document.getElementById('brandFallback').style.display='block';"
+              >
+              <span class="brand-fallback" id="brandFallback">Holistic Game</span>
+            </div>
+
+            <!-- Shown only during gameplay (small wordmark image above
+                 the current world's name, replacing the old "Holistic
+                 Loader" text label). -->
+            <div class="brand-gameplay" id="brandGameplay">
+              <img
+                class="brand-logo-text"
+                id="brandLogoText"
+                src="images/game-holisticgametiteltext.png"
+                alt="Holistic Game"
+                onerror="this.style.display='none'; document.getElementById('brandFallbackText').style.display='block';"
+              >
+              <span class="brand-fallback-text" id="brandFallbackText">Holistic Game</span>
               <strong id="worldName">Wellness Garden</strong>
             </div>
           </div>
