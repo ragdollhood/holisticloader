@@ -253,7 +253,7 @@
     .brand-logo {
       display: block;
       max-width: 100%;
-      max-height: clamp(28px, 14cqw, 54px);
+      max-height: clamp(64px, 30cqw, 150px);
       width: auto;
       height: auto;
       object-fit: contain;
@@ -289,6 +289,22 @@
 
     #gameLayout.on-map .brand-map-logo { display: flex; }
     #gameLayout.on-map .brand-gameplay { display: none; }
+
+    /* On the map screen the logo stands on its own — no glass "pill"
+       box behind it (the .hud look is right for text/stat readouts,
+       but just clips/cramps a big logo image). Border, background,
+       blur and shadow all come from the shared .hud class, so they're
+       switched off here with a more specific selector rather than
+       touching .hud itself (which the score/collection/etc. panels
+       still rely on). */
+    #gameLayout.on-map .brand {
+      background: none;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      padding: 0;
+    }
 
     /* Small wordmark image that replaces just the old "Holistic Loader"
        label on the gameplay view — sits above the world name, so it's
