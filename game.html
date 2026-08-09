@@ -1478,14 +1478,36 @@ button {
       .brand small { font-size: 8px; }
       .brand strong { font-size: 15px; }
 
-      .score { padding: 6px 8px; gap: 6px; }
+      /* 5 equal columns now: login/account icon, the 3 stats, then
+         "Back to start" — every button in the row stretches to fill
+         its own slice of the box instead of sizing to its content
+         (see the .home-thumb / #authRoot width:100% overrides below
+         and layoutSideExtras() in the JS, which puts them in this
+         order for mobile only). */
+      .score { padding: 6px 8px; gap: 6px; grid-template-columns: repeat(5, 1fr); }
       .score .stat { min-width: 0; padding: 5px 6px; }
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      .home-thumb { flex-direction: row; align-items: center; padding: 6px 8px; gap: 8px; }
-      .home-thumb-img { width: 34px; height: 34px; max-width: none; border-radius: 10px; order: -1; }
-      .home-thumb-label { font-size: 9px; text-align: left; }
+      .home-thumb { flex-direction: row; align-items: center; justify-content: center; padding: 6px 4px; gap: 6px; width: 100%; }
+      .home-thumb-img { width: 28px; height: 28px; max-width: none; border-radius: 10px; order: -1; }
+      .home-thumb-label { font-size: 8px; text-align: left; }
+
+      /* Login/account icon (moved here from .top-row by
+         layoutSideExtras()) — styled as the same kind of tile as
+         .stat/.home-thumb so it reads as part of the same button row
+         instead of a bare floating icon. */
+      .score #authRoot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+        padding: 5px 4px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 16px;
+      }
 
       .world-picker { padding: 6px; gap: 6px; }
       .collection { padding: 6px 8px; gap: 5px; }
@@ -2175,9 +2197,14 @@ function getItem(level) {
         // sharing space with the score/moves/best stats.
         topRowEl.appendChild(authRootEl);
       } else {
-        scoreBoxEl.insertBefore(homeBtnEl, scoreBoxEl.firstChild);
+        // Mobile: login/account icon sits first in the score row (bottom
+        // left, right next to the Score stat), "Back to start" moves to
+        // the very end of that row (bottom right) instead of its old
+        // spot on the left — see the max-width:760px .score rules for
+        // the matching 5-column layout.
+        scoreBoxEl.insertBefore(authRootEl, scoreBoxEl.firstChild);
+        scoreBoxEl.appendChild(homeBtnEl);
         stageEl.appendChild(nextItemGroupEl);
-        topRowEl.appendChild(authRootEl);
       }
     }
     layoutSideExtras();
