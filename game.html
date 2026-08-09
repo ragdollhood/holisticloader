@@ -1351,6 +1351,11 @@ button {
       letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.88);
     }
 
+    /* New standalone button (mobile map screen only — see the
+       max-width:760px query further down for its actual layout).
+       Hidden by default everywhere else so it never affects desktop. */
+    .mobile-map-trial-btn { display: none; }
+
     .premium-buy-btn, .gcm-buy-btn {
       display: flex; align-items: center; justify-content: center;
       width: 100%; padding: 11px 12px; border-radius: 999px;
@@ -1614,17 +1619,19 @@ button {
 
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
-        justify-content: flex-end;
+        justify-content: space-between;
         min-height: 44px;
       }
 
-      #gameLayout.on-map .side-panel > *:not(.top-row) {
+      #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
         display: none !important;
       }
 
-      /* Centered independently of the icon buttons on the right, so it
-         stays truly centered in the bar no matter how wide those
-         buttons render. */
+      /* .brand (the small hidden logo pill) used to be the only other
+         thing in the row, so centering it via absolute position was
+         safe. It's not shown on mobile (see .top-row .brand-map-logo
+         rule further down), so this rule is inert there — kept only
+         so nothing changes if that ever flips. */
       #gameLayout.on-map .top-row .brand {
         position: absolute;
         left: 50%;
@@ -1637,36 +1644,63 @@ button {
       #gameLayout.on-map .brand-logo { max-height: 38px; }
 
       /* Turns the icon on for the map screen only — its base rule
-         (display:none) keeps it off on desktop and during gameplay. */
-      #gameLayout.on-map .howtoplay-btn { display: inline-flex; }
+         (display:none) keeps it off on desktop and during gameplay.
+         Now the leftmost item in the icon bar (see .top-row's
+         space-between above and #authRoot's position at the opposite
+         end, further down). */
+      #gameLayout.on-map .howtoplay-btn { display: inline-flex; order: -1; }
 
-      /* Title image (images/game-holisticgametiteltext.png) overlaid
-         directly on top of the map artwork itself, the same way
-         desktop's .map-brand already works — instead of only living
-         as a small logo inside the icon bar above the image. Centered
-         horizontally near the top of the map screen. */
+      /* Title image (images/game-holisticgametiteltext.png) — moved by
+         JS (see the mobile branch of layoutSideExtras()) out of the
+         map artwork and into the side panel, right below the icon bar,
+         so it renders as a normal header ABOVE the map image instead
+         of floating on top of it. That relocation is also what shrinks
+         the map image itself: the side panel's real content height
+         (icon bar + this title) simply leaves less of the fixed 100svh
+         layout for the map's flex-grow area below it. */
       #gameLayout.on-map .map-brand {
         display: block;
-        position: absolute;
-        left: 50%;
-        top: clamp(14px, 4vw, 28px);
-        transform: translateX(-50%);
-        z-index: 3;
-        max-width: 72%;
+        position: static;
+        left: auto;
+        top: auto;
+        transform: none;
+        z-index: auto;
+        max-width: 100%;
+        width: 100%;
+        margin-top: 6px;
         text-align: center;
       }
 
       #gameLayout.on-map .map-brand-img {
-        max-height: clamp(46px, 14vw, 86px);
+        max-height: clamp(40px, 12vw, 72px);
         margin: 0 auto;
       }
 
       /* The small logo that used to be the icon bar's only title is now
          redundant once the big title image sits on the map itself —
          hide it so there's just the one title, not two stacked on top
-         of each other. The bar keeps only the "how to play" icon. */
+         of each other. The bar keeps only the "how to play" and login
+         icons. */
       #gameLayout.on-map .top-row .brand-map-logo {
         display: none;
+      }
+
+      /* Login/account icon — rightmost item in the icon bar now that
+         "how to play" moved to the far left (see .howtoplay-btn's
+         order:-1 above and .top-row's space-between). */
+      #gameLayout.on-map #authRoot { order: 1; }
+
+      /* New "Free Trial" button (see the markup right after
+         #gameLayout closes) — sits below the map image, in the space
+         freed up by shrinking the map (see .map-brand's comment
+         above). Only ever shown on mobile's map screen; base rule
+         (.mobile-map-trial-btn { display:none }) keeps it off desktop
+         and off the gameplay board. */
+      #gameLayout.on-map .mobile-map-trial-btn {
+        display: flex;
+        width: auto;
+        flex: 0 0 auto;
+        margin: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
       }
     }
 
@@ -1863,6 +1897,16 @@ button {
              placement untouched. -->
         <div class="next-box" id="nextBox" aria-label="Back to map and next item"></div>
       </aside>
+
+      <!-- Mobile-only, map-screen-only "Free Trial" button — sits below
+           the (shrunk) map image once #gameLayout has .on-map, see the
+           max-width:760px .mobile-map-trial-btn rules and
+           #mobileMapTrialBtn's click handler (JS) further down. Hidden
+           everywhere else (desktop, or during gameplay) by default. -->
+      <button type="button" class="premium-trial-btn mobile-map-trial-btn" id="mobileMapTrialBtn">
+        <span class="ptCta">Free Trial (14 Days)</span>
+        <span class="ptNote">No card needed!</span>
+      </button>
     </div>
   </main>
 
@@ -2283,6 +2327,8 @@ function getItem(level) {
     const worldPickerEl = document.getElementById("worldPicker");
     const mapScreenEl = document.getElementById("mapScreen");
     const mapTitleEl = document.getElementById("mapTitle");
+    const mapBrandEl = document.getElementById("mapBrand");
+    const sidePanelEl = document.getElementById("sidePanel");
     const homeBtnEl = document.getElementById("homeBtn");
     const nextItemGroupEl = document.getElementById("nextItemGroup");
     const nextBoxEl = document.getElementById("nextBox");
@@ -2299,6 +2345,12 @@ function getItem(level) {
        - Mobile: unchanged from before — home-thumb back inside the
          score row (left of the stat numbers), next-item badge back as
          an absolute overlay on the stage image itself.
+       Also relocates the big map-screen title image (#mapBrand):
+       - Desktop/laptop: unchanged — stays inside .map-screen itself,
+         overlaid on top of the map artwork.
+       - Mobile: moved into the side panel, right after the icon bar,
+         so it renders as a normal header ABOVE the map image (see the
+         max-width:760px .map-brand rules) instead of floating over it.
        Called once at load and again every time DESKTOP_MEDIA_QUERY's
        "change" event fires, so resizing across the breakpoint (or
        rotating a foldable) relocates them immediately. */
@@ -2311,6 +2363,7 @@ function getItem(level) {
         // box, so it stands alone in the top-right corner instead of
         // sharing space with the score/moves/best stats.
         topRowEl.appendChild(authRootEl);
+        mapScreenEl.insertBefore(mapBrandEl, mapTitleEl);
       } else {
         // Mobile: next-item badge sits first in the score row (directly
         // under the board image, no longer overlaid on top of it),
@@ -2320,9 +2373,15 @@ function getItem(level) {
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.insertBefore(authRootEl, nextItemGroupEl.nextSibling);
         scoreBoxEl.appendChild(homeBtnEl);
+        sidePanelEl.insertBefore(mapBrandEl, topRowEl.nextSibling);
       }
     }
     layoutSideExtras();
+
+    const mobileMapTrialBtnEl = document.getElementById("mobileMapTrialBtn");
+    mobileMapTrialBtnEl.addEventListener("click", () => {
+      if (typeof window.openFreeTrialSignup === "function") window.openFreeTrialSignup();
+    });
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
