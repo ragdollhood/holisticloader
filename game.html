@@ -840,7 +840,8 @@ button {
         display: block;
         position: absolute;
         top: clamp(8px, 2vw, 22px);
-        left: clamp(10px, 2.4vw, 26px);
+        /* +1cm (≈38px) to the right of the original clamp(10px, 2.4vw, 26px). */
+        left: calc(clamp(10px, 2.4vw, 26px) + 38px);
         transform: none;
         z-index: 3;
         max-width: 30%;
@@ -863,7 +864,8 @@ button {
        this just shrinks the image itself). */
     @media (min-width: 761px) {
       .map-brand-img {
-        max-height: clamp(40px, 8vw, 110px);
+        /* +10% over the original clamp(40px, 8vw, 110px). */
+        max-height: clamp(44px, 8.8vw, 121px);
         margin: 0;
       }
     }
