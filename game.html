@@ -283,11 +283,19 @@
     .brand-gameplay {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       gap: 0;
     }
 
     #gameLayout.on-map .brand-map-logo { display: flex; }
+
+    /* Laptop/desktop only: the start-map title now sits directly on
+       top of the map image itself (see .map-brand below), so the old
+       side-panel logo pill is hidden here instead. Mobile keeps the
+       side-panel version untouched (see the max-width:760px query). */
+    @media (min-width: 761px) {
+      #gameLayout.on-map .brand-map-logo { display: none; }
+    }
     #gameLayout.on-map .brand-gameplay { display: none; }
 
     /* On the map screen the logo stands on its own — no glass "pill"
@@ -314,7 +322,7 @@
     .brand-logo-text {
       display: block;
       max-width: 100%;
-      max-height: clamp(12px, 6cqw, 20px);
+      max-height: clamp(36px, 18cqw, 60px);
       width: auto;
       height: auto;
       object-fit: contain;
@@ -335,7 +343,7 @@
       padding: 10px 14px;
       border-radius: 22px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, 1fr) auto;
       gap: 10px;
     }
 
@@ -395,10 +403,10 @@
       display: block;
       width: 100%;
       max-width: 220px;
-      aspect-ratio: 1 / 1;
+      height: auto;
       flex: 0 0 auto;
       border-radius: 20px;
-      object-fit: cover;
+      object-fit: contain;
       border: 2px solid rgba(248,217,139,.55);
       box-shadow:
         0 0 0 1px rgba(255,255,255,.10),
@@ -457,10 +465,11 @@
     /* Large "next item" readout that fills the side panel's own
        leftover height (the panel is a flex column with content stacked
        at the top, so on desktop/laptop widths — where it's taller than
-       its content — this grows to soak up the empty space at the
-       bottom instead of leaving it blank). */
+       its content — this grows to soak up ALL the empty space at the
+       bottom, reaching the same bottom edge as the game board next to
+       it, instead of just sitting at a fixed minimum size). */
     .next-seed-panel {
-      flex: 0 1 auto;
+      flex: 1 1 auto;
       min-height: 140px;
       display: flex;
       flex-direction: column;
@@ -583,7 +592,8 @@ button {
       display: none;
       background-color: #1b1030;
       background-image: var(--map-bg);
-      background-size: cover;
+      background-size: contain;
+      background-repeat: no-repeat;
       background-position: center;
       border-radius: clamp(20px, 3vw, 36px);
       overflow: hidden;
@@ -591,7 +601,52 @@ button {
 
     .map-screen.show { display: block; }
 
+    /* Title image sitting directly on top of the map artwork, centered
+       horizontally — laptop/desktop only (see the min-width query
+       below). Replaces images/game-holistigametitel.png, which used to
+       show in the side panel instead (see #gameLayout.on-map
+       .brand-map-logo above). Falls back to plain "Holistic Game" text
+       (see the inline onerror handler on the <img> in the markup) if
+       the file is missing or fails to load. */
+    .map-brand {
+      display: none;
+    }
+
+    @media (min-width: 761px) {
+      .map-brand {
+        display: block;
+        position: absolute;
+        top: clamp(12px, 2.4vw, 26px);
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        max-width: 46%;
+        text-align: center;
+      }
+    }
+
+    .map-brand-img {
+      display: block;
+      width: 100%;
+      max-height: clamp(35px, 8vw, 95px);
+      height: auto;
+      object-fit: contain;
+      object-position: center top;
+      margin: 0 auto;
+    }
+
+    .map-brand-fallback {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: clamp(18px, 3.2vw, 30px);
+      color: #fff4d5;
+    }
+
     .map-title {
+      display: none;
       position: absolute;
       left: 50%;
       top: clamp(10px, 2.4vw, 22px);
@@ -1133,6 +1188,16 @@ button {
           </div>
 
           <div class="map-screen" id="mapScreen" aria-label="World map">
+            <div class="map-brand" id="mapBrand">
+              <img
+                class="map-brand-img"
+                id="mapBrandImg"
+                src="images/game-holisticgametiteltext.png"
+                alt="Holistic Game"
+                onerror="this.style.display='none'; document.getElementById('mapBrandFallback').style.display='block';"
+              >
+              <span class="map-brand-fallback" id="mapBrandFallback">Holistic Game</span>
+            </div>
             <div class="map-title" id="mapTitle">Choose an island</div>
           </div>
 
@@ -1156,7 +1221,6 @@ button {
            here instead, laid out top-to-bottom in normal document flow. -->
       <aside class="side-panel" id="sidePanel" aria-label="Garden controls">
         <div class="top-row">
-          <div id="authRoot"></div>
           <div class="hud brand">
             <!-- Shown only on the map screen (full logo, no world name —
                  see #gameLayout.on-map .brand-map-logo in the CSS). -->
@@ -1192,6 +1256,7 @@ button {
           <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
           <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
           <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
+          <div id="authRoot"></div>
         </div>
 
         <div class="world-picker gameplay-only" id="worldPicker" aria-label="Choose world"></div>
@@ -1385,7 +1450,7 @@ const WORLD_LABELS = {
   // 4. Treasure Cave       5. Cherry Blossom  6. Jungle Ruins
   // 7. Mountain Top        8. The Forest      9. Dragons Valley
   // 10. Crystal Palace
-  underwaterKingdom: "Underwater Kingdom", // island 1
+  underwaterKingdom: "Underwater", // island 1
   sunsetPlace:       "Sunset Place",       // island 2
   beachBirds:        "Beach Birds",        // island 3
   treasureCave:      "Treasure Cave",      // island 4
