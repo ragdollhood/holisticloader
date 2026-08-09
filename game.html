@@ -105,11 +105,12 @@
   width: auto;
   aspect-ratio: var(--stage-ratio);
 
-  /* Column count for the game grid: 5 by default (matches ROWS, which
-     never changes), overridden to 7 on desktop/laptop widths only by
-     JS (see COLS / DESKTOP_MEDIA_QUERY below) — mobile always stays
-     at the original 5x5 board. */
+  /* Column/row counts for the game grid: 5x5 by default, overridden by
+     JS (see COLS/ROWS + DESKTOP_MEDIA_QUERY below) — 7x5 on desktop/
+     laptop widths, 5x4 on mobile (mobile drops the top row of the
+     board, see ROWS_MOBILE). */
   --board-cols: 5;
+  --board-rows: 5;
 }
 
     /* The vertical panel itself — everything inside it stacks top to
@@ -509,6 +510,16 @@
     .home-thumb:hover .home-thumb-img,
     .home-thumb:focus-visible .home-thumb-img {
       transform: scale(1.08);
+    }
+
+    /* HOME icon + mobile label — only ever shown on the mobile HUD (see
+       the max-width:760px query further down), which also hides
+       .home-thumb-img/.home-thumb-label there instead. Hidden here by
+       default so desktop/laptop keeps its existing thumbnail + "Back to
+       start" caption untouched. */
+    .home-thumb-icon,
+    .home-thumb-mobile-label {
+      display: none;
     }
 
     /* The single HUD element allowed to remain on top of the game-world
@@ -1030,13 +1041,13 @@ button {
 }
 
  .board {
-  width: min(100cqw, calc(100cqh * var(--board-cols) / 5));
-  height: min(100cqh, calc(100cqw * 5 / var(--board-cols)));
+  width: min(100cqw, calc(100cqh * var(--board-cols) / var(--board-rows)));
+  height: min(100cqh, calc(100cqw * var(--board-rows) / var(--board-cols)));
 
   display: grid;
 
   grid-template-columns: repeat(var(--board-cols), 1fr);
-  grid-template-rows: repeat(5,1fr);
+  grid-template-rows: repeat(var(--board-rows), 1fr);
 
   gap: 4%;
 }
@@ -1465,11 +1476,20 @@ button {
     @media (max-width: 760px), (orientation: landscape) and (max-height: 500px) {
       .screen { padding: 5px; }
 
+      /* Board bounding box shrunk to ~86% of its previous size (and
+         re-centered — left/top adjusted to keep equal margins) so that,
+         combined with the smaller .cell fill % below, the planting
+         circles render about 20% smaller while the gap BETWEEN them
+         stays the same as before. Just shrinking .cell on its own would
+         make that gap grow (less circle, same grid square = more empty
+         margin) since the grid's own gap% and the board's overall pixel
+         size wouldn't change — shrinking the whole board's footprint by
+         the right amount compensates for that. */
       :root {
-        --board-left: 4%;
-        --board-top: 5%;
-        --board-width: 92%;
-        --board-height: 90%;
+        --board-left: 10.5%;
+        --board-top: calc(11% - 30px);
+        --board-width: 79%;
+        --board-height: 78%;
       }
 
       .game-layout {
@@ -1545,9 +1565,19 @@ button {
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      .home-thumb { flex-direction: row; align-items: center; justify-content: center; padding: 6px 4px; gap: 6px; width: 100%; }
-      .home-thumb-img { width: 28px; height: 28px; max-width: none; border-radius: 10px; order: -1; }
-      .home-thumb-label { font-size: 8px; text-align: left; }
+      .home-thumb { flex-direction: column; align-items: center; justify-content: center; padding: 5px 6px; gap: 3px; width: 100%; }
+      .home-thumb-img,
+      .home-thumb-label { display: none; }
+      .home-thumb-icon { display: block; width: 17px; height: 17px; color: var(--gold2); }
+      .home-thumb-mobile-label {
+        display: block;
+        font-family: Arial, sans-serif;
+        font-weight: 800;
+        font-size: 8px;
+        letter-spacing: .10em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
 
       /* Login/account icon — now lives at the far right of the Undo/New
          row instead of the score row (see layoutSideExtras() in the
@@ -1599,7 +1629,10 @@ button {
          just a smaller fraction of each grid square so there's a
          little more visible space between neighboring circles. Doesn't
          touch the shared .cell rule (that stays 97% for desktop). */
-      .cell { width: 86%; }
+      /* Reduced from 86% to 80% (paired with the smaller board bounding
+         box above) so each circle is ~20% smaller while the empty gap
+         between neighboring circles stays visually the same as before. */
+      .cell { width: 80%; }
 
       /* ---------- Mobile map screen ----------
          The side panel becomes a slim icon bar sitting ABOVE the map
@@ -1622,6 +1655,27 @@ button {
         border-radius: 0;
       }
 
+      /* The map art used background-size:contain, which letterboxed it
+         inside the frame and left the plain stage background-color
+         showing as empty margin down both sides — that's the "map
+         doesn't reach the edge" gap. Switching to cover (mobile map
+         screen only; desktop/laptop keeps contain, untouched) fills
+         the full width edge-to-edge, at the cost of a little top/bottom
+         crop where the box's aspect ratio doesn't exactly match the
+         art's — an acceptable trade-off for a true full-bleed image. */
+      #gameLayout.on-map .map-screen {
+        background-size: cover;
+      }
+
+      /* The 1px border inherited from .stage was barely visible once
+         the art goes full-bleed to the screen edge — thickened and
+         tinted gold so it reads as an intentional frame instead of a
+         stray hairline. */
+      #gameLayout.on-map .stage {
+        border-width: 3px;
+        border-color: rgba(248, 217, 139, .45);
+      }
+
       /* Back in normal flow (not absolutely positioned over the stage),
          placed first via order so it renders above the image instead
          of below it — .stage-frame comes first in the markup, but
@@ -1634,14 +1688,14 @@ button {
         position: static;
         flex: 0 0 auto;
         max-height: none;
-        padding: 2px 16px 0;
+        padding: 0 16px;
         gap: 0;
       }
 
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
         justify-content: space-between;
-        min-height: 30px;
+        min-height: 26px;
       }
 
       #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
@@ -1694,7 +1748,7 @@ button {
 
       #gameLayout.on-map .map-brand-img {
         max-height: clamp(40px, 12vw, 72px);
-        margin: 0 auto;
+        margin: -6px auto 0;
       }
 
       /* The small logo that used to be the icon bar's only title is now
@@ -1896,6 +1950,11 @@ button {
           <button type="button" class="home-thumb" id="homeBtn" aria-label="Back to the map">
             <span class="home-thumb-label">Back to start</span>
             <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
+            <svg class="home-thumb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M3 11.5 12 4l9 7.5"></path>
+              <path d="M5.5 9.5V19a1 1 0 0 0 1 1H9.5a.5.5 0 0 0 .5-.5V15a2 2 0 0 1 4 0v4.5a.5.5 0 0 0 .5.5h3a1 1 0 0 0 1-1V9.5"></path>
+            </svg>
+            <span class="home-thumb-mobile-label">HOME</span>
           </button>
           <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
           <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
@@ -2306,7 +2365,9 @@ function getItem(level) {
     // COLS below can use it immediately at page load.
     const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px)");
 
-    const ROWS = 5;
+    const ROWS_DESKTOP = 5;
+    const ROWS_MOBILE = 4;
+    let ROWS = DESKTOP_MEDIA_QUERY.matches ? ROWS_DESKTOP : ROWS_MOBILE;
     const COLS_MOBILE = 5;
     const COLS_DESKTOP = 7;
     let COLS = DESKTOP_MEDIA_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
@@ -2612,17 +2673,22 @@ function getItem(level) {
       layoutSideExtras();
     });
 
-    // Keeps the live board array's column count in sync with COLS
-    // whenever the mobile/desktop breakpoint is crossed (resizing a
-    // browser window, rotating/un-rotating a foldable) — not just at
-    // page load. Existing tiles are preserved wherever they still fit
-    // (see reshapeBoardToDims); a no-op if the breakpoint didn't
-    // actually change COLS (e.g. only --stage-ratio needed updating).
+    // Keeps the live board array's row/column counts in sync with
+    // ROWS/COLS whenever the mobile/desktop breakpoint is crossed
+    // (resizing a browser window, rotating/un-rotating a foldable) —
+    // not just at page load. Existing tiles are preserved wherever they
+    // still fit (see reshapeBoardToDims); a no-op if the breakpoint
+    // didn't actually change ROWS/COLS (e.g. only --stage-ratio needed
+    // updating). Mobile drops to 4 rows (desktop keeps 5) — see
+    // ROWS_MOBILE/ROWS_DESKTOP above.
     function setColsForBreakpoint(isDesktop) {
       const nextCols = isDesktop ? COLS_DESKTOP : COLS_MOBILE;
-      if (nextCols === COLS) return;
+      const nextRows = isDesktop ? ROWS_DESKTOP : ROWS_MOBILE;
+      if (nextCols === COLS && nextRows === ROWS) return;
       COLS = nextCols;
+      ROWS = nextRows;
       stageFrameEl.style.setProperty("--board-cols", COLS);
+      stageFrameEl.style.setProperty("--board-rows", ROWS);
       board = reshapeBoardToDims(board);
       render();
     }
@@ -3221,6 +3287,7 @@ function getItem(level) {
     }
 
     stageFrameEl.style.setProperty("--board-cols", COLS); // match the CSS var to the COLS this page actually loaded with
+    stageFrameEl.style.setProperty("--board-rows", ROWS); // match the CSS var to the ROWS this page actually loaded with
     setWorld(currentWorldKey); // sets an initial background (and picker dots) before auth resolves
     addStartingTiles();
     render();
