@@ -1250,6 +1250,11 @@ function getItem(level) {
     document.getElementById("undoBtn").addEventListener("click", undo);
     document.getElementById("saveBtn").addEventListener("click", saveGame);
     mapBtnEl.addEventListener("click", () => showMap(null));
+    boardEl.addEventListener("click", (e) => {
+      const cell = e.target.closest(".cell");
+      if (!cell || !boardEl.contains(cell)) return;
+      placeTile(Number(cell.dataset.r), Number(cell.dataset.c));
+    });
     document.getElementById("loginGateBtn").addEventListener("click", () => {
       // #accountBtn is built by auth.js into #authRoot; logged out, a
       // click on it opens the login/sign-up modal directly.
@@ -1303,41 +1308,45 @@ function getItem(level) {
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
       renderCollection();
-      syncToCloud(false);
+      syncToCloud(false, true);
       applyStageAspectRatio(key);
     }
 
     /* -----------------------------------------------------------------
-       Desktop/laptop only: shape .stage-frame to match each world
-       image's REAL proportions (measured, not guessed), so
-       background-size: cover (set globally, see .stage in the CSS)
-       fills it with zero cropping and zero letterboxing — the frame's
-       aspect ratio and the image's aspect ratio end up identical.
-       Mobile is left alone entirely: its own media query already forces
-       a square .stage regardless of --stage-ratio (see the CSS), so
-       this function is a no-op there by design (checked via
+       Desktop/laptop only: shape .stage-frame to match each world (or
+       map) image's REAL proportions (measured, not guessed), so
+       background-size: cover (set globally, see .stage/.map-screen in
+       the CSS) fills it with zero cropping and zero letterboxing — the
+       frame's aspect ratio and the image's aspect ratio end up
+       identical. Mobile is left alone entirely: its own media query
+       already forces a square .stage regardless of --stage-ratio (see
+       the CSS), so this is a no-op there by design (checked via
        DESKTOP_MEDIA_QUERY below) rather than fighting that layout.
-    ----------------------------------------------------------------- */
-    const stageRatioCache = {}; // worldKey -> "w / h", so re-selecting a world already measured this session doesn't re-fetch/re-decode its image just to read its size
 
-    function applyStageAspectRatio(key) {
+       measureAndApplyRatio() is the shared engine behind both
+       applyStageAspectRatio() (world backgrounds) and
+       applyMapAspectRatio() (map screens) below — one probe/cache
+       implementation instead of two near-duplicates.
+    ----------------------------------------------------------------- */
+    const ratioCache = {}; // cache key ("world:<key>" / "map:<page>") -> width/height, so re-showing something already measured this session doesn't re-fetch/re-decode its image just to read its size
+
+    function measureAndApplyRatio(cacheKey, url, isStillRelevant) {
       if (!DESKTOP_MEDIA_QUERY.matches) return; // mobile forces its own square stage in CSS regardless — don't bother measuring
-      const cached = stageRatioCache[key];
+      const cached = ratioCache[cacheKey];
       if (cached) {
         stageFrameEl.style.setProperty("--stage-ratio", cached);
         return;
       }
-      const url = getWorldBackgroundUrl(key);
       if (!url) return;
       const probe = new Image();
       probe.onload = () => {
         if (!probe.naturalWidth || !probe.naturalHeight) return;
         const ratio = probe.naturalWidth / probe.naturalHeight;
-        stageRatioCache[key] = ratio;
-        // Only apply if this world is still the one showing — the
-        // player may have already switched worlds again before this
+        ratioCache[cacheKey] = ratio;
+        // Only apply if the thing we measured is still what's showing —
+        // the player may have already navigated away before this
         // (possibly slow, uncached) image finished loading.
-        if (currentWorldKey === key) stageFrameEl.style.setProperty("--stage-ratio", ratio);
+        if (isStillRelevant()) stageFrameEl.style.setProperty("--stage-ratio", ratio);
       };
       probe.onerror = () => {
         console.warn(`[stage aspect ratio] failed to load: ${url} — keeping current --stage-ratio`);
@@ -1345,13 +1354,33 @@ function getItem(level) {
       probe.src = url;
     }
 
+    function applyStageAspectRatio(key) {
+      measureAndApplyRatio(`world:${key}`, getWorldBackgroundUrl(key), () => currentWorldKey === key);
+    }
+
+    function applyMapAspectRatio(page) {
+      const info = MAP_PAGES[page];
+      if (!info) return;
+      measureAndApplyRatio(`map:${page}`, info.image, () => onMap && mapPage === page);
+    }
+
+    // Both map images are needed the moment login resolves (the map is
+    // the landing screen) and are otherwise only fetched lazily on
+    // first display — warm the browser cache for both up front so
+    // flipping from karta1-5 to karta6-10 (or reloading mid-session)
+    // never shows a blank/loading frame.
+    function preloadMapImages() {
+      Object.values(MAP_PAGES).forEach(page => { new Image().src = page.image; });
+    }
+    preloadMapImages();
+
     // Crossing the desktop/mobile breakpoint at runtime (resizing a
     // browser window, or rotating/un-rotating a foldable) should apply
     // or clear the measured ratio immediately rather than waiting for
     // the next world switch.
     DESKTOP_MEDIA_QUERY.addEventListener("change", (e) => {
       if (e.matches) {
-        applyStageAspectRatio(currentWorldKey);
+        if (onMap) applyMapAspectRatio(mapPage); else applyStageAspectRatio(currentWorldKey);
       } else {
         stageFrameEl.style.removeProperty("--stage-ratio"); // back to the CSS default (square)
       }
@@ -1373,16 +1402,31 @@ function getItem(level) {
       render();
     }
 
+    // Built once (fixed set of dots) instead of torn down and rebuilt
+    // on every setWorld() call — after the first render, only the
+    // .active class needs to move, which is far cheaper than 20 fresh
+    // buttons + 20 fresh listeners every time a world changes.
+    let worldPickerBuilt = false;
     function renderWorldPicker() {
-      worldPickerEl.innerHTML = "";
-      WORLD_KEYS.forEach(key => {
-        const label = WORLD_LABELS[key] || key;
-        const btn = document.createElement("button");
-        btn.className = "world-dot" + (key === currentWorldKey ? " active" : "");
-        btn.title = label;
-        btn.setAttribute("aria-label", label);
-        btn.addEventListener("click", () => setWorld(key));
-        worldPickerEl.appendChild(btn);
+      if (!worldPickerBuilt) {
+        worldPickerEl.innerHTML = "";
+        WORLD_KEYS.forEach(key => {
+          const label = WORLD_LABELS[key] || key;
+          const btn = document.createElement("button");
+          btn.className = "world-dot";
+          btn.title = label;
+          btn.setAttribute("aria-label", label);
+          btn.dataset.worldKey = key;
+          worldPickerEl.appendChild(btn);
+        });
+        worldPickerEl.addEventListener("click", (e) => {
+          const btn = e.target.closest(".world-dot");
+          if (btn) setWorld(btn.dataset.worldKey);
+        });
+        worldPickerBuilt = true;
+      }
+      worldPickerEl.querySelectorAll(".world-dot").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.worldKey === currentWorldKey);
       });
     }
 
@@ -1411,6 +1455,7 @@ function getItem(level) {
       }
       renderMap();
       mapScreenEl.classList.add("show");
+      applyMapAspectRatio(mapPage);
       if (justUnlockedKey) {
         setTimeout(() => {
           justUnlockedKey = null;
@@ -1428,8 +1473,7 @@ function getItem(level) {
     function enterWorld(key) {
       if (!isWorldUnlocked(key)) { showToast("Clear the island before this one first"); return; }
       hideMap();
-      setWorld(key);
-      syncToCloud(false);
+      setWorld(key); // already flushes an immediate sync internally
     }
 
     function renderMap() {
@@ -1458,10 +1502,16 @@ function getItem(level) {
         btn.style.top = `${pos.y}%`;
         btn.textContent = String(islandNumber);
         btn.setAttribute("aria-label", `${WORLD_LABELS[key] || key} — island ${islandNumber}${cleared ? ", cleared" : unlocked ? "" : ", locked"}`);
-        btn.addEventListener("click", () => enterWorld(key));
+        btn.dataset.worldKey = key; // read by the single delegated listener below, added once
         mapScreenEl.appendChild(btn);
       });
     }
+
+    mapScreenEl.addEventListener("click", (e) => {
+      const btn = e.target.closest(".island-btn");
+      if (!btn) return;
+      enterWorld(btn.dataset.worldKey);
+    });
 
     // Called from placeTile() right after a merge. If the item just
     // created is the "clear" tier (CLEAR_ITEM_LEVEL) and this world
@@ -1477,7 +1527,7 @@ function getItem(level) {
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
       const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
       showToast(nextKey ? "Island cleared! A new one has opened" : "Island cleared!");
-      syncToCloud(false);
+      syncToCloud(false, true);
       setTimeout(() => showMap(nextKey), 1100);
     }
 
@@ -1491,7 +1541,7 @@ function getItem(level) {
       addStartingTiles();
       render();
       showToast("New garden planted");
-      syncToCloud(false);
+      syncToCloud(false, true);
     }
 
     function addStartingTiles() {
@@ -1517,7 +1567,7 @@ function getItem(level) {
       collection = previous.collection.slice();
       render();
       showToast("One step back");
-      syncToCloud(false);
+      syncToCloud(false, true);
     }
 
     /* -----------------------------------------------------------------
@@ -1596,7 +1646,18 @@ function getItem(level) {
       };
     }
 
-    async function syncToCloud(showFeedback) {
+    // Debounced so a burst of rapid moves (placing several tiles in a
+    // row) collapses into ONE upsert instead of one per move — this is
+    // the single biggest network-cost cut in the file, since placeTile()
+    // used to fire a Supabase write on every tap. syncToCloud(show) still
+    // schedules a write within SYNC_DEBOUNCE_MS; pass immediate=true for
+    // writes that must land right away (explicit Save, clearing an
+    // island, switching/leaving a world) rather than get coalesced.
+    const SYNC_DEBOUNCE_MS = 900;
+    let syncTimer = null;
+    let syncPendingFeedback = false;
+
+    async function performSync(showFeedback) {
       if (!currentUser || typeof sb === "undefined") return;
       try {
         const { error } = await sb.from(GARDEN_TABLE).upsert(currentSaveRow(), { onConflict: "user_id" });
@@ -1608,11 +1669,44 @@ function getItem(level) {
       }
     }
 
+    function syncToCloud(showFeedback, immediate) {
+      if (!currentUser || typeof sb === "undefined") return;
+      syncPendingFeedback = syncPendingFeedback || !!showFeedback;
+      if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+      if (immediate) {
+        const feedback = syncPendingFeedback;
+        syncPendingFeedback = false;
+        performSync(feedback);
+        return;
+      }
+      syncTimer = setTimeout(() => {
+        syncTimer = null;
+        const feedback = syncPendingFeedback;
+        syncPendingFeedback = false;
+        performSync(feedback);
+      }, SYNC_DEBOUNCE_MS);
+    }
+
+    // A debounced write can still be sitting in the timer when the tab is
+    // closed or backgrounded — flush it immediately in either case so the
+    // last move or two are never silently lost.
+    function flushPendingSync() {
+      if (!syncTimer) return;
+      clearTimeout(syncTimer);
+      syncTimer = null;
+      const feedback = syncPendingFeedback;
+      syncPendingFeedback = false;
+      performSync(feedback);
+    }
+    document.addEventListener("visibilitychange", () => { if (document.hidden) flushPendingSync(); });
+    window.addEventListener("pagehide", flushPendingSync);
+
     // "Save" button — same cloud write as the automatic saves below,
-    // just with a toast so the user gets explicit confirmation.
+    // just forced to go immediately (not debounced) with a toast so the
+    // user gets explicit confirmation.
     function saveGame() {
       if (!currentUser) { showToast("Log in to save your garden"); return; }
-      syncToCloud(true);
+      syncToCloud(true, true);
     }
 
     async function loadFromCloud() {
@@ -1780,7 +1874,13 @@ function getItem(level) {
           cell.type = "button";
           cell.className = "cell" + (level === 0 ? " empty" : "");
           cell.setAttribute("aria-label", level === 0 ? "Empty planting circle" : item.name);
-          cell.addEventListener("click", () => placeTile(r, c));
+          // Position stored as data-attributes and read by a single
+          // delegated listener on #board (added once, outside this
+          // function) instead of one new closure per cell per render —
+          // cuts listener churn on every move/merge, which matters most
+          // on the frequent re-renders after a chain of merges.
+          cell.dataset.r = r;
+          cell.dataset.c = c;
           if (level > 0) {
             const tile = document.createElement("span");
             tile.className = `tile level-${level}`;
