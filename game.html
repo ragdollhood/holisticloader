@@ -1161,6 +1161,23 @@ const ITEMS = [
   { level: 5, image: "images/game-item5", name: "Lotus",    score: 780 }
 ];
 
+// Per-world item-art overrides — keyed by world key, then indexed by
+// level (1-5). Any world not listed here (i.e. every world except
+// underwaterKingdom right now) falls back to the shared ITEMS art above,
+// unchanged. Add more worlds the same way if/when they get their own
+// themed item set. Same webp/png fallback rule as the shared art (see
+// getItemImageUrl() below) — every image here needs BOTH a .webp AND a
+// .png file present in images/.
+const WORLD_ITEM_IMAGES = {
+  underwaterKingdom: {
+    1: "images/game-item-underwater1",
+    2: "images/game-item-underwater2",
+    3: "images/game-item-underwater3",
+    4: "images/game-item-underwater4",
+    5: "images/game-item-underwater5"
+  }
+};
+
 // Declaration order of the keys below = world/unlock order everywhere else.
 // Backdrop art lives at images/game-world<N>, numbered in this same
 // declaration order (1 = underwaterKingdom ... 20 = crystalFalls). No file
@@ -1223,7 +1240,10 @@ function getWorldBackgroundUrl(key) {
 function getItemImageUrl(item) {
   // .png (not .jpg) fallback: item icons are transparent circular art —
   // a jpg fallback would show each one on an opaque square instead.
-  return item && item.image ? `${item.image}.${WEBP_SUPPORTED ? "webp" : "png"}` : null;
+  if (!item || !item.image) return null;
+  const override = WORLD_ITEM_IMAGES[currentWorldKey] && WORLD_ITEM_IMAGES[currentWorldKey][item.level];
+  const base = override || item.image;
+  return `${base}.${WEBP_SUPPORTED ? "webp" : "png"}`;
 }
 
 // Map background is responsive on top of the webp/jpg format swap: phones
