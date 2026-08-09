@@ -1531,6 +1531,15 @@ button {
          below and layoutSideExtras() in the JS, which now inserts the
          next-item badge as this row's first child, mobile only). Login
          moved out of this row entirely — see .actions #authRoot below. */
+      /* Pull the score/next-item/back-to-start row out of its default
+         end-of-panel position (.score { order: 1 } near the top of this
+         stylesheet, meant for the start screen's how-to-play/premium
+         stacking order) so on mobile gameplay it renders immediately
+         after .stage-frame instead of after world-picker/collection/
+         actions — i.e. directly under the game-world image, matching
+         the desktop/laptop behavior above. */
+      #gameLayout:not(.on-map) .side-panel .score.gameplay-only { order: 0; }
+
       .score { padding: 6px 8px; gap: 6px; grid-template-columns: auto repeat(4, 1fr); align-items: center; }
       .score .stat { min-width: 0; padding: 5px 6px; }
       .stat b { font-size: 13px; }
@@ -1625,14 +1634,14 @@ button {
         position: static;
         flex: 0 0 auto;
         max-height: none;
-        padding: 6px 16px 4px;
-        gap: 2px;
+        padding: 4px 16px 0;
+        gap: 0;
       }
 
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
         justify-content: space-between;
-        min-height: 38px;
+        min-height: 34px;
       }
 
       #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
@@ -1712,7 +1721,7 @@ button {
         display: flex;
         width: auto;
         flex: 0 0 auto;
-        margin: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
+        margin: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
       }
     }
 
