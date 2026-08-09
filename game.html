@@ -1524,14 +1524,14 @@ button {
       .brand small { font-size: 8px; }
       .brand strong { font-size: 15px; }
 
-      /* 6 columns now: the next-item badge (sized to its own content,
-         not stretched), then login/account icon, the 3 stats, then
-         "Back to start" — those last 5 stretch to fill their own
-         slice of the remaining width just like before (see the
-         .home-thumb / #authRoot width:100% overrides below and
-         layoutSideExtras() in the JS, which now inserts the next-item
-         badge as this row's first child, mobile only). */
-      .score { padding: 6px 8px; gap: 6px; grid-template-columns: auto repeat(5, 1fr); align-items: center; }
+      /* 5 columns now: the next-item badge (sized to its own content,
+         not stretched), then the 3 stats, then "Back to start" — those
+         last 4 stretch to fill their own slice of the remaining width
+         just like before (see the .home-thumb width:100% override
+         below and layoutSideExtras() in the JS, which now inserts the
+         next-item badge as this row's first child, mobile only). Login
+         moved out of this row entirely — see .actions #authRoot below. */
+      .score { padding: 6px 8px; gap: 6px; grid-template-columns: auto repeat(4, 1fr); align-items: center; }
       .score .stat { min-width: 0; padding: 5px 6px; }
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
@@ -1540,20 +1540,22 @@ button {
       .home-thumb-img { width: 28px; height: 28px; max-width: none; border-radius: 10px; order: -1; }
       .home-thumb-label { font-size: 8px; text-align: left; }
 
-      /* Login/account icon (moved here from .top-row by
-         layoutSideExtras()) — styled as the same kind of tile as
-         .stat/.home-thumb so it reads as part of the same button row
-         instead of a bare floating icon. */
-      .score #authRoot {
+      /* Login/account icon — now lives at the far right of the Undo/New
+         row instead of the score row (see layoutSideExtras() in the
+         JS, which appends #authRoot into #actionsBox on mobile). Sized
+         to its own content (not stretched, unlike Undo/New which fill
+         the remaining space via .actions button { flex:1 1 0 }), and
+         styled as a small round tile matching the pill buttons beside
+         it. */
+      .actions #authRoot {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
-        min-width: 0;
-        padding: 5px 4px;
+        flex: 0 0 auto;
+        padding: 6px 10px;
         background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.12);
-        border-radius: 16px;
+        border-radius: 999px;
       }
 
       .world-picker { padding: 6px; gap: 6px; }
@@ -1584,6 +1586,12 @@ button {
       .actions { padding: 5px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
 
+      /* Planting circles sized down a bit on mobile — same grid/gap,
+         just a smaller fraction of each grid square so there's a
+         little more visible space between neighboring circles. Doesn't
+         touch the shared .cell rule (that stays 97% for desktop). */
+      .cell { width: 86%; }
+
       /* ---------- Mobile map screen ----------
          The side panel becomes a slim icon bar sitting ABOVE the map
          image (not overlaid on top of it) — logo centered in the bar,
@@ -1609,18 +1617,22 @@ button {
          placed first via order so it renders above the image instead
          of below it — .stage-frame comes first in the markup, but
          visually the bar needs to sit on top. */
+      /* Padding/gap trimmed down to the minimum this header actually
+         needs (icon row + title logo, nothing more) so the map image
+         below gets as much of the fixed 100svh height as possible. */
       #gameLayout.on-map .side-panel {
         order: -1;
         position: static;
         flex: 0 0 auto;
         max-height: none;
-        padding: 10px 16px;
+        padding: 6px 16px 4px;
+        gap: 2px;
       }
 
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
         justify-content: space-between;
-        min-height: 44px;
+        min-height: 38px;
       }
 
       #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
@@ -1667,7 +1679,7 @@ button {
         z-index: auto;
         max-width: 100%;
         width: 100%;
-        margin-top: 6px;
+        margin-top: 0;
         text-align: center;
       }
 
@@ -1885,7 +1897,7 @@ button {
 
         <div class="hud collection gameplay-only" id="collection" aria-label="Rewards created"></div>
 
-        <div class="hud actions gameplay-only">
+        <div class="hud actions gameplay-only" id="actionsBox">
           <button class="secondary" id="undoBtn">Undo</button>
           <button id="newBtn">New</button>
         </div>
@@ -2333,18 +2345,19 @@ function getItem(level) {
     const nextItemGroupEl = document.getElementById("nextItemGroup");
     const nextBoxEl = document.getElementById("nextBox");
     const scoreBoxEl = document.getElementById("scoreBox");
+    const actionsBoxEl = document.getElementById("actionsBox");
     const authRootEl = document.getElementById("authRoot");
     const topRowEl = document.querySelector(".top-row");
 
-    /* Moves the home-thumb ("back to the map") button and the
-       next-item badge between their two homes depending on the
-       desktop/mobile breakpoint:
-       - Desktop/laptop: both live in #nextBox, home-thumb on top,
-         next-item badge below it, as a normal box at the bottom of the
-         side panel (see .next-box CSS).
-       - Mobile: unchanged from before — home-thumb back inside the
-         score row (left of the stat numbers), next-item badge back as
-         an absolute overlay on the stage image itself.
+    /* Moves the home-thumb ("back to the map") button, the next-item
+       badge, and the login/account icon between their homes depending
+       on the desktop/mobile breakpoint:
+       - Desktop/laptop: home-thumb + next-item badge both live in
+         #nextBox (see .next-box CSS); login icon stays in .top-row.
+       - Mobile: home-thumb + next-item badge live in the score row
+         alongside the 3 stats (next-item badge first, home-thumb
+         last); login icon moves into the actions row instead, at the
+         far right of the Undo/New buttons.
        Also relocates the big map-screen title image (#mapBrand):
        - Desktop/laptop: unchanged — stays inside .map-screen itself,
          overlaid on top of the map artwork.
@@ -2367,12 +2380,13 @@ function getItem(level) {
       } else {
         // Mobile: next-item badge sits first in the score row (directly
         // under the board image, no longer overlaid on top of it),
-        // then login/account icon, then the 3 stats, then "Back to
-        // start" at the very end — see the max-width:760px .score rules
-        // for the matching 6-column layout.
+        // then the 3 stats, then "Back to start" at the very end — see
+        // the max-width:760px .score rules for the matching 5-column
+        // layout. Login/account icon moves into the actions row
+        // instead, after Undo/New, at the far right.
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
-        scoreBoxEl.insertBefore(authRootEl, nextItemGroupEl.nextSibling);
         scoreBoxEl.appendChild(homeBtnEl);
+        actionsBoxEl.appendChild(authRootEl);
         sidePanelEl.insertBefore(mapBrandEl, topRowEl.nextSibling);
       }
     }
