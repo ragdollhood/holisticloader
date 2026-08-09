@@ -363,10 +363,6 @@ function _buildAuthDom() {
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.06 6.6.87-4.85 4.6 1.2 6.6L12 17.4l-5.85 3.23 1.2-6.6L2.5 9.43l6.6-.87L12 2.5z"/></svg>
           <span>Free Trial (14 Days)</span>
         </button>
-        <button id="unlockPremiumBtn" type="button">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.06 6.6.87-4.85 4.6 1.2 6.6L12 17.4l-5.85 3.23 1.2-6.6L2.5 9.43l6.6-.87L12 2.5z"/></svg>
-          <span>Unlock Premium ($4.99/month)</span>
-        </button>
         <button id="readMorePremiumBtn" type="button">Read more about Premium</button>
       </div>
     `;
@@ -459,10 +455,8 @@ function _wireAuthDom() {
     };
   }
 
-  // "Unlock Premium" goes straight to checkout, same destination as the
-  // premium modal's own buy button; "Read more about Premium" opens the
-  // full premium modal (defined on the page, in index.html) instead.
-  const unlockPremiumBtn = document.getElementById("unlockPremiumBtn");
+  // "Read more about Premium" opens the full premium modal (defined on
+  // the page, in index.html).
   const readMorePremiumBtn = document.getElementById("readMorePremiumBtn");
   function goToPremiumModal() {
     if (typeof window.openPremiumModal === "function") {
@@ -470,7 +464,6 @@ function _wireAuthDom() {
       window.openPremiumModal("login");
     }
   }
-  if (unlockPremiumBtn) unlockPremiumBtn.onclick = goToPremiumModal;
   if (readMorePremiumBtn) readMorePremiumBtn.onclick = goToPremiumModal;
 
   function openAccountMenu() {
