@@ -23,18 +23,25 @@
       --line: var(--border);
       --bg: #10091b;
 
-  --board-left: 18%;
-  --board-top: calc(19% + 38px);
+  /* Laptop/desktop board bounding box — shrunk a bit (from 64%/60% to
+     58%/54%) and re-centered (left +3% for the narrower width), plus
+     pushed further down (top +5% beyond the recentering amount) so the
+     circles sit a little lower under the brand/HUD area. Mobile
+     completely overrides all four of these inside its own media query
+     (see max-width:760px below), so this block only ever affects
+     desktop/laptop. */
+  --board-left: 21%;
+  --board-top: calc(24% + 38px);
 
   /* These two are deliberately unequal — they define a bounding BOX
-     (64% wide x 60% tall of the stage), not the grid's actual shape.
-     60% height leaves room below the board for the next-seed panel /
+     (58% wide x 54% tall of the stage), not the grid's actual shape.
+     The height leaves room below the board for the next-seed panel /
      controls. The grid itself (.board, via .board-wrap + cqmin — see
      below) always sizes itself to the largest SQUARE that fits inside
      this box, centered, so the 5x5 cells stay perfectly square/circular
      no matter how non-square this bounding box or the stage image is. */
-  --board-width: 64%;
-  --board-height: 60%;
+  --board-width: 58%;
+  --board-height: 54%;
 
 }
 
@@ -1153,6 +1160,13 @@ button {
        clip mask — this is the "items fit inside the circles" sizing. */
     .tile .item-icon { width: 80%; height: 80%; }
     .next-seed .item-icon { width: 46px; height: 46px; }
+
+    /* Laptop/desktop only: bigger item artwork inside each planting
+       circle (mobile keeps the 80% base size above — see its own
+       media query for mobile-specific sizing). */
+    @media (min-width: 761px) {
+      .tile .item-icon { width: 92%; height: 92%; }
+    }
     .collection .item-icon { width: 50px; height: 50px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
 
@@ -2264,11 +2278,11 @@ const WORLD_ITEM_IMAGES = {
   // → young bird → fully-plumed phoenix-like adult, matching the
   // level-1-to-5 rarity/value ramp the shared ITEMS array uses.
   beachBirds: {
-    1: "images/game-item-bird3",
-    2: "images/game-item-bird4",
-    3: "images/game-item-bird5",
-    4: "images/game-item-bird1",
-    5: "images/game-item-bird2"
+    1: "images/game-item-bird1",
+    2: "images/game-item-bird2",
+    3: "images/game-item-bird3",
+    4: "images/game-item-bird4",
+    5: "images/game-item-bird5"
   }
 };
 
