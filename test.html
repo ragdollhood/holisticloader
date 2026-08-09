@@ -248,7 +248,7 @@
   position: absolute;
 
   right: 20px;
-  bottom: 20px;
+  bottom: clamp(12px, 3vw, 26px);
 
   display: flex;
   align-items: center;
@@ -297,7 +297,7 @@ button {
       z-index: 7;
       left: 50%;
       transform: translateX(-50%);
-      bottom: clamp(88px, 11svh, 118px);
+      bottom: clamp(144px, 19svh, 184px);
       display: flex;
       gap: 8px;
       padding: 8px;
@@ -319,6 +319,155 @@ button {
     }
 
     .world-dot.active { background: linear-gradient(135deg, var(--gold), var(--lav)); box-shadow: 0 0 18px rgba(248,217,139,.36); }
+
+    /* ---------- Map screen ----------
+       Shown instead of the board on first load (and any time the player
+       taps "Map"). Two real <img> pages live inside #mapScroll at all
+       times — game-karta1-5.jpg (islands 1-5) and game-karta6-10.jpg
+       (islands 6-10) — never one shared <div> background, specifically
+       so neither image is ever cropped:
+         - Desktop (>=761px, see the map-page/.active rule far below):
+           only the current page is shown, sized via object-fit: cover
+           inside a box whose aspect-ratio is measured to match the
+           image exactly (applyMapAspectRatio()) — cover then fills
+           edge-to-edge with zero cropping, same trick used for world
+           backgrounds.
+         - Mobile (<=760px, the default/base rules right here): BOTH
+           pages are shown stacked full-width (height: auto, so the
+           whole image is always visible, nothing cover-cropped) inside
+           a vertically scrolling column — karta6-10 on top, karta1-5
+           below it, per how the islands are meant to read as you climb.
+       Sits on top of the stage (same layer the login-gate uses) so the
+       board underneath keeps its own state untouched while hidden. */
+    .map-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      display: none;
+      background-color: #1b1030;
+      border-radius: clamp(20px, 3vw, 36px);
+      overflow: hidden;
+    }
+
+    .map-screen.show { display: block; }
+
+    .map-scroll {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
+    }
+
+    .map-page { position: relative; width: 100%; flex: 0 0 auto; }
+
+    .map-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+
+    .map-title {
+      position: absolute;
+      left: 50%;
+      top: clamp(10px, 2.4vw, 22px);
+      transform: translateX(-50%);
+      z-index: 2;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--gold2);
+      background: rgba(16,9,27,.55);
+      border: 1px solid rgba(248,217,139,.30);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .island-btn {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: clamp(38px, 7vw, 58px);
+      height: clamp(38px, 7vw, 58px);
+      border-radius: 50%;
+      border: 2px solid rgba(248,217,139,.65);
+      background: radial-gradient(circle, rgba(248,217,139,.30), rgba(20,10,30,.55) 70%);
+      color: var(--gold2);
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: clamp(14px, 2.4vw, 20px);
+      box-shadow: 0 0 20px rgba(248,217,139,.30), 0 10px 26px rgba(0,0,0,.4);
+      cursor: pointer;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .island-btn:hover, .island-btn:focus-visible { transform: translate(-50%, -50%) scale(1.1); }
+
+    .island-btn.cleared {
+      border-color: rgba(154,255,180,.85);
+      background: radial-gradient(circle, rgba(154,255,180,.30), rgba(20,10,30,.55) 70%);
+      box-shadow: 0 0 20px rgba(154,255,180,.35), 0 10px 26px rgba(0,0,0,.4);
+    }
+
+    .island-btn.locked {
+      opacity: .42;
+      filter: grayscale(.6);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .island-btn.locked:hover, .island-btn.locked:focus-visible { transform: translate(-50%, -50%); }
+
+    @keyframes islandPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(248,217,139,.30), 0 10px 26px rgba(0,0,0,.4); transform: translate(-50%, -50%) scale(1); }
+      50% { box-shadow: 0 0 40px rgba(248,217,139,.85), 0 10px 26px rgba(0,0,0,.4); transform: translate(-50%, -50%) scale(1.22); }
+    }
+
+    .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
+
+    .map-btn {
+      position: absolute;
+      right: clamp(12px, 3vw, 26px);
+      top: clamp(12px, 3vw, 26px);
+      z-index: 6;
+    }
+
+    /* Desktop only: one page at a time, filling the frame edge-to-edge
+       (see the class comment on .map-screen above for why this stays
+       crop-free). Mobile keeps the base rules above — both pages
+       stacked, full width, scrollable. */
+    @media (min-width: 761px) {
+      .map-scroll { overflow: hidden; display: block; }
+      .map-page {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s ease;
+      }
+      .map-page.active { opacity: 1; pointer-events: auto; }
+      .map-img { width: 100%; height: 100%; object-fit: cover; }
+    }
+
+    /* While the map is showing, hide the board-only HUD chrome so it
+       doesn't float over the map art (the map has its own title). */
+    .stage-frame.on-map .map-btn,
+    .stage-frame.on-map .world-picker,
+    .stage-frame.on-map .collection,
+    .stage-frame.on-map .bottom-bar,
+    .stage-frame.on-map .score {
+      display: none;
+    }
 
  /* .board-wrap keeps the ORIGINAL bounding box (left/top/width/height —
     which is deliberately non-square, see the vars above) but no longer
@@ -488,17 +637,23 @@ button {
       100% { transform: translate(-50%, -130%) scale(1.25); opacity: 0; }
     }
 
+    /* Same bottom offset as next-box/actions — confirmed not to collide
+       with them on laptop widths since it's horizontally centered while
+       they sit at the left/right edges. .hud (added in the markup)
+       gives it the same bordered glass-panel look as those, so it
+       reads as a real "frame" instead of icons floating loose over the
+       artwork. */
     .collection {
-      position: absolute;
-      z-index: 6;
       left: 50%;
       transform: translateX(-50%);
-      top: clamp(80px, 10svh, 110px);
+      bottom: clamp(12px, 3vw, 26px);
       display: flex;
       gap: 6px;
-      max-width: min(70%, 430px);
+      max-width: min(78%, 520px);
       justify-content: center;
       flex-wrap: wrap;
+      padding: 10px 14px;
+      border-radius: 24px;
       pointer-events: none;
     }
 
@@ -716,6 +871,11 @@ button {
          board as much room as possible on a small screen. */
       .collection, .world-picker { display: none; }
 
+      /* Both map pages are visible at once here (see .map-screen /
+         .map-page for why), so a single "which page" label doesn't
+         apply the way it does on desktop — drop it. */
+      .map-title { display: none; }
+
       /* Score / Moves / Best on one row, compact. */
       .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
       .score .stat { min-width: 0; padding: 5px 6px; }
@@ -844,6 +1004,25 @@ button {
         <div class="board-wrap">
           <div class="board" id="board" aria-label="Game board"></div>
         </div>
+
+        <div class="map-screen" id="mapScreen" aria-label="World map">
+          <div class="map-title" id="mapTitle">Choose an island</div>
+          <div class="map-scroll" id="mapScroll">
+            <!-- DOM order matters on mobile: this is a normal-flow
+                 stacked column there, karta6-10 above karta1-5 (see
+                 .map-screen CSS comment). Desktop absolutely-positions
+                 both and only shows the .active one, so order there
+                 is irrelevant. Keep these two src values in sync with
+                 MAP_PAGES in the script below if you ever rename the
+                 image files. -->
+            <div class="map-page" id="mapPage2" data-page="2">
+              <img class="map-img" src="images/game-karta6-10.jpg" alt="Islands 6-10 map" draggable="false">
+            </div>
+            <div class="map-page" id="mapPage1" data-page="1">
+              <img class="map-img" src="images/game-karta1-5.jpg" alt="Islands 1-5 map" draggable="false">
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Wrapped so mobile can put the title and the account icon on one
@@ -867,7 +1046,7 @@ button {
         <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
       </div>
 
-      <div class="collection" id="collection" aria-label="Rewards created"></div>
+      <div class="hud collection" id="collection" aria-label="Rewards created"></div>
 
       <!-- Wrapped so mobile can lay next-seed + all three buttons out as a
            single row (see .bottom-bar in the mobile media queries) without
@@ -885,6 +1064,8 @@ button {
           <button id="newBtn">New</button>
         </div>
       </div>
+
+      <button type="button" class="hud map-btn" id="mapBtn" aria-label="Show world map">Map</button>
 
       <div class="world-picker" id="worldPicker" aria-label="Choose world"></div>
 
@@ -1045,6 +1226,31 @@ const WORLD_LABELS = {
   crystalFalls:      "Crystal Falls"
 };
 
+/* -----------------------------------------------------------------
+   MAP SCREENS — images/game-karta1-5.jpg covers islands 1-5 (the
+   first 5 WORLD_KEYS), images/game-karta6-10.jpg covers islands 6-10
+   (the next 5 WORLD_KEYS). The map is the landing screen after login;
+   tapping an unlocked island calls enterWorld() to open that world's
+   board. "Clearing" an island = creating CLEAR_ITEM_LEVEL's item
+   (level 5, "Lotus") at least once while that world is active — see
+   checkWorldClear() in placeTile(). Clearing island N unlocks island
+   N+1; clearing island 5 additionally reveals the karta6-10 map.
+
+   Positions are percentages (of the map image's width/height) for
+   each numbered circle in the artwork — eyeball-adjust these if the
+   final art shifts the islands at all.
+----------------------------------------------------------------- */
+const CLEAR_ITEM_LEVEL = 5;
+const MAP_WORLD_KEYS = WORLD_KEYS.slice(0, 10); // islands 1-10
+const MAP_PAGES = {
+  1: { image: "images/game-karta1-5.jpg", keys: MAP_WORLD_KEYS.slice(0, 5), offset: 0 },
+  2: { image: "images/game-karta6-10.jpg", keys: MAP_WORLD_KEYS.slice(5, 10), offset: 5 }
+};
+const ISLAND_POSITIONS = {
+  1: { x: 18, y: 40 }, 2: { x: 41, y: 40 }, 3: { x: 76, y: 35 }, 4: { x: 20, y: 89 }, 5: { x: 76, y: 89 },
+  6: { x: 9,  y: 55 }, 7: { x: 27, y: 55 }, 8: { x: 48, y: 54 }, 9: { x: 69, y: 55 }, 10: { x: 89, y: 46 }
+};
+
 const EMPTY_ITEM = { level: 0, image: null, name: "Empty", score: 0 };
 
 function currentWorldItems() { return ITEMS; }
@@ -1081,6 +1287,13 @@ function getItem(level) {
     let collection = [];
     let currentWorldKey = WORLD_KEYS[0];
 
+    // Map progression state — persisted to Supabase alongside the rest
+    // of the save (see currentSaveRow() / loadFromCloud()).
+    let clearedWorlds = [];   // world keys that have been "cleared" (see CLEAR_ITEM_LEVEL)
+    let mapPage = 1;          // 1 = karta1-5.jpg unlocked, 2 = karta6-10.jpg also unlocked
+    let onMap = true;         // true while the map screen is showing instead of the board
+    let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
+
     const stageEl = document.getElementById("stage");
     const stageFrameEl = document.getElementById("stageFrame");
     const boardEl = document.getElementById("board");
@@ -1095,12 +1308,23 @@ function getItem(level) {
     const worldNameEl = document.getElementById("worldName");
     const worldPickerEl = document.getElementById("worldPicker");
     const loginGateEl = document.getElementById("loginGate");
+    const mapScreenEl = document.getElementById("mapScreen");
+    const mapScrollEl = document.getElementById("mapScroll");
+    const mapTitleEl = document.getElementById("mapTitle");
+    const mapBtnEl = document.getElementById("mapBtn");
+    const mapPageEls = { 1: document.getElementById("mapPage1"), 2: document.getElementById("mapPage2") };
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
     document.getElementById("closeModalBtn").addEventListener("click", hideModal);
     document.getElementById("undoBtn").addEventListener("click", undo);
     document.getElementById("saveBtn").addEventListener("click", saveGame);
+    mapBtnEl.addEventListener("click", () => showMap(null));
+    boardEl.addEventListener("click", (e) => {
+      const cell = e.target.closest(".cell");
+      if (!cell || !boardEl.contains(cell)) return;
+      placeTile(Number(cell.dataset.r), Number(cell.dataset.c));
+    });
     document.getElementById("loginGateBtn").addEventListener("click", () => {
       // #accountBtn is built by auth.js into #authRoot; logged out, a
       // click on it opens the login/sign-up modal directly.
@@ -1154,41 +1378,45 @@ function getItem(level) {
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
       renderCollection();
-      syncToCloud(false);
+      syncToCloud(false, true);
       applyStageAspectRatio(key);
     }
 
     /* -----------------------------------------------------------------
-       Desktop/laptop only: shape .stage-frame to match each world
-       image's REAL proportions (measured, not guessed), so
-       background-size: cover (set globally, see .stage in the CSS)
-       fills it with zero cropping and zero letterboxing — the frame's
-       aspect ratio and the image's aspect ratio end up identical.
-       Mobile is left alone entirely: its own media query already forces
-       a square .stage regardless of --stage-ratio (see the CSS), so
-       this function is a no-op there by design (checked via
+       Desktop/laptop only: shape .stage-frame to match each world (or
+       map) image's REAL proportions (measured, not guessed), so
+       background-size: cover (set globally, see .stage/.map-screen in
+       the CSS) fills it with zero cropping and zero letterboxing — the
+       frame's aspect ratio and the image's aspect ratio end up
+       identical. Mobile is left alone entirely: its own media query
+       already forces a square .stage regardless of --stage-ratio (see
+       the CSS), so this is a no-op there by design (checked via
        DESKTOP_MEDIA_QUERY below) rather than fighting that layout.
-    ----------------------------------------------------------------- */
-    const stageRatioCache = {}; // worldKey -> "w / h", so re-selecting a world already measured this session doesn't re-fetch/re-decode its image just to read its size
 
-    function applyStageAspectRatio(key) {
+       measureAndApplyRatio() is the shared engine behind both
+       applyStageAspectRatio() (world backgrounds) and
+       applyMapAspectRatio() (map screens) below — one probe/cache
+       implementation instead of two near-duplicates.
+    ----------------------------------------------------------------- */
+    const ratioCache = {}; // cache key ("world:<key>" / "map:<page>") -> width/height, so re-showing something already measured this session doesn't re-fetch/re-decode its image just to read its size
+
+    function measureAndApplyRatio(cacheKey, url, isStillRelevant) {
       if (!DESKTOP_MEDIA_QUERY.matches) return; // mobile forces its own square stage in CSS regardless — don't bother measuring
-      const cached = stageRatioCache[key];
+      const cached = ratioCache[cacheKey];
       if (cached) {
         stageFrameEl.style.setProperty("--stage-ratio", cached);
         return;
       }
-      const url = getWorldBackgroundUrl(key);
       if (!url) return;
       const probe = new Image();
       probe.onload = () => {
         if (!probe.naturalWidth || !probe.naturalHeight) return;
         const ratio = probe.naturalWidth / probe.naturalHeight;
-        stageRatioCache[key] = ratio;
-        // Only apply if this world is still the one showing — the
-        // player may have already switched worlds again before this
+        ratioCache[cacheKey] = ratio;
+        // Only apply if the thing we measured is still what's showing —
+        // the player may have already navigated away before this
         // (possibly slow, uncached) image finished loading.
-        if (currentWorldKey === key) stageFrameEl.style.setProperty("--stage-ratio", ratio);
+        if (isStillRelevant()) stageFrameEl.style.setProperty("--stage-ratio", ratio);
       };
       probe.onerror = () => {
         console.warn(`[stage aspect ratio] failed to load: ${url} — keeping current --stage-ratio`);
@@ -1196,13 +1424,33 @@ function getItem(level) {
       probe.src = url;
     }
 
+    function applyStageAspectRatio(key) {
+      measureAndApplyRatio(`world:${key}`, getWorldBackgroundUrl(key), () => currentWorldKey === key);
+    }
+
+    function applyMapAspectRatio(page) {
+      const info = MAP_PAGES[page];
+      if (!info) return;
+      measureAndApplyRatio(`map:${page}`, info.image, () => onMap && mapPage === page);
+    }
+
+    // Both map images are needed the moment login resolves (the map is
+    // the landing screen) and are otherwise only fetched lazily on
+    // first display — warm the browser cache for both up front so
+    // flipping from karta1-5 to karta6-10 (or reloading mid-session)
+    // never shows a blank/loading frame.
+    function preloadMapImages() {
+      Object.values(MAP_PAGES).forEach(page => { new Image().src = page.image; });
+    }
+    preloadMapImages();
+
     // Crossing the desktop/mobile breakpoint at runtime (resizing a
     // browser window, or rotating/un-rotating a foldable) should apply
     // or clear the measured ratio immediately rather than waiting for
     // the next world switch.
     DESKTOP_MEDIA_QUERY.addEventListener("change", (e) => {
       if (e.matches) {
-        applyStageAspectRatio(currentWorldKey);
+        if (onMap) applyMapAspectRatio(mapPage); else applyStageAspectRatio(currentWorldKey);
       } else {
         stageFrameEl.style.removeProperty("--stage-ratio"); // back to the CSS default (square)
       }
@@ -1224,17 +1472,154 @@ function getItem(level) {
       render();
     }
 
+    // Built once (fixed set of dots) instead of torn down and rebuilt
+    // on every setWorld() call — after the first render, only the
+    // .active class needs to move, which is far cheaper than 20 fresh
+    // buttons + 20 fresh listeners every time a world changes.
+    let worldPickerBuilt = false;
     function renderWorldPicker() {
-      worldPickerEl.innerHTML = "";
-      WORLD_KEYS.forEach(key => {
-        const label = WORLD_LABELS[key] || key;
-        const btn = document.createElement("button");
-        btn.className = "world-dot" + (key === currentWorldKey ? " active" : "");
-        btn.title = label;
-        btn.setAttribute("aria-label", label);
-        btn.addEventListener("click", () => setWorld(key));
-        worldPickerEl.appendChild(btn);
+      if (!worldPickerBuilt) {
+        worldPickerEl.innerHTML = "";
+        WORLD_KEYS.forEach(key => {
+          const label = WORLD_LABELS[key] || key;
+          const btn = document.createElement("button");
+          btn.className = "world-dot";
+          btn.title = label;
+          btn.setAttribute("aria-label", label);
+          btn.dataset.worldKey = key;
+          worldPickerEl.appendChild(btn);
+        });
+        worldPickerEl.addEventListener("click", (e) => {
+          const btn = e.target.closest(".world-dot");
+          if (btn) setWorld(btn.dataset.worldKey);
+        });
+        worldPickerBuilt = true;
+      }
+      worldPickerEl.querySelectorAll(".world-dot").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.worldKey === currentWorldKey);
       });
+    }
+
+    /* -----------------------------------------------------------------
+       MAP SCREEN — see the MAP_PAGES / ISLAND_POSITIONS comment above
+       for the data this reads.
+    ----------------------------------------------------------------- */
+    function isWorldCleared(key) { return clearedWorlds.includes(key); }
+
+    // Island 1 of each page is always open once that page is unlocked;
+    // every later island needs the one before it (in MAP_WORLD_KEYS
+    // order) cleared first.
+    function isWorldUnlocked(key) {
+      const idx = MAP_WORLD_KEYS.indexOf(key);
+      if (idx <= 0) return true;
+      return isWorldCleared(MAP_WORLD_KEYS[idx - 1]);
+    }
+
+    function showMap(highlightKey) {
+      onMap = true;
+      stageFrameEl.classList.add("on-map");
+      justUnlockedKey = highlightKey || null;
+      if (justUnlockedKey) {
+        const page = MAP_WORLD_KEYS.indexOf(justUnlockedKey) < 5 ? 1 : 2;
+        mapPage = Math.max(mapPage, page);
+      }
+      renderMap();
+      mapScreenEl.classList.add("show");
+      applyMapAspectRatio(mapPage); // desktop only — no-op on mobile, see measureAndApplyRatio()
+
+      // Mobile shows both pages stacked in one scroller — jump to
+      // whichever page is relevant so the player isn't dropped on the
+      // wrong one. Desktop ignores this scroll (it shows one page,
+      // full-bleed, via the .active class instead).
+      if (!DESKTOP_MEDIA_QUERY.matches) {
+        const target = mapPageEls[mapPage];
+        if (target) target.scrollIntoView({ block: "start" });
+      }
+
+      if (justUnlockedKey) {
+        setTimeout(() => {
+          justUnlockedKey = null;
+          renderMap();
+        }, 3000);
+      }
+    }
+
+    function hideMap() {
+      onMap = false;
+      stageFrameEl.classList.remove("on-map");
+      mapScreenEl.classList.remove("show");
+    }
+
+    function enterWorld(key) {
+      if (!isWorldUnlocked(key)) { showToast("Clear the island before this one first"); return; }
+      hideMap();
+      setWorld(key); // already flushes an immediate sync internally
+    }
+
+    // Renders BOTH pages' islands every time (cheap: 10 buttons total)
+    // rather than only the "current" one — mobile shows both pages at
+    // once (stacked/scrollable), so both always need live hotspots.
+    // Desktop only reveals the active page (see the .map-page.active
+    // CSS), so rendering the inactive one's buttons too costs nothing
+    // visible there, and keeps this one code path correct on both
+    // breakpoints instead of branching.
+    function renderMap() {
+      mapTitleEl.textContent = mapPage === 1 ? "Islands 1 - 5" : "Islands 6 - 10";
+      Object.entries(mapPageEls).forEach(([pageNum, pageEl]) => {
+        pageEl.classList.toggle("active", Number(pageNum) === mapPage);
+      });
+
+      // Re-render every button (cheap: at most 10 total) rather than
+      // diffing — this only runs when the map is opened, an island is
+      // cleared, or the 3s "just unlocked" pulse expires.
+      mapScreenEl.querySelectorAll(".island-btn").forEach(el => el.remove());
+
+      Object.entries(MAP_PAGES).forEach(([pageNum, page]) => {
+        const pageEl = mapPageEls[pageNum];
+        page.keys.forEach((key, i) => {
+          const islandNumber = page.offset + i + 1;
+          const pos = ISLAND_POSITIONS[islandNumber];
+          if (!pos) return;
+          const unlocked = isWorldUnlocked(key);
+          const cleared = isWorldCleared(key);
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "island-btn"
+            + (unlocked ? "" : " locked")
+            + (cleared ? " cleared" : "")
+            + (key === justUnlockedKey ? " just-unlocked" : "");
+          btn.style.left = `${pos.x}%`;
+          btn.style.top = `${pos.y}%`;
+          btn.textContent = String(islandNumber);
+          btn.setAttribute("aria-label", `${WORLD_LABELS[key] || key} — island ${islandNumber}${cleared ? ", cleared" : unlocked ? "" : ", locked"}`);
+          btn.dataset.worldKey = key; // read by the single delegated listener below, added once
+          pageEl.appendChild(btn);
+        });
+      });
+    }
+
+    mapScreenEl.addEventListener("click", (e) => {
+      const btn = e.target.closest(".island-btn");
+      if (!btn) return;
+      enterWorld(btn.dataset.worldKey);
+    });
+
+    // Called from placeTile() right after a merge. If the item just
+    // created is the "clear" tier (CLEAR_ITEM_LEVEL) and this world
+    // hasn't been marked cleared yet, mark it, unlock the next island
+    // (flipping to the karta6-10 map if that next island is #6), and
+    // drop the player back on the map with the new island pulsing.
+    function checkWorldClear(createdLevel) {
+      if (createdLevel < CLEAR_ITEM_LEVEL) return;
+      if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return;
+      if (isWorldCleared(currentWorldKey)) return;
+
+      clearedWorlds.push(currentWorldKey);
+      const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
+      const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
+      showToast(nextKey ? "Island cleared! A new one has opened" : "Island cleared!");
+      syncToCloud(false, true);
+      setTimeout(() => showMap(nextKey), 1100);
     }
 
     function newGarden() {
@@ -1247,7 +1632,7 @@ function getItem(level) {
       addStartingTiles();
       render();
       showToast("New garden planted");
-      syncToCloud(false);
+      syncToCloud(false, true);
     }
 
     function addStartingTiles() {
@@ -1273,7 +1658,7 @@ function getItem(level) {
       collection = previous.collection.slice();
       render();
       showToast("One step back");
-      syncToCloud(false);
+      syncToCloud(false, true);
     }
 
     /* -----------------------------------------------------------------
@@ -1296,6 +1681,8 @@ function getItem(level) {
            collection    jsonb not null default '[]',
            current_world text not null default 'lavendelMeadow',
            best          int not null default 0,
+           cleared_worlds jsonb not null default '[]',
+           map_page      int not null default 1,
            updated_at    timestamptz not null default now()
          );
 
@@ -1324,6 +1711,13 @@ function getItem(level) {
          alter table public.garden_saves
            alter column current_world type text using 'lavendelMeadow',
            alter column current_world set default 'lavendelMeadow';
+
+       ADDING THE MAP COLUMNS — if garden_saves already existed before
+       the map screen was added, run this once too:
+
+         alter table public.garden_saves
+           add column if not exists cleared_worlds jsonb not null default '[]',
+           add column if not exists map_page int not null default 1;
     ----------------------------------------------------------------- */
     const GARDEN_TABLE = "garden_saves";
 
@@ -1337,11 +1731,24 @@ function getItem(level) {
         collection,
         current_world: currentWorldKey,
         best,
+        cleared_worlds: clearedWorlds,
+        map_page: mapPage,
         updated_at: new Date().toISOString()
       };
     }
 
-    async function syncToCloud(showFeedback) {
+    // Debounced so a burst of rapid moves (placing several tiles in a
+    // row) collapses into ONE upsert instead of one per move — this is
+    // the single biggest network-cost cut in the file, since placeTile()
+    // used to fire a Supabase write on every tap. syncToCloud(show) still
+    // schedules a write within SYNC_DEBOUNCE_MS; pass immediate=true for
+    // writes that must land right away (explicit Save, clearing an
+    // island, switching/leaving a world) rather than get coalesced.
+    const SYNC_DEBOUNCE_MS = 900;
+    let syncTimer = null;
+    let syncPendingFeedback = false;
+
+    async function performSync(showFeedback) {
       if (!currentUser || typeof sb === "undefined") return;
       try {
         const { error } = await sb.from(GARDEN_TABLE).upsert(currentSaveRow(), { onConflict: "user_id" });
@@ -1353,11 +1760,44 @@ function getItem(level) {
       }
     }
 
+    function syncToCloud(showFeedback, immediate) {
+      if (!currentUser || typeof sb === "undefined") return;
+      syncPendingFeedback = syncPendingFeedback || !!showFeedback;
+      if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+      if (immediate) {
+        const feedback = syncPendingFeedback;
+        syncPendingFeedback = false;
+        performSync(feedback);
+        return;
+      }
+      syncTimer = setTimeout(() => {
+        syncTimer = null;
+        const feedback = syncPendingFeedback;
+        syncPendingFeedback = false;
+        performSync(feedback);
+      }, SYNC_DEBOUNCE_MS);
+    }
+
+    // A debounced write can still be sitting in the timer when the tab is
+    // closed or backgrounded — flush it immediately in either case so the
+    // last move or two are never silently lost.
+    function flushPendingSync() {
+      if (!syncTimer) return;
+      clearTimeout(syncTimer);
+      syncTimer = null;
+      const feedback = syncPendingFeedback;
+      syncPendingFeedback = false;
+      performSync(feedback);
+    }
+    document.addEventListener("visibilitychange", () => { if (document.hidden) flushPendingSync(); });
+    window.addEventListener("pagehide", flushPendingSync);
+
     // "Save" button — same cloud write as the automatic saves below,
-    // just with a toast so the user gets explicit confirmation.
+    // just forced to go immediately (not debounced) with a toast so the
+    // user gets explicit confirmation.
     function saveGame() {
       if (!currentUser) { showToast("Log in to save your garden"); return; }
-      syncToCloud(true);
+      syncToCloud(true, true);
     }
 
     async function loadFromCloud() {
@@ -1378,14 +1818,18 @@ function getItem(level) {
           collection = data.collection || [];
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
+          clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds : [];
+          mapPage = data.map_page === 2 ? 2 : 1;
           history = [];
           setWorld(currentWorldKey);
           bestStatEl.textContent = formatNumber(best);
           render();
+          showMap(null); // land on the map first every time the garden loads
           showToast("Garden restored");
         } else {
           // First time this account plays — start fresh and create the row.
           newGarden();
+          showMap(null);
         }
       } catch (err) {
         console.error("loadFromCloud() error:", err);
@@ -1403,7 +1847,7 @@ function getItem(level) {
       if (createdLevel >= 3) collection.push(createdLevel);
       nextLevel = randomNextLevel();
       updateBest();
-      autoUnlockWorld();
+      checkWorldClear(createdLevel);
       render();
       if (createdLevel >= 7) showToast(`${getItem(7).name} created`);
       else if (createdLevel >= 6) showToast(`${getItem(6).name} awakened`);
@@ -1466,11 +1910,11 @@ function getItem(level) {
       }
     }
 
+    // No longer called from placeTile() — islands 1-10 now unlock via
+    // checkWorldClear() (map progress) instead of a score threshold.
+    // Left here in case you want a score-based fallback for worlds
+    // beyond island 10 (11-20), which don't have map art yet.
     function autoUnlockWorld() {
-      // 4 worlds now (was 10): next world unlocks every 2,500 points,
-      // so the last one (cosmos) opens up around 7,500. Comment this
-      // function's call out in placeTile() if you'd rather worlds only
-      // ever change via the picker / setWorld() and never auto-advance.
       const targetIndex = Math.min(WORLD_KEYS.length - 1, Math.floor(score / 2500));
       const targetKey = WORLD_KEYS[targetIndex];
       if (WORLD_KEYS.indexOf(targetKey) > WORLD_KEYS.indexOf(currentWorldKey)) setWorld(targetKey);
@@ -1521,7 +1965,13 @@ function getItem(level) {
           cell.type = "button";
           cell.className = "cell" + (level === 0 ? " empty" : "");
           cell.setAttribute("aria-label", level === 0 ? "Empty planting circle" : item.name);
-          cell.addEventListener("click", () => placeTile(r, c));
+          // Position stored as data-attributes and read by a single
+          // delegated listener on #board (added once, outside this
+          // function) instead of one new closure per cell per render —
+          // cuts listener churn on every move/merge, which matters most
+          // on the frequent re-renders after a chain of merges.
+          cell.dataset.r = r;
+          cell.dataset.c = c;
           if (level > 0) {
             const tile = document.createElement("span");
             tile.className = `tile level-${level}`;
@@ -1609,6 +2059,8 @@ function getItem(level) {
         // lingers on screen for whoever uses this device/browser next.
         board = createEmptyBoard();
         score = 0; moves = 0; history = []; collection = []; nextLevel = 1; best = 0;
+        clearedWorlds = []; mapPage = 1;
+        hideMap();
         setWorld(WORLD_KEYS[0]); // also resets background/name display and re-renders
       }
     }
