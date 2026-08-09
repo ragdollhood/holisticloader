@@ -443,12 +443,15 @@
       gap: 10px;
     }
 
-    /* Account icon (built into #authRoot by auth.js/auth-ui.css), now
-       just the last flex item on the side panel's top row next to the
-       brand pill instead of an absolutely-positioned corner element —
-       auth-ui.css is linked before this <style> block, so this rule
-       (same specificity, later in source order) wins the cascade and
-       overrides its own positioning without needing !important. */
+    /* Account icon (built into #authRoot by auth.js/auth-ui.css). On
+       mobile it stays a normal flex item at the end of .top-row (see
+       layoutSideExtras() in the JS) — auth-ui.css is linked before this
+       <style> block, so this rule (same specificity, later in source
+       order) wins the cascade over auth-ui.css's own absolute-corner
+       default without needing !important. Laptop/desktop overrides this
+       again further down (see the 761px query) to pin it back to the
+       page's actual top-right corner, standing alone rather than
+       sharing the side panel's title row. */
     #authRoot {
       flex: 0 0 auto;
       position: static;
@@ -634,24 +637,38 @@ button {
       #gameLayout:not(.on-map) .next-box {
         display: flex;
 
-        /* Pin the box so its OWN bottom edge lines up with the game
-           board's bottom edge, instead of just trailing the side
-           panel's normal document flow. .side-panel is position:relative
-           and (thanks to .game-layout's align-items:stretch) is always
-           exactly as tall as .stage-frame, so a bottom offset expressed
-           in the same terms as the board's own top+height (see
-           --board-top / --board-height on :root, and .board-wrap which
-           uses them) lands on the identical line inside the image. */
-        position: absolute;
-        left: 2px;
-        right: 2px;
-        bottom: calc(100% - var(--board-top) - var(--board-height));
+        /* Grow to fill whatever vertical space is left over at the
+           bottom of the side panel (which is always exactly as tall
+           as the game image, thanks to .game-layout's
+           align-items:stretch) instead of leaving that space empty
+           below the card. Only the "next item" card (below) actually
+           stretches into the extra room — see .next-box
+           .next-item-group / .next-seed further down — the "back to
+           start" card above it keeps its own natural size. */
+        flex: 1 1 auto;
+        min-height: 0;
       }
 
       /* Inside .next-box the badge is normal in-flow content, not the
          absolute stage overlay mobile still uses. */
       .next-box .next-item-group {
         position: static;
+      }
+
+      /* Laptop/desktop: pin the account icon back to the page's own
+         top-right corner (matching auth-ui.css's original intent — see
+         the #authRoot comment above) instead of sharing the side
+         panel's title row. position:fixed sidesteps the fact that
+         #authRoot is nested deep inside .side-panel (itself
+         position:relative), which would otherwise anchor it to that
+         card instead of the actual viewport corner. Applies on both
+         the start/map screen and gameplay — the icon's position never
+         changes between them. */
+      #authRoot {
+        position: fixed;
+        top: clamp(10px, 2vw, 24px);
+        right: clamp(10px, 2vw, 24px);
+        z-index: 50;
       }
 
       /* Desktop's .score no longer contains the home-thumb (it now
@@ -709,9 +726,17 @@ button {
 
       /* ---------- "Next item" card ----------
          The badge grows from a small floating icon into its own full
-         card: gold caption above a large centered item icon. */
+         card: gold caption above a large centered item icon. Stretches
+         to fill whatever room .next-box has left over (see
+         flex:1 1 auto on .next-box above) so the icon area grows down
+         to the bottom of the side panel instead of leaving empty space
+         under a fixed-size box. */
       .next-box .next-item-group {
         width: 100%;
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
         padding: 18px 14px 24px;
         border-radius: 24px;
         background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03)), var(--glass);
@@ -723,11 +748,14 @@ button {
       .next-box .next-item-label {
         display: block;
         font-size: 12px;
+        flex: 0 0 auto;
       }
 
       .next-box .next-seed {
         width: 100%;
-        height: clamp(140px, 15vw, 220px);
+        flex: 1 1 auto;
+        min-height: 140px;
+        height: auto;
         border-radius: 22px;
       }
 
