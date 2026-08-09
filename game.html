@@ -194,7 +194,7 @@
       padding: 10px 14px;
       border-radius: 22px;
       display: grid;
-      grid-template-columns: repeat(3, auto);
+      grid-template-columns: repeat(4, auto);
       gap: 10px;
     }
 
@@ -210,6 +210,18 @@
       z-index: 7;
     }
 
+    /* auth-ui.css draws a rounded-rectangle frame (border + background)
+       around the account button, which sits right at this page's own
+       rounded stage corner and ends up looking clipped/misaligned.
+       Strip that frame here so only the circular person icon itself
+       (part of the icon's own SVG artwork, not a CSS border) shows. */
+    #accountBtn {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+
     .stat {
       min-width: 50px;
       text-align: center;
@@ -221,6 +233,26 @@
 
     .stat b { display: block; color: var(--gold2); font-family: Arial, sans-serif; font-size: 15px; }
     .stat span { display: block; margin-top: 2px; color: var(--muted); font-family: Arial, sans-serif; font-weight: 800; font-size: 9px; letter-spacing: .10em; text-transform: uppercase; }
+
+    /* HOME — sits to the right of Best in the same stats strip, but is
+       an actual button (back to the map), so it gets a gold accent to
+       read as clickable rather than another read-only stat. */
+    .home-btn {
+      cursor: pointer;
+      border-color: rgba(248,217,139,.45);
+      background: rgba(248,217,139,.12);
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 11px;
+      letter-spacing: .08em;
+      color: var(--gold2);
+      transition: background .15s ease, transform .15s ease;
+    }
+
+    .home-btn:hover, .home-btn:focus-visible {
+      background: rgba(248,217,139,.22);
+      transform: translateY(-1px);
+    }
 
     .next-box {
       left: clamp(12px, 3vw, 26px);
@@ -874,11 +906,12 @@ button {
          board as much room as possible on a small screen. */
       .collection, .world-picker { display: none; }
 
-      /* Score / Moves / Best on one row, compact. */
-      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
+      /* Score / Moves / Best / Home on one row, compact. */
+      .score { grid-template-columns: repeat(4, 1fr); gap: 6px; right: 10px; top: 54px; }
       .score .stat { min-width: 0; padding: 5px 6px; }
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
+      .home-btn { font-size: 9px; }
 
       .brand { left: 10px; top: 10px; padding: 6px 9px; }
       .brand small { font-size: 8px; }
@@ -968,10 +1001,11 @@ button {
 
       .collection, .world-picker { display: none; }
 
-      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
+      .score { grid-template-columns: repeat(4, 1fr); gap: 6px; right: 10px; top: 54px; }
       .score .stat { min-width: 0; padding: 4px 6px; }
       .stat b { font-size: 12px; }
       .stat span { font-size: 8px; }
+      .home-btn { font-size: 8px; }
 
       .brand { left: 10px; top: 10px; padding: 5px 8px; }
       .brand small { font-size: 8px; }
@@ -1027,6 +1061,7 @@ button {
         <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
         <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
         <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
+        <button type="button" class="stat home-btn" id="homeBtn" aria-label="Back to the map">HOME</button>
       </div>
 
       <div class="hud collection" id="collection" aria-label="Rewards created"></div>
@@ -1353,6 +1388,7 @@ function getItem(level) {
     const mapScreenEl = document.getElementById("mapScreen");
     const mapTitleEl = document.getElementById("mapTitle");
     const mapBtnEl = document.getElementById("mapBtn");
+    const homeBtnEl = document.getElementById("homeBtn");
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
@@ -1360,6 +1396,7 @@ function getItem(level) {
     document.getElementById("undoBtn").addEventListener("click", undo);
     document.getElementById("saveBtn").addEventListener("click", saveGame);
     mapBtnEl.addEventListener("click", () => showMap(null));
+    homeBtnEl.addEventListener("click", () => showMap(null)); // same destination as the Map button — just a second, always-visible entry point next to the stats
     boardEl.addEventListener("click", (e) => {
       const cell = e.target.closest(".cell");
       if (!cell || !boardEl.contains(cell)) return;
