@@ -194,7 +194,7 @@
       padding: 10px 14px;
       border-radius: 22px;
       display: grid;
-      grid-template-columns: repeat(4, auto);
+      grid-template-columns: repeat(3, auto);
       gap: 10px;
     }
 
@@ -234,24 +234,62 @@
     .stat b { display: block; color: var(--gold2); font-family: Arial, sans-serif; font-size: 15px; }
     .stat span { display: block; margin-top: 2px; color: var(--muted); font-family: Arial, sans-serif; font-weight: 800; font-size: 9px; letter-spacing: .10em; text-transform: uppercase; }
 
-    /* HOME — sits to the right of Best in the same stats strip, but is
-       an actual button (back to the map), so it gets a gold accent to
-       read as clickable rather than another read-only stat. */
-    .home-btn {
+    /* HOME THUMBNAIL — a snapshot of the world map (images/thumbs/game-home.jpg),
+       sitting OUTSIDE the board's own box (--board-left/--board-top/
+       --board-width/--board-height) in the quiet left-hand margin,
+       vertically centered so it never overlaps the board grid — instead
+       of the old text-only "HOME" stat that used to sit inside the
+       Score/Moves/Best strip. Same click destination as the Map button
+       (showMap(null)); the label underneath just spells that out. */
+    .home-thumb {
+      position: absolute;
+      z-index: 6;
+      left: clamp(10px, 2.4vw, 22px);
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      padding: 0;
       cursor: pointer;
-      border-color: rgba(248,217,139,.45);
-      background: rgba(248,217,139,.12);
-      font-family: Arial, sans-serif;
-      font-weight: 900;
-      font-size: 11px;
-      letter-spacing: .08em;
-      color: var(--gold2);
-      transition: background .15s ease, transform .15s ease;
     }
 
-    .home-btn:hover, .home-btn:focus-visible {
-      background: rgba(248,217,139,.22);
-      transform: translateY(-1px);
+    .home-thumb-img {
+      display: block;
+      width: clamp(52px, 8vw, 78px);
+      height: clamp(52px, 8vw, 78px);
+      border-radius: 18px;
+      object-fit: cover;
+      border: 2px solid rgba(248,217,139,.55);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.10),
+        0 10px 26px rgba(0,0,0,.45),
+        0 0 22px rgba(248,217,139,.28);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .home-thumb:hover .home-thumb-img,
+    .home-thumb:focus-visible .home-thumb-img {
+      transform: scale(1.06);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.16),
+        0 12px 30px rgba(0,0,0,.5),
+        0 0 30px rgba(248,217,139,.42);
+    }
+
+    .home-thumb-label {
+      font-family: Arial, sans-serif;
+      font-weight: 800;
+      font-size: 10px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--gold2);
+      text-shadow: 0 2px 6px rgba(0,0,0,.6);
+      text-align: center;
+      max-width: 84px;
     }
 
     .next-box {
@@ -500,7 +538,8 @@ button {
     .stage-frame.on-map .world-picker,
     .stage-frame.on-map .collection,
     .stage-frame.on-map .bottom-bar,
-    .stage-frame.on-map .score {
+    .stage-frame.on-map .score,
+    .stage-frame.on-map .home-thumb {
       display: none;
     }
 
@@ -903,15 +942,18 @@ button {
       .actions { flex: 0 0 auto; justify-content: flex-end; }
 
       /* Kept hidden rather than squeezed outside too, to leave the
-         board as much room as possible on a small screen. */
-      .collection, .world-picker { display: none; }
+         board as much room as possible on a small screen. The home
+         thumbnail is hidden here too — on a phone the margin outside
+         the board is only 5-16% wide, nowhere near enough room for it
+         without overlapping the grid, and the Map button (top-right)
+         already goes to the same place in far less space. */
+      .collection, .world-picker, .home-thumb { display: none; }
 
-      /* Score / Moves / Best / Home on one row, compact. */
-      .score { grid-template-columns: repeat(4, 1fr); gap: 6px; right: 10px; top: 54px; }
+      /* Score / Moves / Best on one row, compact. */
+      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
       .score .stat { min-width: 0; padding: 5px 6px; }
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
-      .home-btn { font-size: 9px; }
 
       .brand { left: 10px; top: 10px; padding: 6px 9px; }
       .brand small { font-size: 8px; }
@@ -999,13 +1041,12 @@ button {
       .next-box { flex: 0 1 auto; min-width: 0; }
       .actions { flex: 0 0 auto; justify-content: flex-end; }
 
-      .collection, .world-picker { display: none; }
+      .collection, .world-picker, .home-thumb { display: none; }
 
-      .score { grid-template-columns: repeat(4, 1fr); gap: 6px; right: 10px; top: 54px; }
+      .score { grid-template-columns: repeat(3, 1fr); gap: 6px; right: 10px; top: 54px; }
       .score .stat { min-width: 0; padding: 4px 6px; }
       .stat b { font-size: 12px; }
       .stat span { font-size: 8px; }
-      .home-btn { font-size: 8px; }
 
       .brand { left: 10px; top: 10px; padding: 5px 8px; }
       .brand small { font-size: 8px; }
@@ -1061,8 +1102,16 @@ button {
         <div class="stat"><b id="scoreStat">0</b><span>Score</span></div>
         <div class="stat"><b id="movesStat">0</b><span>Moves</span></div>
         <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
-        <button type="button" class="stat home-btn" id="homeBtn" aria-label="Back to the map">HOME</button>
       </div>
+
+      <!-- Home thumbnail — a snapshot of the world map, sitting outside
+           the board's own box instead of as a text stat next to Best.
+           Same id (homeBtn) as before, so the existing click handler
+           below needs no changes. -->
+      <button type="button" class="home-thumb" id="homeBtn" aria-label="Back to the map">
+        <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
+        <span class="home-thumb-label">Back to start</span>
+      </button>
 
       <div class="hud collection" id="collection" aria-label="Rewards created"></div>
 
@@ -1396,7 +1445,7 @@ function getItem(level) {
     document.getElementById("undoBtn").addEventListener("click", undo);
     document.getElementById("saveBtn").addEventListener("click", saveGame);
     mapBtnEl.addEventListener("click", () => showMap(null));
-    homeBtnEl.addEventListener("click", () => showMap(null)); // same destination as the Map button — just a second, always-visible entry point next to the stats
+    homeBtnEl.addEventListener("click", () => showMap(null)); // same destination as the Map button — just a second, always-visible entry point outside the board
     boardEl.addEventListener("click", (e) => {
       const cell = e.target.closest(".cell");
       if (!cell || !boardEl.contains(cell)) return;
