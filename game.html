@@ -27,6 +27,26 @@
       --line: var(--border);
       --bg: #10091b;
 
+  /* ---------- Layout budget (desktop/laptop) ----------
+     The exact same values used by .screen's padding, .game-layout's
+     gap, and .side-panel's width — duplicated here as variables so
+     .stage-frame (below) can size itself against the REAL horizontal
+     space left over after the side panel + gaps + page padding,
+     instead of a flat "78vw" guess. Without this, narrowing the
+     browser window could ask for a stage-frame wider than what's
+     actually left, forcing the flex row to shrink it unevenly (height
+     stays fixed, width gets squeezed) — which distorts the frame's
+     aspect ratio away from the map/world image's real ratio and made
+     the artwork appear cropped at the edges. Sizing against this
+     budget instead means the frame always fits, so nothing ever needs
+     to be cropped — any leftover room just becomes empty air on the
+     sides of the box, and the numbered island badges (positioned in
+     % of that same box) stay exactly where the map artwork puts them. */
+  --screen-pad: clamp(8px, 1.6vw, 18px);
+  --gl-gap: clamp(10px, 1.8vw, 22px);
+  --sp-width: clamp(200px, 21vw, 300px);
+  --stage-max-w: calc(100vw - (var(--screen-pad) * 2) - var(--gl-gap) - var(--sp-width));
+
   /* Laptop/desktop board bounding box — shrunk a bit (from 64%/60% to
      58%/54%) and re-centered (left +3% for the narrower width), plus
      pushed further down (top +5% beyond the recentering amount) so the
@@ -105,16 +125,22 @@
      on mobile it's left at its default 1 and the media query further
      down takes over sizing entirely (own width/height rules, own
      forced-square .stage), so this doesn't affect the phone layout.
-     The calc(78svh * var(--stage-ratio)) term converts the usual
-     height budget into an equivalent width budget for THIS ratio, so
-     a short/wide browser window still can't make the frame taller
-     than the viewport even once it's no longer square. Uses a smaller
-     share of the viewport width than before (78vw, not 96vw) now that
-     the side panel sits next to it and also needs horizontal room. */
+
+     Height is capped by TWO independent budgets, and the smaller one
+     wins: 96svh (vertical room) and calc(var(--stage-max-w) / ratio)
+     (the height that exactly fills the REAL leftover horizontal room
+     — see --stage-max-w above — without the side panel/gaps/padding
+     being pushed off-screen). Only height is ever set explicitly;
+     width stays auto and is derived from aspect-ratio, so the browser
+     never has to shrink width and height independently (the thing
+     that broke the aspect ratio and made the map look cropped) — the
+     box arrives at its final size already matching the image's real
+     proportions, with any spare room simply left empty on the sides. */
   --stage-ratio: 1;
-  height: min(96svh, calc(78vw / var(--stage-ratio)));
+  height: min(96svh, calc(var(--stage-max-w) / var(--stage-ratio)));
   width: auto;
   aspect-ratio: var(--stage-ratio);
+  flex: 0 0 auto;
 
   /* Column/row counts for the game grid: 5x5 by default, overridden by
      JS (see COLS/ROWS + DESKTOP_MEDIA_QUERY below) — 7x5 on desktop/
