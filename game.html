@@ -1688,14 +1688,25 @@ button {
     }
 
     /* Mirrors DESKTOP_MEDIA_QUERY (JS) — matches whenever the desktop/
-       laptop layout ISN'T showing: normal portrait/narrow phones (under
-       1200px width) AND landscape phones (under 1200px width, but NOT
-       short-enough-landscape — see the max-height:600px carve-out,
-       which routes short-landscape phones into the desktop/laptop
-       layout above instead, so a phone turned sideways looks like the
-       laptop view, matching DESKTOP_MEDIA_QUERY). Tablets/foldables in
-       landscape (taller than 600px) still land here, unchanged. */
-    @media (max-width: 1199px) and not ((orientation: landscape) and (max-height: 600px)) {
+       laptop layout ISN'T showing. Written as two OR'd conditions
+       instead of "and not (...)": that nested boolean form isn't
+       reliably supported on older mobile browsers (notably older iOS
+       Safari), and when a browser can't parse a media query it just
+       drops the whole rule block — silently breaking portrait mobile,
+       which is exactly what happened before this rewrite.
+         - (max-width:1199px) and (orientation:portrait): every
+           portrait phone, any height — always the stacked mobile
+           layout, regardless of how tall/short it is.
+         - (max-width:1199px) and (min-height:601px): landscape too,
+           but only once it's tall enough to not be a short landscape
+           phone (matches tablets/foldables, which should still look
+           like the phone view — untouched from before).
+       Together these are the exact inverse of DESKTOP_MEDIA_QUERY's
+       own OR condition above (De Morgan's law), so a short landscape
+       phone (under 1200px wide AND max-height:600px) matches NEITHER
+       line here and falls through to the desktop/laptop layout
+       instead, same as intended. */
+    @media (max-width: 1199px) and (orientation: portrait), (max-width: 1199px) and (min-height: 601px) {
       .screen { padding: 5px; }
 
       /* Board bounding box shrunk to ~86% of its previous size (and
