@@ -400,7 +400,7 @@
        top of the map image itself (see .map-brand below), so the old
        side-panel logo pill is hidden here instead. Mobile keeps the
        side-panel version untouched (see the max-width:760px query). */
-    @media (orientation: landscape) {
+    @media (min-width: 761px) {
       #gameLayout.on-map .brand-map-logo { display: none; }
     }
     #gameLayout.on-map .brand-gameplay { display: none; }
@@ -409,7 +409,7 @@
        and stats/account box on the start-map screen as during
        gameplay — not just gameplay-only anymore. Mobile keeps the
        original map/gameplay swap untouched. */
-    @media (orientation: landscape) {
+    @media (min-width: 761px) {
       #gameLayout.on-map .brand-gameplay { display: flex; }
       #gameLayout.on-map .score.gameplay-only { display: grid; }
       /* Map screen only: show just the small wordmark image, not the
@@ -686,7 +686,7 @@ button {
       gap: 10px;
     }
 
-    @media (orientation: landscape) {
+    @media (min-width: 761px) {
       #gameLayout:not(.on-map) .next-box {
         display: flex;
 
@@ -877,7 +877,7 @@ button {
       display: none;
     }
 
-    @media (orientation: landscape) {
+    @media (min-width: 761px) {
       .map-brand {
         display: block;
         position: absolute;
@@ -904,7 +904,7 @@ button {
     /* Laptop/desktop only: smaller + left-aligned wordmark on the start
        screen (see .map-brand above, which handles the left placement —
        this just shrinks the image itself). */
-    @media (orientation: landscape) {
+    @media (min-width: 761px) {
       .map-brand-img {
         /* +10% over the original clamp(40px, 8vw, 110px). */
         max-height: clamp(44px, 8.8vw, 121px);
@@ -1198,7 +1198,7 @@ button {
     /* Laptop/desktop only: bigger item artwork inside each planting
        circle (mobile keeps the 80% base size above — see its own
        media query for mobile-specific sizing). */
-    @media (orientation: landscape) {
+    @media (min-width: 761px) {
       .tile .item-icon { width: 92%; height: 92%; }
     }
     .collection .item-icon { width: 50px; height: 50px; }
@@ -1628,7 +1628,7 @@ button {
        to .premium-box specifically (not the shared .premium-*/.gcm-*
        rules above, which the #guestClearModal popup also uses) so the
        modal's own type scale is untouched. */
-    @media (orientation: landscape) {
+    @media (min-width: 761px) {
       .how-to-play h3 { font-size: 15px; }
       .how-to-play li { font-size: 14px; line-height: 1.5; }
 
@@ -1643,7 +1643,7 @@ button {
       .premium-box .premium-login-link { font-size: 12px; }
     }
 
-    @media (orientation: portrait) {
+    @media (max-width: 760px) {
       .screen { padding: 5px; }
 
       /* Board bounding box shrunk to ~86% of its previous size (and
@@ -2920,12 +2920,15 @@ function getItem(level) {
     // Desktop/laptop widths get 2 extra board columns (7 instead of 5) —
     // rows stay at 5 there. Declared here (not further down, where
     // applyStageAspectRatio() used to be the only thing reading it) so
-    // COLS below can use it immediately at page load. Also matches
-    // landscape orientation (regardless of width) so a phone turned
-    // sideways gets the same laptop/desktop view instead of the
-    // stacked mobile layout — see the matching CSS media queries
-    // (`(orientation: landscape)`) further up.
-    const DESKTOP_MEDIA_QUERY = window.matchMedia("(orientation: landscape)");
+    // COLS below can use it immediately at page load. Width-based
+    // (not orientation-based) so a laptop window that gets narrowed
+    // switches to the stacked mobile layout (side panel below the
+    // board, correctly scaled board + island numbers) as soon as it
+    // no longer has room for the side-by-side layout, instead of
+    // staying "desktop" just because it's still wider than it is
+    // tall — see the matching CSS media queries (`(min-width: 761px)`
+    // / `(max-width: 760px)`) further up.
+    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px)");
 
     // Mobile only: +1 row (added at the TOP — see addStartingTiles()
     // below, which shifts its fixed cluster down/right to match) and +2
