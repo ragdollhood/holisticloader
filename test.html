@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wellness Garden Premium | Holistic Loader</title>
+  <!-- Opens the connection to the CDN the supabase-js script tag (bottom of
+       body) loads from ahead of time, so that request doesn't also have to
+       pay for DNS + TLS handshake once the parser finally reaches it. -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="auth-ui.css">
   <style>
     :root {
@@ -23,18 +27,25 @@
       --line: var(--border);
       --bg: #10091b;
 
-  --board-left: 18%;
-  --board-top: calc(19% + 38px);
+  /* Laptop/desktop board bounding box — shrunk a bit (from 64%/60% to
+     58%/54%) and re-centered (left +3% for the narrower width), plus
+     pushed further down (top +5% beyond the recentering amount) so the
+     circles sit a little lower under the brand/HUD area. Mobile
+     completely overrides all four of these inside its own media query
+     (see max-width:760px below), so this block only ever affects
+     desktop/laptop. */
+  --board-left: 21%;
+  --board-top: calc(24% + 38px);
 
   /* These two are deliberately unequal — they define a bounding BOX
-     (64% wide x 60% tall of the stage), not the grid's actual shape.
-     60% height leaves room below the board for the next-seed panel /
+     (58% wide x 54% tall of the stage), not the grid's actual shape.
+     The height leaves room below the board for the next-seed panel /
      controls. The grid itself (.board, via .board-wrap + cqmin — see
      below) always sizes itself to the largest SQUARE that fits inside
      this box, centered, so the 5x5 cells stay perfectly square/circular
      no matter how non-square this bounding box or the stage image is. */
-  --board-width: 64%;
-  --board-height: 60%;
+  --board-width: 58%;
+  --board-height: 54%;
 
 }
 
@@ -107,8 +118,9 @@
 
   /* Column/row counts for the game grid: 5x5 by default, overridden by
      JS (see COLS/ROWS + DESKTOP_MEDIA_QUERY below) — 7x5 on desktop/
-     laptop widths, 5x4 on mobile (mobile drops the top row of the
-     board, see ROWS_MOBILE). */
+     laptop widths, 5x5 on mobile too now (mobile used to drop the top
+     row of the board — see ROWS_MOBILE — but that row has been added
+     back). */
   --board-cols: 5;
   --board-rows: 5;
 }
@@ -1051,7 +1063,10 @@ button {
   grid-template-columns: repeat(var(--board-cols), 1fr);
   grid-template-rows: repeat(var(--board-rows), 1fr);
 
-  gap: 4%;
+  /* Reduced from 4% (and further reduced from 2%) so circles sit
+     closer together on laptop/desktop — mobile tightens this further
+     still, see the max-width:760px override below. */
+  gap: 1%;
 }
 
   .cell {
@@ -1149,6 +1164,13 @@ button {
        clip mask — this is the "items fit inside the circles" sizing. */
     .tile .item-icon { width: 80%; height: 80%; }
     .next-seed .item-icon { width: 46px; height: 46px; }
+
+    /* Laptop/desktop only: bigger item artwork inside each planting
+       circle (mobile keeps the 80% base size above — see its own
+       media query for mobile-specific sizing). */
+    @media (min-width: 761px) {
+      .tile .item-icon { width: 92%; height: 92%; }
+    }
     .collection .item-icon { width: 50px; height: 50px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
 
@@ -1169,8 +1191,6 @@ button {
       font-size: 0.85em;
       font-weight: 700;
     }
-
-    @keyframes pop { from { transform: scale(.55); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     .merge-burst {
       position: absolute;
@@ -1403,6 +1423,73 @@ button {
       padding: 18px 4px 4px; border-top: 1px solid rgba(248,217,139,.22);
     }
 
+    /* ---------- First-time level-up celebration ----------
+       Full-screen dim overlay showing the newly-reached item big and
+       centered, held for ~2s (see LEVEL_REVEAL_HOLD_MS in the JS),
+       then the icon animates down into the collection strip while the
+       text fades out (see showLevelReveal()/flying handling in JS). */
+    .level-reveal {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 24px;
+      text-align: center;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 42%, rgba(60,30,90,.55), rgba(8,4,14,.72) 70%);
+    }
+    .level-reveal.show { display: flex; }
+
+    .level-reveal-icon {
+      width: clamp(130px, 34vw, 240px);
+      height: clamp(130px, 34vw, 240px);
+      opacity: 1;
+      transform-origin: center;
+      filter: drop-shadow(0 0 34px rgba(248,217,139,.65));
+    }
+    .level-reveal-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .level-reveal-text {
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .03em;
+      font-size: clamp(24px, 6vw, 38px);
+      color: var(--gold2);
+      text-shadow: 0 6px 24px rgba(0,0,0,.6);
+      transition: opacity .35s ease;
+    }
+
+    .level-reveal-done {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .04em;
+      line-height: 1.35;
+      font-size: clamp(16px, 4vw, 24px);
+      color: var(--lav);
+      text-shadow: 0 4px 18px rgba(0,0,0,.6);
+      transition: opacity .35s ease;
+    }
+    .level-reveal.well-done .level-reveal-done { display: block; }
+
+    @keyframes levelRevealPop {
+      0% { transform: scale(.4); opacity: 0; }
+      60% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .level-reveal.show .level-reveal-icon.pop {
+      animation: levelRevealPop .45s cubic-bezier(.2,.9,.3,1.3);
+    }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -1475,6 +1562,27 @@ button {
        panel — still a vertical box, just a compact one — underneath),
        and every readout/button inside the panel shrinks its padding
        and type so the image can still claim most of the screen. */
+    /* Laptop/desktop only: bigger text in the start-screen side box
+       (the "How to play" panel + the "Unlock Every Island" premium
+       upsell underneath it) that sits to the right of the map. Scoped
+       to .premium-box specifically (not the shared .premium-*/.gcm-*
+       rules above, which the #guestClearModal popup also uses) so the
+       modal's own type scale is untouched. */
+    @media (min-width: 761px) {
+      .how-to-play h3 { font-size: 15px; }
+      .how-to-play li { font-size: 14px; line-height: 1.5; }
+
+      .premium-box .premium-badge { font-size: 11px; }
+      .premium-box .premium-headline { font-size: 21px; }
+      .premium-box p { font-size: 13.5px; }
+      .premium-box .premium-checklist li { font-size: 13.5px; }
+      .premium-box .premium-checklist .chk { width: 19px; height: 19px; font-size: 10.5px; }
+      .premium-box .premium-trial-btn .ptCta { font-size: 13px; }
+      .premium-box .premium-trial-btn .ptNote { font-size: 10.5px; }
+      .premium-box .premium-buy-btn { font-size: 12.5px; }
+      .premium-box .premium-login-link { font-size: 12px; }
+    }
+
     @media (max-width: 760px), (orientation: landscape) and (max-height: 500px) {
       .screen { padding: 5px; }
 
@@ -1488,15 +1596,24 @@ button {
          size wouldn't change — shrinking the whole board's footprint by
          the right amount compensates for that. */
       :root {
-        --board-left: 10.5%;
-        /* Pushed down an extra row's worth (--board-height / --board-rows,
-           i.e. the height of one full planting circle) so the board sits
-           lower in the stage image on mobile. --board-rows resolves via
-           inheritance from #stageFrame's inline style (ROWS_MOBILE, see
-           the JS below), so this stays correct if that value ever changes. */
-        --board-top: calc(11% - 30px + (var(--board-height) / var(--board-rows)));
-        --board-width: 79%;
-        --board-height: 78%;
+        /* Bounding box shrunk further (from 79%/78% down to 55%/54%,
+           re-centered on the same midpoint — see the math in the
+           comment this replaces) so the planting circles themselves
+           render noticeably smaller. Shrinking the whole box like
+           this (rather than just the cell fill-% below) scales the
+           circles AND the space between them down together, so the
+           circles end up both smaller and closer to each other in
+           absolute terms, not just smaller with the same-size gaps. */
+        /* Bounding box nudged in a touch (74%/66% -> 72%/64%) and moved
+           up (top reduced) per request — re-centered horizontally for
+           the narrower width. The cell fill-% and grid gap just below
+           (97% -> 99%, 0.7% -> 0.4%) are tightened to compensate, so
+           the planting circles themselves render at essentially the
+           same size as before; only the empty margin/gap shrinks. */
+        --board-left: 14%;
+        --board-top: calc(32% - 30px);
+        --board-width: 72%;
+        --board-height: 64%;
       }
 
       .game-layout {
@@ -1559,8 +1676,14 @@ button {
       #gameLayout:not(.on-map) .side-panel .top-row .brand {
         position: absolute;
         left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
+        /* Was vertically centered on the row (top:50% + translateY
+           -50%) — with the row itself sitting right at the screen's
+           top edge, that let the top of the title image overflow
+           above the row and get clipped by the screen edge. Anchored
+           to a small fixed offset from the row's own top instead, so
+           there's always a few px of clear air above it. */
+        top: 6px;
+        transform: translateX(-50%);
         flex: none;
         max-width: calc(100% - 60px);
         background: none;
@@ -1569,12 +1692,32 @@ button {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
         padding: 0;
+        /* .brand's base rule sets container-type: inline-size for the
+           cqw-based desktop sizing above — under that containment an
+           auto/shrink-to-fit width (this box is absolutely positioned
+           with no explicit width) can no longer size itself from its
+           own content, which was collapsing the box narrower than the
+           world-name text and forcing it to wrap onto a second line.
+           Mobile doesn't use cqw sizing anyway (font-size is a fixed
+           px below), so turning containment off here lets the box
+           size to fit its content again. */
+        container-type: normal;
+      }
+
+      /* Title image itself sized down a touch on mobile (was capped at
+         36px via the base clamp's floor) so it comfortably clears the
+         row without needing to hug the very top edge. */
+      .top-row .brand-logo-text {
+        max-height: 28px;
       }
 
       .top-row { gap: 6px; }
       .brand { padding: 6px 9px; }
       .brand small { font-size: 8px; }
-      .brand strong { font-size: 15px; }
+      .brand strong { font-size: 15px; white-space: nowrap; }
+      /* World name text hidden on mobile — only the title/wordmark
+         image (.brand-logo-text) shows at the top there. */
+      #worldName { display: none; }
 
       /* 5 columns now: the next-item badge (sized to its own content,
          not stretched), then the 3 stats, then "Back to start" — those
@@ -1592,27 +1735,40 @@ button {
          the desktop/laptop behavior above. */
       #gameLayout:not(.on-map) .side-panel .score.gameplay-only { order: 0; }
 
-      .score { padding: 6px 8px; gap: 6px; grid-template-columns: auto repeat(4, 1fr); align-items: stretch; }
+      /* Enlarged per request: bigger padding + bigger stat/label text
+         (was 6px 8px / 13px / 8px) so the next-item + score row reads
+         as a noticeably bigger box on mobile. */
+      .score { padding: 12px 10px; gap: 8px; grid-template-columns: auto repeat(4, 1fr); align-items: stretch; }
       .score .stat {
+        flex: 1 1 0;
         min-width: 0;
-        padding: 5px 6px;
+        padding: 9px 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
       }
-      .stat b { font-size: 13px; }
-      .stat span { font-size: 8px; }
+      .stat b { font-size: 18px; }
+      .stat span { font-size: 10px; }
 
-      .home-thumb { flex-direction: column; align-items: center; justify-content: center; padding: 5px 6px; gap: 3px; width: 100%; height: 100%; min-width: 0; }
+      /* flex: 1 1 0 (matching .score .stat above) instead of
+         width: 100% — .score renders as a flex row here (not the grid
+         its grid-template-columns rule assumes; see the
+         higher-specificity ".side-panel .gameplay-only" display:flex
+         rule that wins the cascade), and width: 100% on a flex child
+         is read as its flex-basis, i.e. "start at 100% of the row and
+         shrink from there" — which made this button claim far more
+         space than the three stat pills beside it instead of matching
+         them. flex: 1 1 0 makes it share the row equally with them. */
+      .home-thumb { flex: 1 1 0; flex-direction: column; align-items: center; justify-content: center; padding: 9px 8px; gap: 4px; width: auto; height: auto; min-width: 0; }
       .home-thumb-img,
       .home-thumb-label { display: none; }
-      .home-thumb-icon { display: block; width: 17px; height: 17px; color: var(--gold2); }
+      .home-thumb-icon { display: block; width: 22px; height: 22px; color: var(--gold2); }
       .home-thumb-mobile-label {
         display: block;
         font-family: Arial, sans-serif;
         font-weight: 800;
-        font-size: 8px;
+        font-size: 9px;
         letter-spacing: .10em;
         text-transform: uppercase;
         color: var(--muted);
@@ -1637,7 +1793,12 @@ button {
       }
 
       .world-picker { padding: 6px; gap: 6px; }
-      .collection { padding: 6px 8px; gap: 5px; }
+      /* Achievement/collection strip (box #3) — height halved per
+         request by shrinking its item icons (the icon size is what
+         drives this box's height) rather than clipping it, so nothing
+         gets visually cut off. */
+      .collection { padding: 3px 8px; gap: 4px; }
+      .collection .item-icon { width: 25px; height: 25px; }
 
       /* Mobile no longer overlays the next-item badge on top of the
          board image — it now sits in normal flow as the first cell of
@@ -1648,33 +1809,54 @@ button {
          row. Label is placed after the icon in markup, but reordered
          (order:1) to render below it here, matching the icon-then-
          label pattern the stat pills and home button use. */
-      .next-item-group { position: static; left: auto; right: auto; bottom: auto; z-index: auto; justify-content: center; }
-      .next-item-label {
-        display: block;
-        order: 1;
-        font-family: Arial, sans-serif;
-        font-weight: 800;
-        font-size: 9px;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-        white-space: nowrap;
-        color: var(--gold2);
-        text-shadow: 0 1px 4px rgba(0,0,0,.6);
+      /* Boxed the same way the Score/Moves/Best stat pills are (see
+         .stat above) — background, border, radius, padding — so the
+         next-item badge reads as one more pill in the row instead of
+         a bare floating icon+label. flex:1 1 0 matches .score .stat's
+         mobile override so it claims an even share of the row. */
+      .next-item-group {
+        position: static; left: auto; right: auto; bottom: auto; z-index: auto; justify-content: center;
+        flex: 1 1 0;
+        min-width: 0;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 16px;
+        padding: 9px 8px;
       }
-      .next-seed { width: 40px; height: 40px; border-radius: 13px; order: 0; }
-      .next-seed .item-icon { width: 30px; height: 30px; }
+      .next-item-label {
+        display: none;
+      }
+      /* Inner icon frame's own background/border/glow (see base
+         .next-seed above) is switched off here — with the badge now
+         boxed itself, keeping both would nest a small box inside a
+         bigger one instead of the single flat pill Score/Moves/Best
+         use. Sized to fill the pill (which stretches to match the
+         Score/Moves/Best row height via .score's align-items:stretch)
+         now that the "Next item" label is gone and isn't claiming any
+         of that space, so the icon can render as large as the box
+         allows. */
+      .next-seed {
+        width: 100%; height: 100%; border-radius: 13px; order: 0;
+        background: none;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+      .next-seed .item-icon { width: 90%; height: 90%; }
 
       .actions { padding: 5px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
 
-      /* Planting circles sized down a bit on mobile — same grid/gap,
-         just a smaller fraction of each grid square so there's a
-         little more visible space between neighboring circles. Doesn't
-         touch the shared .cell rule (that stays 97% for desktop). */
-      /* Reduced from 86% to 80% (paired with the smaller board bounding
-         box above) so each circle is ~20% smaller while the empty gap
-         between neighboring circles stays visually the same as before. */
-      .cell { width: 80%; }
+      /* Planting circles sized up and pulled much closer together on
+         mobile so they nearly touch: a bigger cell-fill percentage
+         (was 80%, now 97%) plus a much tighter grid gap (see .board
+         override below) closes almost all the empty space between
+         neighboring circles. Combined with the smaller mobile
+         --board-width/--board-height bounding box above, the circles
+         themselves also render much smaller overall. */
+      .cell { width: 99%; }
+      .board { gap: 0.4%; }
 
       /* ---------- Mobile map screen ----------
          The side panel becomes a slim icon bar sitting ABOVE the map
@@ -1692,10 +1874,10 @@ button {
         width: 100vw;
       }
 
-      #gameLayout.on-map .stage,
-      #gameLayout.on-map .map-screen {
-        border-radius: 0;
-      }
+      /* Corners rounded to match the same radius .stage/.map-screen
+         already use everywhere else (base clamp(20px,3vw,36px)) —
+         previously squared off (border-radius:0) here for the
+         full-bleed mobile map, per request now rounded instead. */
 
       /* The map art now fills the full width of the frame edge-to-edge
          (cover, not contain) — any extra height the image doesn't fit
@@ -1708,11 +1890,11 @@ button {
         background-position: center bottom;
       }
 
-      /* The 1px border inherited from .stage was barely visible once
-         the art goes full-bleed to the screen edge — thickened and
-         tinted gold so it reads as an intentional frame instead of a
-         stray hairline. */
-      #gameLayout.on-map .stage {
+      /* Frame border (thickness + gold tint) is on the shared .stage
+         rule now (see below) instead of scoped to on-map, so the
+         exact same frame surrounds the game world during gameplay
+         too — not just the map. */
+      .stage {
         border-width: 3px;
         border-color: rgba(248, 217, 139, .45);
       }
@@ -1776,36 +1958,34 @@ button {
       #gameLayout.on-map .howtoplay-btn { display: inline-flex; order: -1; }
 
       /* Title image (images/game-holisticgametiteltext.png) — moved by
-         JS (see the mobile branch of layoutSideExtras()) out of the
-         map artwork and into the side panel, right below the icon bar,
-         so it renders as a normal header ABOVE the map image instead
-         of floating on top of it. That relocation is also what shrinks
-         the map image itself: the side panel's real content height
-         (icon bar + this title) simply leaves less of the fixed 100svh
-         layout for the map's flex-grow area below it. */
-      #gameLayout.on-map .map-brand {
-        display: block;
+         JS (see the mobile branch of layoutSideExtras()) into the icon
+         bar itself, between the "how to play" and login icons, so all
+         three now sit on the same row instead of the logo getting its
+         own row below. */
+      #gameLayout.on-map .top-row .map-brand {
+        display: flex;
         position: static;
         left: auto;
         top: auto;
         transform: none;
         z-index: auto;
-        max-width: 100%;
-        width: 100%;
-        margin-top: 0;
+        align-items: center;
+        justify-content: center;
+        flex: 0 1 auto;
+        max-width: none;
+        width: auto;
+        margin: 0;
         text-align: center;
       }
 
-      /* Nearly doubled from clamp(30px, 8vw, 52px) — sized up and
-         re-centered (both axes) in the header area between the icon bar
-         and the map frame below it: horizontally via .map-brand's
-         text-align:center + this image's own auto side-margins, and
-         vertically via the small symmetric top/bottom margin here
-         (replacing the old tight negative pull-up, which only worked at
-         the smaller size). */
-      #gameLayout.on-map .map-brand-img {
-        max-height: clamp(56px, 15vw, 98px);
-        margin: 6px auto;
+      /* Sized to fit inside the icon row's own height (howtoplay-btn is
+         34px) rather than the old full-width header block — width:auto
+         lets it keep its natural aspect ratio instead of the base
+         rule's width:100%, which would otherwise force it to stretch. */
+      #gameLayout.on-map .top-row .map-brand-img {
+        width: auto;
+        max-height: 30px;
+        margin: 0;
       }
 
       /* The small logo that used to be the icon bar's only title is now
@@ -1985,7 +2165,7 @@ button {
         <div class="hud premium-box map-only" id="premiumBox" aria-label="Get Premium">
           <span class="premium-eyebrow">14 Days Free</span>
           <h3 class="premium-headline">Unlock Every Island</h3>
-          <p class="premium-sub">World 1 is free to play, forever. Log in to save your garden and unlock every island, plus get full Premium access on holisticloader.com.</p>
+          <p class="premium-sub"></p>
           <ul class="premium-checklist">
             <li><span class="chk">✓</span>All Islands Unlocked</li>
             <li><span class="chk">✓</span>Cloud Save &amp; Sync</li>
@@ -2048,6 +2228,17 @@ button {
   </main>
 
   <div class="toast" id="toast">Beautiful merge ✨</div>
+
+  <!-- First-time-reaching-a-level celebration — hidden/empty until
+       showLevelReveal() (JS, near placeTile()) fills it in and toggles
+       .show. Sits above everything (see .level-reveal z-index) so the
+       item can be shown big and centered, then get animated flying
+       down into the collection strip (#collection). -->
+  <div class="level-reveal" id="levelReveal" aria-live="polite">
+    <div class="level-reveal-icon" id="levelRevealIcon"></div>
+    <div class="level-reveal-text" id="levelRevealText"></div>
+    <div class="level-reveal-done" id="levelRevealDone">YOU MADE IT.<br>WELL DONE!</div>
+  </div>
 
   <div class="modal" id="gameOverModal">
     <div class="modal-card">
@@ -2148,6 +2339,123 @@ button {
   <script src="auth.js"></script>
   <script>
 /* -----------------------------------------------------------------
+   MERGE SOUND — a symphonic gong struck at 80 Hz, played every time
+   three (or more) matching items merge into a new one. The synth
+   below is ported straight from instruments.html's GONG_VOICES.symphonic
+   recipe (same partials/decay/lowpass/noise-shimmer) so it's the exact
+   same gong timbre, just simplified into a single self-contained
+   one-shot (no drag/shimmer/voice-switching, since the game only ever
+   needs one clean strike per merge).
+
+   Two things this version guards against that a naive port wouldn't:
+   - Chain merges: resolveMerges() can call this several times within
+     the same millisecond (a single tap that cascades level 3 -> 4 -> 5).
+     A compressor on the output bus plus a short amplitude "duck" on
+     back-to-back strikes (mirrors instruments.html's own duck logic)
+     stops those overlapping hits from summing into clipping/distortion.
+   - The noise "shimmer" burst used to build a fresh ~22K-sample random
+     buffer on every single call — real, avoidable CPU work sitting
+     right in the placeTile() hot path. It's now built once lazily and
+     reused (safe: multiple simultaneous AudioBufferSourceNodes can
+     share one AudioBuffer).
+
+   The AudioContext is created lazily on the first merge, inside a
+   click-driven call stack (placeTile → resolveMerges), which counts
+   as a user gesture so autoplay policies won't block it.
+----------------------------------------------------------------- */
+let mergeAc = null;
+let mergeLimiter = null; // shared DynamicsCompressor all strikes route through
+let mergeNoiseBuf = null; // shared, built once on first use
+function getMergeAc() {
+  if (!mergeAc) {
+    mergeAc = new (window.AudioContext || window.webkitAudioContext)();
+    mergeLimiter = mergeAc.createDynamicsCompressor();
+    mergeLimiter.threshold.value = -12;
+    mergeLimiter.knee.value = 6;
+    mergeLimiter.ratio.value = 12;
+    mergeLimiter.attack.value = 0.003;
+    mergeLimiter.release.value = 0.25;
+    mergeLimiter.connect(mergeAc.destination);
+  }
+  if (mergeAc.state === "suspended") mergeAc.resume();
+  return mergeAc;
+}
+function getMergeNoiseBuf(ac, dur) {
+  if (!mergeNoiseBuf) {
+    const buf = ac.createBuffer(1, Math.max(1, Math.floor(ac.sampleRate * dur)), ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+    mergeNoiseBuf = buf;
+  }
+  return mergeNoiseBuf;
+}
+const GONG_PARTIALS = [
+  [.497, .24], [.503, .24], [.994, .42], [1, .85], [1.008, .42], [1.34, .24],
+  [1.78, .16], [2.68, .14, .45], [2.71, .13, .5], [3.36, .10, .55],
+  [4.07, .075, .62], [4.97, .05, .7], [6.1, .032, .78], [7.35, .02, .85]
+];
+const GONG_DEC = 11, GONG_ATT = .03, GONG_LP = 5200, GONG_PEAK = .13,
+  GONG_NOISE = .42, GONG_NOISE_F = 1.7, GONG_NOISE_DUR = .5, GONG_HZ = 80;
+
+// Rapid-succession ducking, same idea as strikeGong() in instruments.html:
+// a chain of merges within ~1.2s of each other gets a quieter strike so the
+// overlapping decay tails don't pile up into an overloud/distorted stack.
+let lastMergeGongTime = -Infinity;
+
+function playMergeGong() {
+  const ac = getMergeAc();
+  const t0 = ac.currentTime + 0.02;
+  const nowMs = performance.now();
+  const duck = (nowMs - lastMergeGongTime) < 1200 ? .62 : 1;
+  lastMergeGongTime = nowMs;
+  const v = 0.9 * duck; // overall one-shot level
+
+  const lp = ac.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = GONG_LP;
+  const vg = ac.createGain();
+  vg.connect(lp);
+  lp.connect(mergeLimiter);
+  vg.gain.setValueAtTime(0.0001, t0);
+  vg.gain.linearRampToValueAtTime(v * GONG_PEAK, t0 + GONG_ATT);
+  vg.gain.exponentialRampToValueAtTime(0.0001, t0 + GONG_ATT + GONG_DEC);
+
+  GONG_PARTIALS.forEach(([ratio, amp, pAtt]) => {
+    const o = ac.createOscillator();
+    o.type = "sine";
+    o.frequency.value = GONG_HZ * ratio;
+    const g = ac.createGain();
+    if (pAtt != null) {
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.linearRampToValueAtTime(amp, t0 + pAtt);
+    } else {
+      g.gain.value = amp;
+    }
+    o.connect(g).connect(vg);
+    o.start(t0);
+    o.stop(t0 + GONG_ATT + GONG_DEC + 0.15);
+  });
+
+  // Soft noise "shimmer" burst at the strike, same as instruments.html —
+  // reuses the single shared buffer built by getMergeNoiseBuf() instead of
+  // generating a fresh one on every call.
+  const ndur = GONG_NOISE_DUR;
+  const nb = ac.createBufferSource();
+  nb.buffer = getMergeNoiseBuf(ac, ndur);
+  const nf = ac.createBiquadFilter();
+  nf.type = "bandpass";
+  nf.frequency.value = GONG_HZ * GONG_NOISE_F;
+  nf.Q.value = 0.7;
+  const ng = ac.createGain();
+  ng.gain.setValueAtTime(0.0001, t0);
+  ng.gain.linearRampToValueAtTime(v * GONG_PEAK * GONG_NOISE, t0 + 0.003);
+  ng.gain.exponentialRampToValueAtTime(0.0001, t0 + ndur);
+  nb.connect(nf).connect(ng).connect(vg);
+  nb.start(t0);
+  nb.stop(t0 + ndur + 0.05);
+}
+
+/* -----------------------------------------------------------------
    ITEMS — a single shared set of merge-tile art used in every world:
    { level, image, name, score }. No emoji anywhere: every tile,
    the "next up" preview, the collection strip, and the merge burst
@@ -2211,6 +2519,16 @@ const WORLD_ITEM_IMAGES = {
     3: "images/game-item-treasure3",
     4: "images/game-item-treasure4",
     5: "images/game-item-treasure5"
+  },
+  // Growth progression: speckled egg → hatching chick → fluffy fledgling
+  // → young bird → fully-plumed phoenix-like adult, matching the
+  // level-1-to-5 rarity/value ramp the shared ITEMS array uses.
+  beachBirds: {
+    1: "images/game-item-bird1",
+    2: "images/game-item-bird2",
+    3: "images/game-item-bird3",
+    4: "images/game-item-bird4",
+    5: "images/game-item-bird5"
   }
 };
 
@@ -2227,10 +2545,9 @@ const WORLD_BACKGROUNDS = {
   sunsetPlace:       "images/game-world2",
   beachBirds:        "images/game-world3",
   treasureCave:      "images/game-world4",
-  cherryBlossom:     "images/game-world5",
-
+  mountainTop:       "images/game-world5",
   jungleRuins:       "images/game-world6",
-  mountainTop:       "images/game-world7",
+  cherryBlossom:     "images/game-world7",
   theForest:         "images/game-world8",
   dragonsValley:     "images/game-world9",
   crystalPalace:     "images/game-world10",
@@ -2298,17 +2615,17 @@ const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
 const WORLD_LABELS = {
   // Islands 1-10 (map order) — key names now match their theme directly:
-  // 1. Underwater Kingdom  2. Sunset Place  3. Beach Birds
-  // 4. Treasure Cave       5. Cherry Blossom  6. Jungle Ruins
-  // 7. Mountain Top        8. The Forest      9. Dragons Valley
+  // 1. Underwater Kingdom  2. Sunset Place  3. The Bird Beach
+  // 4. Treasure Cave       5. Mountain Top   6. Jungle Ruins
+  // 7. Cherry Blossom        8. The Forest      9. Dragons Valley
   // 10. Crystal Palace
   underwaterKingdom: "Underwater", // island 1
   sunsetPlace:       "Sunset Place",       // island 2
-  beachBirds:        "Beach Birds",        // island 3
+  beachBirds:        "The Bird Beach",        // island 3
   treasureCave:      "Treasure Cave",      // island 4
-  cherryBlossom:     "Cherry Blossom",     // island 5
+  mountainTop:       "Mountain Top",       // island 5
   jungleRuins:       "Jungle Ruins",       // island 6
-  mountainTop:       "Mountain Top",       // island 7
+  cherryBlossom:     "Cherry Blossom",     // island 7
   theForest:         "The Forest",         // island 8
   dragonsValley:     "Dragons Valley",     // island 9
   crystalPalace:     "Crystal Palace",     // island 10
@@ -2417,15 +2734,19 @@ function getItem(level) {
 }
 
     // Desktop/laptop widths get 2 extra board columns (7 instead of 5) —
-    // rows stay at 5 everywhere. Declared here (not further down, where
+    // rows stay at 5 there. Declared here (not further down, where
     // applyStageAspectRatio() used to be the only thing reading it) so
     // COLS below can use it immediately at page load.
     const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px)");
 
+    // Mobile only: +1 row (added at the TOP — see addStartingTiles()
+    // below, which shifts its fixed cluster down/right to match) and +2
+    // columns (one added on each side) versus the previous 5x5 mobile
+    // board. Desktop/laptop is untouched (still 5 rows x 7 cols).
     const ROWS_DESKTOP = 5;
-    const ROWS_MOBILE = 4;
+    const ROWS_MOBILE = 5;
     let ROWS = DESKTOP_MEDIA_QUERY.matches ? ROWS_DESKTOP : ROWS_MOBILE;
-    const COLS_MOBILE = 5;
+    const COLS_MOBILE = 6;
     const COLS_DESKTOP = 7;
     let COLS = DESKTOP_MEDIA_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
 
@@ -2461,6 +2782,10 @@ function getItem(level) {
     const collectionEl = document.getElementById("collection");
     const toastEl = document.getElementById("toast");
     const modalEl = document.getElementById("gameOverModal");
+    const levelRevealEl = document.getElementById("levelReveal");
+    const levelRevealIconEl = document.getElementById("levelRevealIcon");
+    const levelRevealTextEl = document.getElementById("levelRevealText");
+    const levelRevealDoneEl = document.getElementById("levelRevealDone");
     const gameOverTextEl = document.getElementById("gameOverText");
     const worldNameEl = document.getElementById("worldName");
     const worldPickerEl = document.getElementById("worldPicker");
@@ -2496,9 +2821,10 @@ function getItem(level) {
        Also relocates the big map-screen title image (#mapBrand):
        - Desktop/laptop: unchanged — stays inside .map-screen itself,
          overlaid on top of the map artwork.
-       - Mobile: moved into the side panel, right after the icon bar,
-         so it renders as a normal header ABOVE the map image (see the
-         max-width:760px .map-brand rules) instead of floating over it.
+       - Mobile: moved into the icon bar itself (.top-row), between the
+         "how to play" and login icons, so all three sit on the same row
+         (see the max-width:760px .top-row .map-brand rules) instead of
+         the logo getting its own row below the icons.
        Called once at load and again every time DESKTOP_MEDIA_QUERY's
        "change" event fires, so resizing across the breakpoint (or
        rotating a foldable) relocates them immediately. */
@@ -2516,7 +2842,10 @@ function getItem(level) {
         // layout.
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.appendChild(homeBtnEl);
-        sidePanelEl.insertBefore(mapBrandEl, topRowEl.nextSibling);
+        // Logo goes inside the icon bar, before the login icon — its
+        // default flex order (0) naturally lands it between
+        // howtoplay-btn's order:-1 and #authRoot's order:1.
+        topRowEl.insertBefore(mapBrandEl, authRootEl);
       }
     }
     layoutSideExtras();
@@ -2637,6 +2966,7 @@ function getItem(level) {
       stageEl.style.setProperty("--world-bg", `url("${getWorldBackgroundUrl(key)}")`);
       worldNameEl.textContent = WORLD_LABELS[key] || key;
       renderWorldPicker();
+      invalidateBoardRenderCache(); // same levels can look different in the new world (WORLD_ITEM_IMAGES) — force a full repaint
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
       renderCollection();
@@ -2914,11 +3244,15 @@ function getItem(level) {
     }
 
     function addStartingTiles() {
+      // Same 3-tile cluster on both breakpoints — mobile's board is
+      // 6 cols x 5 rows now (see ROWS_MOBILE/COLS_MOBILE above), close
+      // enough to desktop's proportions that no extra shift is needed.
+      const shift = 0;
       [
         { r: 2, c: 1, level: 1 },
         { r: 2, c: 2, level: 1 },
         { r: 3, c: 2, level: 1 }
-      ].forEach(item => { board[item.r][item.c] = item.level; });
+      ].forEach(item => { board[item.r + shift][item.c + shift] = item.level; });
     }
 
     function saveHistory() {
@@ -3113,7 +3447,8 @@ function getItem(level) {
       saveHistory();
       board[r][c] = nextLevel;
       moves++;
-      const createdLevel = resolveMerges(r, c);
+      const createdLevels = resolveMerges(r, c); // every level created this move, in ascending order (a single move can cascade through several)
+      const createdLevel = createdLevels.length ? Math.max(...createdLevels) : 0;
       if (createdLevel >= 3) collection.push(createdLevel);
       nextLevel = randomNextLevel();
       updateBest();
@@ -3121,6 +3456,12 @@ function getItem(level) {
       render();
       if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
       else if (createdLevel > 0) showToast("Beautiful merge");
+      // First-time-ever reaching a given level (2 through the top level)
+      // gets the big celebratory reveal — see showLevelReveal() below.
+      // Queued so a move that cascades through multiple new levels in
+      // one go still shows them one at a time instead of overlapping.
+      const newlyReachedLevels = createdLevels.filter(level => level >= 2 && markLevelFirstSeen(level));
+      if (newlyReachedLevels.length) queueLevelReveals(newlyReachedLevels);
       if (isFull()) showGameOver();
       syncToCloud(false);
     }
@@ -3128,7 +3469,7 @@ function getItem(level) {
     function resolveMerges(startR, startC) {
       let currentR = startR;
       let currentC = startC;
-      let highestCreated = 0;
+      const createdLevels = [];
       let keepMerging = true;
       while (keepMerging) {
         keepMerging = false;
@@ -3140,12 +3481,113 @@ function getItem(level) {
           board[currentR][currentC] = level + 1;
           const createdItem = getItem(level + 1);
           score += createdItem.score * group.length;
-          highestCreated = Math.max(highestCreated, level + 1);
+          createdLevels.push(level + 1);
           spawnBurst(currentR, currentC, getItemImageUrl(createdItem));
+          playMergeGong();
           keepMerging = true;
         }
       }
-      return highestCreated;
+      return createdLevels;
+    }
+
+    /* -----------------------------------------------------------------
+       First-time level-reveal celebration — "seenLevelIntros" tracks,
+       per device (localStorage, not synced to the cloud save), which
+       levels have already gotten the big centered reveal at least once
+       so it only ever plays the very first time each one is reached.
+    ----------------------------------------------------------------- */
+    let seenLevelIntros = new Set();
+    try {
+      seenLevelIntros = new Set(JSON.parse(localStorage.getItem("seenLevelIntros") || "[]"));
+    } catch (err) { /* ignore malformed/missing storage */ }
+
+    function markLevelFirstSeen(level) {
+      if (seenLevelIntros.has(level)) return false;
+      seenLevelIntros.add(level);
+      try {
+        localStorage.setItem("seenLevelIntros", JSON.stringify([...seenLevelIntros]));
+      } catch (err) { /* storage unavailable — reveal will just replay next time */ }
+      return true;
+    }
+
+    const LEVEL_REVEAL_HOLD_MS = 2000; // how long the big icon stays centered before flying down
+    const LEVEL_REVEAL_FLY_MS = 650;   // duration of the fly-down-to-collection animation
+    let levelRevealQueue = [];
+    let levelRevealBusy = false;
+
+    function queueLevelReveals(levels) {
+      levelRevealQueue.push(...levels);
+      processLevelRevealQueue();
+    }
+
+    function processLevelRevealQueue() {
+      if (levelRevealBusy || !levelRevealQueue.length) return;
+      levelRevealBusy = true;
+      const level = levelRevealQueue.shift();
+      showLevelReveal(level, () => {
+        levelRevealBusy = false;
+        processLevelRevealQueue();
+      });
+    }
+
+    function showLevelReveal(level, onDone) {
+      const item = getItem(level);
+      const total = currentWorldItems().length;
+
+      levelRevealIconEl.removeAttribute("style");
+      levelRevealIconEl.classList.remove("pop");
+      levelRevealIconEl.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = getItemImageUrl(item);
+      img.alt = item.name;
+      img.draggable = false;
+      img.decoding = "async";
+      levelRevealIconEl.appendChild(img);
+
+      levelRevealTextEl.textContent = `${level}/${total}`;
+      levelRevealTextEl.style.opacity = "1";
+      levelRevealDoneEl.style.opacity = "1";
+      levelRevealEl.classList.toggle("well-done", level >= total);
+      levelRevealEl.classList.add("show");
+      // Restart the pop-in animation.
+      void levelRevealIconEl.offsetWidth;
+      levelRevealIconEl.classList.add("pop");
+
+      setTimeout(() => {
+        const startRect = levelRevealIconEl.getBoundingClientRect();
+        const targetRect = collectionEl.getBoundingClientRect();
+        const startX = startRect.left + startRect.width / 2;
+        const startY = startRect.top + startRect.height / 2;
+        const targetX = targetRect.left + targetRect.width / 2;
+        const targetY = targetRect.top + targetRect.height / 2;
+        const dx = targetX - startX;
+        const dy = targetY - startY;
+
+        levelRevealTextEl.style.opacity = "0";
+        levelRevealDoneEl.style.opacity = "0";
+
+        levelRevealIconEl.classList.remove("pop");
+        levelRevealIconEl.style.position = "fixed";
+        levelRevealIconEl.style.left = `${startX}px`;
+        levelRevealIconEl.style.top = `${startY}px`;
+        levelRevealIconEl.style.width = `${startRect.width}px`;
+        levelRevealIconEl.style.height = `${startRect.height}px`;
+        levelRevealIconEl.style.margin = "0";
+        levelRevealIconEl.style.transform = "translate(-50%, -50%) scale(1)";
+        levelRevealIconEl.style.opacity = "1";
+        void levelRevealIconEl.offsetWidth; // force reflow so the transition below actually animates
+        levelRevealIconEl.style.transition = `transform ${LEVEL_REVEAL_FLY_MS}ms cubic-bezier(.4,0,.7,1), opacity ${LEVEL_REVEAL_FLY_MS}ms ease`;
+        levelRevealIconEl.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0.2)`;
+        levelRevealIconEl.style.opacity = "0.15";
+
+        setTimeout(() => {
+          levelRevealEl.classList.remove("show", "well-done");
+          levelRevealIconEl.removeAttribute("style");
+          levelRevealIconEl.classList.remove("pop");
+          levelRevealIconEl.innerHTML = "";
+          if (typeof onDone === "function") onDone();
+        }, LEVEL_REVEAL_FLY_MS);
+      }, LEVEL_REVEAL_HOLD_MS);
     }
 
     function findConnectedGroup(r, c, level) {
@@ -3223,33 +3665,81 @@ function getItem(level) {
       return img;
     }
 
+    // renderBoard() used to wipe #board with innerHTML="" and rebuild
+    // every single cell/tile/icon from scratch on every call — and it's
+    // called after every tap (via render(), from placeTile()). For a
+    // 25-42 cell board that meant destroying and recreating dozens of
+    // DOM nodes (several of them <img>, forcing a fresh decode each
+    // time) even for the ~24-41 cells that didn't change on that move.
+    // Now the grid of <button class="cell"> elements is built ONCE and
+    // reused; each render only touches the cells whose level actually
+    // changed since the last render, tracked in lastRenderedLevels.
+    // A full rebuild still happens automatically whenever ROWS/COLS
+    // themselves change (crossing the desktop/mobile breakpoint), since
+    // that's the one case the cached grid no longer matches.
+    let boardCellEls = null;       // ROWS x COLS grid of <button class="cell"> elements, reused across renders
+    let lastRenderedLevels = null; // ROWS x COLS grid of the level last painted into each cell
+
+    function paintCell(cell, level) {
+      const item = getItem(level);
+      cell.className = "cell" + (level === 0 ? " empty" : "");
+      cell.setAttribute("aria-label", level === 0 ? "Empty planting circle" : item.name);
+      cell.innerHTML = "";
+      if (level > 0) {
+        const tile = document.createElement("span");
+        tile.className = `tile level-${level}`;
+        tile.appendChild(createItemIcon(item));
+        cell.appendChild(tile);
+      }
+    }
+
     function renderBoard() {
-      boardEl.innerHTML = "";
+      const dimsMatch = boardCellEls && boardCellEls.length === ROWS && boardCellEls[0] && boardCellEls[0].length === COLS;
+      if (!dimsMatch) {
+        boardEl.innerHTML = "";
+        boardCellEls = [];
+        for (let r = 0; r < ROWS; r++) {
+          const cellRow = [];
+          for (let c = 0; c < COLS; c++) {
+            const cell = document.createElement("button");
+            cell.type = "button";
+            // Position stored as data-attributes and read by a single
+            // delegated listener on #board (added once, outside this
+            // function) — now set just once per cell (at creation)
+            // instead of on every render, since the cell element itself
+            // persists across renders.
+            cell.dataset.r = r;
+            cell.dataset.c = c;
+            boardEl.appendChild(cell);
+            cellRow.push(cell);
+          }
+          boardCellEls.push(cellRow);
+        }
+        lastRenderedLevels = null; // grid was rebuilt from scratch — repaint every cell below too
+      }
+      if (!lastRenderedLevels) {
+        lastRenderedLevels = boardCellEls.map(row => row.map(() => undefined));
+      }
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
           const level = board[r][c];
-          const item = getItem(level);
-          const cell = document.createElement("button");
-          cell.type = "button";
-          cell.className = "cell" + (level === 0 ? " empty" : "");
-          cell.setAttribute("aria-label", level === 0 ? "Empty planting circle" : item.name);
-          // Position stored as data-attributes and read by a single
-          // delegated listener on #board (added once, outside this
-          // function) instead of one new closure per cell per render —
-          // cuts listener churn on every move/merge, which matters most
-          // on the frequent re-renders after a chain of merges.
-          cell.dataset.r = r;
-          cell.dataset.c = c;
-          if (level > 0) {
-            const tile = document.createElement("span");
-            tile.className = `tile level-${level}`;
-            tile.appendChild(createItemIcon(item));
-            cell.appendChild(tile);
-          }
-          boardEl.appendChild(cell);
+          if (lastRenderedLevels[r][c] === level) continue; // nothing changed in this circle — leave its DOM alone
+          lastRenderedLevels[r][c] = level;
+          paintCell(boardCellEls[r][c], level);
         }
       }
     }
+
+    // Call before renderBoard() whenever something OTHER than the `board`
+    // array itself changes what a given level should look like — right
+    // now that's just switching worlds (each world reuses the same level
+    // numbers but has its own item art via WORLD_ITEM_IMAGES). Without
+    // this, renderBoard()'s diff would see the same levels as last time
+    // and skip repainting cells whose icon actually needs to change.
+    function invalidateBoardRenderCache() {
+      lastRenderedLevels = null;
+    }
+
 
     function renderStats() {
       scoreStatEl.textContent = formatNumber(score);
