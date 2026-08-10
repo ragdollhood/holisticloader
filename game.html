@@ -400,7 +400,7 @@
        top of the map image itself (see .map-brand below), so the old
        side-panel logo pill is hidden here instead. Mobile keeps the
        side-panel version untouched (see the max-width:1024px query). */
-    @media (min-width: 1025px) {
+    @media (min-width: 1025px), (orientation: landscape) and (max-height: 500px) {
       #gameLayout.on-map .brand-map-logo { display: none; }
     }
     #gameLayout.on-map .brand-gameplay { display: none; }
@@ -409,7 +409,7 @@
        and stats/account box on the start-map screen as during
        gameplay — not just gameplay-only anymore. Mobile keeps the
        original map/gameplay swap untouched. */
-    @media (min-width: 1025px) {
+    @media (min-width: 1025px), (orientation: landscape) and (max-height: 500px) {
       #gameLayout.on-map .brand-gameplay { display: flex; }
       #gameLayout.on-map .score.gameplay-only { display: grid; }
       /* Map screen only: show just the small wordmark image, not the
@@ -686,7 +686,7 @@ button {
       gap: 10px;
     }
 
-    @media (min-width: 1025px) {
+    @media (min-width: 1025px), (orientation: landscape) and (max-height: 500px) {
       #gameLayout:not(.on-map) .next-box {
         display: flex;
 
@@ -877,7 +877,7 @@ button {
       display: none;
     }
 
-    @media (min-width: 1025px) {
+    @media (min-width: 1025px), (orientation: landscape) and (max-height: 500px) {
       .map-brand {
         display: block;
         position: absolute;
@@ -904,7 +904,7 @@ button {
     /* Laptop/desktop only: smaller + left-aligned wordmark on the start
        screen (see .map-brand above, which handles the left placement —
        this just shrinks the image itself). */
-    @media (min-width: 1025px) {
+    @media (min-width: 1025px), (orientation: landscape) and (max-height: 500px) {
       .map-brand-img {
         /* +10% over the original clamp(40px, 8vw, 110px). */
         max-height: clamp(44px, 8.8vw, 121px);
@@ -1055,6 +1055,18 @@ button {
       display: none;
     }
 
+    /* Score box is re-shown on-map at both breakpoints (see the
+       min-width and max-width queries), but its home-thumb ("back to
+       start") button and next-item badge — which layoutSideExtras()
+       (JS) parents inside it on mobile, or inside the hidden .next-box
+       on desktop — never make sense while already on the map screen,
+       so they stay hidden no matter which container currently holds
+       them. */
+    #gameLayout.on-map .score .home-thumb,
+    #gameLayout.on-map .score .next-item-group {
+      display: none;
+    }
+
  /* .board-wrap keeps the ORIGINAL bounding box (left/top/width/height —
     which is deliberately non-square, see the vars above) but no longer
     lays out the grid itself. It's a container-query context, so the
@@ -1198,7 +1210,7 @@ button {
     /* Laptop/desktop only: bigger item artwork inside each planting
        circle (mobile keeps the 80% base size above — see its own
        media query for mobile-specific sizing). */
-    @media (min-width: 1025px) {
+    @media (min-width: 1025px), (orientation: landscape) and (max-height: 500px) {
       .tile .item-icon { width: 92%; height: 92%; }
     }
     .collection .item-icon { width: 50px; height: 50px; }
@@ -1628,7 +1640,7 @@ button {
        to .premium-box specifically (not the shared .premium-*/.gcm-*
        rules above, which the #guestClearModal popup also uses) so the
        modal's own type scale is untouched. */
-    @media (min-width: 1025px) {
+    @media (min-width: 1025px), (orientation: landscape) and (max-height: 500px) {
       .how-to-play h3 { font-size: 15px; }
       .how-to-play li { font-size: 14px; line-height: 1.5; }
 
@@ -1643,7 +1655,7 @@ button {
       .premium-box .premium-login-link { font-size: 12px; }
     }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1024px) and (orientation: portrait), (max-width: 1024px) and (min-height: 501px) {
       .screen { padding: 5px; }
 
       /* Board bounding box shrunk to ~86% of its previous size (and
@@ -1709,18 +1721,31 @@ button {
         padding: 2px;
       }
 
-      /* Gameplay only (not the map screen, which already has its own
-         top-row-above-map handling further below): let .side-panel's
+      /* Map screen, stacked layout: show the Score/Moves/Best box below
+         the map same as desktop does (its base rule is gameplay-only,
+         hidden on-map by default) — its home-thumb/next-item-group
+         children stay hidden regardless via the shared rule near
+         .gameplay-only above, since neither makes sense before a board
+         is open. */
+      #gameLayout.on-map .score.gameplay-only {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      /* Applies to both gameplay and the map screen: let .side-panel's
          children flow as if they were direct children of .game-layout
-         itself, so the top-row (world logo + world name) can be
-         reordered to sit above .stage-frame while the rest of the
-         panel (score/home thumb, world picker, collection, actions)
-         stays below the image, right where it already was. */
-      #gameLayout:not(.on-map) .side-panel {
+         itself, so the top-row (world logo + world name, or — on the
+         map screen — the icon bar) can be reordered to sit above
+         .stage-frame while the rest of the panel (score/home thumb,
+         world picker, collection, actions on gameplay; how-to-play +
+         premium box on the map screen) stays below the image, instead
+         of the map screen getting its own separate icon-bar-only
+         layout with everything else hidden. */
+      #gameLayout .side-panel {
         display: contents;
       }
 
-      #gameLayout:not(.on-map) .side-panel .top-row {
+      #gameLayout .side-panel .top-row {
         order: -1;
         position: relative;
         justify-content: flex-end;
@@ -1927,29 +1952,14 @@ button {
          Every other side-panel box (score/world-picker/collection/
          actions, plus the old text how-to-play box) is hidden here
          since none of it applies before a board is open. */
-      .screen:has(#gameLayout.on-map) { padding: 0; }
-
-      #gameLayout.on-map { width: 100vw; max-width: 100vw; height: 100svh; }
-
-      #gameLayout.on-map .stage-frame {
-        width: 100vw;
-      }
-
-      /* Corners rounded to match the same radius .stage/.map-screen
-         already use everywhere else (base clamp(20px,3vw,36px)) —
-         previously squared off (border-radius:0) here for the
-         full-bleed mobile map, per request now rounded instead. */
-
-      /* The map art now fills the full width of the frame edge-to-edge
-         (cover, not contain) — any extra height the image doesn't fit
-         gets cropped from the TOP only (background-position anchored to
-         the bottom keeps the image's bottom edge fixed to the frame's
-         bottom edge, so overflow is trimmed above instead of split
-         evenly top/bottom). */
-      #gameLayout.on-map .map-screen {
-        background-size: cover;
-        background-position: center bottom;
-      }
+      /* Map screen now sizes exactly like every other stacked screen
+         (.game-layout's own width: min(98vw, 620px) / height: calc
+         (100svh - 10px) rules further up, .stage-frame's width:100% +
+         height:auto + aspect-ratio:auto) instead of forcing full-bleed
+         100vw/100svh — and .map-screen keeps the shared background-
+         size:contain (see its base rule) instead of cover, so the
+         whole map image is always visible, just scaled down, never
+         cropped. */
 
       /* Frame border (thickness + gold tint) is on the shared .stage
          rule now (see below) instead of scoped to on-map, so the
@@ -1960,22 +1970,13 @@ button {
         border-color: rgba(248, 217, 139, .45);
       }
 
-      /* Back in normal flow (not absolutely positioned over the stage),
-         placed first via order so it renders above the image instead
-         of below it — .stage-frame comes first in the markup, but
-         visually the bar needs to sit on top. */
-      /* Padding/gap trimmed down to the minimum this header actually
-         needs (icon row + title logo, nothing more) so the map image
-         below gets as much of the fixed 100svh height as possible. */
-      #gameLayout.on-map .side-panel {
-        order: -1;
-        position: static;
-        flex: 0 0 auto;
-        max-height: none;
-        padding: 0 16px;
-        gap: 0;
-      }
-
+      /* Icon row (logo + how-to-play + account) stays above the map
+         image — same "top-row gets order:-1" mechanism the gameplay
+         screen uses (see the shared #gameLayout .side-panel /
+         .top-row rules just below, no longer scoped to :not(.on-map))
+         — just with its own icon-bar spacing/alignment here since the
+         map screen's row only ever holds 3 small icons instead of a
+         title pill + login icon. */
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
         justify-content: space-between;
@@ -1989,10 +1990,6 @@ button {
          #accountBtn vs. the fixed 34px howtoplay-btn). */
       #gameLayout.on-map .side-panel .top-row > * {
         align-self: center;
-      }
-
-      #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
-        display: none !important;
       }
 
       /* .brand (the small hidden logo pill) used to be the only other
@@ -2920,15 +2917,21 @@ function getItem(level) {
     // Desktop/laptop widths get 2 extra board columns (7 instead of 5) —
     // rows stay at 5 there. Declared here (not further down, where
     // applyStageAspectRatio() used to be the only thing reading it) so
-    // COLS below can use it immediately at page load. Width-based
-    // (not orientation-based) so a laptop window that gets narrowed
-    // switches to the stacked mobile layout (side panel below the
-    // board, correctly scaled board + island numbers) as soon as it
+    // COLS below can use it immediately at page load. Primarily
+    // width-based (not orientation-based) so a laptop window that gets
+    // narrowed switches to the stacked mobile layout (side panel below
+    // the board, correctly scaled board + island numbers) as soon as it
     // no longer has room for the side-by-side layout, instead of
-    // staying "desktop" just because it's still wider than it is
-    // tall — see the matching CSS media queries (`(min-width: 1025px)`
-    // / `(max-width: 1024px)`) further up.
-    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 1025px)");
+    // staying "desktop" just because it's still wider than it is tall.
+    // The one exception is a genuine phone turned sideways: narrow
+    // width but also short (max-height: 500px covers real phones —
+    // tablets like iPad are taller than that even in landscape), which
+    // still gets the side-by-side desktop layout since the stacked
+    // layout looks wrong squeezed into a short landscape strip — see
+    // the matching CSS media queries (`(min-width: 1025px), (orientation:
+    // landscape) and (max-height: 500px)` / its exact complement)
+    // further up.
+    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 1025px), (orientation: landscape) and (max-height: 500px)");
 
     // Mobile only: +1 row (added at the TOP — see addStartingTiles()
     // below, which shifts its fixed cluster down/right to match) and +2
