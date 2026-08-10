@@ -470,6 +470,15 @@
       position: static;
     }
 
+    /* Belt-and-suspenders fix for the account icon floating above modal
+       dialogs (auth-ui.css positions it fixed in the corner with its own
+       z-index we don't control) — while any .modal is open, hide it
+       outright so it can never sit on top of a modal's close button. */
+    body.any-modal-open #authRoot,
+    body.any-modal-open #accountBtn {
+      visibility: hidden !important;
+    }
+
     /* auth-ui.css draws a rounded-rectangle frame (border + background)
        around the account button, which sits right at this page's own
        rounded stage corner and ends up looking clipped/misaligned.
@@ -1527,6 +1536,7 @@ button {
     .modal.show { display: grid; }
 
     .modal-card {
+      position: relative;
       width: min(520px, 100%);
       border-radius: 34px;
       border: 1px solid rgba(248,217,139,.32);
@@ -1537,6 +1547,35 @@ button {
       box-shadow: 0 30px 110px rgba(0,0,0,.65);
       padding: 30px;
       text-align: center;
+    }
+
+    /* "X" close button pinned to the card's own top-right corner —
+       always above the card's content (z-index) and, via body's
+       .any-modal-open rule further down, above the fixed account
+       icon too, so it's never hidden behind it. */
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 5;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .modal-close:hover, .modal-close:focus-visible {
+      background: rgba(255,255,255,.16);
+      color: var(--text);
+      outline: none;
     }
 
     .modal-card .big {
@@ -2014,6 +2053,28 @@ button {
         flex: 0 0 auto;
         margin: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
       }
+
+      /* Guest "island cleared" upsell — pushed down from the very top
+         of the screen (instead of vertically centered) so it always
+         sits clear of the account icon in the corner, and shrunk a
+         bit so it comfortably fits as a smaller box. */
+      #guestClearModal {
+        align-items: flex-start;
+        padding-top: 56px;
+      }
+      #guestClearModal .guest-clear-card {
+        width: min(400px, 100%);
+        padding: 20px 18px 16px;
+        max-height: calc(100svh - 76px);
+        overflow-y: auto;
+      }
+      #guestClearModal .gcm-kicker { font-size: 13px; margin-bottom: 3px; }
+      #guestClearModal .gcm-warning { font-size: 11px; margin-bottom: 12px; }
+      #guestClearModal .gcm-block { padding-top: 12px; }
+      #guestClearModal .gcm-headline { font-size: clamp(18px, 5.2vw, 21px); margin-bottom: 6px; }
+      #guestClearModal .gcm-sub { font-size: 11px; margin-bottom: 10px; }
+      #guestClearModal .gcm-checklist { gap: 5px; margin-bottom: 10px; }
+      #guestClearModal .gcm-checklist li { font-size: 11px; }
     }
 
     @media (max-height: 650px) {
@@ -2309,6 +2370,7 @@ button {
        shared .gcm-* rules in the CSS above). -->
   <div class="modal" id="guestClearModal" role="dialog" aria-modal="true" aria-labelledby="guestClearModalTitle">
     <div class="modal-card guest-clear-card">
+      <button type="button" class="modal-close" id="guestClearCloseBtn" aria-label="Close">✕</button>
       <p class="gcm-kicker" id="guestClearKicker">Island 1 cleared! 🌱</p>
       <p class="gcm-warning">Heads up — your progress won't be saved unless you log in.</p>
 
@@ -2339,23 +2401,22 @@ button {
   <script src="auth.js"></script>
   <script>
 /* -----------------------------------------------------------------
-   MERGE SOUND — a symphonic gong struck at 80 Hz, played every time
-   three (or more) matching items merge into a new one. The synth
-   below is ported straight from instruments.html's GONG_VOICES.symphonic
-   recipe (same partials/decay/lowpass/noise-shimmer) so it's the exact
-   same gong timbre, just simplified into a single self-contained
-   one-shot (no drag/shimmer/voice-switching, since the game only ever
-   needs one clean strike per merge).
+   MERGE SOUND — a bright, happy little chime played every time three
+   (or more) matching items merge into a new one: a quick ascending
+   major arpeggio (C5-E5-G5-C6) with a bell-like sparkle on top of
+   each note, plus a soft high shimmer at the end. Replaces the
+   previous low symphonic-gong strike with something more upbeat and
+   celebratory to match a "beautiful merge" moment.
 
-   Two things this version guards against that a naive port wouldn't:
+   Two things this guards against:
    - Chain merges: resolveMerges() can call this several times within
      the same millisecond (a single tap that cascades level 3 -> 4 -> 5).
      A compressor on the output bus plus a short amplitude "duck" on
-     back-to-back strikes (mirrors instruments.html's own duck logic)
-     stops those overlapping hits from summing into clipping/distortion.
+     back-to-back strikes stops those overlapping hits from summing
+     into clipping/distortion.
    - The noise "shimmer" burst used to build a fresh ~22K-sample random
      buffer on every single call — real, avoidable CPU work sitting
-     right in the placeTile() hot path. It's now built once lazily and
+     right in the placeTile() hot path. It's built once lazily and
      reused (safe: multiple simultaneous AudioBufferSourceNodes can
      share one AudioBuffer).
 
@@ -2389,17 +2450,21 @@ function getMergeNoiseBuf(ac, dur) {
   }
   return mergeNoiseBuf;
 }
-const GONG_PARTIALS = [
-  [.497, .24], [.503, .24], [.994, .42], [1, .85], [1.008, .42], [1.34, .24],
-  [1.78, .16], [2.68, .14, .45], [2.71, .13, .5], [3.36, .10, .55],
-  [4.07, .075, .62], [4.97, .05, .7], [6.1, .032, .78], [7.35, .02, .85]
-];
-const GONG_DEC = 11, GONG_ATT = .03, GONG_LP = 5200, GONG_PEAK = .13,
-  GONG_NOISE = .42, GONG_NOISE_F = 1.7, GONG_NOISE_DUR = .5, GONG_HZ = 80;
+// Bright ascending major arpeggio — C5, E5, G5, C6 — the "happy little
+// sparkle" that plays on every merge. Notes fire in quick succession
+// (MERGE_CHIME_NOTE_GAP apart) rather than all at once, so it reads as a
+// cheerful little run up the scale instead of one flat chord.
+const MERGE_CHIME_NOTES = [523.25, 659.25, 783.99, 1046.50];
+const MERGE_CHIME_NOTE_GAP = 0.045;
+const MERGE_CHIME_ATTACK = 0.006;
+const MERGE_CHIME_DECAY = 0.42;
+const MERGE_CHIME_PEAK = 0.22;
+const MERGE_CHIME_SPARKLE_RATIO = 3; // bright overtone, an octave-plus-a-fifth above each note
+const MERGE_CHIME_SPARKLE_AMOUNT = 0.28;
 
-// Rapid-succession ducking, same idea as strikeGong() in instruments.html:
-// a chain of merges within ~1.2s of each other gets a quieter strike so the
-// overlapping decay tails don't pile up into an overloud/distorted stack.
+// Rapid-succession ducking: a chain of merges within ~1.2s of each other
+// gets a quieter chime so back-to-back cascades don't pile up into an
+// overloud stack.
 let lastMergeGongTime = -Infinity;
 
 function playMergeGong() {
@@ -2410,49 +2475,146 @@ function playMergeGong() {
   lastMergeGongTime = nowMs;
   const v = 0.9 * duck; // overall one-shot level
 
-  const lp = ac.createBiquadFilter();
-  lp.type = "lowpass";
-  lp.frequency.value = GONG_LP;
-  const vg = ac.createGain();
-  vg.connect(lp);
-  lp.connect(mergeLimiter);
-  vg.gain.setValueAtTime(0.0001, t0);
-  vg.gain.linearRampToValueAtTime(v * GONG_PEAK, t0 + GONG_ATT);
-  vg.gain.exponentialRampToValueAtTime(0.0001, t0 + GONG_ATT + GONG_DEC);
+  MERGE_CHIME_NOTES.forEach((freq, i) => {
+    const noteStart = t0 + i * MERGE_CHIME_NOTE_GAP;
+    const noteEnd = noteStart + MERGE_CHIME_ATTACK + MERGE_CHIME_DECAY;
 
-  GONG_PARTIALS.forEach(([ratio, amp, pAtt]) => {
+    const g = ac.createGain();
+    g.connect(mergeLimiter);
+    g.gain.setValueAtTime(0.0001, noteStart);
+    g.gain.linearRampToValueAtTime(v * MERGE_CHIME_PEAK, noteStart + MERGE_CHIME_ATTACK);
+    g.gain.exponentialRampToValueAtTime(0.0001, noteEnd);
+
+    // Fundamental — a clean sine "ding" for each note.
     const o = ac.createOscillator();
     o.type = "sine";
-    o.frequency.value = GONG_HZ * ratio;
-    const g = ac.createGain();
-    if (pAtt != null) {
-      g.gain.setValueAtTime(0.0001, t0);
-      g.gain.linearRampToValueAtTime(amp, t0 + pAtt);
-    } else {
-      g.gain.value = amp;
-    }
-    o.connect(g).connect(vg);
-    o.start(t0);
-    o.stop(t0 + GONG_ATT + GONG_DEC + 0.15);
+    o.frequency.value = freq;
+    o.connect(g);
+    o.start(noteStart);
+    o.stop(noteEnd + 0.1);
+
+    // Bright overtone layered on top for a little bell-like sparkle.
+    const sparkleGain = ac.createGain();
+    sparkleGain.gain.value = MERGE_CHIME_SPARKLE_AMOUNT;
+    sparkleGain.connect(g);
+    const sparkle = ac.createOscillator();
+    sparkle.type = "sine";
+    sparkle.frequency.value = freq * MERGE_CHIME_SPARKLE_RATIO;
+    sparkle.connect(sparkleGain);
+    sparkle.start(noteStart);
+    sparkle.stop(noteEnd + 0.1);
   });
 
-  // Soft noise "shimmer" burst at the strike, same as instruments.html —
-  // reuses the single shared buffer built by getMergeNoiseBuf() instead of
-  // generating a fresh one on every call.
-  const ndur = GONG_NOISE_DUR;
+  // A soft high shimmer right at the end of the run, like a little
+  // twinkle — reuses the single shared noise buffer built by
+  // getMergeNoiseBuf() instead of generating a fresh one on every call.
+  const shimmerStart = t0 + (MERGE_CHIME_NOTES.length - 1) * MERGE_CHIME_NOTE_GAP;
+  const ndur = 0.35;
   const nb = ac.createBufferSource();
   nb.buffer = getMergeNoiseBuf(ac, ndur);
   const nf = ac.createBiquadFilter();
   nf.type = "bandpass";
-  nf.frequency.value = GONG_HZ * GONG_NOISE_F;
+  nf.frequency.value = 4200;
+  nf.Q.value = 0.9;
+  const ng = ac.createGain();
+  ng.gain.setValueAtTime(0.0001, shimmerStart);
+  ng.gain.linearRampToValueAtTime(v * 0.05, shimmerStart + 0.004);
+  ng.gain.exponentialRampToValueAtTime(0.0001, shimmerStart + ndur);
+  nb.connect(nf).connect(ng).connect(mergeLimiter);
+  nb.start(shimmerStart);
+  nb.stop(shimmerStart + ndur + 0.05);
+}
+
+/* -----------------------------------------------------------------
+   LEVEL-CLEAR FANFARE — a longer, bigger celebration sound played once
+   whenever an island is actually cleared (reaching 5/5 for the first
+   time in that world — see checkWorldClear()). Builds on the same
+   "bright and happy" palette as the merge chime above (same shared
+   AudioContext/limiter/noise buffer) but is deliberately longer and
+   fuller: a quick rising run-up into a big sustained major chord with
+   a sparkly shimmer underneath, so it reads as a small triumphant
+   fanfare rather than just another merge ding.
+----------------------------------------------------------------- */
+const WORLD_CLEAR_RUN_NOTES = [392.00, 523.25, 659.25, 783.99]; // G4, C5, E5, G5 — quick run-up
+const WORLD_CLEAR_RUN_GAP = 0.09;
+const WORLD_CLEAR_RUN_ATTACK = 0.012;
+const WORLD_CLEAR_RUN_DECAY = 0.2;
+const WORLD_CLEAR_RUN_PEAK = 0.18;
+const WORLD_CLEAR_CHORD_NOTES = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 — the big landing chord
+const WORLD_CLEAR_CHORD_ATTACK = 0.02;
+const WORLD_CLEAR_CHORD_DECAY = 1.5;
+const WORLD_CLEAR_CHORD_PEAK = 0.20;
+const WORLD_CLEAR_CHORD_SPARKLE_RATIO = 2; // an octave up, for extra shine on the landing chord
+const WORLD_CLEAR_CHORD_SPARKLE_AMOUNT = 0.22;
+
+function playWorldClearFanfare() {
+  const ac = getMergeAc();
+  const t0 = ac.currentTime + 0.02;
+
+  // Quick rising run-up leading into the landing chord.
+  WORLD_CLEAR_RUN_NOTES.forEach((freq, i) => {
+    const noteStart = t0 + i * WORLD_CLEAR_RUN_GAP;
+    const noteEnd = noteStart + WORLD_CLEAR_RUN_ATTACK + WORLD_CLEAR_RUN_DECAY;
+    const g = ac.createGain();
+    g.connect(mergeLimiter);
+    g.gain.setValueAtTime(0.0001, noteStart);
+    g.gain.linearRampToValueAtTime(WORLD_CLEAR_RUN_PEAK, noteStart + WORLD_CLEAR_RUN_ATTACK);
+    g.gain.exponentialRampToValueAtTime(0.0001, noteEnd);
+
+    const o = ac.createOscillator();
+    o.type = "triangle";
+    o.frequency.value = freq;
+    o.connect(g);
+    o.start(noteStart);
+    o.stop(noteEnd + 0.05);
+  });
+
+  // Big bright chord landing at the end of the run-up — the "you did
+  // it" swell, held for over a second.
+  const chordStart = t0 + WORLD_CLEAR_RUN_NOTES.length * WORLD_CLEAR_RUN_GAP;
+  const chordEnd = chordStart + WORLD_CLEAR_CHORD_ATTACK + WORLD_CLEAR_CHORD_DECAY;
+
+  WORLD_CLEAR_CHORD_NOTES.forEach((freq) => {
+    const g = ac.createGain();
+    g.connect(mergeLimiter);
+    g.gain.setValueAtTime(0.0001, chordStart);
+    g.gain.linearRampToValueAtTime(WORLD_CLEAR_CHORD_PEAK, chordStart + WORLD_CLEAR_CHORD_ATTACK);
+    g.gain.exponentialRampToValueAtTime(0.0001, chordEnd);
+
+    const o = ac.createOscillator();
+    o.type = "sine";
+    o.frequency.value = freq;
+    o.connect(g);
+    o.start(chordStart);
+    o.stop(chordEnd + 0.15);
+
+    const sparkleGain = ac.createGain();
+    sparkleGain.gain.value = WORLD_CLEAR_CHORD_SPARKLE_AMOUNT;
+    sparkleGain.connect(g);
+    const sparkle = ac.createOscillator();
+    sparkle.type = "sine";
+    sparkle.frequency.value = freq * WORLD_CLEAR_CHORD_SPARKLE_RATIO;
+    sparkle.connect(sparkleGain);
+    sparkle.start(chordStart);
+    sparkle.stop(chordEnd + 0.15);
+  });
+
+  // Soft shimmer underneath the chord, same shared noise buffer the
+  // merge chime uses.
+  const ndur = 1.0;
+  const nb = ac.createBufferSource();
+  nb.buffer = getMergeNoiseBuf(ac, ndur);
+  const nf = ac.createBiquadFilter();
+  nf.type = "bandpass";
+  nf.frequency.value = 5000;
   nf.Q.value = 0.7;
   const ng = ac.createGain();
-  ng.gain.setValueAtTime(0.0001, t0);
-  ng.gain.linearRampToValueAtTime(v * GONG_PEAK * GONG_NOISE, t0 + 0.003);
-  ng.gain.exponentialRampToValueAtTime(0.0001, t0 + ndur);
-  nb.connect(nf).connect(ng).connect(vg);
-  nb.start(t0);
-  nb.stop(t0 + ndur + 0.05);
+  ng.gain.setValueAtTime(0.0001, chordStart);
+  ng.gain.linearRampToValueAtTime(0.06, chordStart + 0.02);
+  ng.gain.exponentialRampToValueAtTime(0.0001, chordStart + ndur);
+  nb.connect(nf).connect(ng).connect(mergeLimiter);
+  nb.start(chordStart);
+  nb.stop(chordStart + ndur + 0.05);
 }
 
 /* -----------------------------------------------------------------
@@ -2770,6 +2932,7 @@ function getItem(level) {
     let mapPage = 1;          // always 1 now — single map image holds all 10 islands (var kept for the cloud row's shape)
     let onMap = true;         // true while the map screen is showing instead of the board
     let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
+    let resetBoardOnEnterKey = null; // world key whose board should start empty next time enterWorld() opens it — set by checkWorldClear() right after an island is cleared (5/5) and the next one unlocks
 
     const stageEl = document.getElementById("stage");
     const gameLayoutEl = document.getElementById("gameLayout");
@@ -2899,7 +3062,10 @@ function getItem(level) {
     // "Level cleared" / "island locked" upsell popup for guests — see
     // openGuestUpsellModal() / checkWorldClear() / enterWorld() below.
     const guestClearModalEl = document.getElementById("guestClearModal");
-    function closeGuestUpsellModal() { guestClearModalEl.classList.remove("show"); }
+    function closeGuestUpsellModal() {
+      guestClearModalEl.classList.remove("show");
+      document.body.classList.remove("any-modal-open");
+    }
     function openGuestUpsellModal(reason) {
       const kicker = document.getElementById("guestClearKicker");
       if (kicker) {
@@ -2908,7 +3074,9 @@ function getItem(level) {
           : "Island 1 cleared! 🌱";
       }
       guestClearModalEl.classList.add("show");
+      document.body.classList.add("any-modal-open");
     }
+    document.getElementById("guestClearCloseBtn").addEventListener("click", closeGuestUpsellModal);
     document.getElementById("guestClearTrialBtn").addEventListener("click", () => {
       closeGuestUpsellModal();
       if (typeof window.openFreeTrialSignup === "function") window.openFreeTrialSignup();
@@ -3163,7 +3331,19 @@ function getItem(level) {
         return;
       }
       hideMap();
+      // First time opening the island that just unlocked (see
+      // checkWorldClear() below) — start it with a clean, empty board
+      // instead of carrying over the full board from the island that
+      // was just cleared.
+      if (key === resetBoardOnEnterKey) {
+        resetBoardOnEnterKey = null;
+        board = createEmptyBoard();
+        history = [];
+        addStartingTiles();
+        nextLevel = randomNextLevel();
+      }
       setWorld(key); // already flushes an immediate sync internally
+      render();
     }
 
     function renderMap() {
@@ -3213,6 +3393,7 @@ function getItem(level) {
       if (isWorldCleared(currentWorldKey)) return;
 
       clearedWorlds.push(currentWorldKey);
+      playWorldClearFanfare();
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
       const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
 
@@ -3226,6 +3407,7 @@ function getItem(level) {
       }
 
       showToast(nextKey ? "Island cleared! A new one has opened" : "Island cleared!");
+      resetBoardOnEnterKey = nextKey; // next island starts on a fresh board — see enterWorld()
       syncToCloud(false, true);
       setTimeout(() => showMap(nextKey), 1100);
     }
