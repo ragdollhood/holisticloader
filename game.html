@@ -1922,7 +1922,12 @@ button {
       #gameLayout.on-map { width: 100vw; max-width: 100vw; height: 100svh; }
 
       #gameLayout.on-map .stage-frame {
-        width: 100vw;
+        width: auto;
+        max-width: 100%;
+        flex: 1 1 0;
+        min-height: 0;
+        aspect-ratio: var(--stage-ratio);
+        align-self: center;
       }
 
       /* Corners rounded to match the same radius .stage/.map-screen
@@ -1930,16 +1935,16 @@ button {
          previously squared off (border-radius:0) here for the
          full-bleed mobile map, per request now rounded instead. */
 
-      /* The map art now fills the full width of the frame edge-to-edge
-         (cover, not contain) — any extra height the image doesn't fit
-         gets cropped from the TOP only (background-position anchored to
-         the bottom keeps the image's bottom edge fixed to the frame's
-         bottom edge, so overflow is trimmed above instead of split
-         evenly top/bottom). */
-      #gameLayout.on-map .map-screen {
-        background-size: cover;
-        background-position: center bottom;
-      }
+      /* No longer force-cropped. The map art now always shows in full
+         (background-size: contain, inherited from the base .map-screen
+         rule) — .stage-frame below is sized to the image's own measured
+         aspect ratio (via --stage-ratio, set by applyMapAspectRatio() in
+         the JS) rather than stretched to an arbitrary box, so "contain"
+         never needs to letterbox inside the frame either. Any leftover
+         space shows as air on the left/right of the frame instead of
+         cropping the artwork, and the island number badges — positioned
+         as % of this same frame — stay lined up with the art no matter
+         the viewport size. */
 
       /* Frame border (thickness + gold tint) is on the shared .stage
          rule now (see below) instead of scoped to on-map, so the
@@ -3176,8 +3181,14 @@ function getItem(level) {
     ----------------------------------------------------------------- */
     const ratioCache = {}; // cache key ("world:<key>" / "map:<page>") -> width/height, so re-showing something already measured this session doesn't re-fetch/re-decode its image just to read its size
 
-    function measureAndApplyRatio(cacheKey, url, isStillRelevant) {
-      if (!DESKTOP_MEDIA_QUERY.matches) return; // mobile sizes its own stage in CSS (flex-fill, no fixed aspect-ratio) — don't bother measuring
+    function measureAndApplyRatio(cacheKey, url, isStillRelevant, force) {
+      // Gameplay board (world backgrounds): mobile sizes its own stage in
+      // CSS (flex-fill, forced-square grid) — don't bother measuring there.
+      // The map screen passes force=true to opt back in on mobile too,
+      // since (unlike the board) the map image's real proportions matter
+      // for both avoiding crop and keeping the island number badges lined
+      // up with the artwork underneath them — see applyMapAspectRatio().
+      if (!force && !DESKTOP_MEDIA_QUERY.matches) return;
       const cached = ratioCache[cacheKey];
       if (cached) {
         stageFrameEl.style.setProperty("--stage-ratio", cached);
@@ -3208,7 +3219,7 @@ function getItem(level) {
       const info = MAP_PAGES[page];
       if (!info) return;
       const cacheKey = `map:${page}:${DESKTOP_MEDIA_QUERY.matches ? "laptop" : "mobile"}`;
-      measureAndApplyRatio(cacheKey, getMapBackgroundUrl(page), () => onMap && mapPage === page);
+      measureAndApplyRatio(cacheKey, getMapBackgroundUrl(page), () => onMap && mapPage === page, true);
     }
 
     // Both the mobile (portrait) and laptop (landscape) map images are
@@ -3235,10 +3246,12 @@ function getItem(level) {
       // layout's spots immediately instead of staying put on the new
       // art. Cheap either way: at most 10 buttons.
       if (onMap) renderMap();
-      if (e.matches) {
-        if (onMap) applyMapAspectRatio(mapPage); else applyStageAspectRatio(currentWorldKey);
+      if (onMap) {
+        applyMapAspectRatio(mapPage); // map always measures its own ratio, mobile or desktop
+      } else if (e.matches) {
+        applyStageAspectRatio(currentWorldKey);
       } else {
-        stageFrameEl.style.removeProperty("--stage-ratio"); // back to the CSS default (square)
+        stageFrameEl.style.removeProperty("--stage-ratio"); // gameplay board: back to the CSS default (square)
       }
       setColsForBreakpoint(e.matches);
       layoutSideExtras();
