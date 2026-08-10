@@ -32,7 +32,7 @@
      pushed further down (top +5% beyond the recentering amount) so the
      circles sit a little lower under the brand/HUD area. Mobile
      completely overrides all four of these inside its own media query
-     (see max-width:760px below), so this block only ever affects
+     (see max-width:1024px below), so this block only ever affects
      desktop/laptop. */
   --board-left: 21%;
   --board-top: calc(24% + 38px);
@@ -84,7 +84,7 @@
        else) and .side-panel (a tall vertical strip holding every button
        and readout that used to float on top of the artwork). Stacked
        instead (image on top, panel below) on narrow/mobile widths — see
-       the max-width:760px and landscape media queries further down. */
+       the max-width:1024px and landscape media queries further down. */
     .game-layout {
       display: flex;
       align-items: stretch;
@@ -399,8 +399,8 @@
     /* Laptop/desktop only: the start-map title now sits directly on
        top of the map image itself (see .map-brand below), so the old
        side-panel logo pill is hidden here instead. Mobile keeps the
-       side-panel version untouched (see the max-width:760px query). */
-    @media (min-width: 761px) {
+       side-panel version untouched (see the max-width:1024px query). */
+    @media (min-width: 1025px) {
       #gameLayout.on-map .brand-map-logo { display: none; }
     }
     #gameLayout.on-map .brand-gameplay { display: none; }
@@ -409,7 +409,7 @@
        and stats/account box on the start-map screen as during
        gameplay — not just gameplay-only anymore. Mobile keeps the
        original map/gameplay swap untouched. */
-    @media (min-width: 761px) {
+    @media (min-width: 1025px) {
       #gameLayout.on-map .brand-gameplay { display: flex; }
       #gameLayout.on-map .score.gameplay-only { display: grid; }
       /* Map screen only: show just the small wordmark image, not the
@@ -483,7 +483,7 @@
        <style> block, so this rule (same specificity, later in source
        order) wins the cascade over auth-ui.css's own absolute-corner
        default without needing !important. Laptop/desktop overrides this
-       again further down (see the 761px query) to pin it back to the
+       again further down (see the 1025px query) to pin it back to the
        page's actual top-right corner, standing alone rather than
        sharing the side panel's title row. */
     #authRoot {
@@ -555,7 +555,7 @@
     }
 
     /* HOME icon + mobile label — only ever shown on the mobile HUD (see
-       the max-width:760px query further down), which also hides
+       the max-width:1024px query further down), which also hides
        .home-thumb-img/.home-thumb-label there instead. Hidden here by
        default so desktop/laptop keeps its existing thumbnail + "Back to
        start" caption untouched. */
@@ -586,7 +586,7 @@
     }
 
     /* Mobile-only caption shown above the next-item icon — hidden on
-       desktop/laptop (see the max-width:760px query further down, which
+       desktop/laptop (see the max-width:1024px query further down, which
        turns it on and repositions the group to the bottom-right). */
     .next-item-label {
       display: none;
@@ -672,7 +672,7 @@ button {
     /* Desktop/laptop-only box at the bottom of the side panel holding
        the back-to-map thumbnail above the next-item badge (see
        layoutSideExtras() in the JS, which moves both elements in here
-       instead of the score row / stage overlay once past the 761px
+       instead of the score row / stage overlay once past the 1025px
        breakpoint). Hidden by default so mobile — which never populates
        it — never shows an empty pill; the min-width query below is the
        only thing that turns it on, and only outside the map screen. */
@@ -686,7 +686,7 @@ button {
       gap: 10px;
     }
 
-    @media (min-width: 761px) {
+    @media (min-width: 1025px) {
       #gameLayout:not(.on-map) .next-box {
         display: flex;
 
@@ -877,7 +877,7 @@ button {
       display: none;
     }
 
-    @media (min-width: 761px) {
+    @media (min-width: 1025px) {
       .map-brand {
         display: block;
         position: absolute;
@@ -904,7 +904,7 @@ button {
     /* Laptop/desktop only: smaller + left-aligned wordmark on the start
        screen (see .map-brand above, which handles the left placement —
        this just shrinks the image itself). */
-    @media (min-width: 761px) {
+    @media (min-width: 1025px) {
       .map-brand-img {
         /* +10% over the original clamp(40px, 8vw, 110px). */
         max-height: clamp(44px, 8.8vw, 121px);
@@ -1095,7 +1095,7 @@ button {
 
   /* Reduced from 4% (and further reduced from 2%) so circles sit
      closer together on laptop/desktop — mobile tightens this further
-     still, see the max-width:760px override below. */
+     still, see the max-width:1024px override below. */
   gap: 1%;
 }
 
@@ -1198,7 +1198,7 @@ button {
     /* Laptop/desktop only: bigger item artwork inside each planting
        circle (mobile keeps the 80% base size above — see its own
        media query for mobile-specific sizing). */
-    @media (min-width: 761px) {
+    @media (min-width: 1025px) {
       .tile .item-icon { width: 92%; height: 92%; }
     }
     .collection .item-icon { width: 50px; height: 50px; }
@@ -1415,7 +1415,7 @@ button {
     }
 
     /* New standalone button (mobile map screen only — see the
-       max-width:760px query further down for its actual layout).
+       max-width:1024px query further down for its actual layout).
        Hidden by default everywhere else so it never affects desktop. */
     .mobile-map-trial-btn { display: none; }
 
@@ -1628,7 +1628,7 @@ button {
        to .premium-box specifically (not the shared .premium-*/.gcm-*
        rules above, which the #guestClearModal popup also uses) so the
        modal's own type scale is untouched. */
-    @media (min-width: 761px) {
+    @media (min-width: 1025px) {
       .how-to-play h3 { font-size: 15px; }
       .how-to-play li { font-size: 14px; line-height: 1.5; }
 
@@ -1643,7 +1643,7 @@ button {
       .premium-box .premium-login-link { font-size: 12px; }
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 1024px) {
       .screen { padding: 5px; }
 
       /* Board bounding box shrunk to ~86% of its previous size (and
@@ -2300,7 +2300,7 @@ button {
 
       <!-- Mobile-only, map-screen-only "Free Trial" button — sits below
            the (shrunk) map image once #gameLayout has .on-map, see the
-           max-width:760px .mobile-map-trial-btn rules and
+           max-width:1024px .mobile-map-trial-btn rules and
            #mobileMapTrialBtn's click handler (JS) further down. Hidden
            everywhere else (desktop, or during gameplay) by default. -->
       <button type="button" class="premium-trial-btn mobile-map-trial-btn" id="mobileMapTrialBtn">
@@ -2926,9 +2926,9 @@ function getItem(level) {
     // board, correctly scaled board + island numbers) as soon as it
     // no longer has room for the side-by-side layout, instead of
     // staying "desktop" just because it's still wider than it is
-    // tall — see the matching CSS media queries (`(min-width: 761px)`
-    // / `(max-width: 760px)`) further up.
-    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px)");
+    // tall — see the matching CSS media queries (`(min-width: 1025px)`
+    // / `(max-width: 1024px)`) further up.
+    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 1025px)");
 
     // Mobile only: +1 row (added at the TOP — see addStartingTiles()
     // below, which shifts its fixed cluster down/right to match) and +2
@@ -3015,7 +3015,7 @@ function getItem(level) {
          overlaid on top of the map artwork.
        - Mobile: moved into the icon bar itself (.top-row), between the
          "how to play" and login icons, so all three sit on the same row
-         (see the max-width:760px .top-row .map-brand rules) instead of
+         (see the max-width:1024px .top-row .map-brand rules) instead of
          the logo getting its own row below the icons.
        Called once at load and again every time DESKTOP_MEDIA_QUERY's
        "change" event fires, so resizing across the breakpoint (or
@@ -3030,7 +3030,7 @@ function getItem(level) {
         // Mobile: next-item badge sits first in the score row (directly
         // under the board image, no longer overlaid on top of it),
         // then the 3 stats, then "Back to start" at the very end — see
-        // the max-width:760px .score rules for the matching 5-column
+        // the max-width:1024px .score rules for the matching 5-column
         // layout.
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.appendChild(homeBtnEl);
