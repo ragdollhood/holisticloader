@@ -52,7 +52,7 @@
      pushed further down (top +5% beyond the recentering amount) so the
      circles sit a little lower under the brand/HUD area. Mobile
      completely overrides all four of these inside its own media query
-     (see max-width:760px below), so this block only ever affects
+     (see max-width:1199px below), so this block only ever affects
      desktop/laptop. */
   --board-left: 21%;
   --board-top: calc(24% + 38px);
@@ -104,7 +104,7 @@
        else) and .side-panel (a tall vertical strip holding every button
        and readout that used to float on top of the artwork). Stacked
        instead (image on top, panel below) on narrow/mobile widths — see
-       the max-width:760px and landscape media queries further down. */
+       the max-width:1199px and landscape media queries further down. */
     .game-layout {
       display: flex;
       align-items: stretch;
@@ -404,8 +404,8 @@
     /* Laptop/desktop only: the start-map title now sits directly on
        top of the map image itself (see .map-brand below), so the old
        side-panel logo pill is hidden here instead. Mobile keeps the
-       side-panel version untouched (see the max-width:760px query). */
-    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
+       side-panel version untouched (see the max-width:1199px query). */
+    @media (min-width: 1200px) {
       #gameLayout.on-map .brand-map-logo { display: none; }
     }
     #gameLayout.on-map .brand-gameplay { display: none; }
@@ -414,7 +414,7 @@
        and stats/account box on the start-map screen as during
        gameplay — not just gameplay-only anymore. Mobile keeps the
        original map/gameplay swap untouched. */
-    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
+    @media (min-width: 1200px) {
       #gameLayout.on-map .brand-gameplay { display: flex; }
       #gameLayout.on-map .score.gameplay-only { display: grid; }
       /* Map screen only: show just the small wordmark image, not the
@@ -488,7 +488,7 @@
        <style> block, so this rule (same specificity, later in source
        order) wins the cascade over auth-ui.css's own absolute-corner
        default without needing !important. Laptop/desktop overrides this
-       again further down (see the 761px query) to pin it back to the
+       again further down (see the 1200px query) to pin it back to the
        page's actual top-right corner, standing alone rather than
        sharing the side panel's title row. */
     #authRoot {
@@ -560,7 +560,7 @@
     }
 
     /* HOME icon + mobile label — only ever shown on the mobile HUD (see
-       the max-width:760px query further down), which also hides
+       the max-width:1199px query further down), which also hides
        .home-thumb-img/.home-thumb-label there instead. Hidden here by
        default so desktop/laptop keeps its existing thumbnail + "Back to
        start" caption untouched. */
@@ -591,7 +591,7 @@
     }
 
     /* Mobile-only caption shown above the next-item icon — hidden on
-       desktop/laptop (see the max-width:760px query further down, which
+       desktop/laptop (see the max-width:1199px query further down, which
        turns it on and repositions the group to the bottom-right). */
     .next-item-label {
       display: none;
@@ -677,7 +677,7 @@ button {
     /* Desktop/laptop-only box at the bottom of the side panel holding
        the back-to-map thumbnail above the next-item badge (see
        layoutSideExtras() in the JS, which moves both elements in here
-       instead of the score row / stage overlay once past the 761px
+       instead of the score row / stage overlay once past the 1200px
        breakpoint). Hidden by default so mobile — which never populates
        it — never shows an empty pill; the min-width query below is the
        only thing that turns it on, and only outside the map screen. */
@@ -691,7 +691,7 @@ button {
       gap: 10px;
     }
 
-    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
+    @media (min-width: 1200px) {
       #gameLayout:not(.on-map) .next-box {
         display: flex;
 
@@ -861,15 +861,51 @@ button {
       z-index: 15;
       display: none;
       background-color: #1b1030;
-      background-image: var(--map-bg);
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
       border-radius: clamp(20px, 3vw, 36px);
       overflow: hidden;
     }
 
-    .map-screen.show { display: block; }
+    /* place-items: center (not "stretch") is what makes the trick below
+       work: .map-frame is left at its "auto" size instead of being
+       stretched to fill .map-screen. */
+    .map-screen.show { display: grid; place-items: center; }
+
+    /* ---------- Map frame ----------
+       Holds the actual map artwork + the numbered island badges.
+       Previously the artwork lived directly on .map-screen via
+       background-size: contain, and the island badges (.island-btn)
+       were positioned in % of .map-screen's own box. That only lined
+       badges up with the artwork when .map-screen's box HAPPENED to
+       have the same aspect ratio as the image — any other shape left
+       "contain" pillar/letterboxing the image inside the box, while
+       the badges (unaware of that letterboxing) kept using the full
+       box's % coordinates and landed off the artwork. This was most
+       visible on wide-but-short "mobile-mode" browser windows (mobile
+       layout applies under 1200px width, not just on phones) — a
+       narrow, tall window happens to be close to the portrait map
+       image's own ratio, so it looked fine there, while a wider mobile
+       window pillarboxed heavily and pushed the badges into the empty
+       bars on the sides.
+
+       Fix: give .map-frame ITSELF the image's real aspect ratio
+       (--map-ratio, measured in JS — see applyMapAspectRatio()) and
+       let it auto-size via max-width/max-height inside the centered
+       grid above — exactly the same "shrink to fit, keep ratio" result
+       as background-size: contain, except now .map-frame's own box
+       always exactly matches the visible artwork with zero letterbox
+       inside it. Badges are appended into .map-frame (JS, renderMap())
+       so their % positions are now relative to that exact box and
+       always land on the artwork, at any window shape. */
+    .map-frame {
+      position: relative;
+      max-width: 100%;
+      max-height: 100%;
+      aspect-ratio: var(--map-ratio, 1);
+      background-image: var(--map-bg);
+      background-size: cover; /* == contain here since the box ratio always matches the image ratio */
+      background-repeat: no-repeat;
+      background-position: center;
+    }
 
     /* Title image sitting directly on top of the map artwork, centered
        horizontally — laptop/desktop only (see the min-width query
@@ -882,7 +918,7 @@ button {
       display: none;
     }
 
-    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
+    @media (min-width: 1200px) {
       .map-brand {
         display: block;
         position: absolute;
@@ -909,7 +945,7 @@ button {
     /* Laptop/desktop only: smaller + left-aligned wordmark on the start
        screen (see .map-brand above, which handles the left placement —
        this just shrinks the image itself). */
-    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
+    @media (min-width: 1200px) {
       .map-brand-img {
         /* +10% over the original clamp(40px, 8vw, 110px). */
         max-height: clamp(44px, 8.8vw, 121px);
@@ -1100,7 +1136,7 @@ button {
 
   /* Reduced from 4% (and further reduced from 2%) so circles sit
      closer together on laptop/desktop — mobile tightens this further
-     still, see the max-width:760px override below. */
+     still, see the max-width:1199px override below. */
   gap: 1%;
 }
 
@@ -1197,14 +1233,23 @@ button {
     /* 80% (not 100%) so the artwork clears the circle's inscribed
        edges on every side instead of its corners/tips brushing the
        clip mask — this is the "items fit inside the circles" sizing. */
-    .tile .item-icon { width: 80%; height: 80%; }
+    /* Requested: 40% bigger item art (80% -> 112%). Capped at 96% via
+       min() because .cell clips to a circle (border-radius:50% +
+       overflow:hidden) — a bounding box past ~96% starts brushing/
+       clipping against that circular mask on a square icon, so the
+       cap keeps the artwork fully visible inside the planting circle
+       instead of letting its corners get cut off. */
+    .tile .item-icon { width: min(112%, 96%); height: min(112%, 96%); }
     .next-seed .item-icon { width: 46px; height: 46px; }
 
     /* Laptop/desktop only: bigger item artwork inside each planting
        circle (mobile keeps the 80% base size above — see its own
        media query for mobile-specific sizing). */
-    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
-      .tile .item-icon { width: 92%; height: 92%; }
+    @media (min-width: 1200px) {
+      /* Requested: 40% bigger item art (92% -> 128.8%). Capped at 96%
+         (same cap as the mobile rule above, same reasoning: the .cell
+         circle mask). */
+      .tile .item-icon { width: min(128.8%, 96%); height: min(128.8%, 96%); }
     }
     .collection .item-icon { width: 50px; height: 50px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
@@ -1420,7 +1465,7 @@ button {
     }
 
     /* New standalone button (mobile map screen only — see the
-       max-width:760px query further down for its actual layout).
+       max-width:1199px query further down for its actual layout).
        Hidden by default everywhere else so it never affects desktop. */
     .mobile-map-trial-btn { display: none; }
 
@@ -1633,7 +1678,7 @@ button {
        to .premium-box specifically (not the shared .premium-*/.gcm-*
        rules above, which the #guestClearModal popup also uses) so the
        modal's own type scale is untouched. */
-    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
+    @media (min-width: 1200px) {
       .how-to-play h3 { font-size: 15px; }
       .how-to-play li { font-size: 14px; line-height: 1.5; }
 
@@ -1648,7 +1693,14 @@ button {
       .premium-box .premium-login-link { font-size: 12px; }
     }
 
-    @media (max-width: 760px) and (orientation: portrait), (max-width: 760px) and (pointer: fine) {
+    /* Mirrors DESKTOP_MEDIA_QUERY (JS) — width-only, so this always
+       fires exactly when DESKTOP_MEDIA_QUERY.matches is false. Used to
+       also require portrait orientation or a fine (mouse) pointer,
+       which excluded coarse-pointer landscape — i.e. a tablet turned
+       sideways — from the stacked mobile layout below, leaving it on
+       the desktop side-by-side one instead. Tablets should look like
+       the phone view regardless of orientation, so that's gone now. */
+    @media (max-width: 1199px) {
       .screen { padding: 5px; }
 
       /* Board bounding box shrunk to ~86% of its previous size (and
@@ -1944,20 +1996,10 @@ button {
          previously squared off (border-radius:0) here for the
          full-bleed mobile map, per request now rounded instead. */
 
-      /* The map art must never be cropped — it always uses "contain"
-         (same as the base .map-screen rule further up), so on a
-         narrow window (whether a real portrait phone or a laptop
-         browser window shrunk below the mobile breakpoint) any
-         leftover space becomes empty air on the LEFT/RIGHT sides of
-         the frame instead of trimming the top or bottom of the
-         artwork. This used to be "cover" with a bottom-anchored crop
-         (trimming the top when the frame's height didn't match the
-         image), which is exactly the disappearing-top-of-image bug —
-         removed in favor of the non-cropping base rule. */
-      #gameLayout.on-map .map-screen {
-        background-size: contain;
-        background-position: center;
-      }
+      /* The map art must never be cropped. .map-frame (see the base
+         rule further up) always sizes itself to the artwork's real
+         aspect ratio now, so it can never need cropping on any window
+         shape — no override needed here any more. */
 
       /* Frame border (thickness + gold tint) is on the shared .stage
          rule now (see below) instead of scoped to on-map, so the
@@ -2144,6 +2186,7 @@ button {
               <span class="map-brand-fallback" id="mapBrandFallback">Holistic Game</span>
             </div>
             <div class="map-title" id="mapTitle">Choose an island</div>
+            <div class="map-frame" id="mapFrame"></div>
           </div>
 
           <!-- The ONLY HUD element left over the image itself, per spec:
@@ -2308,7 +2351,7 @@ button {
 
       <!-- Mobile-only, map-screen-only "Free Trial" button — sits below
            the (shrunk) map image once #gameLayout has .on-map, see the
-           max-width:760px .mobile-map-trial-btn rules and
+           max-width:1199px .mobile-map-trial-btn rules and
            #mobileMapTrialBtn's click handler (JS) further down. Hidden
            everywhere else (desktop, or during gameplay) by default. -->
       <button type="button" class="premium-trial-btn mobile-map-trial-btn" id="mobileMapTrialBtn">
@@ -2928,16 +2971,16 @@ function getItem(level) {
     // Desktop/laptop widths get 2 extra board columns (7 instead of 5) —
     // rows stay at 5 there. Declared here (not further down, where
     // applyStageAspectRatio() used to be the only thing reading it) so
-    // COLS below can use it immediately at page load. Also matches
-    // landscape orientation, but only on coarse-pointer (touch) devices,
-    // so a phone turned sideways still gets the laptop/desktop view
-    // instead of the stacked mobile layout. A mouse-driven laptop/
-    // desktop window narrowed below the breakpoint stays landscape but
-    // has a fine pointer, so it now correctly falls through to the
-    // width check alone and gets the stacked mobile layout too — see
-    // the matching CSS media queries (`(min-width: 761px),
-    // (orientation: landscape) and (pointer: coarse)`) further up.
-    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px), (orientation: landscape) and (pointer: coarse)");
+    // COLS below can use it immediately at page load.
+    //
+    // Width-only on purpose: this used to also match landscape
+    // orientation on coarse-pointer (touch) devices, so a tablet turned
+    // sideways got the laptop/desktop side-by-side view instead of the
+    // stacked mobile layout. Tablets should look like the phone view
+    // (image on top, controls stacked below) at any orientation, so
+    // that extra clause is gone — the width check alone now decides,
+    // matching the CSS media queries (`(min-width: 1200px)`) further up.
+    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 1200px)");
 
     // Mobile only: +1 row (added at the TOP — see addStartingTiles()
     // below, which shifts its fixed cluster down/right to match) and +2
@@ -2991,6 +3034,7 @@ function getItem(level) {
     const worldNameEl = document.getElementById("worldName");
     const worldPickerEl = document.getElementById("worldPicker");
     const mapScreenEl = document.getElementById("mapScreen");
+    const mapFrameEl = document.getElementById("mapFrame"); // holds the artwork + island badges — see .map-frame CSS
     const mapTitleEl = document.getElementById("mapTitle");
     const mapBrandEl = document.getElementById("mapBrand");
     const sidePanelEl = document.getElementById("sidePanel");
@@ -3024,7 +3068,7 @@ function getItem(level) {
          overlaid on top of the map artwork.
        - Mobile: moved into the icon bar itself (.top-row), between the
          "how to play" and login icons, so all three sit on the same row
-         (see the max-width:760px .top-row .map-brand rules) instead of
+         (see the max-width:1199px .top-row .map-brand rules) instead of
          the logo getting its own row below the icons.
        Called once at load and again every time DESKTOP_MEDIA_QUERY's
        "change" event fires, so resizing across the breakpoint (or
@@ -3039,7 +3083,7 @@ function getItem(level) {
         // Mobile: next-item badge sits first in the score row (directly
         // under the board image, no longer overlaid on top of it),
         // then the 3 stats, then "Back to start" at the very end — see
-        // the max-width:760px .score rules for the matching 5-column
+        // the max-width:1199px .score rules for the matching 5-column
         // layout.
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.appendChild(homeBtnEl);
@@ -3226,11 +3270,38 @@ function getItem(level) {
       measureAndApplyRatio(`world:${key}`, getWorldBackgroundUrl(key), () => currentWorldKey === key);
     }
 
+    // Own probe/cache, separate from measureAndApplyRatio() above: that
+    // one is desktop-only by design (world board sizing, see its own
+    // comment). .map-frame needs its ratio on EVERY window size, mobile
+    // included — the mismatch between the two is exactly what let
+    // mobile-mode windows pillarbox the map art without anything
+    // correcting for it (see .map-frame's CSS comment for the full
+    // story). Reuses the same ratioCache map (keys are already
+    // namespaced with "map:" so they can't collide with "world:" keys).
     function applyMapAspectRatio(page) {
       const info = MAP_PAGES[page];
       if (!info) return;
       const cacheKey = `map:${page}:${DESKTOP_MEDIA_QUERY.matches ? "laptop" : "mobile"}`;
-      measureAndApplyRatio(cacheKey, getMapBackgroundUrl(page), () => onMap && mapPage === page);
+      const isStillRelevant = () => onMap && mapPage === page;
+
+      const cached = ratioCache[cacheKey];
+      if (cached) {
+        mapScreenEl.style.setProperty("--map-ratio", cached);
+        return;
+      }
+      const url = getMapBackgroundUrl(page);
+      if (!url) return;
+      const probe = new Image();
+      probe.onload = () => {
+        if (!probe.naturalWidth || !probe.naturalHeight) return;
+        const ratio = probe.naturalWidth / probe.naturalHeight;
+        ratioCache[cacheKey] = ratio;
+        if (isStillRelevant()) mapScreenEl.style.setProperty("--map-ratio", ratio);
+      };
+      probe.onerror = () => {
+        console.warn(`[map aspect ratio] failed to load: ${url} — keeping current --map-ratio`);
+      };
+      probe.src = url;
     }
 
     // Both the mobile (portrait) and laptop (landscape) map images are
@@ -3256,9 +3327,12 @@ function getItem(level) {
       // the background) so the numbered circles jump to their other
       // layout's spots immediately instead of staying put on the new
       // art. Cheap either way: at most 10 buttons.
-      if (onMap) renderMap();
+      if (onMap) {
+        renderMap();
+        applyMapAspectRatio(mapPage); // mobile/laptop art swapped — re-measure for the newly-shown image
+      }
       if (e.matches) {
-        if (onMap) applyMapAspectRatio(mapPage); else applyStageAspectRatio(currentWorldKey);
+        if (!onMap) applyStageAspectRatio(currentWorldKey);
       } else {
         stageFrameEl.style.removeProperty("--stage-ratio"); // back to the CSS default (square)
       }
@@ -3393,7 +3467,7 @@ function getItem(level) {
       // Re-render every button (cheap: at most 10) rather than diffing —
       // this only runs when the map is opened, an island is cleared, or
       // the 3s "just unlocked" pulse expires.
-      mapScreenEl.querySelectorAll(".island-btn").forEach(el => el.remove());
+      mapFrameEl.querySelectorAll(".island-btn").forEach(el => el.remove());
 
       page.keys.forEach((key, i) => {
         const islandNumber = page.offset + i + 1;
@@ -3412,7 +3486,7 @@ function getItem(level) {
         btn.textContent = String(islandNumber);
         btn.setAttribute("aria-label", `${WORLD_LABELS[key] || key} — island ${islandNumber}${cleared ? ", cleared" : unlocked ? "" : ", locked"}`);
         btn.dataset.worldKey = key; // read by the single delegated listener below, added once
-        mapScreenEl.appendChild(btn);
+        mapFrameEl.appendChild(btn);
       });
     }
 
