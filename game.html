@@ -109,12 +109,19 @@
      The calc(78svh * var(--stage-ratio)) term converts the usual
      height budget into an equivalent width budget for THIS ratio, so
      a short/wide browser window still can't make the frame taller
-     than the viewport even once it's no longer square. Uses a smaller
-     share of the viewport width than before (78vw, not 96vw) now that
-     the side panel sits next to it and also needs horizontal room. */
+     than the viewport even once it's no longer square. Width budget
+     is 100vw minus what the side panel + gap + screen padding
+     ACTUALLY consume (--stage-width-budget, set right below) rather
+     than a flat 78vw — a flat share stopped working once the window
+     got narrow enough that the panel's fixed ~200px floor became a
+     bigger fraction of the total width than that flat share assumed,
+     which is what pushed the panel off-screen instead of the whole
+     layout scaling down together. */
   --stage-ratio: 1;
-  height: min(96svh, calc(78vw / var(--stage-ratio)));
+  --stage-width-budget: calc(100vw - clamp(200px, 21vw, 300px) - clamp(10px, 1.8vw, 22px) - 2 * clamp(8px, 1.6vw, 18px));
+  height: min(96svh, calc(var(--stage-width-budget) / var(--stage-ratio)));
   width: auto;
+  min-width: 0;
   aspect-ratio: var(--stage-ratio);
 
   /* Column/row counts for the game grid: 5x5 by default, overridden by
@@ -133,6 +140,7 @@
     .side-panel {
       position: relative;
       width: clamp(200px, 21vw, 300px);
+      min-width: 0;
       flex: 0 0 auto;
       display: flex;
       flex-direction: column;
