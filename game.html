@@ -93,33 +93,41 @@
       max-width: 100%;
       height: 100%;
       max-height: 100%;
+
+      /* --stage-ratio (image width / image height) defaults to a square
+         until applyStageAspectRatio() (JS, below) measures the CURRENT
+         world/map image's real natural size and overwrites it — so the
+         frame always matches whatever that image's actual proportions
+         are, instead of assuming square. Defined here (not on
+         .stage-frame) so .side-panel can read --stage-h too, via plain
+         CSS inheritance — custom properties don't cross between
+         siblings, only down from a shared ancestor. Only touched on
+         desktop/laptop widths; on mobile it's left at its default 1 and
+         the portrait media query further down takes over sizing
+         entirely, so this doesn't affect the phone layout.
+         --stage-width-budget is 100vw minus what the side panel + gap +
+         screen padding ACTUALLY consume, so the board's width (and thus
+         height, and thus the side panel's matching height) always fits
+         the real available space instead of assuming a flat share of
+         the viewport. */
+      --stage-ratio: 1;
+      --stage-width-budget: calc(100vw - clamp(200px, 21vw, 300px) - clamp(10px, 1.8vw, 22px) - 2 * clamp(8px, 1.6vw, 18px));
+      --stage-h: min(96svh, calc(var(--stage-width-budget) / var(--stage-ratio)));
     }
 
 .stage-frame {
   position: relative;
 
-  /* --stage-ratio (image width / image height) defaults to a square
-     until applyStageAspectRatio() (JS, below) measures the CURRENT
-     world image's real natural size and overwrites it — so the frame
-     always matches whatever that image's actual proportions are,
-     instead of assuming square. Only touched on desktop/laptop widths;
-     on mobile it's left at its default 1 and the media query further
-     down takes over sizing entirely (own width/height rules, own
-     forced-square .stage), so this doesn't affect the phone layout.
-     The calc(78svh * var(--stage-ratio)) term converts the usual
-     height budget into an equivalent width budget for THIS ratio, so
-     a short/wide browser window still can't make the frame taller
-     than the viewport even once it's no longer square. Width budget
-     is 100vw minus what the side panel + gap + screen padding
-     ACTUALLY consume (--stage-width-budget, set right below) rather
-     than a flat 78vw — a flat share stopped working once the window
-     got narrow enough that the panel's fixed ~200px floor became a
-     bigger fraction of the total width than that flat share assumed,
-     which is what pushed the panel off-screen instead of the whole
-     layout scaling down together. */
-  --stage-ratio: 1;
-  --stage-width-budget: calc(100vw - clamp(200px, 21vw, 300px) - clamp(10px, 1.8vw, 22px) - 2 * clamp(8px, 1.6vw, 18px));
-  --stage-h: min(96svh, calc(var(--stage-width-budget) / var(--stage-ratio)));
+  /* --stage-ratio and --stage-h are set on the shared .game-layout
+     parent now (see above) so .side-panel can match this same height —
+     this just consumes them. Width is computed directly from --stage-h
+     and --stage-ratio (rather than left to the CSS aspect-ratio
+     property) and flex-shrink is pinned to 0, so flexbox can never
+     nudge the box's width away from that exact ratio — the map/world
+     image and the island-number overlay are both positioned assuming
+     the box's real rendered ratio is EXACTLY --stage-ratio, and any
+     drift there (e.g. from flex-shrink kicking in over a rounding
+     pixel) visibly misplaces them. */
   height: var(--stage-h);
   width: calc(var(--stage-h) * var(--stage-ratio));
   flex-shrink: 0;
@@ -142,6 +150,7 @@
       width: clamp(200px, 21vw, 300px);
       min-width: 0;
       flex: 0 0 auto;
+      height: var(--stage-h);
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -1694,6 +1703,7 @@ button {
       .side-panel {
         width: 100%;
         flex: 0 0 auto;
+        height: auto;
         max-height: 46svh;
         gap: 6px;
         padding: 2px;
@@ -3180,7 +3190,7 @@ function getItem(level) {
       if (!DESKTOP_MEDIA_QUERY.matches) return; // mobile sizes its own stage in CSS (flex-fill, no fixed aspect-ratio) — don't bother measuring
       const cached = ratioCache[cacheKey];
       if (cached) {
-        stageFrameEl.style.setProperty("--stage-ratio", cached);
+        gameLayoutEl.style.setProperty("--stage-ratio", cached);
         return;
       }
       if (!url) return;
@@ -3192,7 +3202,7 @@ function getItem(level) {
         // Only apply if the thing we measured is still what's showing —
         // the player may have already navigated away before this
         // (possibly slow, uncached) image finished loading.
-        if (isStillRelevant()) stageFrameEl.style.setProperty("--stage-ratio", ratio);
+        if (isStillRelevant()) gameLayoutEl.style.setProperty("--stage-ratio", ratio);
       };
       probe.onerror = () => {
         console.warn(`[stage aspect ratio] failed to load: ${url} — keeping current --stage-ratio`);
@@ -3238,7 +3248,7 @@ function getItem(level) {
       if (e.matches) {
         if (onMap) applyMapAspectRatio(mapPage); else applyStageAspectRatio(currentWorldKey);
       } else {
-        stageFrameEl.style.removeProperty("--stage-ratio"); // back to the CSS default (square)
+        gameLayoutEl.style.removeProperty("--stage-ratio"); // back to the CSS default (square)
       }
       setColsForBreakpoint(e.matches);
       layoutSideExtras();
