@@ -2526,6 +2526,98 @@ function playMergeGong() {
 }
 
 /* -----------------------------------------------------------------
+   LEVEL-CLEAR FANFARE — a longer, bigger celebration sound played once
+   whenever an island is actually cleared (reaching 5/5 for the first
+   time in that world — see checkWorldClear()). Builds on the same
+   "bright and happy" palette as the merge chime above (same shared
+   AudioContext/limiter/noise buffer) but is deliberately longer and
+   fuller: a quick rising run-up into a big sustained major chord with
+   a sparkly shimmer underneath, so it reads as a small triumphant
+   fanfare rather than just another merge ding.
+----------------------------------------------------------------- */
+const WORLD_CLEAR_RUN_NOTES = [392.00, 523.25, 659.25, 783.99]; // G4, C5, E5, G5 — quick run-up
+const WORLD_CLEAR_RUN_GAP = 0.09;
+const WORLD_CLEAR_RUN_ATTACK = 0.012;
+const WORLD_CLEAR_RUN_DECAY = 0.2;
+const WORLD_CLEAR_RUN_PEAK = 0.18;
+const WORLD_CLEAR_CHORD_NOTES = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 — the big landing chord
+const WORLD_CLEAR_CHORD_ATTACK = 0.02;
+const WORLD_CLEAR_CHORD_DECAY = 1.5;
+const WORLD_CLEAR_CHORD_PEAK = 0.20;
+const WORLD_CLEAR_CHORD_SPARKLE_RATIO = 2; // an octave up, for extra shine on the landing chord
+const WORLD_CLEAR_CHORD_SPARKLE_AMOUNT = 0.22;
+
+function playWorldClearFanfare() {
+  const ac = getMergeAc();
+  const t0 = ac.currentTime + 0.02;
+
+  // Quick rising run-up leading into the landing chord.
+  WORLD_CLEAR_RUN_NOTES.forEach((freq, i) => {
+    const noteStart = t0 + i * WORLD_CLEAR_RUN_GAP;
+    const noteEnd = noteStart + WORLD_CLEAR_RUN_ATTACK + WORLD_CLEAR_RUN_DECAY;
+    const g = ac.createGain();
+    g.connect(mergeLimiter);
+    g.gain.setValueAtTime(0.0001, noteStart);
+    g.gain.linearRampToValueAtTime(WORLD_CLEAR_RUN_PEAK, noteStart + WORLD_CLEAR_RUN_ATTACK);
+    g.gain.exponentialRampToValueAtTime(0.0001, noteEnd);
+
+    const o = ac.createOscillator();
+    o.type = "triangle";
+    o.frequency.value = freq;
+    o.connect(g);
+    o.start(noteStart);
+    o.stop(noteEnd + 0.05);
+  });
+
+  // Big bright chord landing at the end of the run-up — the "you did
+  // it" swell, held for over a second.
+  const chordStart = t0 + WORLD_CLEAR_RUN_NOTES.length * WORLD_CLEAR_RUN_GAP;
+  const chordEnd = chordStart + WORLD_CLEAR_CHORD_ATTACK + WORLD_CLEAR_CHORD_DECAY;
+
+  WORLD_CLEAR_CHORD_NOTES.forEach((freq) => {
+    const g = ac.createGain();
+    g.connect(mergeLimiter);
+    g.gain.setValueAtTime(0.0001, chordStart);
+    g.gain.linearRampToValueAtTime(WORLD_CLEAR_CHORD_PEAK, chordStart + WORLD_CLEAR_CHORD_ATTACK);
+    g.gain.exponentialRampToValueAtTime(0.0001, chordEnd);
+
+    const o = ac.createOscillator();
+    o.type = "sine";
+    o.frequency.value = freq;
+    o.connect(g);
+    o.start(chordStart);
+    o.stop(chordEnd + 0.15);
+
+    const sparkleGain = ac.createGain();
+    sparkleGain.gain.value = WORLD_CLEAR_CHORD_SPARKLE_AMOUNT;
+    sparkleGain.connect(g);
+    const sparkle = ac.createOscillator();
+    sparkle.type = "sine";
+    sparkle.frequency.value = freq * WORLD_CLEAR_CHORD_SPARKLE_RATIO;
+    sparkle.connect(sparkleGain);
+    sparkle.start(chordStart);
+    sparkle.stop(chordEnd + 0.15);
+  });
+
+  // Soft shimmer underneath the chord, same shared noise buffer the
+  // merge chime uses.
+  const ndur = 1.0;
+  const nb = ac.createBufferSource();
+  nb.buffer = getMergeNoiseBuf(ac, ndur);
+  const nf = ac.createBiquadFilter();
+  nf.type = "bandpass";
+  nf.frequency.value = 5000;
+  nf.Q.value = 0.7;
+  const ng = ac.createGain();
+  ng.gain.setValueAtTime(0.0001, chordStart);
+  ng.gain.linearRampToValueAtTime(0.06, chordStart + 0.02);
+  ng.gain.exponentialRampToValueAtTime(0.0001, chordStart + ndur);
+  nb.connect(nf).connect(ng).connect(mergeLimiter);
+  nb.start(chordStart);
+  nb.stop(chordStart + ndur + 0.05);
+}
+
+/* -----------------------------------------------------------------
    ITEMS — a single shared set of merge-tile art used in every world:
    { level, image, name, score }. No emoji anywhere: every tile,
    the "next up" preview, the collection strip, and the merge burst
@@ -2840,6 +2932,7 @@ function getItem(level) {
     let mapPage = 1;          // always 1 now — single map image holds all 10 islands (var kept for the cloud row's shape)
     let onMap = true;         // true while the map screen is showing instead of the board
     let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
+    let resetBoardOnEnterKey = null; // world key whose board should start empty next time enterWorld() opens it — set by checkWorldClear() right after an island is cleared (5/5) and the next one unlocks
 
     const stageEl = document.getElementById("stage");
     const gameLayoutEl = document.getElementById("gameLayout");
@@ -3238,7 +3331,19 @@ function getItem(level) {
         return;
       }
       hideMap();
+      // First time opening the island that just unlocked (see
+      // checkWorldClear() below) — start it with a clean, empty board
+      // instead of carrying over the full board from the island that
+      // was just cleared.
+      if (key === resetBoardOnEnterKey) {
+        resetBoardOnEnterKey = null;
+        board = createEmptyBoard();
+        history = [];
+        addStartingTiles();
+        nextLevel = randomNextLevel();
+      }
       setWorld(key); // already flushes an immediate sync internally
+      render();
     }
 
     function renderMap() {
@@ -3288,6 +3393,7 @@ function getItem(level) {
       if (isWorldCleared(currentWorldKey)) return;
 
       clearedWorlds.push(currentWorldKey);
+      playWorldClearFanfare();
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
       const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
 
@@ -3301,6 +3407,7 @@ function getItem(level) {
       }
 
       showToast(nextKey ? "Island cleared! A new one has opened" : "Island cleared!");
+      resetBoardOnEnterKey = nextKey; // next island starts on a fresh board — see enterWorld()
       syncToCloud(false, true);
       setTimeout(() => showMap(nextKey), 1100);
     }
