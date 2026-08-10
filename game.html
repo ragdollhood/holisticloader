@@ -1518,13 +1518,18 @@ button {
       height: clamp(130px, 34vw, 240px);
       opacity: 1;
       transform-origin: center;
-      filter: drop-shadow(0 0 34px rgba(248,217,139,.65));
     }
     .level-reveal-icon img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       pointer-events: none;
+      /* Applied directly to the <img> (not the wrapping div above) so
+         the glow follows the actual artwork's alpha shape rather than
+         the icon's square bounding box — putting a drop-shadow on the
+         wrapper instead was rendering as a visible square frame around
+         the transparent item art in some browsers. */
+      filter: drop-shadow(0 0 34px rgba(248,217,139,.65));
     }
 
     .level-reveal-text {
@@ -3898,7 +3903,7 @@ function getItem(level) {
       return true;
     }
 
-    const LEVEL_REVEAL_HOLD_MS = 2000; // how long the big icon stays centered before flying down
+    const LEVEL_REVEAL_HOLD_MS = 1500; // how long the big icon stays centered before flying down
     const LEVEL_REVEAL_FLY_MS = 650;   // duration of the fly-down-to-collection animation
     let levelRevealQueue = [];
     let levelRevealBusy = false;
