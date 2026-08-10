@@ -1197,14 +1197,23 @@ button {
     /* 80% (not 100%) so the artwork clears the circle's inscribed
        edges on every side instead of its corners/tips brushing the
        clip mask — this is the "items fit inside the circles" sizing. */
-    .tile .item-icon { width: 80%; height: 80%; }
+    /* Requested: 40% bigger item art (80% -> 112%). Capped at 96% via
+       min() because .cell clips to a circle (border-radius:50% +
+       overflow:hidden) — a bounding box past ~96% starts brushing/
+       clipping against that circular mask on a square icon, so the
+       cap keeps the artwork fully visible inside the planting circle
+       instead of letting its corners get cut off. */
+    .tile .item-icon { width: min(112%, 96%); height: min(112%, 96%); }
     .next-seed .item-icon { width: 46px; height: 46px; }
 
     /* Laptop/desktop only: bigger item artwork inside each planting
        circle (mobile keeps the 80% base size above — see its own
        media query for mobile-specific sizing). */
     @media (min-width: 1200px), (orientation: landscape) and (pointer: coarse) {
-      .tile .item-icon { width: 92%; height: 92%; }
+      /* Requested: 40% bigger item art (92% -> 128.8%). Capped at 96%
+         (same cap as the mobile rule above, same reasoning: the .cell
+         circle mask). */
+      .tile .item-icon { width: min(128.8%, 96%); height: min(128.8%, 96%); }
     }
     .collection .item-icon { width: 50px; height: 50px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
