@@ -119,10 +119,10 @@
      layout scaling down together. */
   --stage-ratio: 1;
   --stage-width-budget: calc(100vw - clamp(200px, 21vw, 300px) - clamp(10px, 1.8vw, 22px) - 2 * clamp(8px, 1.6vw, 18px));
-  height: min(96svh, calc(var(--stage-width-budget) / var(--stage-ratio)));
-  width: auto;
-  min-width: 0;
-  aspect-ratio: var(--stage-ratio);
+  --stage-h: min(96svh, calc(var(--stage-width-budget) / var(--stage-ratio)));
+  height: var(--stage-h);
+  width: calc(var(--stage-h) * var(--stage-ratio));
+  flex-shrink: 0;
 
   /* Column/row counts for the game grid: 5x5 by default, overridden by
      JS (see COLS/ROWS + DESKTOP_MEDIA_QUERY below) — 7x5 on desktop/
