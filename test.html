@@ -405,7 +405,7 @@
        top of the map image itself (see .map-brand below), so the old
        side-panel logo pill is hidden here instead. Mobile keeps the
        side-panel version untouched (see the max-width:1199px query). */
-    @media (min-width: 1200px) {
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       #gameLayout.on-map .brand-map-logo { display: none; }
     }
     #gameLayout.on-map .brand-gameplay { display: none; }
@@ -414,7 +414,7 @@
        and stats/account box on the start-map screen as during
        gameplay — not just gameplay-only anymore. Mobile keeps the
        original map/gameplay swap untouched. */
-    @media (min-width: 1200px) {
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       #gameLayout.on-map .brand-gameplay { display: flex; }
       #gameLayout.on-map .score.gameplay-only { display: grid; }
       /* Map screen only: show just the small wordmark image, not the
@@ -697,7 +697,7 @@ button {
       gap: 10px;
     }
 
-    @media (min-width: 1200px) {
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       #gameLayout:not(.on-map) .next-box {
         display: flex;
 
@@ -907,7 +907,7 @@ button {
       display: none;
     }
 
-    @media (min-width: 1200px) {
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       .map-brand {
         display: block;
         position: absolute;
@@ -934,7 +934,7 @@ button {
     /* Laptop/desktop only: smaller + left-aligned wordmark on the start
        screen (see .map-brand above, which handles the left placement —
        this just shrinks the image itself). */
-    @media (min-width: 1200px) {
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       .map-brand-img {
         /* +10% over the original clamp(40px, 8vw, 110px). */
         max-height: clamp(44px, 8.8vw, 121px);
@@ -1074,6 +1074,27 @@ button {
     }
 
     .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
+
+    /* Mobile in landscape ("horizontal") ONLY — smaller number badges.
+       Scoped tightly to that one case (orientation:landscape AND
+       max-height:600px AND max-width:1199px, the same "phone turned
+       sideways" combo used elsewhere) so this never touches real
+       desktop/laptop widths (excluded by max-width) or portrait mobile
+       (excluded by orientation) — just the one requested case. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      .island-btn {
+        width: clamp(28px, 5vw, 42px);
+        height: clamp(28px, 5vw, 42px);
+        font-size: clamp(12px, 2vw, 17px);
+      }
+      .island-btn.cleared::after {
+        top: -4px;
+        right: -4px;
+        width: 13px;
+        height: 13px;
+        font-size: 9px;
+      }
+    }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
        (score, home thumbnail, world picker, collection, actions) — the
@@ -1237,7 +1258,7 @@ button {
        ".tile .item-icon" above. Kept as its own rule (rather than
        relying on the base one) in case a future desktop-only change
        to the cell/board sizing means this ever needs to diverge. */
-    @media (min-width: 1200px) {
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       .tile .item-icon { width: 96%; height: 96%; }
     }
     .collection .item-icon { width: 50px; height: 50px; }
@@ -1518,13 +1539,18 @@ button {
       height: clamp(130px, 34vw, 240px);
       opacity: 1;
       transform-origin: center;
-      filter: drop-shadow(0 0 34px rgba(248,217,139,.65));
     }
     .level-reveal-icon img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       pointer-events: none;
+      /* Applied directly to the <img> (not the wrapping div above) so
+         the glow follows the actual artwork's alpha shape rather than
+         the icon's square bounding box — putting a drop-shadow on the
+         wrapper instead was rendering as a visible square frame around
+         the transparent item art in some browsers. */
+      filter: drop-shadow(0 0 34px rgba(248,217,139,.65));
     }
 
     .level-reveal-text {
@@ -1667,7 +1693,7 @@ button {
        to .premium-box specifically (not the shared .premium-*/.gcm-*
        rules above, which the #guestClearModal popup also uses) so the
        modal's own type scale is untouched. */
-    @media (min-width: 1200px) {
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       .how-to-play h3 { font-size: 15px; }
       .how-to-play li { font-size: 14px; line-height: 1.5; }
 
@@ -1682,14 +1708,26 @@ button {
       .premium-box .premium-login-link { font-size: 12px; }
     }
 
-    /* Mirrors DESKTOP_MEDIA_QUERY (JS) — width-only, so this always
-       fires exactly when DESKTOP_MEDIA_QUERY.matches is false. Used to
-       also require portrait orientation or a fine (mouse) pointer,
-       which excluded coarse-pointer landscape — i.e. a tablet turned
-       sideways — from the stacked mobile layout below, leaving it on
-       the desktop side-by-side one instead. Tablets should look like
-       the phone view regardless of orientation, so that's gone now. */
-    @media (max-width: 1199px) {
+    /* Mirrors DESKTOP_MEDIA_QUERY (JS) — matches whenever the desktop/
+       laptop layout ISN'T showing. Written as two OR'd conditions
+       instead of "and not (...)": that nested boolean form isn't
+       reliably supported on older mobile browsers (notably older iOS
+       Safari), and when a browser can't parse a media query it just
+       drops the whole rule block — silently breaking portrait mobile,
+       which is exactly what happened before this rewrite.
+         - (max-width:1199px) and (orientation:portrait): every
+           portrait phone, any height — always the stacked mobile
+           layout, regardless of how tall/short it is.
+         - (max-width:1199px) and (min-height:601px): landscape too,
+           but only once it's tall enough to not be a short landscape
+           phone (matches tablets/foldables, which should still look
+           like the phone view — untouched from before).
+       Together these are the exact inverse of DESKTOP_MEDIA_QUERY's
+       own OR condition above (De Morgan's law), so a short landscape
+       phone (under 1200px wide AND max-height:600px) matches NEITHER
+       line here and falls through to the desktop/laptop layout
+       instead, same as intended. */
+    @media (max-width: 1199px) and (orientation: portrait), (max-width: 1199px) and (min-height: 601px) {
       .screen { padding: 5px; }
 
       /* Board bounding box shrunk to ~86% of its previous size (and
@@ -2737,11 +2775,11 @@ const WORLD_ITEM_IMAGES = {
     5: "images/game-item-underwater5"
   },
   sunsetPlace: {
-    1: "images/game-item-magic1",
-    2: "images/game-item-magic2",
-    3: "images/game-item-magic3",
-    4: "images/game-item-magic4",
-    5: "images/game-item-magic5"
+    1: "images/game-item-grow1",
+    2: "images/game-item-grow2",
+    3: "images/game-item-grow3",
+    4: "images/game-item-grow4",
+    5: "images/game-item-grow5"
   },
   treasureCave: {
     1: "images/game-item-treasure1",
@@ -2773,6 +2811,20 @@ const WORLD_ITEM_IMAGES = {
     3: "images/game-item-drake3",
     4: "images/game-item-drake4",
     5: "images/game-item-drake5"
+  },
+  cherryBlossom: {
+    1: "images/game-item-cherry1",
+    2: "images/game-item-cherry2",
+    3: "images/game-item-cherry3",
+    4: "images/game-item-cherry4",
+    5: "images/game-item-cherry5"
+  },
+  mountainTop: {
+    1: "images/game-item-magic1",
+    2: "images/game-item-magic2",
+    3: "images/game-item-magic3",
+    4: "images/game-item-magic4",
+    5: "images/game-item-magic5"
   }
 };
 
@@ -2789,11 +2841,11 @@ const WORLD_BACKGROUNDS = {
   sunsetPlace:       "images/game-world2",
   beachBirds:        "images/game-world3",
   treasureCave:      "images/game-world4",
-  mountainTop:       "images/game-world5",
+  cherryBlossom:     "images/game-world5",
   jungleRuins:       "images/game-world6",
-  cherryBlossom:     "images/game-world7",
+  dragonsValley:     "images/game-world7",
   theForest:         "images/game-world8",
-  dragonsValley:     "images/game-world9",
+  mountainTop:       "images/game-world9",
   crystalPalace:     "images/game-world10",
 
   iceCavern:       "images/game-world11",
@@ -2860,18 +2912,18 @@ const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 const WORLD_LABELS = {
   // Islands 1-10 (map order) — key names now match their theme directly:
   // 1. Underwater Kingdom  2. Sunset Place  3. The Bird Beach
-  // 4. Treasure Cave       5. Mountain Top   6. Jungle Ruins
-  // 7. Cherry Blossom        8. The Forest      9. Dragons Valley
+  // 4. Treasure Cave       5. Cherry Blossom 6. Jungle Ruins
+  // 7. Dragons Valley      8. The Forest      9. Mountain Top
   // 10. Crystal Palace
   underwaterKingdom: "Underwater", // island 1
   sunsetPlace:       "Sunset Place",       // island 2
   beachBirds:        "The Bird Beach",        // island 3
   treasureCave:      "Treasure Cave",      // island 4
-  mountainTop:       "Mountain Top",       // island 5
+  cherryBlossom:     "Cherry Blossom",     // island 5
   jungleRuins:       "Jungle Ruins",       // island 6
-  cherryBlossom:     "Cherry Blossom",     // island 7
+  dragonsValley:     "Dragons Valley",     // island 7
   theForest:         "The Forest",         // island 8
-  dragonsValley:     "Dragons Valley",     // island 9
+  mountainTop:       "Mountain Top",       // island 9
   crystalPalace:     "Crystal Palace",     // island 10
 
   // Islands 11-20 — not on the current map art, names unchanged.
@@ -2989,7 +3041,11 @@ function getItem(level) {
     // (image on top, controls stacked below) at any orientation, so
     // that extra clause is gone — the width check alone now decides,
     // matching the CSS media queries (`(min-width: 1200px)`) further up.
-    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 1200px)");
+    // Also matches short landscape phones (orientation:landscape AND
+    // max-height:600px) so turning a phone sideways switches it into
+    // this same desktop/laptop layout — see the matching CSS media
+    // query above and its comment for the height-threshold reasoning.
+    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 1200px), (orientation: landscape) and (max-height: 600px)");
 
     // Mobile only: +1 row (added at the TOP — see addStartingTiles()
     // below, which shifts its fixed cluster down/right to match) and +2
@@ -3893,7 +3949,7 @@ function getItem(level) {
       return true;
     }
 
-    const LEVEL_REVEAL_HOLD_MS = 2000; // how long the big icon stays centered before flying down
+    const LEVEL_REVEAL_HOLD_MS = 1500; // how long the big icon stays centered before flying down
     const LEVEL_REVEAL_FLY_MS = 650;   // duration of the fly-down-to-collection animation
     let levelRevealQueue = [];
     let levelRevealBusy = false;
