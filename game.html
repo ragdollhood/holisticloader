@@ -2401,23 +2401,22 @@ button {
   <script src="auth.js"></script>
   <script>
 /* -----------------------------------------------------------------
-   MERGE SOUND — a symphonic gong struck at 80 Hz, played every time
-   three (or more) matching items merge into a new one. The synth
-   below is ported straight from instruments.html's GONG_VOICES.symphonic
-   recipe (same partials/decay/lowpass/noise-shimmer) so it's the exact
-   same gong timbre, just simplified into a single self-contained
-   one-shot (no drag/shimmer/voice-switching, since the game only ever
-   needs one clean strike per merge).
+   MERGE SOUND — a bright, happy little chime played every time three
+   (or more) matching items merge into a new one: a quick ascending
+   major arpeggio (C5-E5-G5-C6) with a bell-like sparkle on top of
+   each note, plus a soft high shimmer at the end. Replaces the
+   previous low symphonic-gong strike with something more upbeat and
+   celebratory to match a "beautiful merge" moment.
 
-   Two things this version guards against that a naive port wouldn't:
+   Two things this guards against:
    - Chain merges: resolveMerges() can call this several times within
      the same millisecond (a single tap that cascades level 3 -> 4 -> 5).
      A compressor on the output bus plus a short amplitude "duck" on
-     back-to-back strikes (mirrors instruments.html's own duck logic)
-     stops those overlapping hits from summing into clipping/distortion.
+     back-to-back strikes stops those overlapping hits from summing
+     into clipping/distortion.
    - The noise "shimmer" burst used to build a fresh ~22K-sample random
      buffer on every single call — real, avoidable CPU work sitting
-     right in the placeTile() hot path. It's now built once lazily and
+     right in the placeTile() hot path. It's built once lazily and
      reused (safe: multiple simultaneous AudioBufferSourceNodes can
      share one AudioBuffer).
 
@@ -2451,17 +2450,21 @@ function getMergeNoiseBuf(ac, dur) {
   }
   return mergeNoiseBuf;
 }
-const GONG_PARTIALS = [
-  [.497, .24], [.503, .24], [.994, .42], [1, .85], [1.008, .42], [1.34, .24],
-  [1.78, .16], [2.68, .14, .45], [2.71, .13, .5], [3.36, .10, .55],
-  [4.07, .075, .62], [4.97, .05, .7], [6.1, .032, .78], [7.35, .02, .85]
-];
-const GONG_DEC = 11, GONG_ATT = .03, GONG_LP = 5200, GONG_PEAK = .13,
-  GONG_NOISE = .42, GONG_NOISE_F = 1.7, GONG_NOISE_DUR = .5, GONG_HZ = 80;
+// Bright ascending major arpeggio — C5, E5, G5, C6 — the "happy little
+// sparkle" that plays on every merge. Notes fire in quick succession
+// (MERGE_CHIME_NOTE_GAP apart) rather than all at once, so it reads as a
+// cheerful little run up the scale instead of one flat chord.
+const MERGE_CHIME_NOTES = [523.25, 659.25, 783.99, 1046.50];
+const MERGE_CHIME_NOTE_GAP = 0.045;
+const MERGE_CHIME_ATTACK = 0.006;
+const MERGE_CHIME_DECAY = 0.42;
+const MERGE_CHIME_PEAK = 0.22;
+const MERGE_CHIME_SPARKLE_RATIO = 3; // bright overtone, an octave-plus-a-fifth above each note
+const MERGE_CHIME_SPARKLE_AMOUNT = 0.28;
 
-// Rapid-succession ducking, same idea as strikeGong() in instruments.html:
-// a chain of merges within ~1.2s of each other gets a quieter strike so the
-// overlapping decay tails don't pile up into an overloud/distorted stack.
+// Rapid-succession ducking: a chain of merges within ~1.2s of each other
+// gets a quieter chime so back-to-back cascades don't pile up into an
+// overloud stack.
 let lastMergeGongTime = -Infinity;
 
 function playMergeGong() {
@@ -2472,49 +2475,54 @@ function playMergeGong() {
   lastMergeGongTime = nowMs;
   const v = 0.9 * duck; // overall one-shot level
 
-  const lp = ac.createBiquadFilter();
-  lp.type = "lowpass";
-  lp.frequency.value = GONG_LP;
-  const vg = ac.createGain();
-  vg.connect(lp);
-  lp.connect(mergeLimiter);
-  vg.gain.setValueAtTime(0.0001, t0);
-  vg.gain.linearRampToValueAtTime(v * GONG_PEAK, t0 + GONG_ATT);
-  vg.gain.exponentialRampToValueAtTime(0.0001, t0 + GONG_ATT + GONG_DEC);
+  MERGE_CHIME_NOTES.forEach((freq, i) => {
+    const noteStart = t0 + i * MERGE_CHIME_NOTE_GAP;
+    const noteEnd = noteStart + MERGE_CHIME_ATTACK + MERGE_CHIME_DECAY;
 
-  GONG_PARTIALS.forEach(([ratio, amp, pAtt]) => {
+    const g = ac.createGain();
+    g.connect(mergeLimiter);
+    g.gain.setValueAtTime(0.0001, noteStart);
+    g.gain.linearRampToValueAtTime(v * MERGE_CHIME_PEAK, noteStart + MERGE_CHIME_ATTACK);
+    g.gain.exponentialRampToValueAtTime(0.0001, noteEnd);
+
+    // Fundamental — a clean sine "ding" for each note.
     const o = ac.createOscillator();
     o.type = "sine";
-    o.frequency.value = GONG_HZ * ratio;
-    const g = ac.createGain();
-    if (pAtt != null) {
-      g.gain.setValueAtTime(0.0001, t0);
-      g.gain.linearRampToValueAtTime(amp, t0 + pAtt);
-    } else {
-      g.gain.value = amp;
-    }
-    o.connect(g).connect(vg);
-    o.start(t0);
-    o.stop(t0 + GONG_ATT + GONG_DEC + 0.15);
+    o.frequency.value = freq;
+    o.connect(g);
+    o.start(noteStart);
+    o.stop(noteEnd + 0.1);
+
+    // Bright overtone layered on top for a little bell-like sparkle.
+    const sparkleGain = ac.createGain();
+    sparkleGain.gain.value = MERGE_CHIME_SPARKLE_AMOUNT;
+    sparkleGain.connect(g);
+    const sparkle = ac.createOscillator();
+    sparkle.type = "sine";
+    sparkle.frequency.value = freq * MERGE_CHIME_SPARKLE_RATIO;
+    sparkle.connect(sparkleGain);
+    sparkle.start(noteStart);
+    sparkle.stop(noteEnd + 0.1);
   });
 
-  // Soft noise "shimmer" burst at the strike, same as instruments.html —
-  // reuses the single shared buffer built by getMergeNoiseBuf() instead of
-  // generating a fresh one on every call.
-  const ndur = GONG_NOISE_DUR;
+  // A soft high shimmer right at the end of the run, like a little
+  // twinkle — reuses the single shared noise buffer built by
+  // getMergeNoiseBuf() instead of generating a fresh one on every call.
+  const shimmerStart = t0 + (MERGE_CHIME_NOTES.length - 1) * MERGE_CHIME_NOTE_GAP;
+  const ndur = 0.35;
   const nb = ac.createBufferSource();
   nb.buffer = getMergeNoiseBuf(ac, ndur);
   const nf = ac.createBiquadFilter();
   nf.type = "bandpass";
-  nf.frequency.value = GONG_HZ * GONG_NOISE_F;
-  nf.Q.value = 0.7;
+  nf.frequency.value = 4200;
+  nf.Q.value = 0.9;
   const ng = ac.createGain();
-  ng.gain.setValueAtTime(0.0001, t0);
-  ng.gain.linearRampToValueAtTime(v * GONG_PEAK * GONG_NOISE, t0 + 0.003);
-  ng.gain.exponentialRampToValueAtTime(0.0001, t0 + ndur);
-  nb.connect(nf).connect(ng).connect(vg);
-  nb.start(t0);
-  nb.stop(t0 + ndur + 0.05);
+  ng.gain.setValueAtTime(0.0001, shimmerStart);
+  ng.gain.linearRampToValueAtTime(v * 0.05, shimmerStart + 0.004);
+  ng.gain.exponentialRampToValueAtTime(0.0001, shimmerStart + ndur);
+  nb.connect(nf).connect(ng).connect(mergeLimiter);
+  nb.start(shimmerStart);
+  nb.stop(shimmerStart + ndur + 0.05);
 }
 
 /* -----------------------------------------------------------------
