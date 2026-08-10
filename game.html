@@ -470,6 +470,15 @@
       position: static;
     }
 
+    /* Belt-and-suspenders fix for the account icon floating above modal
+       dialogs (auth-ui.css positions it fixed in the corner with its own
+       z-index we don't control) — while any .modal is open, hide it
+       outright so it can never sit on top of a modal's close button. */
+    body.any-modal-open #authRoot,
+    body.any-modal-open #accountBtn {
+      visibility: hidden !important;
+    }
+
     /* auth-ui.css draws a rounded-rectangle frame (border + background)
        around the account button, which sits right at this page's own
        rounded stage corner and ends up looking clipped/misaligned.
@@ -1423,6 +1432,73 @@ button {
       padding: 18px 4px 4px; border-top: 1px solid rgba(248,217,139,.22);
     }
 
+    /* ---------- First-time level-up celebration ----------
+       Full-screen dim overlay showing the newly-reached item big and
+       centered, held for ~2s (see LEVEL_REVEAL_HOLD_MS in the JS),
+       then the icon animates down into the collection strip while the
+       text fades out (see showLevelReveal()/flying handling in JS). */
+    .level-reveal {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 24px;
+      text-align: center;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 42%, rgba(60,30,90,.55), rgba(8,4,14,.72) 70%);
+    }
+    .level-reveal.show { display: flex; }
+
+    .level-reveal-icon {
+      width: clamp(130px, 34vw, 240px);
+      height: clamp(130px, 34vw, 240px);
+      opacity: 1;
+      transform-origin: center;
+      filter: drop-shadow(0 0 34px rgba(248,217,139,.65));
+    }
+    .level-reveal-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .level-reveal-text {
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .03em;
+      font-size: clamp(24px, 6vw, 38px);
+      color: var(--gold2);
+      text-shadow: 0 6px 24px rgba(0,0,0,.6);
+      transition: opacity .35s ease;
+    }
+
+    .level-reveal-done {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .04em;
+      line-height: 1.35;
+      font-size: clamp(16px, 4vw, 24px);
+      color: var(--lav);
+      text-shadow: 0 4px 18px rgba(0,0,0,.6);
+      transition: opacity .35s ease;
+    }
+    .level-reveal.well-done .level-reveal-done { display: block; }
+
+    @keyframes levelRevealPop {
+      0% { transform: scale(.4); opacity: 0; }
+      60% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .level-reveal.show .level-reveal-icon.pop {
+      animation: levelRevealPop .45s cubic-bezier(.2,.9,.3,1.3);
+    }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -1460,6 +1536,7 @@ button {
     .modal.show { display: grid; }
 
     .modal-card {
+      position: relative;
       width: min(520px, 100%);
       border-radius: 34px;
       border: 1px solid rgba(248,217,139,.32);
@@ -1470,6 +1547,35 @@ button {
       box-shadow: 0 30px 110px rgba(0,0,0,.65);
       padding: 30px;
       text-align: center;
+    }
+
+    /* "X" close button pinned to the card's own top-right corner —
+       always above the card's content (z-index) and, via body's
+       .any-modal-open rule further down, above the fixed account
+       icon too, so it's never hidden behind it. */
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 5;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .modal-close:hover, .modal-close:focus-visible {
+      background: rgba(255,255,255,.16);
+      color: var(--text);
+      outline: none;
     }
 
     .modal-card .big {
@@ -1668,18 +1774,21 @@ button {
          the desktop/laptop behavior above. */
       #gameLayout:not(.on-map) .side-panel .score.gameplay-only { order: 0; }
 
-      .score { padding: 6px 8px; gap: 6px; grid-template-columns: auto repeat(4, 1fr); align-items: stretch; }
+      /* Enlarged per request: bigger padding + bigger stat/label text
+         (was 6px 8px / 13px / 8px) so the next-item + score row reads
+         as a noticeably bigger box on mobile. */
+      .score { padding: 12px 10px; gap: 8px; grid-template-columns: auto repeat(4, 1fr); align-items: stretch; }
       .score .stat {
         flex: 1 1 0;
         min-width: 0;
-        padding: 5px 6px;
+        padding: 9px 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
       }
-      .stat b { font-size: 13px; }
-      .stat span { font-size: 8px; }
+      .stat b { font-size: 18px; }
+      .stat span { font-size: 10px; }
 
       /* flex: 1 1 0 (matching .score .stat above) instead of
          width: 100% — .score renders as a flex row here (not the grid
@@ -1690,15 +1799,15 @@ button {
          shrink from there" — which made this button claim far more
          space than the three stat pills beside it instead of matching
          them. flex: 1 1 0 makes it share the row equally with them. */
-      .home-thumb { flex: 1 1 0; flex-direction: column; align-items: center; justify-content: center; padding: 5px 6px; gap: 3px; width: auto; height: auto; min-width: 0; }
+      .home-thumb { flex: 1 1 0; flex-direction: column; align-items: center; justify-content: center; padding: 9px 8px; gap: 4px; width: auto; height: auto; min-width: 0; }
       .home-thumb-img,
       .home-thumb-label { display: none; }
-      .home-thumb-icon { display: block; width: 17px; height: 17px; color: var(--gold2); }
+      .home-thumb-icon { display: block; width: 22px; height: 22px; color: var(--gold2); }
       .home-thumb-mobile-label {
         display: block;
         font-family: Arial, sans-serif;
         font-weight: 800;
-        font-size: 8px;
+        font-size: 9px;
         letter-spacing: .10em;
         text-transform: uppercase;
         color: var(--muted);
@@ -1723,7 +1832,12 @@ button {
       }
 
       .world-picker { padding: 6px; gap: 6px; }
-      .collection { padding: 6px 8px; gap: 5px; }
+      /* Achievement/collection strip (box #3) — height halved per
+         request by shrinking its item icons (the icon size is what
+         drives this box's height) rather than clipping it, so nothing
+         gets visually cut off. */
+      .collection { padding: 3px 8px; gap: 4px; }
+      .collection .item-icon { width: 25px; height: 25px; }
 
       /* Mobile no longer overlays the next-item badge on top of the
          board image — it now sits in normal flow as the first cell of
@@ -1746,7 +1860,7 @@ button {
         background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.12);
         border-radius: 16px;
-        padding: 5px 6px;
+        padding: 9px 8px;
       }
       .next-item-label {
         display: none;
@@ -1939,6 +2053,28 @@ button {
         flex: 0 0 auto;
         margin: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
       }
+
+      /* Guest "island cleared" upsell — pushed down from the very top
+         of the screen (instead of vertically centered) so it always
+         sits clear of the account icon in the corner, and shrunk a
+         bit so it comfortably fits as a smaller box. */
+      #guestClearModal {
+        align-items: flex-start;
+        padding-top: 56px;
+      }
+      #guestClearModal .guest-clear-card {
+        width: min(400px, 100%);
+        padding: 20px 18px 16px;
+        max-height: calc(100svh - 76px);
+        overflow-y: auto;
+      }
+      #guestClearModal .gcm-kicker { font-size: 13px; margin-bottom: 3px; }
+      #guestClearModal .gcm-warning { font-size: 11px; margin-bottom: 12px; }
+      #guestClearModal .gcm-block { padding-top: 12px; }
+      #guestClearModal .gcm-headline { font-size: clamp(18px, 5.2vw, 21px); margin-bottom: 6px; }
+      #guestClearModal .gcm-sub { font-size: 11px; margin-bottom: 10px; }
+      #guestClearModal .gcm-checklist { gap: 5px; margin-bottom: 10px; }
+      #guestClearModal .gcm-checklist li { font-size: 11px; }
     }
 
     @media (max-height: 650px) {
@@ -2154,6 +2290,17 @@ button {
 
   <div class="toast" id="toast">Beautiful merge ✨</div>
 
+  <!-- First-time-reaching-a-level celebration — hidden/empty until
+       showLevelReveal() (JS, near placeTile()) fills it in and toggles
+       .show. Sits above everything (see .level-reveal z-index) so the
+       item can be shown big and centered, then get animated flying
+       down into the collection strip (#collection). -->
+  <div class="level-reveal" id="levelReveal" aria-live="polite">
+    <div class="level-reveal-icon" id="levelRevealIcon"></div>
+    <div class="level-reveal-text" id="levelRevealText"></div>
+    <div class="level-reveal-done" id="levelRevealDone">YOU MADE IT.<br>WELL DONE!</div>
+  </div>
+
   <div class="modal" id="gameOverModal">
     <div class="modal-card">
       <div class="big"></div>
@@ -2223,6 +2370,7 @@ button {
        shared .gcm-* rules in the CSS above). -->
   <div class="modal" id="guestClearModal" role="dialog" aria-modal="true" aria-labelledby="guestClearModalTitle">
     <div class="modal-card guest-clear-card">
+      <button type="button" class="modal-close" id="guestClearCloseBtn" aria-label="Close">✕</button>
       <p class="gcm-kicker" id="guestClearKicker">Island 1 cleared! 🌱</p>
       <p class="gcm-warning">Heads up — your progress won't be saved unless you log in.</p>
 
@@ -2696,6 +2844,10 @@ function getItem(level) {
     const collectionEl = document.getElementById("collection");
     const toastEl = document.getElementById("toast");
     const modalEl = document.getElementById("gameOverModal");
+    const levelRevealEl = document.getElementById("levelReveal");
+    const levelRevealIconEl = document.getElementById("levelRevealIcon");
+    const levelRevealTextEl = document.getElementById("levelRevealText");
+    const levelRevealDoneEl = document.getElementById("levelRevealDone");
     const gameOverTextEl = document.getElementById("gameOverText");
     const worldNameEl = document.getElementById("worldName");
     const worldPickerEl = document.getElementById("worldPicker");
@@ -2809,7 +2961,10 @@ function getItem(level) {
     // "Level cleared" / "island locked" upsell popup for guests — see
     // openGuestUpsellModal() / checkWorldClear() / enterWorld() below.
     const guestClearModalEl = document.getElementById("guestClearModal");
-    function closeGuestUpsellModal() { guestClearModalEl.classList.remove("show"); }
+    function closeGuestUpsellModal() {
+      guestClearModalEl.classList.remove("show");
+      document.body.classList.remove("any-modal-open");
+    }
     function openGuestUpsellModal(reason) {
       const kicker = document.getElementById("guestClearKicker");
       if (kicker) {
@@ -2818,7 +2973,9 @@ function getItem(level) {
           : "Island 1 cleared! 🌱";
       }
       guestClearModalEl.classList.add("show");
+      document.body.classList.add("any-modal-open");
     }
+    document.getElementById("guestClearCloseBtn").addEventListener("click", closeGuestUpsellModal);
     document.getElementById("guestClearTrialBtn").addEventListener("click", () => {
       closeGuestUpsellModal();
       if (typeof window.openFreeTrialSignup === "function") window.openFreeTrialSignup();
@@ -3357,7 +3514,8 @@ function getItem(level) {
       saveHistory();
       board[r][c] = nextLevel;
       moves++;
-      const createdLevel = resolveMerges(r, c);
+      const createdLevels = resolveMerges(r, c); // every level created this move, in ascending order (a single move can cascade through several)
+      const createdLevel = createdLevels.length ? Math.max(...createdLevels) : 0;
       if (createdLevel >= 3) collection.push(createdLevel);
       nextLevel = randomNextLevel();
       updateBest();
@@ -3365,6 +3523,12 @@ function getItem(level) {
       render();
       if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
       else if (createdLevel > 0) showToast("Beautiful merge");
+      // First-time-ever reaching a given level (2 through the top level)
+      // gets the big celebratory reveal — see showLevelReveal() below.
+      // Queued so a move that cascades through multiple new levels in
+      // one go still shows them one at a time instead of overlapping.
+      const newlyReachedLevels = createdLevels.filter(level => level >= 2 && markLevelFirstSeen(level));
+      if (newlyReachedLevels.length) queueLevelReveals(newlyReachedLevels);
       if (isFull()) showGameOver();
       syncToCloud(false);
     }
@@ -3372,7 +3536,7 @@ function getItem(level) {
     function resolveMerges(startR, startC) {
       let currentR = startR;
       let currentC = startC;
-      let highestCreated = 0;
+      const createdLevels = [];
       let keepMerging = true;
       while (keepMerging) {
         keepMerging = false;
@@ -3384,13 +3548,113 @@ function getItem(level) {
           board[currentR][currentC] = level + 1;
           const createdItem = getItem(level + 1);
           score += createdItem.score * group.length;
-          highestCreated = Math.max(highestCreated, level + 1);
+          createdLevels.push(level + 1);
           spawnBurst(currentR, currentC, getItemImageUrl(createdItem));
           playMergeGong();
           keepMerging = true;
         }
       }
-      return highestCreated;
+      return createdLevels;
+    }
+
+    /* -----------------------------------------------------------------
+       First-time level-reveal celebration — "seenLevelIntros" tracks,
+       per device (localStorage, not synced to the cloud save), which
+       levels have already gotten the big centered reveal at least once
+       so it only ever plays the very first time each one is reached.
+    ----------------------------------------------------------------- */
+    let seenLevelIntros = new Set();
+    try {
+      seenLevelIntros = new Set(JSON.parse(localStorage.getItem("seenLevelIntros") || "[]"));
+    } catch (err) { /* ignore malformed/missing storage */ }
+
+    function markLevelFirstSeen(level) {
+      if (seenLevelIntros.has(level)) return false;
+      seenLevelIntros.add(level);
+      try {
+        localStorage.setItem("seenLevelIntros", JSON.stringify([...seenLevelIntros]));
+      } catch (err) { /* storage unavailable — reveal will just replay next time */ }
+      return true;
+    }
+
+    const LEVEL_REVEAL_HOLD_MS = 2000; // how long the big icon stays centered before flying down
+    const LEVEL_REVEAL_FLY_MS = 650;   // duration of the fly-down-to-collection animation
+    let levelRevealQueue = [];
+    let levelRevealBusy = false;
+
+    function queueLevelReveals(levels) {
+      levelRevealQueue.push(...levels);
+      processLevelRevealQueue();
+    }
+
+    function processLevelRevealQueue() {
+      if (levelRevealBusy || !levelRevealQueue.length) return;
+      levelRevealBusy = true;
+      const level = levelRevealQueue.shift();
+      showLevelReveal(level, () => {
+        levelRevealBusy = false;
+        processLevelRevealQueue();
+      });
+    }
+
+    function showLevelReveal(level, onDone) {
+      const item = getItem(level);
+      const total = currentWorldItems().length;
+
+      levelRevealIconEl.removeAttribute("style");
+      levelRevealIconEl.classList.remove("pop");
+      levelRevealIconEl.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = getItemImageUrl(item);
+      img.alt = item.name;
+      img.draggable = false;
+      img.decoding = "async";
+      levelRevealIconEl.appendChild(img);
+
+      levelRevealTextEl.textContent = `${level}/${total}`;
+      levelRevealTextEl.style.opacity = "1";
+      levelRevealDoneEl.style.opacity = "1";
+      levelRevealEl.classList.toggle("well-done", level >= total);
+      levelRevealEl.classList.add("show");
+      // Restart the pop-in animation.
+      void levelRevealIconEl.offsetWidth;
+      levelRevealIconEl.classList.add("pop");
+
+      setTimeout(() => {
+        const startRect = levelRevealIconEl.getBoundingClientRect();
+        const targetRect = collectionEl.getBoundingClientRect();
+        const startX = startRect.left + startRect.width / 2;
+        const startY = startRect.top + startRect.height / 2;
+        const targetX = targetRect.left + targetRect.width / 2;
+        const targetY = targetRect.top + targetRect.height / 2;
+        const dx = targetX - startX;
+        const dy = targetY - startY;
+
+        levelRevealTextEl.style.opacity = "0";
+        levelRevealDoneEl.style.opacity = "0";
+
+        levelRevealIconEl.classList.remove("pop");
+        levelRevealIconEl.style.position = "fixed";
+        levelRevealIconEl.style.left = `${startX}px`;
+        levelRevealIconEl.style.top = `${startY}px`;
+        levelRevealIconEl.style.width = `${startRect.width}px`;
+        levelRevealIconEl.style.height = `${startRect.height}px`;
+        levelRevealIconEl.style.margin = "0";
+        levelRevealIconEl.style.transform = "translate(-50%, -50%) scale(1)";
+        levelRevealIconEl.style.opacity = "1";
+        void levelRevealIconEl.offsetWidth; // force reflow so the transition below actually animates
+        levelRevealIconEl.style.transition = `transform ${LEVEL_REVEAL_FLY_MS}ms cubic-bezier(.4,0,.7,1), opacity ${LEVEL_REVEAL_FLY_MS}ms ease`;
+        levelRevealIconEl.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0.2)`;
+        levelRevealIconEl.style.opacity = "0.15";
+
+        setTimeout(() => {
+          levelRevealEl.classList.remove("show", "well-done");
+          levelRevealIconEl.removeAttribute("style");
+          levelRevealIconEl.classList.remove("pop");
+          levelRevealIconEl.innerHTML = "";
+          if (typeof onDone === "function") onDone();
+        }, LEVEL_REVEAL_FLY_MS);
+      }, LEVEL_REVEAL_HOLD_MS);
     }
 
     function findConnectedGroup(r, c, level) {
