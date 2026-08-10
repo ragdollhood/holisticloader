@@ -27,12 +27,32 @@
       --line: var(--border);
       --bg: #10091b;
 
+  /* ---------- Layout budget (desktop/laptop) ----------
+     The exact same values used by .screen's padding, .game-layout's
+     gap, and .side-panel's width — duplicated here as variables so
+     .stage-frame (below) can size itself against the REAL horizontal
+     space left over after the side panel + gaps + page padding,
+     instead of a flat "78vw" guess. Without this, narrowing the
+     browser window could ask for a stage-frame wider than what's
+     actually left, forcing the flex row to shrink it unevenly (height
+     stays fixed, width gets squeezed) — which distorts the frame's
+     aspect ratio away from the map/world image's real ratio and made
+     the artwork appear cropped at the edges. Sizing against this
+     budget instead means the frame always fits, so nothing ever needs
+     to be cropped — any leftover room just becomes empty air on the
+     sides of the box, and the numbered island badges (positioned in
+     % of that same box) stay exactly where the map artwork puts them. */
+  --screen-pad: clamp(8px, 1.6vw, 18px);
+  --gl-gap: clamp(10px, 1.8vw, 22px);
+  --sp-width: clamp(200px, 21vw, 300px);
+  --stage-max-w: calc(100vw - (var(--screen-pad) * 2) - var(--gl-gap) - var(--sp-width));
+
   /* Laptop/desktop board bounding box — shrunk a bit (from 64%/60% to
      58%/54%) and re-centered (left +3% for the narrower width), plus
      pushed further down (top +5% beyond the recentering amount) so the
      circles sit a little lower under the brand/HUD area. Mobile
      completely overrides all four of these inside its own media query
-     (see max-width:760px below), so this block only ever affects
+     (see max-width:1199px below), so this block only ever affects
      desktop/laptop. */
   --board-left: 21%;
   --board-top: calc(24% + 38px);
@@ -84,7 +104,7 @@
        else) and .side-panel (a tall vertical strip holding every button
        and readout that used to float on top of the artwork). Stacked
        instead (image on top, panel below) on narrow/mobile widths — see
-       the max-width:760px and landscape media queries further down. */
+       the max-width:1199px and landscape media queries further down. */
     .game-layout {
       display: flex;
       align-items: stretch;
@@ -105,16 +125,22 @@
      on mobile it's left at its default 1 and the media query further
      down takes over sizing entirely (own width/height rules, own
      forced-square .stage), so this doesn't affect the phone layout.
-     The calc(78svh * var(--stage-ratio)) term converts the usual
-     height budget into an equivalent width budget for THIS ratio, so
-     a short/wide browser window still can't make the frame taller
-     than the viewport even once it's no longer square. Uses a smaller
-     share of the viewport width than before (78vw, not 96vw) now that
-     the side panel sits next to it and also needs horizontal room. */
+
+     Height is capped by TWO independent budgets, and the smaller one
+     wins: 96svh (vertical room) and calc(var(--stage-max-w) / ratio)
+     (the height that exactly fills the REAL leftover horizontal room
+     — see --stage-max-w above — without the side panel/gaps/padding
+     being pushed off-screen). Only height is ever set explicitly;
+     width stays auto and is derived from aspect-ratio, so the browser
+     never has to shrink width and height independently (the thing
+     that broke the aspect ratio and made the map look cropped) — the
+     box arrives at its final size already matching the image's real
+     proportions, with any spare room simply left empty on the sides. */
   --stage-ratio: 1;
-  height: min(96svh, calc(78vw / var(--stage-ratio)));
+  height: min(96svh, calc(var(--stage-max-w) / var(--stage-ratio)));
   width: auto;
   aspect-ratio: var(--stage-ratio);
+  flex: 0 0 auto;
 
   /* Column/row counts for the game grid: 5x5 by default, overridden by
      JS (see COLS/ROWS + DESKTOP_MEDIA_QUERY below) — 7x5 on desktop/
@@ -378,8 +404,8 @@
     /* Laptop/desktop only: the start-map title now sits directly on
        top of the map image itself (see .map-brand below), so the old
        side-panel logo pill is hidden here instead. Mobile keeps the
-       side-panel version untouched (see the max-width:760px query). */
-    @media (min-width: 761px), (orientation: landscape) {
+       side-panel version untouched (see the max-width:1199px query). */
+    @media (min-width: 1200px), (orientation: landscape) and (pointer: coarse) {
       #gameLayout.on-map .brand-map-logo { display: none; }
     }
     #gameLayout.on-map .brand-gameplay { display: none; }
@@ -388,7 +414,7 @@
        and stats/account box on the start-map screen as during
        gameplay — not just gameplay-only anymore. Mobile keeps the
        original map/gameplay swap untouched. */
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 1200px), (orientation: landscape) and (pointer: coarse) {
       #gameLayout.on-map .brand-gameplay { display: flex; }
       #gameLayout.on-map .score.gameplay-only { display: grid; }
       /* Map screen only: show just the small wordmark image, not the
@@ -462,7 +488,7 @@
        <style> block, so this rule (same specificity, later in source
        order) wins the cascade over auth-ui.css's own absolute-corner
        default without needing !important. Laptop/desktop overrides this
-       again further down (see the 761px query) to pin it back to the
+       again further down (see the 1200px query) to pin it back to the
        page's actual top-right corner, standing alone rather than
        sharing the side panel's title row. */
     #authRoot {
@@ -534,7 +560,7 @@
     }
 
     /* HOME icon + mobile label — only ever shown on the mobile HUD (see
-       the max-width:760px query further down), which also hides
+       the max-width:1199px query further down), which also hides
        .home-thumb-img/.home-thumb-label there instead. Hidden here by
        default so desktop/laptop keeps its existing thumbnail + "Back to
        start" caption untouched. */
@@ -565,7 +591,7 @@
     }
 
     /* Mobile-only caption shown above the next-item icon — hidden on
-       desktop/laptop (see the max-width:760px query further down, which
+       desktop/laptop (see the max-width:1199px query further down, which
        turns it on and repositions the group to the bottom-right). */
     .next-item-label {
       display: none;
@@ -651,7 +677,7 @@ button {
     /* Desktop/laptop-only box at the bottom of the side panel holding
        the back-to-map thumbnail above the next-item badge (see
        layoutSideExtras() in the JS, which moves both elements in here
-       instead of the score row / stage overlay once past the 761px
+       instead of the score row / stage overlay once past the 1200px
        breakpoint). Hidden by default so mobile — which never populates
        it — never shows an empty pill; the min-width query below is the
        only thing that turns it on, and only outside the map screen. */
@@ -665,7 +691,7 @@ button {
       gap: 10px;
     }
 
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 1200px), (orientation: landscape) and (pointer: coarse) {
       #gameLayout:not(.on-map) .next-box {
         display: flex;
 
@@ -856,7 +882,7 @@ button {
       display: none;
     }
 
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 1200px), (orientation: landscape) and (pointer: coarse) {
       .map-brand {
         display: block;
         position: absolute;
@@ -883,7 +909,7 @@ button {
     /* Laptop/desktop only: smaller + left-aligned wordmark on the start
        screen (see .map-brand above, which handles the left placement —
        this just shrinks the image itself). */
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 1200px), (orientation: landscape) and (pointer: coarse) {
       .map-brand-img {
         /* +10% over the original clamp(40px, 8vw, 110px). */
         max-height: clamp(44px, 8.8vw, 121px);
@@ -1074,7 +1100,7 @@ button {
 
   /* Reduced from 4% (and further reduced from 2%) so circles sit
      closer together on laptop/desktop — mobile tightens this further
-     still, see the max-width:760px override below. */
+     still, see the max-width:1199px override below. */
   gap: 1%;
 }
 
@@ -1177,7 +1203,7 @@ button {
     /* Laptop/desktop only: bigger item artwork inside each planting
        circle (mobile keeps the 80% base size above — see its own
        media query for mobile-specific sizing). */
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 1200px), (orientation: landscape) and (pointer: coarse) {
       .tile .item-icon { width: 92%; height: 92%; }
     }
     .collection .item-icon { width: 50px; height: 50px; }
@@ -1394,7 +1420,7 @@ button {
     }
 
     /* New standalone button (mobile map screen only — see the
-       max-width:760px query further down for its actual layout).
+       max-width:1199px query further down for its actual layout).
        Hidden by default everywhere else so it never affects desktop. */
     .mobile-map-trial-btn { display: none; }
 
@@ -1607,7 +1633,7 @@ button {
        to .premium-box specifically (not the shared .premium-*/.gcm-*
        rules above, which the #guestClearModal popup also uses) so the
        modal's own type scale is untouched. */
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 1200px), (orientation: landscape) and (pointer: coarse) {
       .how-to-play h3 { font-size: 15px; }
       .how-to-play li { font-size: 14px; line-height: 1.5; }
 
@@ -1622,7 +1648,7 @@ button {
       .premium-box .premium-login-link { font-size: 12px; }
     }
 
-    @media (max-width: 760px) and (orientation: portrait) {
+    @media (max-width: 1199px) and (orientation: portrait), (max-width: 1199px) and (pointer: fine) {
       .screen { padding: 5px; }
 
       /* Board bounding box shrunk to ~86% of its previous size (and
@@ -1918,15 +1944,19 @@ button {
          previously squared off (border-radius:0) here for the
          full-bleed mobile map, per request now rounded instead. */
 
-      /* The map art now fills the full width of the frame edge-to-edge
-         (cover, not contain) — any extra height the image doesn't fit
-         gets cropped from the TOP only (background-position anchored to
-         the bottom keeps the image's bottom edge fixed to the frame's
-         bottom edge, so overflow is trimmed above instead of split
-         evenly top/bottom). */
+      /* The map art must never be cropped — it always uses "contain"
+         (same as the base .map-screen rule further up), so on a
+         narrow window (whether a real portrait phone or a laptop
+         browser window shrunk below the mobile breakpoint) any
+         leftover space becomes empty air on the LEFT/RIGHT sides of
+         the frame instead of trimming the top or bottom of the
+         artwork. This used to be "cover" with a bottom-anchored crop
+         (trimming the top when the frame's height didn't match the
+         image), which is exactly the disappearing-top-of-image bug —
+         removed in favor of the non-cropping base rule. */
       #gameLayout.on-map .map-screen {
-        background-size: cover;
-        background-position: center bottom;
+        background-size: contain;
+        background-position: center;
       }
 
       /* Frame border (thickness + gold tint) is on the shared .stage
@@ -2278,7 +2308,7 @@ button {
 
       <!-- Mobile-only, map-screen-only "Free Trial" button — sits below
            the (shrunk) map image once #gameLayout has .on-map, see the
-           max-width:760px .mobile-map-trial-btn rules and
+           max-width:1199px .mobile-map-trial-btn rules and
            #mobileMapTrialBtn's click handler (JS) further down. Hidden
            everywhere else (desktop, or during gameplay) by default. -->
       <button type="button" class="premium-trial-btn mobile-map-trial-btn" id="mobileMapTrialBtn">
@@ -2899,11 +2929,15 @@ function getItem(level) {
     // rows stay at 5 there. Declared here (not further down, where
     // applyStageAspectRatio() used to be the only thing reading it) so
     // COLS below can use it immediately at page load. Also matches
-    // landscape orientation (regardless of width) so a phone turned
-    // sideways gets the same laptop/desktop view instead of the
-    // stacked mobile layout — see the matching CSS media queries
-    // (`(min-width: 761px), (orientation: landscape)`) further up.
-    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px), (orientation: landscape)");
+    // landscape orientation, but only on coarse-pointer (touch) devices,
+    // so a phone turned sideways still gets the laptop/desktop view
+    // instead of the stacked mobile layout. A mouse-driven laptop/
+    // desktop window narrowed below the breakpoint stays landscape but
+    // has a fine pointer, so it now correctly falls through to the
+    // width check alone and gets the stacked mobile layout too — see
+    // the matching CSS media queries (`(min-width: 1200px),
+    // (orientation: landscape) and (pointer: coarse)`) further up.
+    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 1200px), (orientation: landscape) and (pointer: coarse)");
 
     // Mobile only: +1 row (added at the TOP — see addStartingTiles()
     // below, which shifts its fixed cluster down/right to match) and +2
@@ -2990,7 +3024,7 @@ function getItem(level) {
          overlaid on top of the map artwork.
        - Mobile: moved into the icon bar itself (.top-row), between the
          "how to play" and login icons, so all three sit on the same row
-         (see the max-width:760px .top-row .map-brand rules) instead of
+         (see the max-width:1199px .top-row .map-brand rules) instead of
          the logo getting its own row below the icons.
        Called once at load and again every time DESKTOP_MEDIA_QUERY's
        "change" event fires, so resizing across the breakpoint (or
@@ -3005,7 +3039,7 @@ function getItem(level) {
         // Mobile: next-item badge sits first in the score row (directly
         // under the board image, no longer overlaid on top of it),
         // then the 3 stats, then "Back to start" at the very end — see
-        // the max-width:760px .score rules for the matching 5-column
+        // the max-width:1199px .score rules for the matching 5-column
         // layout.
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.appendChild(homeBtnEl);
@@ -3345,6 +3379,7 @@ function getItem(level) {
         history = [];
         addStartingTiles();
         nextLevel = randomNextLevel();
+        resetSeenLevelIntros(key); // fresh play-through of this world — level reveals should replay
       }
       setWorld(key); // already flushes an immediate sync internally
       render();
@@ -3424,6 +3459,7 @@ function getItem(level) {
       collection = [];
       nextLevel = 1;
       addStartingTiles();
+      resetSeenLevelIntros(currentWorldKey); // fresh play-through of this world — level reveals should replay
       render();
       showToast("New garden planted");
       syncToCloud(false, true);
@@ -3678,21 +3714,27 @@ function getItem(level) {
 
     /* -----------------------------------------------------------------
        First-time level-reveal celebration — "seenLevelIntros" tracks,
-       per device (localStorage, not synced to the cloud save), which
-       levels have already gotten the big centered reveal at least once
-       so it only ever plays the very first time each one is reached.
+       per world AND per play-through, which levels have already gotten
+       the big centered reveal so it only plays the first time each one
+       is reached *this* game round in *that* world. It is intentionally
+       NOT persisted to localStorage/cloud: starting a new game, or
+       opening a world with a fresh board (including one you've already
+       completed before), resets that world's set — see the
+       resetSeenLevelIntros() calls in newGarden() and enterWorld() —
+       so the reveal happens again every time it's genuinely the first
+       time this playthrough, not just the first time ever on this
+       device.
     ----------------------------------------------------------------- */
-    let seenLevelIntros = new Set();
-    try {
-      seenLevelIntros = new Set(JSON.parse(localStorage.getItem("seenLevelIntros") || "[]"));
-    } catch (err) { /* ignore malformed/missing storage */ }
+    let seenLevelIntros = {}; // { [worldKey]: Set<level> }
+
+    function resetSeenLevelIntros(worldKey) {
+      seenLevelIntros[worldKey] = new Set();
+    }
 
     function markLevelFirstSeen(level) {
-      if (seenLevelIntros.has(level)) return false;
-      seenLevelIntros.add(level);
-      try {
-        localStorage.setItem("seenLevelIntros", JSON.stringify([...seenLevelIntros]));
-      } catch (err) { /* storage unavailable — reveal will just replay next time */ }
+      const set = seenLevelIntros[currentWorldKey] || (seenLevelIntros[currentWorldKey] = new Set());
+      if (set.has(level)) return false;
+      set.add(level);
       return true;
     }
 
