@@ -379,7 +379,7 @@
        top of the map image itself (see .map-brand below), so the old
        side-panel logo pill is hidden here instead. Mobile keeps the
        side-panel version untouched (see the max-width:760px query). */
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
       #gameLayout.on-map .brand-map-logo { display: none; }
     }
     #gameLayout.on-map .brand-gameplay { display: none; }
@@ -388,7 +388,7 @@
        and stats/account box on the start-map screen as during
        gameplay — not just gameplay-only anymore. Mobile keeps the
        original map/gameplay swap untouched. */
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
       #gameLayout.on-map .brand-gameplay { display: flex; }
       #gameLayout.on-map .score.gameplay-only { display: grid; }
       /* Map screen only: show just the small wordmark image, not the
@@ -665,7 +665,7 @@ button {
       gap: 10px;
     }
 
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
       #gameLayout:not(.on-map) .next-box {
         display: flex;
 
@@ -856,7 +856,7 @@ button {
       display: none;
     }
 
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
       .map-brand {
         display: block;
         position: absolute;
@@ -883,7 +883,7 @@ button {
     /* Laptop/desktop only: smaller + left-aligned wordmark on the start
        screen (see .map-brand above, which handles the left placement —
        this just shrinks the image itself). */
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
       .map-brand-img {
         /* +10% over the original clamp(40px, 8vw, 110px). */
         max-height: clamp(44px, 8.8vw, 121px);
@@ -1177,7 +1177,7 @@ button {
     /* Laptop/desktop only: bigger item artwork inside each planting
        circle (mobile keeps the 80% base size above — see its own
        media query for mobile-specific sizing). */
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
       .tile .item-icon { width: 92%; height: 92%; }
     }
     .collection .item-icon { width: 50px; height: 50px; }
@@ -1607,7 +1607,7 @@ button {
        to .premium-box specifically (not the shared .premium-*/.gcm-*
        rules above, which the #guestClearModal popup also uses) so the
        modal's own type scale is untouched. */
-    @media (min-width: 761px), (orientation: landscape) {
+    @media (min-width: 761px), (orientation: landscape) and (pointer: coarse) {
       .how-to-play h3 { font-size: 15px; }
       .how-to-play li { font-size: 14px; line-height: 1.5; }
 
@@ -1622,7 +1622,7 @@ button {
       .premium-box .premium-login-link { font-size: 12px; }
     }
 
-    @media (max-width: 760px) and (orientation: portrait) {
+    @media (max-width: 760px) and (orientation: portrait), (max-width: 760px) and (pointer: fine) {
       .screen { padding: 5px; }
 
       /* Board bounding box shrunk to ~86% of its previous size (and
@@ -2899,11 +2899,15 @@ function getItem(level) {
     // rows stay at 5 there. Declared here (not further down, where
     // applyStageAspectRatio() used to be the only thing reading it) so
     // COLS below can use it immediately at page load. Also matches
-    // landscape orientation (regardless of width) so a phone turned
-    // sideways gets the same laptop/desktop view instead of the
-    // stacked mobile layout — see the matching CSS media queries
-    // (`(min-width: 761px), (orientation: landscape)`) further up.
-    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px), (orientation: landscape)");
+    // landscape orientation, but only on coarse-pointer (touch) devices,
+    // so a phone turned sideways still gets the laptop/desktop view
+    // instead of the stacked mobile layout. A mouse-driven laptop/
+    // desktop window narrowed below the breakpoint stays landscape but
+    // has a fine pointer, so it now correctly falls through to the
+    // width check alone and gets the stacked mobile layout too — see
+    // the matching CSS media queries (`(min-width: 761px),
+    // (orientation: landscape) and (pointer: coarse)`) further up.
+    const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 761px), (orientation: landscape) and (pointer: coarse)");
 
     // Mobile only: +1 row (added at the TOP — see addStartingTiles()
     // below, which shifts its fixed cluster down/right to match) and +2
@@ -3345,6 +3349,7 @@ function getItem(level) {
         history = [];
         addStartingTiles();
         nextLevel = randomNextLevel();
+        resetSeenLevelIntros(key); // fresh play-through of this world — level reveals should replay
       }
       setWorld(key); // already flushes an immediate sync internally
       render();
@@ -3424,6 +3429,7 @@ function getItem(level) {
       collection = [];
       nextLevel = 1;
       addStartingTiles();
+      resetSeenLevelIntros(currentWorldKey); // fresh play-through of this world — level reveals should replay
       render();
       showToast("New garden planted");
       syncToCloud(false, true);
@@ -3678,21 +3684,27 @@ function getItem(level) {
 
     /* -----------------------------------------------------------------
        First-time level-reveal celebration — "seenLevelIntros" tracks,
-       per device (localStorage, not synced to the cloud save), which
-       levels have already gotten the big centered reveal at least once
-       so it only ever plays the very first time each one is reached.
+       per world AND per play-through, which levels have already gotten
+       the big centered reveal so it only plays the first time each one
+       is reached *this* game round in *that* world. It is intentionally
+       NOT persisted to localStorage/cloud: starting a new game, or
+       opening a world with a fresh board (including one you've already
+       completed before), resets that world's set — see the
+       resetSeenLevelIntros() calls in newGarden() and enterWorld() —
+       so the reveal happens again every time it's genuinely the first
+       time this playthrough, not just the first time ever on this
+       device.
     ----------------------------------------------------------------- */
-    let seenLevelIntros = new Set();
-    try {
-      seenLevelIntros = new Set(JSON.parse(localStorage.getItem("seenLevelIntros") || "[]"));
-    } catch (err) { /* ignore malformed/missing storage */ }
+    let seenLevelIntros = {}; // { [worldKey]: Set<level> }
+
+    function resetSeenLevelIntros(worldKey) {
+      seenLevelIntros[worldKey] = new Set();
+    }
 
     function markLevelFirstSeen(level) {
-      if (seenLevelIntros.has(level)) return false;
-      seenLevelIntros.add(level);
-      try {
-        localStorage.setItem("seenLevelIntros", JSON.stringify([...seenLevelIntros]));
-      } catch (err) { /* storage unavailable — reveal will just replay next time */ }
+      const set = seenLevelIntros[currentWorldKey] || (seenLevelIntros[currentWorldKey] = new Set());
+      if (set.has(level)) return false;
+      set.add(level);
       return true;
     }
 
