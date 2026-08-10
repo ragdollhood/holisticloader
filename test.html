@@ -1219,26 +1219,26 @@ button {
       filter: drop-shadow(0 0 12px rgba(255,255,255,.25));
     }
 
-    /* 80% (not 100%) so the artwork clears the circle's inscribed
-       edges on every side instead of its corners/tips brushing the
-       clip mask — this is the "items fit inside the circles" sizing. */
-    /* Requested: 40% bigger item art (80% -> 112%). Capped at 96% via
-       min() because .cell clips to a circle (border-radius:50% +
-       overflow:hidden) — a bounding box past ~96% starts brushing/
-       clipping against that circular mask on a square icon, so the
-       cap keeps the artwork fully visible inside the planting circle
-       instead of letting its corners get cut off. */
-    .tile .item-icon { width: min(112%, 96%); height: min(112%, 96%); }
+    /* Item art sized as large as possible while still fitting fully
+       inside the circular planting cell. .cell clips to a circle
+       (border-radius:50% + overflow:hidden), and the artwork sits in
+       a SQUARE bounding box (the .item-icon itself) — so the true
+       ceiling is however big that square can get before its own
+       corners start being cut off by the round mask. Testing that
+       against the actual artwork (which has a bit of transparent
+       margin baked into each PNG/WebP) landed on 96%: the largest
+       size where nothing visible gets clipped. Same value on every
+       breakpoint (mobile below, desktop/laptop override further
+       down) so item art is equally maximized in every version. */
+    .tile .item-icon { width: 96%; height: 96%; }
     .next-seed .item-icon { width: 46px; height: 46px; }
 
-    /* Laptop/desktop only: bigger item artwork inside each planting
-       circle (mobile keeps the 80% base size above — see its own
-       media query for mobile-specific sizing). */
+    /* Laptop/desktop: same 96% cap as mobile — see the comment on
+       ".tile .item-icon" above. Kept as its own rule (rather than
+       relying on the base one) in case a future desktop-only change
+       to the cell/board sizing means this ever needs to diverge. */
     @media (min-width: 1200px) {
-      /* Requested: 40% bigger item art (92% -> 128.8%). Capped at 96%
-         (same cap as the mobile rule above, same reasoning: the .cell
-         circle mask). */
-      .tile .item-icon { width: min(128.8%, 96%); height: min(128.8%, 96%); }
+      .tile .item-icon { width: 96%; height: 96%; }
     }
     .collection .item-icon { width: 50px; height: 50px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
