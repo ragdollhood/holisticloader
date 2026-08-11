@@ -1142,8 +1142,8 @@ button {
          fell through to the desktop/laptop board's more spacious base
          values (97% cell / 1% gap), sized for a screen with far more
          room to spare, making the items look tiny by comparison. */
-      .cell { width: 99%; }
-      .board { gap: 0.4%; }
+      .cell { width: 99.5%; }
+      .board { gap: 0.2%; }
 
       /* Measured this instead of guessing: on a short viewport the
          stage-frame's height is always the binding constraint (it's
@@ -1159,18 +1159,29 @@ button {
          same fraction portrait mobile used to have before it got
          bumped to 72%/64% below. On a frame this much smaller than
          desktop's, that small a fraction produces genuinely tiny
-         circles. Bumped to 78%/74% here instead, recentred on the same
-         mid-point as the untouched values (so the box still lines up
-         with the illustrated soil patches in the artwork — only its
-         size changed, not its centre), which grows every circle by
-         roughly 45% on top of the cell/gap tightening above.
+         circles. Bumped to 78%/74% first (see below), which grew every
+         circle by roughly 45% on top of the cell/gap tightening above.
+
+         Bumped again, further per request, to 88%/84% — recentred on
+         the SAME mid-point as always (50% across, 51%+38px down: with
+         width/height W/H, left = 50% - W/2 and top's percentage part =
+         51% - H/2, the +38px carried over unchanged since it's a
+         fixed top-row offset, not part of the box's own size) so the
+         box still lines up with the illustrated soil patches in the
+         artwork — only its size changed, not its centre. 88%/84% is
+         about as far as this can go without the box's own edges
+         starting to clip the stage frame: left+width = 6%+88% = 94%,
+         top's worst case (+38px on a short phone's ~34px-per-percent
+         frame height) leaves roughly a percent of slack at the
+         bottom — any bigger and the bottom row of circles risks
+         crowding the frame edge on the shortest supported phones.
          --sp-width is left as it was (harmless either way, and the
          panel still needs the room). */
       :root {
-        --board-left: 11%;
-        --board-top: calc(14% + 38px);
-        --board-width: 78%;
-        --board-height: 74%;
+        --board-left: 6%;
+        --board-top: calc(9% + 38px);
+        --board-width: 88%;
+        --board-height: 84%;
         --sp-width: clamp(190px, 26vw, 300px);
         --gl-gap: clamp(6px, 1.2vw, 14px);
         --screen-pad: clamp(6px, 1vw, 12px);
@@ -1185,6 +1196,35 @@ button {
          of just leaving a little empty margin. 92svh leaves enough
          slack for that padding on every device this query matches. */
       .stage-frame { height: min(92svh, calc(var(--stage-max-w) / var(--stage-ratio))); }
+
+      /* Root cause of the "next item" card landing below the visible
+         area: .game-layout (the flex row holding .stage-frame and
+         .side-panel) had no explicit height of its own — only
+         max-height:100%, which can't resolve to anything definite
+         here because .screen sizes itself as a CSS-grid cell with no
+         explicit row track, i.e. its height is itself content-based.
+         With no definite height on .game-layout, a flex container's
+         auto height is the tallest child's UNSTRETCHED (natural
+         content) size — not .stage-frame's fixed height — so if
+         .side-panel's stacked content (top row + score + world-picker
+         + collection + next-box, all at their natural sizes) added up
+         to more than .stage-frame's height, .game-layout simply grew
+         to fit it. That growth pushed the whole layout past .screen's
+         100svh, which html/body's overflow:hidden then clipped with
+         no scrollbar anywhere — the card wasn't just scrolled out of
+         reach, it was being rendered fully outside the page.
+
+         Giving .game-layout the exact same explicit height formula
+         .stage-frame already uses fixes this: the row's cross size is
+         now definite, so align-items:stretch forces .side-panel to
+         that same height regardless of its content's natural size,
+         which finally makes .side-panel's own overflow-y:auto (plus
+         its min-height:0, already set) the thing that activates —
+         any content that still doesn't fit scrolls WITHIN the panel,
+         inside the visible frame, instead of pushing the layout (and
+         the next-item card specifically, since it's last in the
+         stack) off the bottom of the screen entirely. */
+      .game-layout { height: min(92svh, calc(var(--stage-max-w) / var(--stage-ratio))); }
 
       .island-btn {
         width: clamp(28px, 5vw, 42px);
