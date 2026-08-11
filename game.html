@@ -159,6 +159,17 @@
       position: relative;
       width: clamp(200px, 21vw, 300px);
       flex: 0 0 auto;
+      /* Without this, a flex item's default min-height:auto lets its
+         CONTENT'S natural height win over the stretched height coming
+         from .game-layout's align-items:stretch — so on a viewport too
+         short for everything to fit (e.g. a phone in landscape, using
+         this same side-by-side layout — see the min-width:1200px /
+         landscape media queries), the panel just grows taller than its
+         box instead of scrolling, and that overflow then gets clipped
+         by html/body's own overflow:hidden further up. min-height:0
+         lets the panel actually respect its stretched height so
+         overflow-y:auto (below) can do its job and scroll instead. */
+      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -204,6 +215,37 @@
 
     .howtoplay-btn:hover, .howtoplay-btn:focus-visible {
       background: linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.10)), var(--glass);
+      outline: none;
+    }
+
+    /* Landscape-mobile-only alternative to the icon above — icon PLUS
+       the "How to Use" label, sitting inline in the side panel (see
+       the markup right before .how-to-play's <h3>) instead of in a
+       top icon bar. Hidden by default everywhere else; the
+       landscape-mobile media query further down turns it on and hides
+       the full h3+ol instructions in its place. */
+    .how-to-play-compact-btn {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.05)), var(--glass);
+      color: var(--gold2);
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .how-to-play-compact-btn svg { flex: 0 0 auto; }
+
+    .how-to-play-compact-btn:hover, .how-to-play-compact-btn:focus-visible {
+      background: linear-gradient(145deg, rgba(255,255,255,.22), rgba(255,255,255,.09)), var(--glass);
       outline: none;
     }
 
@@ -1074,6 +1116,42 @@ button {
     }
 
     .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
+
+    /* Mobile in landscape ("horizontal") ONLY — smaller number badges.
+       Scoped tightly to that one case (orientation:landscape AND
+       max-height:600px AND max-width:1199px, the same "phone turned
+       sideways" combo used elsewhere) so this never touches real
+       desktop/laptop widths (excluded by max-width) or portrait mobile
+       (excluded by orientation) — just the one requested case. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      .island-btn {
+        width: clamp(28px, 5vw, 42px);
+        height: clamp(28px, 5vw, 42px);
+        font-size: clamp(12px, 2vw, 17px);
+      }
+      .island-btn.cleared::after {
+        top: -4px;
+        right: -4px;
+        width: 13px;
+        height: 13px;
+        font-size: 9px;
+      }
+
+      /* "How to Use" + "Free Trial" only, on the start/map screen —
+         swaps out the full instructions card and full premium card
+         (both sized for a real desktop/laptop's taller side panel,
+         which is what this viewport otherwise reuses) for the same
+         compact icon+label / single-button pattern mobile portrait
+         already uses on its map screen, just inline in the side panel
+         instead of a separate icon bar + button below the image. */
+      .how-to-play { padding: 6px; gap: 6px; }
+      .how-to-play-compact-btn { display: flex; }
+      .how-to-play h3, .how-to-play ol { display: none; }
+
+      .premium-box { padding: 6px; gap: 6px; }
+      .premium-box > *:not(.premium-trial-btn) { display: none; }
+      .premium-box .premium-trial-btn { margin-top: 0; }
+    }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
        (score, home thumbnail, world picker, collection, actions) — the
@@ -2259,6 +2337,21 @@ button {
         </div>
 
         <div class="hud how-to-play map-only" aria-label="How to play">
+          <!-- Landscape-mobile-only: replaces the full instructions
+               below with just this icon + "How to Use" label, which
+               opens the exact same #howToPlayModal popup that mobile
+               portrait's own icon (#howToPlayBtn, in the icon bar
+               above) opens — see the click handler (JS) and the
+               landscape-mobile media query (CSS) that swaps which of
+               the two is visible. Hidden everywhere else by default. -->
+          <button type="button" class="how-to-play-compact-btn" id="howToPlayCompactBtn" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="9.25"></circle>
+              <path d="M9.4 9.2a2.6 2.6 0 0 1 5 .95c0 1.75-2.5 2.05-2.5 3.55"></path>
+              <line x1="12" y1="16.9" x2="12.01" y2="16.9"></line>
+            </svg>
+            <span>How to Use</span>
+          </button>
           <h3>How to Play</h3>
           <ol>
             <li>Tap an empty tile to place the item shown in the preview.</li>
@@ -3159,6 +3252,11 @@ function getItem(level) {
     // replaced by this popup.
     const howToPlayModalEl = document.getElementById("howToPlayModal");
     document.getElementById("howToPlayBtn").addEventListener("click", () => {
+      howToPlayModalEl.classList.add("show");
+    });
+    // Landscape-mobile's "How to Use" button (icon + label, inline in
+    // the side panel) — same modal, see .how-to-play-compact-btn CSS.
+    document.getElementById("howToPlayCompactBtn").addEventListener("click", () => {
       howToPlayModalEl.classList.add("show");
     });
     document.getElementById("howToPlayCloseBtn").addEventListener("click", () => {
