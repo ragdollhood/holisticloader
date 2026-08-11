@@ -523,6 +523,71 @@
       color: var(--gold2);
     }
 
+    /* Holds the title wordmark image on top of the game-world art —
+       see #stageTitle in the markup and layoutStageTitle() in the JS,
+       which moves #brandLogoText/#brandFallbackText in here. Empty
+       (and hidden) on every breakpoint except mobile in landscape
+       ("horizontal") during actual gameplay — see the media query
+       below. On the map/start screen the wordmark stays in its usual
+       side-panel spot instead (layoutStageTitle() only moves it while
+       #gameLayout does NOT have .on-map). */
+    .stage-title {
+      display: none;
+    }
+
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      #gameLayout:not(.on-map) .stage-title {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      #gameLayout:not(.on-map) .stage-title .brand-logo-text {
+        max-height: 32px;
+      }
+
+      /* The wordmark image already moved into .stage-title above, so
+         all this box has left in it is the world-name text (see
+         layoutStageTitle() in the JS) — drop the whole box, text
+         included, to free up room in the side panel. Scoped to
+         gameplay (:not(.on-map)) so the map screen's own logo box
+         (.brand-map-logo, a different child of this same .brand
+         wrapper) is untouched. */
+      #gameLayout:not(.on-map) .top-row .brand {
+        display: none;
+      }
+
+      /* Let the next-item icon grow to fill essentially all of its
+         card now that the world-name box above freed up extra room —
+         drop the fixed min-height so it's purely flex-sized, and grow
+         the icon itself from 66% to fill nearly the whole card. */
+      #gameLayout:not(.on-map) .next-box .next-seed {
+        min-height: 0;
+      }
+
+      #gameLayout:not(.on-map) .next-box .next-seed .item-icon {
+        width: 92%;
+        height: 92%;
+      }
+
+      /* Login icon (#authRoot) is pinned position:fixed to the page's
+         true top-right corner (see the shared min-width:1200px /
+         landscape rule further up, and the tightened "right" value
+         further down in this same query) — but .top-row .brand is
+         flex:1 1 auto and, with little else left in that row on this
+         narrow breakpoint, grows all the way out to the side panel's
+         own right edge (flush with that same corner), so its box ends
+         up sitting directly under/against the icon. Reserving space on
+         the brand box's right keeps a clear gap between the two. */
+      .top-row .brand {
+        margin-right: 44px;
+      }
+    }
+
     .score {
       width: 100%;
       padding: 10px 14px;
@@ -696,6 +761,51 @@
 }
 
 .difficulty button { flex: 1 1 0; }
+
+/* Illustrated legend under the Easy/Hard toggle (see #difficultyRules in
+   the markup) — two small groups of tiny merge diagrams (built the same
+   way as .merge-demo in #howToPlayModal: circles + dashed arrow + green
+   checkmark) that make the Easy/Hard button tooltips visible at a glance
+   instead of only on hover. */
+.difficulty-rules {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 14px;
+}
+
+.diff-rule-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.diff-rule-label {
+  font-family: Arial, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  color: var(--muted);
+}
+
+.diff-rule-label em { color: var(--gold); font-style: normal; }
+
+.diff-rule-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Short text hint appended to the Easy/Hard button labels — hidden on
+   desktop/laptop (where the full illustrated .difficulty-rules legend
+   below the buttons already explains the modes), shown only on mobile
+   (where that legend is hidden — see the max-width:1199px query) so
+   the rule is still visible at a glance without the circles/arrows. */
+.diff-mobile-hint {
+  display: none;
+}
 
 /* #homeActionBtn ("Home", next to "New") is desktop/laptop-only — see
    the min-width:1200px override further down. Mobile keeps using the
@@ -887,6 +997,29 @@ button {
       .next-box .next-seed .item-icon {
         width: 66%;
         height: 66%;
+      }
+    }
+
+    /* Mobile-landscape ("horizontal") gameplay only: the next-item
+       badge stays (or rather, is put back) as an overlay on the
+       game-world art itself — bottom-left corner, flush against the
+       edges — instead of living in the side panel's .next-box card
+       (see the DESKTOP_MEDIA_QUERY branch of layoutSideExtras() in
+       the JS, which now special-cases this narrower breakpoint). With
+       nothing left inside it, .next-box itself is hidden here so it
+       doesn't show up as an empty card. Icon only, no caption. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      #gameLayout:not(.on-map) .next-box {
+        display: none;
+      }
+
+      #gameLayout:not(.on-map) .stage .next-item-group {
+        left: 0;
+        bottom: 0;
+      }
+
+      #gameLayout:not(.on-map) .stage .next-item-label {
+        display: none;
       }
     }
 
@@ -1364,6 +1497,22 @@ button {
       .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
       .difficulty { padding: 5px; gap: 4px; }
       .difficulty button { padding: 7px 8px; font-size: 9px; min-width: 0; }
+      /* Show the illustrated legend (circles + dashed arrow + checkmark)
+         instead of the text hint on the buttons themselves — just
+         "Easy"/"Hard" on the buttons, the diagrams explain the rule
+         below. Compacted (smaller padding/gap/label/svg) so the whole
+         panel still fits within the game-world image's height, now
+         that .next-box (emptied earlier in this same breakpoint) isn't
+         competing for that space. */
+      .side-panel .difficulty-rules {
+        display: flex;
+        padding: 4px 8px;
+        gap: 3px;
+      }
+      .diff-rule-group { gap: 1px; }
+      .diff-rule-label { font-size: 8.5px; }
+      .diff-rule-svg { width: 60%; margin: 0 auto; }
+      .diff-mobile-hint { display: none; }
 
       /* Account icon: the shared rule above (see the min-width:1200px /
          landscape query further down) pins #authRoot fixed to the
@@ -1372,7 +1521,7 @@ button {
          the side panel instead of clear of it. Pulling "right" in a
          little closer to the true edge nudges the icon further right,
          off the card, without touching the desktop/laptop position. */
-      #authRoot { right: clamp(2px, 1vw, 10px); }
+      #authRoot { right: 0px; }
     }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
@@ -2292,6 +2441,11 @@ button {
 
       .actions { padding: 5px; gap: 4px; }
       .difficulty { padding: 5px; gap: 4px; }
+      /* Mobile drops the illustrated circles/arrows/checkmark legend
+         entirely and instead shows a short text hint right on the
+         Easy/Hard buttons themselves (see .diff-mobile-hint). */
+      .side-panel .difficulty-rules { display: none; }
+      .diff-mobile-hint { display: inline; }
       button { padding: 6px 8px; font-size: 8px; }
 
       /* Planting circles sized up and pulled much closer together on
@@ -2504,6 +2658,14 @@ button {
          the side panel while the map screen is showing. -->
     <div class="game-layout" id="gameLayout">
       <div class="stage-frame" id="stageFrame">
+        <!-- Empty on every breakpoint except mobile-landscape ("phone
+             turned sideways") gameplay, where layoutStageTitle() (JS)
+             moves the title wordmark image (#brandLogoText, normally in
+             the side-panel's top-row) in here instead, overlaid on the
+             top-left corner of the game-world art — see the
+             orientation:landscape/max-height:600px/max-width:1199px
+             CSS block for .stage-title further up. -->
+        <div class="stage-title" id="stageTitle" aria-hidden="true"></div>
         <section class="stage" id="stage" aria-label="Wellness Garden game world">
           <div class="stars"></div>
 
@@ -2690,7 +2852,7 @@ button {
 
         <div class="hud actions gameplay-only" id="actionsBox">
           <button class="secondary" id="undoBtn">Undo</button>
-          <button id="newBtn">New</button>
+          <button class="secondary" id="newBtn">New</button>
           <!-- Desktop/laptop-only: replaces the old "back to start"
                home-thumb card (see .home-thumb / #nextBox). Hidden by
                default (mobile keeps the home-thumb icon in the score
@@ -2706,8 +2868,63 @@ button {
              (horizontal or vertical); angled clusters no longer merge.
              See setDifficulty() / findConnectedGroupStraight() (JS). -->
         <div class="hud difficulty gameplay-only" id="difficultyBox" aria-label="Difficulty">
-          <button type="button" id="diffEasyBtn" data-difficulty="easy">Easy</button>
-          <button type="button" class="secondary" id="diffHardBtn" data-difficulty="hard">Hard</button>
+          <button type="button" id="diffEasyBtn" data-difficulty="easy" title="Easy: any touching group of 3+ merges — straight rows and angled (L-shaped) clusters both work.">Easy<span class="diff-mobile-hint"> (angle or 3 in a row)</span></button>
+          <button type="button" class="secondary" id="diffHardBtn" data-difficulty="hard" title="Hard: only straight rows or columns of 3+ merge. Angled (L-shaped) clusters no longer merge.">Hard<span class="diff-mobile-hint"> (only 3 in a row)</span></button>
+        </div>
+
+        <!-- Small illustrated legend explaining exactly what the Easy/Hard
+             title tooltips above summarize in words: Easy merges straight
+             rows AND angled/L-shaped clusters, Hard only merges straight
+             rows. Pure SVG (same drawing approach as .merge-demo in
+             #howToPlayModal), so it needs no image assets and themes
+             itself off the same --gold/--lav CSS variables as the rest
+             of the UI. -->
+        <div class="hud difficulty-rules gameplay-only" id="difficultyRules" aria-hidden="true">
+          <div class="diff-rule-group">
+            <span class="diff-rule-label">Easy: row <em>or</em> angle merges</span>
+            <svg class="diff-rule-svg" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="diffArrowEasyRow" markerWidth="7" markerHeight="7" refX="4" refY="3" orient="auto">
+                  <path d="M0 0 L7 3 L0 6 Z" fill="var(--gold)"></path>
+                </marker>
+              </defs>
+              <circle cx="12" cy="20" r="9" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.3"></circle>
+              <circle cx="32" cy="20" r="9" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.3"></circle>
+              <circle cx="52" cy="20" r="9" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.3"></circle>
+              <line x1="66" y1="20" x2="88" y2="20" stroke="var(--gold)" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#diffArrowEasyRow)"></line>
+              <circle cx="112" cy="20" r="12" fill="rgba(111,207,122,.2)" stroke="#6fcf7a" stroke-width="1.6"></circle>
+              <path d="M106 20 l4 4 8-8" fill="none" stroke="#6fcf7a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <svg class="diff-rule-svg" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="diffArrowEasyAngle" markerWidth="7" markerHeight="7" refX="4" refY="3" orient="auto">
+                  <path d="M0 0 L7 3 L0 6 Z" fill="var(--gold)"></path>
+                </marker>
+              </defs>
+              <circle cx="12" cy="12" r="8" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.3"></circle>
+              <circle cx="32" cy="12" r="8" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.3"></circle>
+              <circle cx="12" cy="32" r="8" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.3"></circle>
+              <line x1="66" y1="22" x2="88" y2="22" stroke="var(--gold)" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#diffArrowEasyAngle)"></line>
+              <circle cx="112" cy="22" r="12" fill="rgba(111,207,122,.2)" stroke="#6fcf7a" stroke-width="1.6"></circle>
+              <path d="M106 22 l4 4 8-8" fill="none" stroke="#6fcf7a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+          <div class="diff-rule-group">
+            <span class="diff-rule-label">Hard: straight rows only</span>
+            <svg class="diff-rule-svg" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="diffArrowHardRow" markerWidth="7" markerHeight="7" refX="4" refY="3" orient="auto">
+                  <path d="M0 0 L7 3 L0 6 Z" fill="var(--gold)"></path>
+                </marker>
+              </defs>
+              <circle cx="12" cy="20" r="9" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.3"></circle>
+              <circle cx="32" cy="20" r="9" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.3"></circle>
+              <circle cx="52" cy="20" r="9" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.3"></circle>
+              <line x1="66" y1="20" x2="88" y2="20" stroke="var(--gold)" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#diffArrowHardRow)"></line>
+              <circle cx="112" cy="20" r="12" fill="rgba(111,207,122,.2)" stroke="#6fcf7a" stroke-width="1.6"></circle>
+              <path d="M106 20 l4 4 8-8" fill="none" stroke="#6fcf7a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
         </div>
 
         <!-- Desktop/laptop-only box at the bottom of the side panel:
@@ -3466,11 +3683,40 @@ function getItem(level) {
     const sidePanelEl = document.getElementById("sidePanel");
     const homeBtnEl = document.getElementById("homeBtn");
     const nextItemGroupEl = document.getElementById("nextItemGroup");
+    const nextItemLabelEl = document.getElementById("nextItemLabel");
     const nextBoxEl = document.getElementById("nextBox");
     const scoreBoxEl = document.getElementById("scoreBox");
     const actionsBoxEl = document.getElementById("actionsBox");
     const authRootEl = document.getElementById("authRoot");
     const topRowEl = document.querySelector(".top-row");
+    const stageTitleEl = document.getElementById("stageTitle");
+    const brandGameplayEl = document.getElementById("brandGameplay");
+    const brandLogoTextEl = document.getElementById("brandLogoText");
+    const brandFallbackTextEl = document.getElementById("brandFallbackText");
+
+    // Same tightly-scoped "phone turned sideways" combo used elsewhere
+    // (orientation:landscape AND max-height:600px AND max-width:1199px)
+    // — matches ONLY short mobile-landscape, never real desktop/laptop
+    // (excluded by max-width) and never portrait/tall-landscape mobile
+    // (excluded by the other two clauses).
+    const MOBILE_LANDSCAPE_QUERY = window.matchMedia("(orientation: landscape) and (max-height: 600px) and (max-width: 1199px)");
+
+    // Moves just the title wordmark image (+ its text fallback) between
+    // its usual home in the side-panel's top-row (next to the world
+    // name) and #stageTitle, overlaid on the game-world art's top-left
+    // corner — mobile-landscape gameplay only. The world name text
+    // itself (#worldName) always stays put in the side panel. Called
+    // once at load, on MOBILE_LANDSCAPE_QUERY's "change" event, and
+    // from showMap()/hideMap() (since it also depends on onMap). */
+    function layoutStageTitle() {
+      if (MOBILE_LANDSCAPE_QUERY.matches && !onMap) {
+        stageTitleEl.appendChild(brandLogoTextEl);
+        stageTitleEl.appendChild(brandFallbackTextEl);
+      } else {
+        brandGameplayEl.insertBefore(brandFallbackTextEl, worldNameEl);
+        brandGameplayEl.insertBefore(brandLogoTextEl, brandFallbackTextEl);
+      }
+    }
 
     /* Moves the home-thumb ("back to the map") button and the next-item
        badge between their homes depending on the desktop/mobile
@@ -3508,7 +3754,18 @@ function getItem(level) {
         // below). It's left in place in #scoreBox (hidden via the
         // ".home-thumb { display:none }" desktop rule) so it's still
         // ready to be used the moment the layout drops back to mobile.
-        nextBoxEl.appendChild(nextItemGroupEl);
+        if (MOBILE_LANDSCAPE_QUERY.matches) {
+          // Short mobile-landscape phone: keep the next-item badge as
+          // a stage overlay (its original spot) instead of moving it
+          // into #nextBox like real desktop/laptop does — see the
+          // matching CSS block ("Mobile-landscape ... next-item badge
+          // stays ... as an overlay") a few hundred lines up.
+          stageEl.appendChild(nextItemGroupEl);
+          nextItemLabelEl.textContent = "Next";
+        } else {
+          nextBoxEl.appendChild(nextItemGroupEl);
+          nextItemLabelEl.textContent = "Next item";
+        }
         mapScreenEl.insertBefore(mapBrandEl, mapTitleEl);
       } else {
         // Mobile: next-item badge sits first in the score row (directly
@@ -3525,6 +3782,11 @@ function getItem(level) {
       }
     }
     layoutSideExtras();
+    layoutStageTitle();
+    MOBILE_LANDSCAPE_QUERY.addEventListener("change", () => {
+      layoutStageTitle();
+      layoutSideExtras();
+    });
 
     const mobileMapTrialBtnEl = document.getElementById("mobileMapTrialBtn");
     mobileMapTrialBtnEl.addEventListener("click", () => {
@@ -3744,6 +4006,24 @@ function getItem(level) {
     // that entirely.
     let currentMapRatio = 1;
 
+    // Mobile-landscape ("horizontal") only: also shapes .stage-frame
+    // ITSELF to the map artwork's real ratio, the same way
+    // measureAndApplyRatio() shapes it to each world's ratio during
+    // gameplay. Without this, .stage-frame stays sized to whatever
+    // world ratio was last applied, so the map — contain-fit inside
+    // that mismatched box by layoutMapFrame() — ends up smaller than
+    // the box, letterboxed, instead of matching the game-world art's
+    // size and position exactly. Once the box itself matches the
+    // map's ratio, that same contain-fit math naturally fills the
+    // whole box with zero letterbox, so nothing else needs to change.
+    // Desktop/laptop are untouched (real desktop keeps its original
+    // contain-fit behaviour).
+    function applyMapStageRatio(ratio) {
+      if (typeof MOBILE_LANDSCAPE_QUERY !== "undefined" && MOBILE_LANDSCAPE_QUERY.matches) {
+        stageFrameEl.style.setProperty("--stage-ratio", ratio);
+      }
+    }
+
     function applyMapAspectRatio(page) {
       const info = MAP_PAGES[page];
       if (!info) return;
@@ -3753,6 +4033,7 @@ function getItem(level) {
       const cached = ratioCache[cacheKey];
       if (cached) {
         currentMapRatio = cached;
+        applyMapStageRatio(cached);
         layoutMapFrame();
         return;
       }
@@ -3765,6 +4046,7 @@ function getItem(level) {
         ratioCache[cacheKey] = ratio;
         if (isStillRelevant()) {
           currentMapRatio = ratio;
+          applyMapStageRatio(ratio);
           layoutMapFrame();
         }
       };
@@ -3928,6 +4210,7 @@ function getItem(level) {
     function showMap(highlightKey) {
       onMap = true;
       gameLayoutEl.classList.add("on-map");
+      layoutStageTitle();
       justUnlockedKey = highlightKey || null;
       renderMap();
       mapScreenEl.classList.add("show");
@@ -3952,6 +4235,7 @@ function getItem(level) {
       onMap = false;
       gameLayoutEl.classList.remove("on-map");
       mapScreenEl.classList.remove("show");
+      layoutStageTitle();
     }
 
     function enterWorld(key) {
