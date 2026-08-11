@@ -774,6 +774,15 @@ button {
     0 14px 34px rgba(248,217,139,.22);
 }
 
+/* Per request: the "New" button keeps its gold pill styling from the
+   shared button rule above, but should not glow — overrides just the
+   box-shadow via this higher-specificity ID selector. Unscoped (no
+   media query), so this applies on every version: laptop/desktop AND
+   both mobile orientations. */
+#newBtn {
+  box-shadow: none;
+}
+
     button.secondary {
       color: var(--text);
       background: rgba(255,255,255,.10);
@@ -1422,6 +1431,40 @@ button {
          little closer to the true edge nudges the icon further right,
          off the card, without touching the desktop/laptop position. */
       #authRoot { right: clamp(2px, 1vw, 10px); }
+    }
+
+    /* Mobile landscape ("horizontal") ONLY, per request — moves the
+       title/wordmark image (images/game-holisticgametiteltext.png,
+       shown here as .brand-logo-text inside .brand-gameplay) off its
+       normal spot at the top of the side panel — which, in this
+       side-by-side landscape layout (see DESKTOP_MEDIA_QUERY in the
+       JS), reads visually as the top-RIGHT of the screen — and onto
+       the game world's own stage instead, top-LEFT.
+
+       position:fixed sidesteps .brand-gameplay's actual DOM parent
+       (.top-row, inside .side-panel) the same way #authRoot is already
+       pinned straight to the viewport's top-right corner in this exact
+       layout (see the shared min-width:1200px / landscape query
+       further up) — .stage-frame sits flush against the screen's own
+       left edge here, so anchoring to the viewport's top-left corner
+       instead lands the title directly on top of it, matching
+       #authRoot's top offset for visual alignment.
+
+       Scoped to the same tightly-targeted landscape-phone combo as
+       everything else in this block, so real laptop/desktop (excluded
+       by max-width) and portrait mobile (excluded by orientation) are
+       both left exactly as they were. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      .top-row .brand-gameplay {
+        position: fixed;
+        top: clamp(10px, 2vw, 24px);
+        left: clamp(10px, 2vw, 24px);
+        z-index: 50;
+      }
+
+      /* Sized down a touch so the overlaid title comfortably clears
+         the stage's own rounded corner instead of hugging it. */
+      .top-row .brand-logo-text { max-height: 26px; }
     }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
