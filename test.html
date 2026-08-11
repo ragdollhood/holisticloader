@@ -1162,7 +1162,7 @@ button {
          grows every circle noticeably without needing to starve the
          panel down to an unusable width. */
       :root {
-        --sp-width: clamp(150px, 19vw, 240px);
+        --sp-width: clamp(190px, 26vw, 300px);
         --gl-gap: clamp(6px, 1.2vw, 14px);
         --screen-pad: clamp(6px, 1vw, 12px);
       }
@@ -1276,7 +1276,7 @@ button {
       .collection .item-icon { width: 25px; height: 25px; }
 
       .actions { padding: 5px; gap: 4px; }
-      .actions button { padding: 7px 8px; font-size: 9px; }
+      .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
     }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
