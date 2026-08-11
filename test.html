@@ -1145,6 +1145,25 @@ button {
       .cell { width: 99.5%; }
       .board { gap: 0.2%; }
 
+      /* Item art on the board is placed inside each planting circle at
+         the usual 96% box (see the shared ".tile .item-icon" rule), but
+         the source PNGs/WebPs carry a lot of transparent margin around
+         the actual artwork, so on this cramped landscape-phone view the
+         item still reads as a tiny dot floating in an otherwise-empty
+         circle. The circle itself stays exactly the size set above —
+         only the artwork inside it is blown up, via a transform (so it
+         doesn't change the layout box other rules measure against) and
+         cropped by .cell's own overflow:hidden + border-radius:50%, so
+         nothing spills outside the circle. --mobile-landscape-item-scale
+         is the one knob to turn if this needs to be bigger/smaller —
+         raise it further if the artwork is still visibly small, or back
+         it off if real edges of the art start getting clipped. */
+      :root { --mobile-landscape-item-scale: 2.4; }
+      .tile .item-icon {
+        transform: scale(var(--mobile-landscape-item-scale));
+        transform-origin: center;
+      }
+
       /* Measured this instead of guessing: on a short viewport the
          stage-frame's height is always the binding constraint (it's
          min(92svh, stage-max-w / ratio), and 92svh alone comes out
