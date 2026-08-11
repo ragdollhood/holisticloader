@@ -549,6 +549,30 @@
       #gameLayout:not(.on-map) .stage-title .brand-logo-text {
         max-height: 32px;
       }
+
+      /* The wordmark image already moved into .stage-title above, so
+         all this box has left in it is the world-name text (see
+         layoutStageTitle() in the JS) — drop the whole box, text
+         included, to free up room in the side panel. Scoped to
+         gameplay (:not(.on-map)) so the map screen's own logo box
+         (.brand-map-logo, a different child of this same .brand
+         wrapper) is untouched. */
+      #gameLayout:not(.on-map) .top-row .brand {
+        display: none;
+      }
+
+      /* Let the next-item icon grow to fill essentially all of its
+         card now that the world-name box above freed up extra room —
+         drop the fixed min-height so it's purely flex-sized, and grow
+         the icon itself from 66% to fill nearly the whole card. */
+      #gameLayout:not(.on-map) .next-box .next-seed {
+        min-height: 0;
+      }
+
+      #gameLayout:not(.on-map) .next-box .next-seed .item-icon {
+        width: 92%;
+        height: 92%;
+      }
     }
 
     .score {
