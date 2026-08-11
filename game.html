@@ -1345,6 +1345,15 @@ button {
 
       .actions { padding: 5px; gap: 4px; }
       .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
+
+      /* Account icon: the shared rule above (see the min-width:1200px /
+         landscape query further down) pins #authRoot fixed to the
+         page's own top-right corner — on this cramped landscape-phone
+         width that corner sits right on top of the brand/title card in
+         the side panel instead of clear of it. Pulling "right" in a
+         little closer to the true edge nudges the icon further right,
+         off the card, without touching the desktop/laptop position. */
+      #authRoot { right: clamp(2px, 1vw, 10px); }
     }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
