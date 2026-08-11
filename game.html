@@ -3975,9 +3975,7 @@ function getItem(level) {
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
       renderCollection();
-     if (gardenLoadedForUser !== null) {
-  syncToCloud(false, true);
-}
+      syncToCloud(false, true);
       applyStageAspectRatio(key);
     }
 
@@ -4363,9 +4361,8 @@ function getItem(level) {
       if (createdLevel < CLEAR_ITEM_LEVEL) return;
       if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return;
       if (isWorldCleared(currentWorldKey)) return;
-console.log("WORLD CLEARED", currentWorldKey);
+
       clearedWorlds.push(currentWorldKey);
-      console.log("AFTER PUSH:", clearedWorlds);
       playWorldClearFanfare();
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
       const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
@@ -4511,21 +4508,16 @@ console.log("WORLD CLEARED", currentWorldKey);
     let syncTimer = null;
     let syncPendingFeedback = false;
 
+    let saveCounter = 0; // TEMP DEBUG — remove once the cleared_worlds bug is found
+
     async function performSync(showFeedback) {
       if (!currentUser || typeof sb === "undefined") return;
       try {
-        console.log("BEFORE SAVE:", clearedWorlds);
-console.log("SAVE ROW:", currentSaveRow());
-        console.log("BEFORE SAVE:", clearedWorlds);
-console.log("SAVE ROW:", currentSaveRow());
-console.trace("SAVE CALLED");
-        console.log(
-  "SAVE CLEARED:",
-  JSON.stringify(currentSaveRow().cleared_worlds)
-);
-
-console.trace("SAVE TRACE");
-        const { error } = await sb.from(GARDEN_TABLE).upsert(currentSaveRow(), { onConflict: "user_id" });
+        const row = currentSaveRow();
+        saveCounter++;
+        console.log(`SAVE #${saveCounter}`, "cleared_worlds:", JSON.stringify(row.cleared_worlds), "updated_at:", row.updated_at); // TEMP DEBUG
+        console.trace(`SAVE #${saveCounter} trace`); // TEMP DEBUG
+        const { error } = await sb.from(GARDEN_TABLE).upsert(row, { onConflict: "user_id" });
         if (error) throw error;
         if (showFeedback) showToast("Garden saved");
       } catch (err) {
@@ -4585,9 +4577,6 @@ console.trace("SAVE TRACE");
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
           clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds : [];
-          console.log("LOADED clearedWorlds:", clearedWorlds);
-console.log("RAW cleared_worlds:", data.cleared_worlds);
-console.log("USER:", currentUser.id);
           mapPage = 1; // only one map page now (all 10 islands on one image) — kept as a var for the cloud row's shape
           history = [];
           setWorld(currentWorldKey);
@@ -4614,7 +4603,6 @@ console.log("USER:", currentUser.id);
       moves++;
       const createdLevels = resolveMerges(r, c); // every level created this move, in ascending order (a single move can cascade through several)
       const createdLevel = createdLevels.length ? Math.max(...createdLevels) : 0;
-      console.log("createdLevel:", createdLevel);
       if (createdLevel >= 3) collection.push(createdLevel);
       nextLevel = randomNextLevel();
       updateBest();
@@ -5038,6 +5026,14 @@ console.log("USER:", currentUser.id);
     let gardenLoadedForUser = null; // tracks which user_id we've already loaded, to avoid reloading on unrelated premium-status refreshes
 
     function onAuthOrPremiumChange() {
+      // Guard against a debounced sync (queued by syncToCloud(false), see
+      // placeTile()) firing AFTER an auth-state flicker resets local state
+      // below — without this, a stale timer could still send whatever
+      // currentSaveRow() looks like at that later moment (e.g. a wiped
+      // clearedWorlds) and overwrite good cloud data. See the "cleared_worlds
+      // keeps coming back empty" bug.
+      if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; syncPendingFeedback = false; }
+
       // Drives the CSS rule that shows/hides #premiumBox — see
       // `#gameLayout.on-map:not(.is-logged-in) .premium-box` above.
       gameLayoutEl.classList.toggle("is-logged-in", !!currentUser);
@@ -5049,6 +5045,8 @@ console.log("USER:", currentUser.id);
           loadFromCloud();
         }
       } else {
+        console.warn("AUTH RESET FIRED — currentUser is null, clearedWorlds being wiped to []"); // TEMP DEBUG
+        console.trace("AUTH RESET trace"); // TEMP DEBUG
         gardenLoadedForUser = null;
         // Reset the visible board so a previous account's garden never
         // lingers on screen for whoever uses this device/browser next,
