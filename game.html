@@ -582,9 +582,18 @@
          narrow breakpoint, grows all the way out to the side panel's
          own right edge (flush with that same corner), so its box ends
          up sitting directly under/against the icon. Reserving space on
-         the brand box's right keeps a clear gap between the two. */
+         the brand box's right keeps a clear gap between the two.
+         Matched with an equal left margin (rather than right-only) so
+         the box shrinks symmetrically and its own centered content
+         (justify-content:center, see .brand) lands on the row's TRUE
+         midpoint — the same midpoint .score's full-width stat row
+         below lines up on — instead of drifting left of it. This only
+         has a visible effect on the map/start screen: during actual
+         gameplay .top-row .brand is hidden outright (see the
+         :not(.on-map) rule above), so the reserved margin has nothing
+         to center there. */
       .top-row .brand {
-        margin-right: 44px;
+        margin: 0 44px;
       }
     }
 
@@ -776,10 +785,21 @@
   border-radius: 14px;
 }
 
+/* Only the group matching the currently-selected difficulty shows —
+   see setDifficulty() (JS), which toggles "mode-easy"/"mode-hard" on
+   #difficultyRules to match #diffEasyBtn/#diffHardBtn's own selected
+   state. Laptop/desktop and mobile-landscape only: mobile-portrait
+   hides #difficultyRules entirely regardless (see the
+   max-width:1199px query further down), so this never applies there. */
 .diff-rule-group {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 3px;
+}
+
+#difficultyRules.mode-easy .diff-rule-group[data-rule="easy"],
+#difficultyRules.mode-hard .diff-rule-group[data-rule="hard"] {
+  display: flex;
 }
 
 .diff-rule-label {
@@ -1106,6 +1126,19 @@ button {
        the file is missing or fails to load. */
     .map-brand {
       display: none;
+    }
+
+    /* Mobile-landscape ("horizontal") only: no title image over the
+       map artwork itself — the matching wordmark already shows in the
+       side panel (see .brand-gameplay/#brandLogoText, centered above
+       the score row there). #mapBrand's ID selector outranks the
+       broader .map-brand class rule below regardless of source order,
+       so this stays hidden on this one breakpoint while real desktop/
+       laptop (min-width:1200px) keeps the title on the map untouched. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      #mapBrand {
+        display: none;
+      }
     }
 
     @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
@@ -2880,7 +2913,7 @@ button {
              itself off the same --gold/--lav CSS variables as the rest
              of the UI. -->
         <div class="hud difficulty-rules gameplay-only" id="difficultyRules" aria-hidden="true">
-          <div class="diff-rule-group">
+          <div class="diff-rule-group" data-rule="easy">
             <span class="diff-rule-label">Easy: row <em>or</em> angle merges</span>
             <svg class="diff-rule-svg" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -2909,7 +2942,7 @@ button {
               <path d="M106 22 l4 4 8-8" fill="none" stroke="#6fcf7a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
           </div>
-          <div class="diff-rule-group">
+          <div class="diff-rule-group" data-rule="hard">
             <span class="diff-rule-label">Hard: straight rows only</span>
             <svg class="diff-rule-svg" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -4760,6 +4793,16 @@ function getItem(level) {
         hardBtn.classList.toggle("secondary", difficulty !== "hard");
         easyBtn.setAttribute("aria-pressed", String(difficulty === "easy"));
         hardBtn.setAttribute("aria-pressed", String(difficulty === "hard"));
+      }
+      // Shows only the matching illustrated rule group below the
+      // buttons (see .diff-rule-group[data-rule] in the CSS) — laptop/
+      // desktop and mobile-landscape only; mobile-portrait hides
+      // #difficultyRules entirely regardless, so this class has no
+      // visible effect there.
+      const rulesEl = document.getElementById("difficultyRules");
+      if (rulesEl) {
+        rulesEl.classList.toggle("mode-easy", difficulty === "easy");
+        rulesEl.classList.toggle("mode-hard", difficulty === "hard");
       }
     }
 
