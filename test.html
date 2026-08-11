@@ -1149,23 +1149,33 @@ button {
          set once up top) stays exactly as-is here — it's a % of the
          stage-frame image and has to stay put, or the interactive
          circles drift off the illustrated soil patches painted into
-         that image. The actual reason items render tiny on this
-         viewport is upstream of that box: --sp-width (the side panel's
-         width budget) is the same clamp(200px, 21vw, 300px) used on a
-         full desktop window, so on a narrow phone turned sideways it
-         eats a huge slice of the little horizontal room there is,
-         which starves --stage-max-w and therefore the whole stage
-         frame (board included) shrinks to match. Giving the panel a
-         much smaller budget here hands that width straight back to
-         the stage frame — the board box is still the same 58%/54%
-         slice, just of a visibly bigger image, so every circle grows
-         with it. Smaller --gl-gap/--screen-pad free a little more
-         width on top of that. */
+         that image. --sp-width (the side panel's width budget) is
+         trimmed a little from the full desktop clamp(200px, 21vw,
+         300px) — a narrow phone turned sideways doesn't need quite
+         that much reserved for its panel — but kept well above the
+         very cramped floor tried before, which left too little room
+         for the score/action button boxes and made them (and the
+         labels inside them) crop instead of just being smaller. The
+         real fix for tiny items is the board's own column count (see
+         BOARD_COLS_QUERY in the JS): this viewport now keeps mobile's
+         6 columns instead of jumping to desktop's cramped 7, which
+         grows every circle noticeably without needing to starve the
+         panel down to an unusable width. */
       :root {
-        --sp-width: clamp(132px, 15vw, 190px);
+        --sp-width: clamp(150px, 19vw, 240px);
         --gl-gap: clamp(6px, 1.2vw, 14px);
         --screen-pad: clamp(6px, 1vw, 12px);
       }
+
+      /* A touch more conservative than the base 96svh cap: with
+         --screen-pad shrunk above, the stage frame's own height
+         request wasn't accounting for that padding, so on some short
+         viewports it could end up requesting a hair more height than
+         .screen's actual padded content box has room for — the excess
+         then getting clipped by html/body's overflow:hidden instead
+         of just leaving a little empty margin. 92svh leaves enough
+         slack for that padding on every device this query matches. */
+      .stage-frame { height: min(92svh, calc(var(--stage-max-w) / var(--stage-ratio))); }
 
       .island-btn {
         width: clamp(28px, 5vw, 42px);
@@ -3243,6 +3253,17 @@ function getItem(level) {
     // query above and its comment for the height-threshold reasoning.
     const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 1200px), (orientation: landscape) and (max-height: 600px)");
 
+    // Board column count specifically: width-only, NOT the same query as
+    // DESKTOP_MEDIA_QUERY above. DESKTOP_MEDIA_QUERY also matches short
+    // landscape phones (so the side panel/next-box/map art etc. can
+    // reuse the desktop-style side-by-side layout there — see its own
+    // comment) but a narrow phone turned sideways is still a phone, not
+    // a real 1200px+ desktop viewport, so it should keep the same
+    // 6-column board mobile portrait uses (bigger cells) rather than
+    // desktop's cramped 7 columns squeezed into a much smaller absolute
+    // frame. Real desktop/laptop widths are untouched either way.
+    const BOARD_COLS_QUERY = window.matchMedia("(min-width: 1200px)");
+
     // Mobile only: +1 row (added at the TOP — see addStartingTiles()
     // below, which shifts its fixed cluster down/right to match) and +2
     // columns (one added on each side) versus the previous 5x5 mobile
@@ -3252,7 +3273,8 @@ function getItem(level) {
     let ROWS = DESKTOP_MEDIA_QUERY.matches ? ROWS_DESKTOP : ROWS_MOBILE;
     const COLS_MOBILE = 6;
     const COLS_DESKTOP = 7;
-    let COLS = DESKTOP_MEDIA_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
+    let COLS = BOARD_COLS_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
+
 
     /* Progress lives in Supabase only (table: garden_saves — see the
        setup notes near GARDEN_TABLE below), not localStorage. Logged-in
@@ -3685,9 +3707,14 @@ function getItem(level) {
     // didn't actually change ROWS/COLS (e.g. only --stage-ratio needed
     // updating). Mobile drops to 4 rows (desktop keeps 5) — see
     // ROWS_MOBILE/ROWS_DESKTOP above.
-    function setColsForBreakpoint(isDesktop) {
-      const nextCols = isDesktop ? COLS_DESKTOP : COLS_MOBILE;
-      const nextRows = isDesktop ? ROWS_DESKTOP : ROWS_MOBILE;
+    // isRowsDesktop drives ROWS only (from DESKTOP_MEDIA_QUERY, which
+    // also matches short landscape phones); COLS is decided separately
+    // from BOARD_COLS_QUERY (width-only) so those same short landscape
+    // phones keep mobile's 6-column board instead of desktop's 7 — see
+    // BOARD_COLS_QUERY's comment above.
+    function setColsForBreakpoint(isRowsDesktop) {
+      const nextCols = BOARD_COLS_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
+      const nextRows = isRowsDesktop ? ROWS_DESKTOP : ROWS_MOBILE;
       if (nextCols === COLS && nextRows === ROWS) return;
       COLS = nextCols;
       ROWS = nextRows;
