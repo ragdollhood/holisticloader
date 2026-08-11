@@ -1002,24 +1002,24 @@ button {
 
     /* Mobile-landscape ("horizontal") gameplay only: the next-item
        badge stays (or rather, is put back) as an overlay on the
-       game-world art itself — bottom-left, per the base .next-item-group
-       rule further up — instead of living in the side panel's .next-box
-       card (see the DESKTOP_MEDIA_QUERY branch of layoutSideExtras() in
+       game-world art itself — bottom-left corner, flush against the
+       edges — instead of living in the side panel's .next-box card
+       (see the DESKTOP_MEDIA_QUERY branch of layoutSideExtras() in
        the JS, which now special-cases this narrower breakpoint). With
        nothing left inside it, .next-box itself is hidden here so it
-       doesn't show up as an empty card; the caption above/below the
-       icon (hidden everywhere else) is turned on and reworded to just
-       "Next" (see the JS, which sets its text), and reordered after the
-       icon so it reads underneath instead of above. */
+       doesn't show up as an empty card. Icon only, no caption. */
     @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
       #gameLayout:not(.on-map) .next-box {
         display: none;
       }
 
+      #gameLayout:not(.on-map) .stage .next-item-group {
+        left: 0;
+        bottom: 0;
+      }
+
       #gameLayout:not(.on-map) .stage .next-item-label {
-        display: block;
-        order: 1;
-        font-size: 10px;
+        display: none;
       }
     }
 
