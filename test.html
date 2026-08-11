@@ -1497,10 +1497,22 @@ button {
       .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
       .difficulty { padding: 5px; gap: 4px; }
       .difficulty button { padding: 7px 8px; font-size: 9px; min-width: 0; }
-      /* No vertical room on this cramped landscape-phone breakpoint —
-         the Easy/Hard button title="" tooltips still cover the rules. */
-      .side-panel .difficulty-rules { display: none; }
-      .diff-mobile-hint { display: inline; }
+      /* Show the illustrated legend (circles + dashed arrow + checkmark)
+         instead of the text hint on the buttons themselves — just
+         "Easy"/"Hard" on the buttons, the diagrams explain the rule
+         below. Compacted (smaller padding/gap/label/svg) so the whole
+         panel still fits within the game-world image's height, now
+         that .next-box (emptied earlier in this same breakpoint) isn't
+         competing for that space. */
+      .side-panel .difficulty-rules {
+        display: flex;
+        padding: 4px 8px;
+        gap: 3px;
+      }
+      .diff-rule-group { gap: 1px; }
+      .diff-rule-label { font-size: 8.5px; }
+      .diff-rule-svg { width: 60%; margin: 0 auto; }
+      .diff-mobile-hint { display: none; }
 
       /* Account icon: the shared rule above (see the min-width:1200px /
          landscape query further down) pins #authRoot fixed to the
