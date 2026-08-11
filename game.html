@@ -157,7 +157,7 @@
        very short viewport can't fit all of it. */
     .side-panel {
       position: relative;
-      width: clamp(200px, 21vw, 300px);
+      width: var(--sp-width);
       flex: 0 0 auto;
       /* Without this, a flex item's default min-height:auto lets its
          CONTENT'S natural height win over the stretched height coming
@@ -1142,8 +1142,89 @@ button {
          fell through to the desktop/laptop board's more spacious base
          values (97% cell / 1% gap), sized for a screen with far more
          room to spare, making the items look tiny by comparison. */
-      .cell { width: 99%; }
-      .board { gap: 0.4%; }
+      .cell { width: 99.5%; }
+      .board { gap: 0.2%; }
+
+      /* Measured this instead of guessing: on a short viewport the
+         stage-frame's height is always the binding constraint (it's
+         min(92svh, stage-max-w / ratio), and 92svh alone comes out
+         smaller than stage-max-w/ratio here) — so --sp-width has ZERO
+         effect on the frame's size. Checked across six phone widths at
+         matching heights; the frame rendered pixel-identical every
+         time regardless of panel width. So the previous fix's theory
+         (widen the panel, starve the board) wasn't actually the cause
+         here. What WAS starving the circles: --board-width/--board-
+         height (the interactive grid's own share of the frame) were
+         left at the desktop default (58%/54%) in this query — the
+         same fraction portrait mobile used to have before it got
+         bumped to 72%/64% below. On a frame this much smaller than
+         desktop's, that small a fraction produces genuinely tiny
+         circles. Bumped to 78%/74% first (see below), which grew every
+         circle by roughly 45% on top of the cell/gap tightening above.
+
+         Bumped again, further per request, to 88%/84% — recentred on
+         the SAME mid-point as always (50% across, 51%+38px down: with
+         width/height W/H, left = 50% - W/2 and top's percentage part =
+         51% - H/2, the +38px carried over unchanged since it's a
+         fixed top-row offset, not part of the box's own size) so the
+         box still lines up with the illustrated soil patches in the
+         artwork — only its size changed, not its centre. 88%/84% is
+         about as far as this can go without the box's own edges
+         starting to clip the stage frame: left+width = 6%+88% = 94%,
+         top's worst case (+38px on a short phone's ~34px-per-percent
+         frame height) leaves roughly a percent of slack at the
+         bottom — any bigger and the bottom row of circles risks
+         crowding the frame edge on the shortest supported phones.
+         --sp-width is left as it was (harmless either way, and the
+         panel still needs the room). */
+      :root {
+        --board-left: 19%;
+        --board-top: calc(17% + 24px);
+        --board-width: 62%;
+        --board-height: 54%;
+        --sp-width: clamp(190px, 26vw, 300px);
+        --gl-gap: clamp(6px, 1.2vw, 14px);
+        --screen-pad: clamp(6px, 1vw, 12px);
+      }
+
+      /* A touch more conservative than the base 96svh cap: with
+         --screen-pad shrunk above, the stage frame's own height
+         request wasn't accounting for that padding, so on some short
+         viewports it could end up requesting a hair more height than
+         .screen's actual padded content box has room for — the excess
+         then getting clipped by html/body's overflow:hidden instead
+         of just leaving a little empty margin. 92svh leaves enough
+         slack for that padding on every device this query matches. */
+      .stage-frame { height: min(92svh, calc(var(--stage-max-w) / var(--stage-ratio))); }
+
+      /* Root cause of the "next item" card landing below the visible
+         area: .game-layout (the flex row holding .stage-frame and
+         .side-panel) had no explicit height of its own — only
+         max-height:100%, which can't resolve to anything definite
+         here because .screen sizes itself as a CSS-grid cell with no
+         explicit row track, i.e. its height is itself content-based.
+         With no definite height on .game-layout, a flex container's
+         auto height is the tallest child's UNSTRETCHED (natural
+         content) size — not .stage-frame's fixed height — so if
+         .side-panel's stacked content (top row + score + world-picker
+         + collection + next-box, all at their natural sizes) added up
+         to more than .stage-frame's height, .game-layout simply grew
+         to fit it. That growth pushed the whole layout past .screen's
+         100svh, which html/body's overflow:hidden then clipped with
+         no scrollbar anywhere — the card wasn't just scrolled out of
+         reach, it was being rendered fully outside the page.
+
+         Giving .game-layout the exact same explicit height formula
+         .stage-frame already uses fixes this: the row's cross size is
+         now definite, so align-items:stretch forces .side-panel to
+         that same height regardless of its content's natural size,
+         which finally makes .side-panel's own overflow-y:auto (plus
+         its min-height:0, already set) the thing that activates —
+         any content that still doesn't fit scrolls WITHIN the panel,
+         inside the visible frame, instead of pushing the layout (and
+         the next-item card specifically, since it's last in the
+         stack) off the bottom of the screen entirely. */
+      .game-layout { height: min(92svh, calc(var(--stage-max-w) / var(--stage-ratio))); }
 
       .island-btn {
         width: clamp(28px, 5vw, 42px);
@@ -1198,20 +1279,53 @@ button {
          exactly fill (never more, never less than) whatever room is
          really left, so it's both fully on-screen AND as large as
          this layout allows — not shrunk down to a tiny fixed badge. */
-      .next-box { flex: 1 1 auto; min-height: 0; padding: 8px; gap: 6px; }
+      .next-box { flex: 0 0 auto; min-height: 0; padding: 6px; gap: 4px; margin-top: -4px; }
       .next-box .next-item-group {
-        flex: 1 1 auto;
+        flex: 0 0 auto;
         min-height: 0;
-        padding: 8px 10px 10px;
-        gap: 6px;
+        padding: 4px 8px 6px;
+        gap: 4px;
       }
-      .next-box .next-item-label { font-size: 10px; flex: 0 0 auto; }
+      .next-box .next-item-label { font-size: 9px; flex: 0 0 auto; }
       .next-box .next-seed {
-        flex: 1 1 auto;
-        width: 100%;
-        height: auto;
+        flex: 0 0 auto;
+        width: 48px;
+        height: 48px;
         min-height: 0;
       }
+
+      /* The boxes ABOVE .next-box (score/world-picker/collection/
+         actions) were still using their full desktop padding/icon
+         sizes here — sized for a real laptop's much taller side panel.
+         On this short viewport that ate most of the available height
+         before .next-box ever got a turn, so despite its own
+         flex:1 1 auto + min-height:0 above, there was nothing left to
+         grow into and it rendered as a sliver (or scrolled below the
+         visible area). Compacting these the same way the portrait
+         breakpoint already does frees that height back up, so
+         .next-box sits directly under .actions with the same gap as
+         every other pair of boxes, and is tall enough to actually see. */
+      .side-panel { gap: 8px; }
+
+      .score { padding: 8px 10px; gap: 6px; }
+      .stat { padding: 5px 6px; min-width: 0; }
+      .stat b { font-size: 13px; }
+      .stat span { font-size: 8px; }
+
+      .world-picker { padding: 6px; gap: 5px; }
+      .world-dot { width: 9px; height: 9px; }
+
+      /* Collection icons default to 50px (see .collection .item-icon
+         base rule) — sized for a desktop side panel with room to
+         spare. At 50px each, even a handful of collected items wrap
+         into two tall rows here, which was the single biggest
+         contributor to pushing .next-box off screen. Shrunk to match
+         the size mobile portrait already uses. */
+      .collection { padding: 4px 8px; gap: 4px; }
+      .collection .item-icon { width: 25px; height: 25px; }
+
+      .actions { padding: 5px; gap: 4px; }
+      .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
     }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
@@ -1791,6 +1905,28 @@ button {
     .modal-card h2 { margin: 0; color: #fff2d3; font-size: 38px; letter-spacing: -.04em; }
     .modal-card p { margin: 12px auto 22px; max-width: 390px; color: var(--muted); font-family: Arial, sans-serif; line-height: 1.6; font-size: 14px; }
     .modal-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+    /* Mobile in landscape ("horizontal") ONLY — same tightly-scoped
+       "phone turned sideways" combo used elsewhere (orientation:landscape
+       AND max-height:600px AND max-width:1199px), so this never touches
+       real desktop/laptop (excluded by max-width) or portrait mobile
+       (excluded by orientation). Popup cards (e.g. the How to Play
+       modal) have enough content — heading, numbered steps, the merge
+       illustration — that on a short landscape viewport they can be
+       taller than the screen itself. .modal-card had no height cap or
+       scroll of its own, so any part past the viewport's edge was
+       simply cut off by html/body's own overflow:hidden with no way to
+       reach it. Capping the card's height to the available viewport and
+       letting IT scroll internally (instead of relying on the page)
+       means every popup stays fully reachable here, without changing
+       how modals look on laptop or on portrait mobile. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      .modal-card {
+        max-height: calc(100svh - 36px); /* 100svh minus .modal's own 18px top+bottom padding */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
 
     /* Desktop stage aspect-ratio is no longer a hardcoded guess — see the
        applyStageAspectRatio() JS below, which measures each world image's
@@ -2916,11 +3052,11 @@ const WORLD_ITEM_IMAGES = {
     5: "images/game-item-underwater5"
   },
   sunsetPlace: {
-    1: "images/game-item-grow1",
-    2: "images/game-item-grow2",
-    3: "images/game-item-grow3",
-    4: "images/game-item-grow4",
-    5: "images/game-item-grow5"
+    1: "images/game-item-magic1",
+    2: "images/game-item-magic2",
+    3: "images/game-item-magic3",
+    4: "images/game-item-magic4",
+    5: "images/game-item-magic5"
   },
   treasureCave: {
     1: "images/game-item-treasure1",
@@ -2966,6 +3102,13 @@ const WORLD_ITEM_IMAGES = {
     3: "images/game-item-magic3",
     4: "images/game-item-magic4",
     5: "images/game-item-magic5"
+  },
+  cosmos: {
+    1: "images/game-item-rymd1",
+    2: "images/game-item-rymd2",
+    3: "images/game-item-rymd3",
+    4: "images/game-item-rymd4",
+    5: "images/game-item-rymd5"
   }
 };
 
@@ -3188,6 +3331,17 @@ function getItem(level) {
     // query above and its comment for the height-threshold reasoning.
     const DESKTOP_MEDIA_QUERY = window.matchMedia("(min-width: 1200px), (orientation: landscape) and (max-height: 600px)");
 
+    // Board column count specifically: width-only, NOT the same query as
+    // DESKTOP_MEDIA_QUERY above. DESKTOP_MEDIA_QUERY also matches short
+    // landscape phones (so the side panel/next-box/map art etc. can
+    // reuse the desktop-style side-by-side layout there — see its own
+    // comment) but a narrow phone turned sideways is still a phone, not
+    // a real 1200px+ desktop viewport, so it should keep the same
+    // 6-column board mobile portrait uses (bigger cells) rather than
+    // desktop's cramped 7 columns squeezed into a much smaller absolute
+    // frame. Real desktop/laptop widths are untouched either way.
+    const BOARD_COLS_QUERY = window.matchMedia("(min-width: 1200px)");
+
     // Mobile only: +1 row (added at the TOP — see addStartingTiles()
     // below, which shifts its fixed cluster down/right to match) and +2
     // columns (one added on each side) versus the previous 5x5 mobile
@@ -3197,7 +3351,8 @@ function getItem(level) {
     let ROWS = DESKTOP_MEDIA_QUERY.matches ? ROWS_DESKTOP : ROWS_MOBILE;
     const COLS_MOBILE = 6;
     const COLS_DESKTOP = 7;
-    let COLS = DESKTOP_MEDIA_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
+    let COLS = BOARD_COLS_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
+
 
     /* Progress lives in Supabase only (table: garden_saves — see the
        setup notes near GARDEN_TABLE below), not localStorage. Logged-in
@@ -3630,9 +3785,14 @@ function getItem(level) {
     // didn't actually change ROWS/COLS (e.g. only --stage-ratio needed
     // updating). Mobile drops to 4 rows (desktop keeps 5) — see
     // ROWS_MOBILE/ROWS_DESKTOP above.
-    function setColsForBreakpoint(isDesktop) {
-      const nextCols = isDesktop ? COLS_DESKTOP : COLS_MOBILE;
-      const nextRows = isDesktop ? ROWS_DESKTOP : ROWS_MOBILE;
+    // isRowsDesktop drives ROWS only (from DESKTOP_MEDIA_QUERY, which
+    // also matches short landscape phones); COLS is decided separately
+    // from BOARD_COLS_QUERY (width-only) so those same short landscape
+    // phones keep mobile's 6-column board instead of desktop's 7 — see
+    // BOARD_COLS_QUERY's comment above.
+    function setColsForBreakpoint(isRowsDesktop) {
+      const nextCols = BOARD_COLS_QUERY.matches ? COLS_DESKTOP : COLS_MOBILE;
+      const nextRows = isRowsDesktop ? ROWS_DESKTOP : ROWS_MOBILE;
       if (nextCols === COLS && nextRows === ROWS) return;
       COLS = nextCols;
       ROWS = nextRows;
