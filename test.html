@@ -776,10 +776,21 @@
   border-radius: 14px;
 }
 
+/* Only the group matching the currently-selected difficulty shows —
+   see setDifficulty() (JS), which toggles "mode-easy"/"mode-hard" on
+   #difficultyRules to match #diffEasyBtn/#diffHardBtn's own selected
+   state. Laptop/desktop and mobile-landscape only: mobile-portrait
+   hides #difficultyRules entirely regardless (see the
+   max-width:1199px query further down), so this never applies there. */
 .diff-rule-group {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 3px;
+}
+
+#difficultyRules.mode-easy .diff-rule-group[data-rule="easy"],
+#difficultyRules.mode-hard .diff-rule-group[data-rule="hard"] {
+  display: flex;
 }
 
 .diff-rule-label {
@@ -2880,7 +2891,7 @@ button {
              itself off the same --gold/--lav CSS variables as the rest
              of the UI. -->
         <div class="hud difficulty-rules gameplay-only" id="difficultyRules" aria-hidden="true">
-          <div class="diff-rule-group">
+          <div class="diff-rule-group" data-rule="easy">
             <span class="diff-rule-label">Easy: row <em>or</em> angle merges</span>
             <svg class="diff-rule-svg" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -2909,7 +2920,7 @@ button {
               <path d="M106 22 l4 4 8-8" fill="none" stroke="#6fcf7a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
           </div>
-          <div class="diff-rule-group">
+          <div class="diff-rule-group" data-rule="hard">
             <span class="diff-rule-label">Hard: straight rows only</span>
             <svg class="diff-rule-svg" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -4760,6 +4771,16 @@ function getItem(level) {
         hardBtn.classList.toggle("secondary", difficulty !== "hard");
         easyBtn.setAttribute("aria-pressed", String(difficulty === "easy"));
         hardBtn.setAttribute("aria-pressed", String(difficulty === "hard"));
+      }
+      // Shows only the matching illustrated rule group below the
+      // buttons (see .diff-rule-group[data-rule] in the CSS) — laptop/
+      // desktop and mobile-landscape only; mobile-portrait hides
+      // #difficultyRules entirely regardless, so this class has no
+      // visible effect there.
+      const rulesEl = document.getElementById("difficultyRules");
+      if (rulesEl) {
+        rulesEl.classList.toggle("mode-easy", difficulty === "easy");
+        rulesEl.classList.toggle("mode-hard", difficulty === "hard");
       }
     }
 
