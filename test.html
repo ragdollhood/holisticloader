@@ -1145,23 +1145,32 @@ button {
       .cell { width: 99%; }
       .board { gap: 0.4%; }
 
-      /* The board's own bounding box (--board-left/top/width/height,
-         set once up top) stays exactly as-is here — it's a % of the
-         stage-frame image and has to stay put, or the interactive
-         circles drift off the illustrated soil patches painted into
-         that image. --sp-width (the side panel's width budget) is
-         trimmed a little from the full desktop clamp(200px, 21vw,
-         300px) — a narrow phone turned sideways doesn't need quite
-         that much reserved for its panel — but kept well above the
-         very cramped floor tried before, which left too little room
-         for the score/action button boxes and made them (and the
-         labels inside them) crop instead of just being smaller. The
-         real fix for tiny items is the board's own column count (see
-         BOARD_COLS_QUERY in the JS): this viewport now keeps mobile's
-         6 columns instead of jumping to desktop's cramped 7, which
-         grows every circle noticeably without needing to starve the
-         panel down to an unusable width. */
+      /* Measured this instead of guessing: on a short viewport the
+         stage-frame's height is always the binding constraint (it's
+         min(92svh, stage-max-w / ratio), and 92svh alone comes out
+         smaller than stage-max-w/ratio here) — so --sp-width has ZERO
+         effect on the frame's size. Checked across six phone widths at
+         matching heights; the frame rendered pixel-identical every
+         time regardless of panel width. So the previous fix's theory
+         (widen the panel, starve the board) wasn't actually the cause
+         here. What WAS starving the circles: --board-width/--board-
+         height (the interactive grid's own share of the frame) were
+         left at the desktop default (58%/54%) in this query — the
+         same fraction portrait mobile used to have before it got
+         bumped to 72%/64% below. On a frame this much smaller than
+         desktop's, that small a fraction produces genuinely tiny
+         circles. Bumped to 78%/74% here instead, recentred on the same
+         mid-point as the untouched values (so the box still lines up
+         with the illustrated soil patches in the artwork — only its
+         size changed, not its centre), which grows every circle by
+         roughly 45% on top of the cell/gap tightening above.
+         --sp-width is left as it was (harmless either way, and the
+         panel still needs the room). */
       :root {
+        --board-left: 11%;
+        --board-top: calc(14% + 38px);
+        --board-width: 78%;
+        --board-height: 74%;
         --sp-width: clamp(190px, 26vw, 300px);
         --gl-gap: clamp(6px, 1.2vw, 14px);
         --screen-pad: clamp(6px, 1vw, 12px);
