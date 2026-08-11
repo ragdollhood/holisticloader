@@ -523,6 +523,34 @@
       color: var(--gold2);
     }
 
+    /* Holds the title wordmark image on top of the game-world art —
+       see #stageTitle in the markup and layoutStageTitle() in the JS,
+       which moves #brandLogoText/#brandFallbackText in here. Empty
+       (and hidden) on every breakpoint except mobile in landscape
+       ("horizontal") during actual gameplay — see the media query
+       below. On the map/start screen the wordmark stays in its usual
+       side-panel spot instead (layoutStageTitle() only moves it while
+       #gameLayout does NOT have .on-map). */
+    .stage-title {
+      display: none;
+    }
+
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      #gameLayout:not(.on-map) .stage-title {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      #gameLayout:not(.on-map) .stage-title .brand-logo-text {
+        max-height: 32px;
+      }
+    }
+
     .score {
       width: 100%;
       padding: 10px 14px;
@@ -2558,6 +2586,14 @@ button {
          the side panel while the map screen is showing. -->
     <div class="game-layout" id="gameLayout">
       <div class="stage-frame" id="stageFrame">
+        <!-- Empty on every breakpoint except mobile-landscape ("phone
+             turned sideways") gameplay, where layoutStageTitle() (JS)
+             moves the title wordmark image (#brandLogoText, normally in
+             the side-panel's top-row) in here instead, overlaid on the
+             top-left corner of the game-world art — see the
+             orientation:landscape/max-height:600px/max-width:1199px
+             CSS block for .stage-title further up. -->
+        <div class="stage-title" id="stageTitle" aria-hidden="true"></div>
         <section class="stage" id="stage" aria-label="Wellness Garden game world">
           <div class="stars"></div>
 
@@ -3580,6 +3616,34 @@ function getItem(level) {
     const actionsBoxEl = document.getElementById("actionsBox");
     const authRootEl = document.getElementById("authRoot");
     const topRowEl = document.querySelector(".top-row");
+    const stageTitleEl = document.getElementById("stageTitle");
+    const brandGameplayEl = document.getElementById("brandGameplay");
+    const brandLogoTextEl = document.getElementById("brandLogoText");
+    const brandFallbackTextEl = document.getElementById("brandFallbackText");
+
+    // Same tightly-scoped "phone turned sideways" combo used elsewhere
+    // (orientation:landscape AND max-height:600px AND max-width:1199px)
+    // — matches ONLY short mobile-landscape, never real desktop/laptop
+    // (excluded by max-width) and never portrait/tall-landscape mobile
+    // (excluded by the other two clauses).
+    const MOBILE_LANDSCAPE_QUERY = window.matchMedia("(orientation: landscape) and (max-height: 600px) and (max-width: 1199px)");
+
+    // Moves just the title wordmark image (+ its text fallback) between
+    // its usual home in the side-panel's top-row (next to the world
+    // name) and #stageTitle, overlaid on the game-world art's top-left
+    // corner — mobile-landscape gameplay only. The world name text
+    // itself (#worldName) always stays put in the side panel. Called
+    // once at load, on MOBILE_LANDSCAPE_QUERY's "change" event, and
+    // from showMap()/hideMap() (since it also depends on onMap). */
+    function layoutStageTitle() {
+      if (MOBILE_LANDSCAPE_QUERY.matches && !onMap) {
+        stageTitleEl.appendChild(brandLogoTextEl);
+        stageTitleEl.appendChild(brandFallbackTextEl);
+      } else {
+        brandGameplayEl.insertBefore(brandFallbackTextEl, worldNameEl);
+        brandGameplayEl.insertBefore(brandLogoTextEl, brandFallbackTextEl);
+      }
+    }
 
     /* Moves the home-thumb ("back to the map") button and the next-item
        badge between their homes depending on the desktop/mobile
@@ -3634,6 +3698,8 @@ function getItem(level) {
       }
     }
     layoutSideExtras();
+    layoutStageTitle();
+    MOBILE_LANDSCAPE_QUERY.addEventListener("change", layoutStageTitle);
 
     const mobileMapTrialBtnEl = document.getElementById("mobileMapTrialBtn");
     mobileMapTrialBtnEl.addEventListener("click", () => {
@@ -4037,6 +4103,7 @@ function getItem(level) {
     function showMap(highlightKey) {
       onMap = true;
       gameLayoutEl.classList.add("on-map");
+      layoutStageTitle();
       justUnlockedKey = highlightKey || null;
       renderMap();
       mapScreenEl.classList.add("show");
@@ -4061,6 +4128,7 @@ function getItem(level) {
       onMap = false;
       gameLayoutEl.classList.remove("on-map");
       mapScreenEl.classList.remove("show");
+      layoutStageTitle();
     }
 
     function enterWorld(key) {
