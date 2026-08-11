@@ -1186,23 +1186,30 @@ button {
          the top row/score/actions, so the full-size card was pushing
          itself (and the rest of .next-box) below the visible area
          instead of fitting on screen. */
-      /* margin-top:auto pins this to the exact bottom of the side
-         panel (which is stretched to match the game board's height —
-         see .game-layout's align-items:stretch), so its bottom edge
-         lines up exactly with the board's bottom edge, with any spare
-         vertical space absorbed above it instead of below. */
-      .next-box { flex: 0 0 auto; margin-top: auto; padding: 8px; gap: 6px; }
+      /* Fills whatever vertical space is left after the top row/score/
+         actions, all the way down to the side panel's own bottom edge
+         (which lines up with the game board's bottom edge — see
+         .game-layout's align-items:stretch) — same flex-grow approach
+         .next-box already uses on real desktop/laptop, just WITHOUT
+         that version's fixed 140px-min-height icon box. That fixed
+         floor was taller than the space actually available on a short
+         landscape-phone viewport, pushing the whole card below the
+         visible area; min-height:0 here instead lets it grow to
+         exactly fill (never more, never less than) whatever room is
+         really left, so it's both fully on-screen AND as large as
+         this layout allows — not shrunk down to a tiny fixed badge. */
+      .next-box { flex: 1 1 auto; min-height: 0; padding: 8px; gap: 6px; }
       .next-box .next-item-group {
-        flex: 0 0 auto;
+        flex: 1 1 auto;
         min-height: 0;
         padding: 8px 10px 10px;
         gap: 6px;
       }
-      .next-box .next-item-label { font-size: 10px; }
+      .next-box .next-item-label { font-size: 10px; flex: 0 0 auto; }
       .next-box .next-seed {
-        flex: 0 0 auto;
-        width: 56px;
-        height: 56px;
+        flex: 1 1 auto;
+        width: 100%;
+        height: auto;
         min-height: 0;
       }
     }
