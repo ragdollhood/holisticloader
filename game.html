@@ -4363,6 +4363,7 @@ function getItem(level) {
       if (isWorldCleared(currentWorldKey)) return;
 console.log("WORLD CLEARED", currentWorldKey);
       clearedWorlds.push(currentWorldKey);
+      console.log("AFTER PUSH:", clearedWorlds);
       playWorldClearFanfare();
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
       const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
@@ -4511,6 +4512,8 @@ console.log("WORLD CLEARED", currentWorldKey);
     async function performSync(showFeedback) {
       if (!currentUser || typeof sb === "undefined") return;
       try {
+        console.log("BEFORE SAVE:", clearedWorlds);
+console.log("SAVE ROW:", currentSaveRow());
         const { error } = await sb.from(GARDEN_TABLE).upsert(currentSaveRow(), { onConflict: "user_id" });
         if (error) throw error;
         if (showFeedback) showToast("Garden saved");
