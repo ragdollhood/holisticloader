@@ -582,9 +582,18 @@
          narrow breakpoint, grows all the way out to the side panel's
          own right edge (flush with that same corner), so its box ends
          up sitting directly under/against the icon. Reserving space on
-         the brand box's right keeps a clear gap between the two. */
+         the brand box's right keeps a clear gap between the two.
+         Matched with an equal left margin (rather than right-only) so
+         the box shrinks symmetrically and its own centered content
+         (justify-content:center, see .brand) lands on the row's TRUE
+         midpoint — the same midpoint .score's full-width stat row
+         below lines up on — instead of drifting left of it. This only
+         has a visible effect on the map/start screen: during actual
+         gameplay .top-row .brand is hidden outright (see the
+         :not(.on-map) rule above), so the reserved margin has nothing
+         to center there. */
       .top-row .brand {
-        margin-right: 44px;
+        margin: 0 44px;
       }
     }
 
@@ -1117,6 +1126,19 @@ button {
        the file is missing or fails to load. */
     .map-brand {
       display: none;
+    }
+
+    /* Mobile-landscape ("horizontal") only: no title image over the
+       map artwork itself — the matching wordmark already shows in the
+       side panel (see .brand-gameplay/#brandLogoText, centered above
+       the score row there). #mapBrand's ID selector outranks the
+       broader .map-brand class rule below regardless of source order,
+       so this stays hidden on this one breakpoint while real desktop/
+       laptop (min-width:1200px) keeps the title on the map untouched. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      #mapBrand {
+        display: none;
+      }
     }
 
     @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
