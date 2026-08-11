@@ -3975,7 +3975,9 @@ function getItem(level) {
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
       renderCollection();
-      syncToCloud(false, true);
+     if (gardenLoadedForUser !== null) {
+  syncToCloud(false, true);
+}
       applyStageAspectRatio(key);
     }
 
@@ -4517,6 +4519,12 @@ console.log("SAVE ROW:", currentSaveRow());
         console.log("BEFORE SAVE:", clearedWorlds);
 console.log("SAVE ROW:", currentSaveRow());
 console.trace("SAVE CALLED");
+        console.log(
+  "SAVE CLEARED:",
+  JSON.stringify(currentSaveRow().cleared_worlds)
+);
+
+console.trace("SAVE TRACE");
         const { error } = await sb.from(GARDEN_TABLE).upsert(currentSaveRow(), { onConflict: "user_id" });
         if (error) throw error;
         if (showFeedback) showToast("Garden saved");
