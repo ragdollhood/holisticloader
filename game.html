@@ -4361,7 +4361,7 @@ function getItem(level) {
       if (createdLevel < CLEAR_ITEM_LEVEL) return;
       if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return;
       if (isWorldCleared(currentWorldKey)) return;
-
+console.log("WORLD CLEARED", currentWorldKey);
       clearedWorlds.push(currentWorldKey);
       playWorldClearFanfare();
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
