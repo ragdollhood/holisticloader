@@ -326,6 +326,15 @@
   border: 1px solid rgba(255,255,255,.18);
 }
 
+    /* Laptop/desktop only (NOT mobile landscape, which reuses this
+       same layout but is its own separate ask) — thicker frame border
+       around the game world/map image. True min-width:1200px only, on
+       purpose: no OR'd landscape/max-height clause here like the
+       other "desktop-ish" media queries in this file. */
+    @media (min-width: 1200px) {
+      .stage { border-width: 4px; }
+    }
+
     .stage::before {
       content: "";
       position: absolute;
@@ -3597,7 +3606,16 @@ function getItem(level) {
         });
         worldPickerEl.addEventListener("click", (e) => {
           const btn = e.target.closest(".world-dot");
-          if (btn) setWorld(btn.dataset.worldKey);
+          if (btn) {
+            // Manually picking a world from these dots always starts a
+            // fresh game there (empty board, score/moves/collection
+            // reset) — NOT just a visual re-skin of whatever's
+            // currently on the board. setWorld() first so newGarden()'s
+            // resetSeenLevelIntros()/WORLD_ITEM_IMAGES lookups already
+            // see the new world.
+            setWorld(btn.dataset.worldKey);
+            newGarden();
+          }
         });
         worldPickerBuilt = true;
       }
@@ -3759,15 +3777,10 @@ function getItem(level) {
     }
 
     function addStartingTiles() {
-      // Same 3-tile cluster on both breakpoints — mobile's board is
-      // 6 cols x 5 rows now (see ROWS_MOBILE/COLS_MOBILE above), close
-      // enough to desktop's proportions that no extra shift is needed.
-      const shift = 0;
-      [
-        { r: 2, c: 1, level: 1 },
-        { r: 2, c: 2, level: 1 },
-        { r: 3, c: 2, level: 1 }
-      ].forEach(item => { board[item.r + shift][item.c + shift] = item.level; });
+      // Board now starts completely empty — no pre-placed tiles.
+      // (Was a 3-tile starter cluster; left as a documented no-op,
+      // rather than removing every call site, so newGarden()/initial
+      // load/etc. don't need to change.)
     }
 
     function saveHistory() {
