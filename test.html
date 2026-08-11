@@ -1165,6 +1165,29 @@ button {
       .premium-box { padding: 6px; gap: 6px; }
       .side-panel .premium-box > *:not(.premium-trial-btn) { display: none; }
       .side-panel .premium-box .premium-trial-btn { margin-top: 0; }
+
+      /* "Next item" card, during gameplay — shrunk down from the full
+         desktop card (which stretches to fill leftover side-panel
+         height via flex:1 1 auto + a 140px-min-height icon box) to a
+         small fixed-size badge instead. On a short landscape-phone
+         viewport there usually isn't 140px+ of spare room left after
+         the top row/score/actions, so the full-size card was pushing
+         itself (and the rest of .next-box) below the visible area
+         instead of fitting on screen. */
+      .next-box { flex: 0 0 auto; padding: 8px; gap: 6px; }
+      .next-box .next-item-group {
+        flex: 0 0 auto;
+        min-height: 0;
+        padding: 8px 10px 10px;
+        gap: 6px;
+      }
+      .next-box .next-item-label { font-size: 10px; }
+      .next-box .next-seed {
+        flex: 0 0 auto;
+        width: 56px;
+        height: 56px;
+        min-height: 0;
+      }
     }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
