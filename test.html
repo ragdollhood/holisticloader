@@ -1857,6 +1857,28 @@ button {
     .modal-card p { margin: 12px auto 22px; max-width: 390px; color: var(--muted); font-family: Arial, sans-serif; line-height: 1.6; font-size: 14px; }
     .modal-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 
+    /* Mobile in landscape ("horizontal") ONLY — same tightly-scoped
+       "phone turned sideways" combo used elsewhere (orientation:landscape
+       AND max-height:600px AND max-width:1199px), so this never touches
+       real desktop/laptop (excluded by max-width) or portrait mobile
+       (excluded by orientation). Popup cards (e.g. the How to Play
+       modal) have enough content — heading, numbered steps, the merge
+       illustration — that on a short landscape viewport they can be
+       taller than the screen itself. .modal-card had no height cap or
+       scroll of its own, so any part past the viewport's edge was
+       simply cut off by html/body's own overflow:hidden with no way to
+       reach it. Capping the card's height to the available viewport and
+       letting IT scroll internally (instead of relying on the page)
+       means every popup stays fully reachable here, without changing
+       how modals look on laptop or on portrait mobile. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      .modal-card {
+        max-height: calc(100svh - 36px); /* 100svh minus .modal's own 18px top+bottom padding */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
     /* Desktop stage aspect-ratio is no longer a hardcoded guess — see the
        applyStageAspectRatio() JS below, which measures each world image's
        actual width/height once it loads and sets --stage-ratio on
