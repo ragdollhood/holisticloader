@@ -1178,10 +1178,10 @@ button {
          --sp-width is left as it was (harmless either way, and the
          panel still needs the room). */
       :root {
-        --board-left: 6%;
-        --board-top: calc(9% + 38px);
-        --board-width: 88%;
-        --board-height: 84%;
+        --board-left: 11%;
+        --board-top: calc(8% + 16px);
+        --board-width: 78%;
+        --board-height: 72%;
         --sp-width: clamp(190px, 26vw, 300px);
         --gl-gap: clamp(6px, 1.2vw, 14px);
         --screen-pad: clamp(6px, 1vw, 12px);
@@ -1279,18 +1279,18 @@ button {
          exactly fill (never more, never less than) whatever room is
          really left, so it's both fully on-screen AND as large as
          this layout allows — not shrunk down to a tiny fixed badge. */
-      .next-box { flex: 1 1 auto; min-height: 0; padding: 8px; gap: 6px; }
+      .next-box { flex: 0 0 auto; min-height: 0; padding: 6px; gap: 4px; margin-top: -4px; }
       .next-box .next-item-group {
-        flex: 1 1 auto;
+        flex: 0 0 auto;
         min-height: 0;
-        padding: 8px 10px 10px;
-        gap: 6px;
+        padding: 4px 8px 6px;
+        gap: 4px;
       }
-      .next-box .next-item-label { font-size: 10px; flex: 0 0 auto; }
+      .next-box .next-item-label { font-size: 9px; flex: 0 0 auto; }
       .next-box .next-seed {
-        flex: 1 1 auto;
-        width: 100%;
-        height: auto;
+        flex: 0 0 auto;
+        width: 48px;
+        height: 48px;
         min-height: 0;
       }
 
