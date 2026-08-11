@@ -1133,6 +1133,18 @@ button {
        desktop/laptop widths (excluded by max-width) or portrait mobile
        (excluded by orientation) — just the one requested case. */
     @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      /* Same tighter cell-packing mobile portrait's map screen already
+         uses (bigger cell-fill %, smaller grid gap) — reclaims the
+         gap's wasted space for the circles themselves, so each item's
+         circle (and therefore the item art inside it, still capped at
+         96% of that circle — see .tile .item-icon) is as large as
+         this cramped short viewport can fit. Previously this viewport
+         fell through to the desktop/laptop board's more spacious base
+         values (97% cell / 1% gap), sized for a screen with far more
+         room to spare, making the items look tiny by comparison. */
+      .cell { width: 99%; }
+      .board { gap: 0.4%; }
+
       .island-btn {
         width: clamp(28px, 5vw, 42px);
         height: clamp(28px, 5vw, 42px);
