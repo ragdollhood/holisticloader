@@ -4514,6 +4514,9 @@ console.log("WORLD CLEARED", currentWorldKey);
       try {
         console.log("BEFORE SAVE:", clearedWorlds);
 console.log("SAVE ROW:", currentSaveRow());
+        console.log("BEFORE SAVE:", clearedWorlds);
+console.log("SAVE ROW:", currentSaveRow());
+console.trace("SAVE CALLED");
         const { error } = await sb.from(GARDEN_TABLE).upsert(currentSaveRow(), { onConflict: "user_id" });
         if (error) throw error;
         if (showFeedback) showToast("Garden saved");
