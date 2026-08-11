@@ -4006,6 +4006,24 @@ function getItem(level) {
     // that entirely.
     let currentMapRatio = 1;
 
+    // Mobile-landscape ("horizontal") only: also shapes .stage-frame
+    // ITSELF to the map artwork's real ratio, the same way
+    // measureAndApplyRatio() shapes it to each world's ratio during
+    // gameplay. Without this, .stage-frame stays sized to whatever
+    // world ratio was last applied, so the map — contain-fit inside
+    // that mismatched box by layoutMapFrame() — ends up smaller than
+    // the box, letterboxed, instead of matching the game-world art's
+    // size and position exactly. Once the box itself matches the
+    // map's ratio, that same contain-fit math naturally fills the
+    // whole box with zero letterbox, so nothing else needs to change.
+    // Desktop/laptop are untouched (real desktop keeps its original
+    // contain-fit behaviour).
+    function applyMapStageRatio(ratio) {
+      if (typeof MOBILE_LANDSCAPE_QUERY !== "undefined" && MOBILE_LANDSCAPE_QUERY.matches) {
+        stageFrameEl.style.setProperty("--stage-ratio", ratio);
+      }
+    }
+
     function applyMapAspectRatio(page) {
       const info = MAP_PAGES[page];
       if (!info) return;
@@ -4015,6 +4033,7 @@ function getItem(level) {
       const cached = ratioCache[cacheKey];
       if (cached) {
         currentMapRatio = cached;
+        applyMapStageRatio(cached);
         layoutMapFrame();
         return;
       }
@@ -4027,6 +4046,7 @@ function getItem(level) {
         ratioCache[cacheKey] = ratio;
         if (isStillRelevant()) {
           currentMapRatio = ratio;
+          applyMapStageRatio(ratio);
           layoutMapFrame();
         }
       };
