@@ -680,6 +680,23 @@
 
 .actions button { flex: 1 1 0; }
 
+/* Same pill row as .actions, just for the Easy/Hard toggle underneath
+   it — see #difficultyBox in the markup and setDifficulty() (JS),
+   which swaps the "active" look (plain gold button) onto whichever
+   side is currently selected and drops the other one back to
+   button.secondary. */
+.difficulty {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+}
+
+.difficulty button { flex: 1 1 0; }
+
 /* #homeActionBtn ("Home", next to "New") is desktop/laptop-only — see
    the min-width:1200px override further down. Mobile keeps using the
    small home-thumb icon in the score row instead, so this stays
@@ -1345,6 +1362,8 @@ button {
 
       .actions { padding: 5px; gap: 4px; }
       .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
+      .difficulty { padding: 5px; gap: 4px; }
+      .difficulty button { padding: 7px 8px; font-size: 9px; min-width: 0; }
 
       /* Account icon: the shared rule above (see the min-width:1200px /
          landscape query further down) pins #authRoot fixed to the
@@ -2272,6 +2291,7 @@ button {
       .next-seed .item-icon { width: 90%; height: 90%; }
 
       .actions { padding: 5px; gap: 4px; }
+      .difficulty { padding: 5px; gap: 4px; }
       button { padding: 6px 8px; font-size: 8px; }
 
       /* Planting circles sized up and pulled much closer together on
@@ -2677,6 +2697,17 @@ button {
                row instead); shown at the min-width:1200px breakpoint —
                see that rule further up. -->
           <button class="secondary" id="homeActionBtn">Home</button>
+        </div>
+
+        <!-- Difficulty selector — sits directly under the Undo/New/Home
+             row. "Easy" merges any touching cluster of 3+ (straight
+             line OR angle/L-shape), same as the game's original
+             behavior. "Hard" only merges straight three-in-a-rows
+             (horizontal or vertical); angled clusters no longer merge.
+             See setDifficulty() / findConnectedGroupStraight() (JS). -->
+        <div class="hud difficulty gameplay-only" id="difficultyBox" aria-label="Difficulty">
+          <button type="button" id="diffEasyBtn" data-difficulty="easy">Easy</button>
+          <button type="button" class="secondary" id="diffHardBtn" data-difficulty="hard">Hard</button>
         </div>
 
         <!-- Desktop/laptop-only box at the bottom of the side panel:
@@ -3396,6 +3427,12 @@ function getItem(level) {
     let collection = [];
     let currentWorldKey = WORLD_KEYS[0];
 
+    // Difficulty is a local device preference (not part of the cloud
+    // save) — "easy" merges any touching cluster of 3+ regardless of
+    // shape (the game's original behavior), "hard" only merges straight
+    // three-in-a-rows. See setDifficulty() and findConnectedGroupStraight().
+    let difficulty = localStorage.getItem("difficulty") === "hard" ? "hard" : "easy";
+
     // Map progression state — persisted to Supabase alongside the rest
     // of the save (see currentSaveRow() / loadFromCloud()).
     let clearedWorlds = [];   // world keys that have been "cleared" (see CLEAR_ITEM_LEVEL)
@@ -3495,6 +3532,9 @@ function getItem(level) {
     });
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
+    document.getElementById("diffEasyBtn").addEventListener("click", () => setDifficulty("easy"));
+    document.getElementById("diffHardBtn").addEventListener("click", () => setDifficulty("hard"));
+    setDifficulty(difficulty); // reflect the stored/default preference in the button styling on load
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
     document.getElementById("closeModalBtn").addEventListener("click", hideModal);
 
@@ -4246,7 +4286,9 @@ function getItem(level) {
         keepMerging = false;
         const level = board[currentR][currentC];
         if (level <= 0 || level >= currentWorldItems().length) break; // already at this world's max level
-        const group = findConnectedGroup(currentR, currentC, level);
+        const group = difficulty === "hard"
+          ? findConnectedGroupStraight(currentR, currentC, level)
+          : findConnectedGroup(currentR, currentC, level);
         if (group.length >= 3) {
           group.forEach(pos => { board[pos.r][pos.c] = 0; });
           board[currentR][currentC] = level + 1;
@@ -4386,6 +4428,55 @@ function getItem(level) {
 
     function getNeighbors(r, c) {
       return [{ r: r - 1, c }, { r: r + 1, c }, { r, c: c - 1 }, { r, c: c + 1 }].filter(pos => inBounds(pos.r, pos.c));
+    }
+
+    // "Hard" mode's match-finder — unlike findConnectedGroup() (any
+    // touching blob of 3+, straight or angled), this only counts a
+    // straight run of 3+ matching tiles through (r,c): it walks left/
+    // right for the horizontal run and up/down for the vertical run
+    // and only keeps whichever run(s) are actually >=3 long. A pure
+    // L-shape/angle (2 horizontal + 2 vertical, neither reaching 3 on
+    // its own) returns an empty array, so it does NOT merge. A T/plus
+    // shape that has a genuine 3+ run in both directions merges both
+    // runs together in one go.
+    function findConnectedGroupStraight(r, c, level) {
+      const horizontal = [{ r, c }];
+      for (let cc = c - 1; cc >= 0 && board[r][cc] === level; cc--) horizontal.unshift({ r, c: cc });
+      for (let cc = c + 1; cc < COLS && board[r][cc] === level; cc++) horizontal.push({ r, c: cc });
+
+      const vertical = [{ r, c }];
+      for (let rr = r - 1; rr >= 0 && board[rr][c] === level; rr--) vertical.unshift({ r: rr, c });
+      for (let rr = r + 1; rr < ROWS && board[rr][c] === level; rr++) vertical.push({ r: rr, c });
+
+      const result = [];
+      const seen = new Set();
+      const addRun = (run) => {
+        if (run.length < 3) return;
+        run.forEach(pos => {
+          const key = `${pos.r},${pos.c}`;
+          if (!seen.has(key)) { seen.add(key); result.push(pos); }
+        });
+      };
+      addRun(horizontal);
+      addRun(vertical);
+      return result;
+    }
+
+    // Switches between "easy" (any touching 3+, straight or angled)
+    // and "hard" (straight three-in-a-rows only) and remembers the
+    // choice locally for next time. Doesn't touch the board — it only
+    // changes how the NEXT placed tile resolves merges.
+    function setDifficulty(mode) {
+      difficulty = mode === "hard" ? "hard" : "easy";
+      localStorage.setItem("difficulty", difficulty);
+      const easyBtn = document.getElementById("diffEasyBtn");
+      const hardBtn = document.getElementById("diffHardBtn");
+      if (easyBtn && hardBtn) {
+        easyBtn.classList.toggle("secondary", difficulty !== "easy");
+        hardBtn.classList.toggle("secondary", difficulty !== "hard");
+        easyBtn.setAttribute("aria-pressed", String(difficulty === "easy"));
+        hardBtn.setAttribute("aria-pressed", String(difficulty === "hard"));
+      }
     }
 
     function inBounds(r, c) { return r >= 0 && c >= 0 && r < ROWS && c < COLS; }
