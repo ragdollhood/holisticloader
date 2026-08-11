@@ -1146,11 +1146,16 @@ button {
          instead of a separate icon bar + button below the image. */
       .how-to-play { padding: 6px; gap: 6px; }
       .how-to-play-compact-btn { display: flex; }
-      .how-to-play h3, .how-to-play ol { display: none; }
+      /* .side-panel prefix bumps specificity above the later, unscoped
+         base ".how-to-play h3"/".how-to-play ol" rules further down
+         the stylesheet — without it, those rules (equal specificity,
+         later source order) would win and the full instructions would
+         stay visible here despite this override. */
+      .side-panel .how-to-play h3, .side-panel .how-to-play ol { display: none; }
 
       .premium-box { padding: 6px; gap: 6px; }
-      .premium-box > *:not(.premium-trial-btn) { display: none; }
-      .premium-box .premium-trial-btn { margin-top: 0; }
+      .side-panel .premium-box > *:not(.premium-trial-btn) { display: none; }
+      .side-panel .premium-box .premium-trial-btn { margin-top: 0; }
     }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
