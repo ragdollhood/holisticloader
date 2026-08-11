@@ -1174,7 +1174,12 @@ button {
          the top row/score/actions, so the full-size card was pushing
          itself (and the rest of .next-box) below the visible area
          instead of fitting on screen. */
-      .next-box { flex: 0 0 auto; padding: 8px; gap: 6px; }
+      /* margin-top:auto pins this to the exact bottom of the side
+         panel (which is stretched to match the game board's height —
+         see .game-layout's align-items:stretch), so its bottom edge
+         lines up exactly with the board's bottom edge, with any spare
+         vertical space absorbed above it instead of below. */
+      .next-box { flex: 0 0 auto; margin-top: auto; padding: 8px; gap: 6px; }
       .next-box .next-item-group {
         flex: 0 0 auto;
         min-height: 0;
