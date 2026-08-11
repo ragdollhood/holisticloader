@@ -4597,6 +4597,7 @@ console.log("WORLD CLEARED", currentWorldKey);
       moves++;
       const createdLevels = resolveMerges(r, c); // every level created this move, in ascending order (a single move can cascade through several)
       const createdLevel = createdLevels.length ? Math.max(...createdLevels) : 0;
+      console.log("createdLevel:", createdLevel);
       if (createdLevel >= 3) collection.push(createdLevel);
       nextLevel = randomNextLevel();
       updateBest();
