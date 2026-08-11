@@ -573,6 +573,19 @@
         width: 92%;
         height: 92%;
       }
+
+      /* Login icon (#authRoot) is pinned position:fixed to the page's
+         true top-right corner (see the shared min-width:1200px /
+         landscape rule further up, and the tightened "right" value
+         further down in this same query) — but .top-row .brand is
+         flex:1 1 auto and, with little else left in that row on this
+         narrow breakpoint, grows all the way out to the side panel's
+         own right edge (flush with that same corner), so its box ends
+         up sitting directly under/against the icon. Reserving space on
+         the brand box's right keeps a clear gap between the two. */
+      .top-row .brand {
+        margin-right: 44px;
+      }
     }
 
     .score {
