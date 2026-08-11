@@ -157,7 +157,7 @@
        very short viewport can't fit all of it. */
     .side-panel {
       position: relative;
-      width: clamp(200px, 21vw, 300px);
+      width: var(--sp-width);
       flex: 0 0 auto;
       /* Without this, a flex item's default min-height:auto lets its
          CONTENT'S natural height win over the stretched height coming
@@ -1133,6 +1133,40 @@ button {
        desktop/laptop widths (excluded by max-width) or portrait mobile
        (excluded by orientation) — just the one requested case. */
     @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      /* Same tighter cell-packing mobile portrait's map screen already
+         uses (bigger cell-fill %, smaller grid gap) — reclaims the
+         gap's wasted space for the circles themselves, so each item's
+         circle (and therefore the item art inside it, still capped at
+         96% of that circle — see .tile .item-icon) is as large as
+         this cramped short viewport can fit. Previously this viewport
+         fell through to the desktop/laptop board's more spacious base
+         values (97% cell / 1% gap), sized for a screen with far more
+         room to spare, making the items look tiny by comparison. */
+      .cell { width: 99%; }
+      .board { gap: 0.4%; }
+
+      /* The board's own bounding box (--board-left/top/width/height,
+         set once up top) stays exactly as-is here — it's a % of the
+         stage-frame image and has to stay put, or the interactive
+         circles drift off the illustrated soil patches painted into
+         that image. The actual reason items render tiny on this
+         viewport is upstream of that box: --sp-width (the side panel's
+         width budget) is the same clamp(200px, 21vw, 300px) used on a
+         full desktop window, so on a narrow phone turned sideways it
+         eats a huge slice of the little horizontal room there is,
+         which starves --stage-max-w and therefore the whole stage
+         frame (board included) shrinks to match. Giving the panel a
+         much smaller budget here hands that width straight back to
+         the stage frame — the board box is still the same 58%/54%
+         slice, just of a visibly bigger image, so every circle grows
+         with it. Smaller --gl-gap/--screen-pad free a little more
+         width on top of that. */
+      :root {
+        --sp-width: clamp(132px, 15vw, 190px);
+        --gl-gap: clamp(6px, 1.2vw, 14px);
+        --screen-pad: clamp(6px, 1vw, 12px);
+      }
+
       .island-btn {
         width: clamp(28px, 5vw, 42px);
         height: clamp(28px, 5vw, 42px);
@@ -1174,20 +1208,65 @@ button {
          the top row/score/actions, so the full-size card was pushing
          itself (and the rest of .next-box) below the visible area
          instead of fitting on screen. */
-      .next-box { flex: 0 0 auto; padding: 8px; gap: 6px; }
+      /* Fills whatever vertical space is left after the top row/score/
+         actions, all the way down to the side panel's own bottom edge
+         (which lines up with the game board's bottom edge — see
+         .game-layout's align-items:stretch) — same flex-grow approach
+         .next-box already uses on real desktop/laptop, just WITHOUT
+         that version's fixed 140px-min-height icon box. That fixed
+         floor was taller than the space actually available on a short
+         landscape-phone viewport, pushing the whole card below the
+         visible area; min-height:0 here instead lets it grow to
+         exactly fill (never more, never less than) whatever room is
+         really left, so it's both fully on-screen AND as large as
+         this layout allows — not shrunk down to a tiny fixed badge. */
+      .next-box { flex: 1 1 auto; min-height: 0; padding: 8px; gap: 6px; }
       .next-box .next-item-group {
-        flex: 0 0 auto;
+        flex: 1 1 auto;
         min-height: 0;
         padding: 8px 10px 10px;
         gap: 6px;
       }
-      .next-box .next-item-label { font-size: 10px; }
+      .next-box .next-item-label { font-size: 10px; flex: 0 0 auto; }
       .next-box .next-seed {
-        flex: 0 0 auto;
-        width: 56px;
-        height: 56px;
+        flex: 1 1 auto;
+        width: 100%;
+        height: auto;
         min-height: 0;
       }
+
+      /* The boxes ABOVE .next-box (score/world-picker/collection/
+         actions) were still using their full desktop padding/icon
+         sizes here — sized for a real laptop's much taller side panel.
+         On this short viewport that ate most of the available height
+         before .next-box ever got a turn, so despite its own
+         flex:1 1 auto + min-height:0 above, there was nothing left to
+         grow into and it rendered as a sliver (or scrolled below the
+         visible area). Compacting these the same way the portrait
+         breakpoint already does frees that height back up, so
+         .next-box sits directly under .actions with the same gap as
+         every other pair of boxes, and is tall enough to actually see. */
+      .side-panel { gap: 8px; }
+
+      .score { padding: 8px 10px; gap: 6px; }
+      .stat { padding: 5px 6px; min-width: 0; }
+      .stat b { font-size: 13px; }
+      .stat span { font-size: 8px; }
+
+      .world-picker { padding: 6px; gap: 5px; }
+      .world-dot { width: 9px; height: 9px; }
+
+      /* Collection icons default to 50px (see .collection .item-icon
+         base rule) — sized for a desktop side panel with room to
+         spare. At 50px each, even a handful of collected items wrap
+         into two tall rows here, which was the single biggest
+         contributor to pushing .next-box off screen. Shrunk to match
+         the size mobile portrait already uses. */
+      .collection { padding: 4px 8px; gap: 4px; }
+      .collection .item-icon { width: 25px; height: 25px; }
+
+      .actions { padding: 5px; gap: 4px; }
+      .actions button { padding: 7px 8px; font-size: 9px; }
     }
 
     /* While the map is showing, hide the gameplay-only side-panel chrome
