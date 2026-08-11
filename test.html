@@ -2155,6 +2155,26 @@ button {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
       }
+
+      /* How to Play specifically: shrink the heading/list/illustration
+         enough that the whole card normally fits within the popup at
+         once on a short landscape phone, instead of leaning on the
+         scroll fallback above (still there as a safety net for the
+         very shortest viewports). */
+      .modal-card.how-to-play-card {
+        padding: 18px 20px;
+      }
+      .how-to-play-card h2 { font-size: 22px; }
+      .how-to-play-card ol {
+        margin: 8px 0 14px;
+        gap: 6px;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+      .how-to-play-card .merge-demo {
+        max-width: 170px;
+        margin-top: 4px;
+      }
     }
 
     /* Desktop stage aspect-ratio is no longer a hardcoded guess — see the
@@ -2817,8 +2837,8 @@ button {
                 <circle cx="46" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
                 <circle cx="72" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
                 <line x1="88" y1="24" x2="112" y2="24" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#mergeArrow)"></line>
-                <circle cx="134" cy="24" r="15" fill="rgba(201,167,255,.22)" stroke="var(--lav)" stroke-width="1.6"></circle>
-                <path d="M134 16 l2.6 5.4 5.9.8 -4.3 4.1 1 5.8 -5.2 -2.8 -5.2 2.8 1 -5.8 -4.3 -4.1 5.9 -.8 Z" fill="var(--lav)"></path>
+                <circle cx="134" cy="24" r="15" fill="rgba(111,207,122,.2)" stroke="#6fcf7a" stroke-width="1.6"></circle>
+                <path d="M128 24 l4 4 8-8" fill="none" stroke="#6fcf7a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
                 <text x="180" y="20" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">In a</text>
                 <text x="180" y="32" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">row</text>
 
@@ -2828,8 +2848,8 @@ button {
                 <circle cx="46" cy="64" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
                 <circle cx="20" cy="90" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
                 <line x1="88" y1="77" x2="112" y2="77" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#mergeArrow)"></line>
-                <circle cx="134" cy="77" r="15" fill="rgba(201,167,255,.22)" stroke="var(--lav)" stroke-width="1.6"></circle>
-                <path d="M134 69 l2.6 5.4 5.9.8 -4.3 4.1 1 5.8 -5.2 -2.8 -5.2 2.8 1 -5.8 -4.3 -4.1 5.9 -.8 Z" fill="var(--lav)"></path>
+                <circle cx="134" cy="77" r="15" fill="rgba(111,207,122,.2)" stroke="#6fcf7a" stroke-width="1.6"></circle>
+                <path d="M128 77 l4 4 8-8" fill="none" stroke="#6fcf7a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
                 <text x="180" y="73" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">At an</text>
                 <text x="180" y="85" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">angle</text>
 
@@ -3028,8 +3048,8 @@ button {
             <circle cx="46" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
             <circle cx="72" cy="24" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
             <line x1="88" y1="24" x2="112" y2="24" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#mergeArrowModal)"></line>
-            <circle cx="134" cy="24" r="15" fill="rgba(201,167,255,.22)" stroke="var(--lav)" stroke-width="1.6"></circle>
-            <path d="M134 16 l2.6 5.4 5.9.8 -4.3 4.1 1 5.8 -5.2 -2.8 -5.2 2.8 1 -5.8 -4.3 -4.1 5.9 -.8 Z" fill="var(--lav)"></path>
+            <circle cx="134" cy="24" r="15" fill="rgba(111,207,122,.2)" stroke="#6fcf7a" stroke-width="1.6"></circle>
+            <path d="M128 24 l4 4 8-8" fill="none" stroke="#6fcf7a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
             <text x="180" y="20" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">In a</text>
             <text x="180" y="32" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">row</text>
 
@@ -3039,8 +3059,8 @@ button {
             <circle cx="46" cy="64" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
             <circle cx="20" cy="90" r="11" fill="rgba(248,217,139,.16)" stroke="var(--gold)" stroke-width="1.4"></circle>
             <line x1="88" y1="77" x2="112" y2="77" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#mergeArrowModal)"></line>
-            <circle cx="134" cy="77" r="15" fill="rgba(201,167,255,.22)" stroke="var(--lav)" stroke-width="1.6"></circle>
-            <path d="M134 69 l2.6 5.4 5.9.8 -4.3 4.1 1 5.8 -5.2 -2.8 -5.2 2.8 1 -5.8 -4.3 -4.1 5.9 -.8 Z" fill="var(--lav)"></path>
+            <circle cx="134" cy="77" r="15" fill="rgba(111,207,122,.2)" stroke="#6fcf7a" stroke-width="1.6"></circle>
+            <path d="M128 77 l4 4 8-8" fill="none" stroke="#6fcf7a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
             <text x="180" y="73" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">At an</text>
             <text x="180" y="85" fill="var(--muted)" font-size="10" font-family="Arial, sans-serif" font-weight="700">angle</text>
 
