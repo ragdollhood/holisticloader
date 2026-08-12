@@ -4378,9 +4378,12 @@ function getItem(level) {
         resetBoardOnEnterKey = null;
         board = createEmptyBoard();
         history = [];
+        collection = [];
         addStartingTiles();
         nextLevel = 1; // guaranteed level 1 for the first tile of a new world
         resetSeenLevelIntros(key); // fresh play-through of this world — level reveals should replay
+        seenLevelIntros[key].add(1); // level 1 is guaranteed as the first tile — mark it seen right away
+        collection.push(1); // ...and give it its collection icon immediately, so order tracking starts at 1
       }
       setWorld(key); // already flushes an immediate sync internally
       render();
@@ -4468,6 +4471,8 @@ function getItem(level) {
       nextLevel = 1;
       addStartingTiles();
       resetSeenLevelIntros(currentWorldKey); // fresh play-through of this world — level reveals should replay
+      seenLevelIntros[currentWorldKey].add(1); // level 1 is guaranteed as the first tile — mark it seen right away
+      collection.push(1); // ...and give it its collection icon immediately, so order tracking starts at 1
       render();
     }
 
@@ -4742,7 +4747,7 @@ async function performSync(showFeedback) {
       // of once per merge) so each level gets exactly one collection icon
       // per playthrough, not a duplicate every time it's merged again.
       const newlyReachedLevels = createdLevels.filter(level => level >= 2 && markLevelFirstSeen(level));
-      newlyReachedLevels.filter(level => level >= 3).forEach(level => collection.push(level));
+      newlyReachedLevels.filter(level => level >= 2).forEach(level => collection.push(level));
       nextLevel = randomNextLevel();
       updateBest();
       const clearedThisMove = checkWorldClear(createdLevel);
@@ -5201,6 +5206,9 @@ async function performSync(showFeedback) {
         clearedWorlds = Array.isArray(lastKnownClearedWorlds) ? lastKnownClearedWorlds.slice() : [];
         mapPage = 1;
         addStartingTiles();
+        resetSeenLevelIntros(WORLD_KEYS[0]); // fresh guest playthrough — level reveals should replay
+        seenLevelIntros[WORLD_KEYS[0]].add(1); // level 1 is guaranteed as the first tile — mark it seen right away
+        collection.push(1); // ...and give it its collection icon immediately, so order tracking starts at 1
         setWorld(WORLD_KEYS[0]); // also resets background/name display and re-renders
         bestStatEl.textContent = formatNumber(best);
         render();
