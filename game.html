@@ -3711,6 +3711,8 @@ function getItem(level) {
     let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
     let resetBoardOnEnterKey = null; // world key whose board should start empty next time enterWorld() opens it — set by checkWorldClear() right after an island is cleared (5/5) and the next one unlocks
     let isLoadingGarden = false; // true while loadFromCloud() is populating state — guards setWorld() from firing a sync mid-load, see setWorld() below
+    let cloudSaveReadyForUser = null; // only this user_id may write to Supabase after cloud load/no-row handling has completed
+    let lastKnownClearedWorlds = []; // local safety snapshot so auth-status flickers never erase map progression in memory
 
     const stageEl = document.getElementById("stage");
     const gameLayoutEl = document.getElementById("gameLayout");
@@ -4361,11 +4363,12 @@ function getItem(level) {
     // hasn't been marked cleared yet, mark it, unlock the next island,
     // and drop the player back on the map with the new island pulsing.
     function checkWorldClear(createdLevel) {
-      if (createdLevel < CLEAR_ITEM_LEVEL) return;
-      if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return;
-      if (isWorldCleared(currentWorldKey)) return;
+      if (createdLevel < CLEAR_ITEM_LEVEL) return false;
+      if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return false;
+      if (isWorldCleared(currentWorldKey)) return false;
 
-      clearedWorlds.push(currentWorldKey);
+      clearedWorlds = Array.from(new Set([...(Array.isArray(clearedWorlds) ? clearedWorlds : []), currentWorldKey]));
+      lastKnownClearedWorlds = clearedWorlds.slice();
       playWorldClearFanfare();
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
       const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
@@ -4376,13 +4379,14 @@ function getItem(level) {
         // pretending the next island just opened.
         showToast("Island cleared!");
         setTimeout(() => { showMap(null); openGuestUpsellModal("cleared"); }, 1100);
-        return;
+        return true;
       }
 
       showToast(nextKey ? "Island cleared! A new one has opened" : "Island cleared!");
       resetBoardOnEnterKey = nextKey; // next island starts on a fresh board — see enterWorld()
       syncToCloud(false, true);
       setTimeout(() => showMap(nextKey), 1100);
+      return true;
     }
 
     // Resets local board state only — does NOT touch clearedWorlds and does
@@ -4507,7 +4511,7 @@ function getItem(level) {
         collection,
         current_world: currentWorldKey,
         best,
-        cleared_worlds: clearedWorlds,
+        cleared_worlds: Array.isArray(clearedWorlds) ? clearedWorlds.slice() : [],
         map_page: mapPage,
         updated_at: new Date().toISOString()
       };
@@ -4528,12 +4532,17 @@ let saveCounter = 0; // TEMP DEBUG
 
 async function performSync(showFeedback) {
   if (!currentUser || typeof sb === "undefined") return;
-
+  if (isLoadingGarden || cloudSaveReadyForUser !== currentUser.id) {
+    console.warn("syncToCloud() skipped: garden is not ready for cloud writes yet", {
+      user: currentUser && currentUser.id,
+      cloudSaveReadyForUser,
+      isLoadingGarden
+    });
+    return;
+  }
   try {
     saveCounter++;
-
     const row = currentSaveRow();
-
     console.log(
       `SAVE #${saveCounter}`,
       "cleared_worlds:",
@@ -4541,33 +4550,23 @@ async function performSync(showFeedback) {
       "updated_at:",
       row.updated_at
     );
-
-    if (row.cleared_worlds.length === 0) {
-      console.error("EMPTY SAVE DETECTED");
-      console.trace("EMPTY SAVE TRACE");
-    } else {
-      console.trace(`SAVE #${saveCounter} trace`);
-    }
-
     const { error } = await sb
       .from(GARDEN_TABLE)
       .upsert(row, { onConflict: "user_id" });
-
     if (error) throw error;
-
+    if (Array.isArray(row.cleared_worlds)) {
+      lastKnownClearedWorlds = row.cleared_worlds.slice();
+    }
     if (showFeedback) {
       showToast("Garden saved");
     }
-
   } catch (err) {
     console.error("syncToCloud() error:", err);
-
     if (showFeedback) {
       showToast("Could not save — try again");
     }
   }
 }
-
     function syncToCloud(showFeedback, immediate) {
       if (!currentUser || typeof sb === "undefined") return;
       syncPendingFeedback = syncPendingFeedback || !!showFeedback;
@@ -4602,7 +4601,12 @@ async function performSync(showFeedback) {
 
     async function loadFromCloud() {
       isLoadingGarden = true;
-      if (!currentUser || typeof sb === "undefined") { isLoadingGarden = false; resetGardenStateLocally(); return; }
+      if (!currentUser || typeof sb === "undefined") {
+        isLoadingGarden = false;
+        cloudSaveReadyForUser = null;
+        resetGardenStateLocally();
+        return;
+      }
       try {
         const { data, error } = await sb
           .from(GARDEN_TABLE)
@@ -4619,7 +4623,9 @@ async function performSync(showFeedback) {
           collection = data.collection || [];
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
-          clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds : [];
+          clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds.slice() : [];
+          lastKnownClearedWorlds = clearedWorlds.slice();
+          cloudSaveReadyForUser = currentUser.id;
           mapPage = 1; // only one map page now (all 10 islands on one image) — kept as a var for the cloud row's shape
           history = [];
           setWorld(currentWorldKey);
@@ -4637,6 +4643,7 @@ async function performSync(showFeedback) {
           // new player still gets saved on their first move (see
           // resetGardenStateLocally()'s comment above).
           console.warn("loadFromCloud(): no row found for user", currentUser.id, "— starting local-only fresh garden (not synced yet)"); // TEMP DEBUG
+          cloudSaveReadyForUser = currentUser.id;
           isLoadingGarden = false;
           resetGardenStateLocally();
           showMap(null);
@@ -4644,11 +4651,15 @@ async function performSync(showFeedback) {
       } catch (err) {
         console.error("loadFromCloud() error:", err);
         showToast("Could not load your garden");
+        cloudSaveReadyForUser = null;
         isLoadingGarden = false;
         // Deliberately NOT calling newGarden() here — a transient load
         // failure must never overwrite the real cloud save with a blank
-        // one. Leave local state as-is; the next successful load will
-        // restore the real data.
+        // one. Keep the last known map progression in memory too; a
+        // later successful load will replace it with the real cloud data.
+        if (Array.isArray(lastKnownClearedWorlds)) {
+          clearedWorlds = lastKnownClearedWorlds.slice();
+        }
         resetGardenStateLocally();
       }
     }
@@ -4663,7 +4674,7 @@ async function performSync(showFeedback) {
       if (createdLevel >= 3) collection.push(createdLevel);
       nextLevel = randomNextLevel();
       updateBest();
-      checkWorldClear(createdLevel);
+      const clearedThisMove = checkWorldClear(createdLevel);
       render();
       if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
       else if (createdLevel > 0) showToast("Beautiful merge");
@@ -4674,7 +4685,10 @@ async function performSync(showFeedback) {
       const newlyReachedLevels = createdLevels.filter(level => level >= 2 && markLevelFirstSeen(level));
       if (newlyReachedLevels.length) queueLevelReveals(newlyReachedLevels);
       if (isFull()) showGameOver();
-      syncToCloud(false);
+      // A world-clear already forced an immediate save above. Avoid a second
+      // delayed save from the same move, because auth/premium listeners can
+      // briefly reset local state before the debounce fires.
+      if (!clearedThisMove) syncToCloud(false);
     }
 
     function resolveMerges(startR, startC) {
@@ -5099,20 +5113,27 @@ async function performSync(showFeedback) {
         closeGuestUpsellModal();
         if (gardenLoadedForUser !== currentUser.id) {
           gardenLoadedForUser = currentUser.id;
+          cloudSaveReadyForUser = null;
           loadFromCloud();
         }
       } else {
         console.warn("AUTH RESET FIRED — currentUser is null, clearedWorlds being wiped to []"); // TEMP DEBUG
         console.trace("AUTH RESET trace"); // TEMP DEBUG
         gardenLoadedForUser = null;
+        cloudSaveReadyForUser = null;
         // Reset the visible board so a previous account's garden never
         // lingers on screen for whoever uses this device/browser next,
         // then drop the guest onto a fresh, playable island 1 — no
         // account required. Progress here is session-only (never synced
         // to Supabase, see syncToCloud()'s currentUser guard).
+        // Do not blindly wipe clearedWorlds here: auth/premium can briefly
+        // report null during refresh and that was erasing map progress in
+        // memory after a correct save. Guests still cannot unlock island 2+
+        // because isWorldUnlocked() requires currentUser.
         board = createEmptyBoard();
         score = 0; moves = 0; history = []; collection = []; nextLevel = 1; best = 0;
-        clearedWorlds = []; mapPage = 1;
+        clearedWorlds = Array.isArray(lastKnownClearedWorlds) ? lastKnownClearedWorlds.slice() : [];
+        mapPage = 1;
         addStartingTiles();
         setWorld(WORLD_KEYS[0]); // also resets background/name display and re-renders
         bestStatEl.textContent = formatNumber(best);
@@ -5132,6 +5153,7 @@ async function performSync(showFeedback) {
     // (empty) clearedWorlds. See the "cleared_worlds keeps coming back
     // empty" bug — confirmed via stack trace pointing at this exact line.
     isLoadingGarden = true;
+    cloudSaveReadyForUser = null;
     setWorld(currentWorldKey); // sets an initial background (and picker dots) before auth resolves
     isLoadingGarden = false;
     addStartingTiles();
