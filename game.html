@@ -3710,6 +3710,7 @@ function getItem(level) {
     let onMap = true;         // true while the map screen is showing instead of the board
     let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
     let resetBoardOnEnterKey = null; // world key whose board should start empty next time enterWorld() opens it — set by checkWorldClear() right after an island is cleared (5/5) and the next one unlocks
+    let isLoadingGarden = false; // true while loadFromCloud() is populating state — guards setWorld() from firing a sync mid-load, see setWorld() below
 
     const stageEl = document.getElementById("stage");
     const gameLayoutEl = document.getElementById("gameLayout");
@@ -3975,7 +3976,9 @@ function getItem(level) {
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
       renderCollection();
-      syncToCloud(false, true);
+      if (!isLoadingGarden) {
+        syncToCloud(false, true);
+      }
       applyStageAspectRatio(key);
     }
 
@@ -4382,7 +4385,12 @@ function getItem(level) {
       setTimeout(() => showMap(nextKey), 1100);
     }
 
-    function newGarden() {
+    // Resets local board state only — does NOT touch clearedWorlds and does
+    // NOT sync to the cloud. Used when we can't be sure it's safe to write
+    // (see loadFromCloud()'s no-data/error paths below) — a genuine new
+    // player still gets saved the moment they place their first tile, via
+    // the debounced syncToCloud(false) in placeTile().
+    function resetGardenStateLocally() {
       board = createEmptyBoard();
       score = 0;
       moves = 0;
@@ -4392,6 +4400,14 @@ function getItem(level) {
       addStartingTiles();
       resetSeenLevelIntros(currentWorldKey); // fresh play-through of this world — level reveals should replay
       render();
+    }
+
+    // User-facing "start over" action (Again button, explicit new-garden
+    // flows) — resets local state AND immediately writes it to the cloud.
+    // Do NOT call this from loadFromCloud()'s failure paths — see
+    // resetGardenStateLocally() above.
+    function newGarden() {
+      resetGardenStateLocally();
       showToast("New garden planted");
       syncToCloud(false, true);
     }
@@ -4504,27 +4520,53 @@ function getItem(level) {
     // schedules a write within SYNC_DEBOUNCE_MS; pass immediate=true for
     // writes that must land right away (explicit Save, clearing an
     // island, switching/leaving a world) rather than get coalesced.
-    const SYNC_DEBOUNCE_MS = 900;
-    let syncTimer = null;
-    let syncPendingFeedback = false;
+const SYNC_DEBOUNCE_MS = 900;
+let syncTimer = null;
+let syncPendingFeedback = false;
 
-    let saveCounter = 0; // TEMP DEBUG — remove once the cleared_worlds bug is found
+let saveCounter = 0; // TEMP DEBUG
 
-    async function performSync(showFeedback) {
-      if (!currentUser || typeof sb === "undefined") return;
-      try {
-        const row = currentSaveRow();
-        saveCounter++;
-        console.log(`SAVE #${saveCounter}`, "cleared_worlds:", JSON.stringify(row.cleared_worlds), "updated_at:", row.updated_at); // TEMP DEBUG
-        console.trace(`SAVE #${saveCounter} trace`); // TEMP DEBUG
-        const { error } = await sb.from(GARDEN_TABLE).upsert(row, { onConflict: "user_id" });
-        if (error) throw error;
-        if (showFeedback) showToast("Garden saved");
-      } catch (err) {
-        console.error("syncToCloud() error:", err);
-        if (showFeedback) showToast("Could not save — try again");
-      }
+async function performSync(showFeedback) {
+  if (!currentUser || typeof sb === "undefined") return;
+
+  try {
+    saveCounter++;
+
+    const row = currentSaveRow();
+
+    console.log(
+      `SAVE #${saveCounter}`,
+      "cleared_worlds:",
+      JSON.stringify(row.cleared_worlds),
+      "updated_at:",
+      row.updated_at
+    );
+
+    if (row.cleared_worlds.length === 0) {
+      console.error("EMPTY SAVE DETECTED");
+      console.trace("EMPTY SAVE TRACE");
+    } else {
+      console.trace(`SAVE #${saveCounter} trace`);
     }
+
+    const { error } = await sb
+      .from(GARDEN_TABLE)
+      .upsert(row, { onConflict: "user_id" });
+
+    if (error) throw error;
+
+    if (showFeedback) {
+      showToast("Garden saved");
+    }
+
+  } catch (err) {
+    console.error("syncToCloud() error:", err);
+
+    if (showFeedback) {
+      showToast("Could not save — try again");
+    }
+  }
+}
 
     function syncToCloud(showFeedback, immediate) {
       if (!currentUser || typeof sb === "undefined") return;
@@ -4559,15 +4601,14 @@ function getItem(level) {
     window.addEventListener("pagehide", flushPendingSync);
 
     async function loadFromCloud() {
-      if (!currentUser || typeof sb === "undefined") { newGarden(); return; }
+      isLoadingGarden = true;
+      if (!currentUser || typeof sb === "undefined") { isLoadingGarden = false; resetGardenStateLocally(); return; }
       try {
         const { data, error } = await sb
           .from(GARDEN_TABLE)
           .select("*")
           .eq("user_id", currentUser.id)
           .maybeSingle();
-        console.log("LOAD DATA:", data);
-console.log("LOAD USER:", currentUser.id);
         if (error) throw error;
 
         if (data) {
@@ -4579,23 +4620,36 @@ console.log("LOAD USER:", currentUser.id);
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
           clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds : [];
-          console.log("LOADED clearedWorlds:", clearedWorlds);
           mapPage = 1; // only one map page now (all 10 islands on one image) — kept as a var for the cloud row's shape
           history = [];
           setWorld(currentWorldKey);
+          isLoadingGarden = false;
           bestStatEl.textContent = formatNumber(best);
           render();
           showMap(null); // land on the map first every time the garden loads
           showToast("Garden restored");
         } else {
-          // First time this account plays — start fresh and create the row.
-          newGarden();
+          // No row found for this user. This SHOULD only mean "first time
+          // this account plays" — but if it fires for a returning player
+          // (e.g. an RLS/session-timing hiccup on this query), calling the
+          // cloud-writing newGarden() here would silently wipe their real
+          // saved progress. Use the local-only reset instead: a genuine
+          // new player still gets saved on their first move (see
+          // resetGardenStateLocally()'s comment above).
+          console.warn("loadFromCloud(): no row found for user", currentUser.id, "— starting local-only fresh garden (not synced yet)"); // TEMP DEBUG
+          isLoadingGarden = false;
+          resetGardenStateLocally();
           showMap(null);
         }
       } catch (err) {
         console.error("loadFromCloud() error:", err);
         showToast("Could not load your garden");
-        newGarden();
+        isLoadingGarden = false;
+        // Deliberately NOT calling newGarden() here — a transient load
+        // failure must never overwrite the real cloud save with a blank
+        // one. Leave local state as-is; the next successful load will
+        // restore the real data.
+        resetGardenStateLocally();
       }
     }
 
