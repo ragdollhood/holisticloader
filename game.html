@@ -3754,17 +3754,6 @@ function getItem(level) {
     let collection = [];
     let currentWorldKey = WORLD_KEYS[0];
 
-    // Levels randomNextLevel() is allowed to deal as the next tile: only
-    // ones that have actually appeared on the board this playthrough (via
-    // a merge), so the player can never receive a level "for free" before
-    // they've built up to it themselves. Level 1 is always in here since
-    // it's the guaranteed first tile. Reset alongside the board — see
-    // resetPresentedLevels() and its call sites (mirrors
-    // resetSeenLevelIntros()'s reset points).
-    let presentedLevels = new Set([1]);
-    function resetPresentedLevels() {
-      presentedLevels = new Set([1]);
-    }
 
     // Difficulty is a local device preference (not part of the cloud
     // save) — "easy" merges any touching cluster of 3+ regardless of
@@ -4022,14 +4011,17 @@ function getItem(level) {
 
     function cloneBoard(source) { return source.map(row => row.slice()); }
 
-    // Only ever hands out a level that has already appeared on the board
-    // this playthrough (tracked in presentedLevels — level 1 is always in
-    // there, since it's the guaranteed first tile). Never introduces a
-    // level the player hasn't reached yet via merging, so nothing is ever
-    // given for free.
+    // Same odds as the original: level 3 only has a shot (7%) once
+    // score > 2400; level 2 gets a boosted shot (18%) once score > 900,
+    // otherwise it's the "roll >= 0.80" fallback; level 1 is the common
+    // case (80% base chance). Level 4 and 5 are never return values here
+    // — those can only ever be reached by merging.
     function randomNextLevel() {
-      const options = Array.from(presentedLevels);
-      return options[Math.floor(Math.random() * options.length)];
+      const roll = Math.random();
+      if (score > 2400 && roll < 0.07) return 3;
+      if (score > 900 && roll < 0.18) return 2;
+      if (roll < 0.80) return 1;
+      return 2;
     }
 
     // setWorld("underwaterKingdom") / setWorld("dragonsValley") / setWorld("iceCavern")
@@ -4387,8 +4379,7 @@ function getItem(level) {
         board = createEmptyBoard();
         history = [];
         addStartingTiles();
-        resetPresentedLevels(); // fresh world — only level 1 is "presented" until the player merges something
-        nextLevel = randomNextLevel(); // guaranteed level 1, since presentedLevels only has {1} right now
+        nextLevel = 1; // guaranteed level 1 for the first tile of a new world
         resetSeenLevelIntros(key); // fresh play-through of this world — level reveals should replay
       }
       setWorld(key); // already flushes an immediate sync internally
@@ -4475,7 +4466,6 @@ function getItem(level) {
       history = [];
       collection = [];
       nextLevel = 1;
-      resetPresentedLevels(); // fresh playthrough — only level 1 is "presented" until the player merges something
       addStartingTiles();
       resetSeenLevelIntros(currentWorldKey); // fresh play-through of this world — level reveals should replay
       render();
@@ -4700,12 +4690,6 @@ async function performSync(showFeedback) {
           best = typeof data.best === "number" ? data.best : 0;
           clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds.slice() : [];
           lastKnownClearedWorlds = clearedWorlds.slice();
-          // Rebuild presentedLevels from the restored save: level 1 always,
-          // plus every level currently sitting on the board, plus every
-          // level collection ever recorded (levels 3+ created via merge,
-          // even ones since merged away again) — so randomNextLevel() only
-          // offers levels this player has genuinely already reached.
-          presentedLevels = new Set([1, ...board.flat().filter(level => level > 0), ...collection]);
           cloudSaveReadyForUser = currentUser.id;
           mapPage = 1; // only one map page now (all 10 islands on one image) — kept as a var for the cloud row's shape
           history = [];
@@ -4790,7 +4774,6 @@ async function performSync(showFeedback) {
           const createdItem = getItem(level + 1);
           score += createdItem.score * group.length;
           createdLevels.push(level + 1);
-          presentedLevels.add(level + 1); // this level has now appeared — eligible for randomNextLevel() going forward
           spawnBurst(currentR, currentC, getItemImageUrl(createdItem));
           playMergeGong();
           keepMerging = true;
@@ -5214,7 +5197,6 @@ async function performSync(showFeedback) {
         // because isWorldUnlocked() requires currentUser.
         board = createEmptyBoard();
         score = 0; moves = 0; history = []; collection = []; nextLevel = 1; best = 0;
-        resetPresentedLevels(); // fresh guest session — only level 1 is "presented" until the player merges something
         clearedWorlds = Array.isArray(lastKnownClearedWorlds) ? lastKnownClearedWorlds.slice() : [];
         mapPage = 1;
         addStartingTiles();
