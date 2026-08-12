@@ -13,6 +13,12 @@
   <!-- Update to the real deployed URL before publishing. -->
   <link rel="canonical" href="https://www.holisticgame.com/" />
 
+  <!-- Google AdSense — loads the ad library site-wide. adsense.js (loaded
+       later, after auth.js) decides per-visitor whether any ad actually
+       renders (canShowAds() → false for premium/trial users). -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1322447721565676"
+     crossorigin="anonymous"></script>
+
   <!-- Browser tab icon / bookmark icon / PWA home-screen icon.
        One square PNG covers all of these; browsers pick the sizes they need. -->
   <link rel="icon" type="image/png" href="images/game-icon.png" />
@@ -2802,6 +2808,14 @@ button {
             </div>
             <div class="map-title" id="mapTitle">Choose an island</div>
             <div class="map-frame" id="mapFrame"></div>
+
+            <!-- Map-screen ad — covers the "world map", "between islands",
+                 and "after an island is cleared" placements in one slot,
+                 since clearing an island always drops the player back on
+                 this screen (see checkWorldClear()). Free users only. -->
+            <div class="hud ad-slot ad-slot--map" id="mapAdSlot" aria-label="Advertisement">
+              <span class="ad-label">Advertisement</span>
+            </div>
           </div>
 
           <!-- The ONLY HUD element left over the image itself, per spec:
@@ -2941,6 +2955,20 @@ button {
           </button>
           <a class="premium-buy-btn" id="premiumBoxBuyBtn" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00" target="_blank" rel="noopener">Get Premium — $4.99/mo</a>
           <button type="button" class="premium-login-link" id="premiumBoxLoginBtn">Already have an account? Log in</button>
+        </div>
+
+        <!-- Sidebar ad — free users only, hidden automatically for anyone
+             with premium/trial access (see adsense.js / canShowAds()).
+             map-only, same visibility window as How to Play / Premium
+             above it, so it only ever appears on the map/start screen —
+             never mid-merge, on the board, during level reveals, or
+             world-clear animations. -->
+        <div class="hud ad-slot map-only" id="sidebarAdSlot" aria-label="Advertisement">
+          <span class="ad-label">Advertisement</span>
+        </div>
+        <div class="ad-upsell map-only" id="sidebarAdUpsell">
+          <p>Enjoy an ad-free experience with Holistic Premium</p>
+          <button type="button" id="sidebarRemoveAdsBtn">Remove Ads</button>
         </div>
 
         <!-- home-thumb ("back to the map") starts out here for mobile;
@@ -3174,6 +3202,7 @@ button {
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="auth.js"></script>
+  <script src="adsense.js"></script>
   <script>
 /* -----------------------------------------------------------------
    MERGE SOUND — a bright, happy little chime played every time three
@@ -3975,6 +4004,8 @@ function getItem(level) {
       if (kicker) {
         kicker.textContent = reason === "locked"
           ? "This island is locked"
+          : reason === "ads"
+          ? "Enjoy an ad-free experience with Holistic Premium"
           : "Island 1 cleared! 🌱";
       }
       guestClearModalEl.classList.add("show");
@@ -3993,6 +4024,22 @@ function getItem(level) {
     document.getElementById("guestClearLaterBtn").addEventListener("click", closeGuestUpsellModal);
     guestClearModalEl.addEventListener("click", (e) => {
       if (e.target === guestClearModalEl) closeGuestUpsellModal();
+    });
+
+    // ---------- Ads (Google AdSense, see adsense.js) ----------
+    // Replace "YOUR_SIDEBAR_SLOT_ID" / "YOUR_MAP_SLOT_ID" with the actual
+    // ad unit slot IDs from your AdSense dashboard (Ads -> By ad unit ->
+    // create a "Display ad" for each placement). Both slots are map-only
+    // in the markup/CSS, so they only ever render on the map/start
+    // screen — AdBanner() itself additionally hides them for anyone with
+    // premium or trial access.
+    if (typeof AdBanner === "function") {
+      AdBanner("sidebarAdSlot", "YOUR_SIDEBAR_SLOT_ID", "auto", "sidebarAdUpsell");
+      AdBanner("mapAdSlot", "YOUR_MAP_SLOT_ID", "auto");
+    }
+    document.getElementById("sidebarRemoveAdsBtn").addEventListener("click", () => {
+      if (!currentUser) { openGuestUpsellModal("ads"); return; }
+      window.open("https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00", "_blank", "noopener");
     });
 
     function createEmptyBoard() {
