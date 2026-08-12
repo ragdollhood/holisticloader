@@ -5123,7 +5123,17 @@ async function performSync(showFeedback) {
 
     stageFrameEl.style.setProperty("--board-cols", COLS); // match the CSS var to the COLS this page actually loaded with
     stageFrameEl.style.setProperty("--board-rows", ROWS); // match the CSS var to the ROWS this page actually loaded with
+    // Guarded with isLoadingGarden too: currentUser can already be truthy
+    // here (auth.js may hydrate a cached session synchronously) even though
+    // loadFromCloud() — which populates the real clearedWorlds — hasn't run
+    // yet (it only fires later via onPremiumStatusChange() below). Without
+    // this guard, setWorld()'s internal syncToCloud(false, true) could fire
+    // right here and overwrite the real cloud save with the still-default
+    // (empty) clearedWorlds. See the "cleared_worlds keeps coming back
+    // empty" bug — confirmed via stack trace pointing at this exact line.
+    isLoadingGarden = true;
     setWorld(currentWorldKey); // sets an initial background (and picker dots) before auth resolves
+    isLoadingGarden = false;
     addStartingTiles();
     render();
     showMap(null); // land on the map immediately — island 1 is playable before auth even resolves
