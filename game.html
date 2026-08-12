@@ -3953,12 +3953,12 @@ function getItem(level) {
 
     function cloneBoard(source) { return source.map(row => row.slice()); }
 
+    // Only ever hands out level 1 — level 2, 3, 4, and 5 tiles must now be
+    // reached exclusively by merging, never dealt for free as the next
+    // tile. (Previously this rolled a chance at level 2 or level 3 based
+    // on score; that's removed entirely.)
     function randomNextLevel() {
-      const roll = Math.random();
-      if (score > 2400 && roll < 0.07) return 3;
-      if (score > 900 && roll < 0.18) return 2;
-      if (roll < 0.80) return 1;
-      return 2;
+      return 1;
     }
 
     // setWorld("underwaterKingdom") / setWorld("dragonsValley") / setWorld("iceCavern")
