@@ -4504,37 +4504,52 @@ function getItem(level) {
     // schedules a write within SYNC_DEBOUNCE_MS; pass immediate=true for
     // writes that must land right away (explicit Save, clearing an
     // island, switching/leaving a world) rather than get coalesced.
-    const SYNC_DEBOUNCE_MS = 900;
-    let syncTimer = null;
-    let syncPendingFeedback = false;
+const SYNC_DEBOUNCE_MS = 900;
+let syncTimer = null;
+let syncPendingFeedback = false;
 
-    let saveCounter = 0; // TEMP DEBUG — remove once the cleared_worlds bug is found
+let saveCounter = 0; // TEMP DEBUG
 
-    async function performSync(showFeedback) {
-      if (!currentUser || typeof sb === "undefined") return;
-      try {
-        const row = currentSaveRow();
-        saveCounter++;
-        console.log(`SAVE #${saveCounter}`, "cleared_worlds:", JSON.stringify(row.cleared_worlds), "updated_at:", row.updated_at); // TEMP DEBUG
-        console.trace(`SAVE #${saveCounter} trace`); // TEMP DEBUG
+async function performSync(showFeedback) {
+  if (!currentUser || typeof sb === "undefined") return;
 
-saveCounter++;
+  try {
+    saveCounter++;
 
-const row = currentSaveRow();
+    const row = currentSaveRow();
 
-console.log(
-  `SAVE #${saveCounter}`,
-  "cleared_worlds:",
-  JSON.stringify(row.cleared_worlds),
-  "updated_at:",
-  row.updated_at
-);
+    console.log(
+      `SAVE #${saveCounter}`,
+      "cleared_worlds:",
+      JSON.stringify(row.cleared_worlds),
+      "updated_at:",
+      row.updated_at
+    );
 
-if (row.cleared_worlds.length === 0) {
-  console.error("EMPTY SAVE DETECTED");
-  console.trace("EMPTY SAVE TRACE");
-} else {
-  console.trace(`SAVE #${saveCounter} trace`);
+    if (row.cleared_worlds.length === 0) {
+      console.error("EMPTY SAVE DETECTED");
+      console.trace("EMPTY SAVE TRACE");
+    } else {
+      console.trace(`SAVE #${saveCounter} trace`);
+    }
+
+    const { error } = await sb
+      .from(GARDEN_TABLE)
+      .upsert(row, { onConflict: "user_id" });
+
+    if (error) throw error;
+
+    if (showFeedback) {
+      showToast("Garden saved");
+    }
+
+  } catch (err) {
+    console.error("syncToCloud() error:", err);
+
+    if (showFeedback) {
+      showToast("Could not save — try again");
+    }
+  }
 }
 
 const { error } = await sb
