@@ -3,7 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wellness Garden Premium | Holistic Loader</title>
+  <title>Holistic Game — Relaxing Merge Puzzle Across 10 Islands</title>
+  <meta name="description" content="Holistic Game is a calming merge puzzle: combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. Free to play in your browser." />
+  <meta name="keywords" content="Holistic Game, merge game, merge puzzle, relaxing puzzle game, island game, browser puzzle game, wellness puzzle game" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Holistic Game" />
+  <meta name="application-name" content="Holistic Game" />
+  <meta name="theme-color" content="#10091b" />
+  <!-- Update to the real deployed URL before publishing. -->
+  <link rel="canonical" href="https://www.holisticgame.com/" />
+
+  <!-- Browser tab icon / bookmark icon / PWA home-screen icon.
+       One square PNG covers all of these; browsers pick the sizes they need. -->
+  <link rel="icon" type="image/png" href="images/game-icon.png" />
+  <link rel="shortcut icon" type="image/png" href="images/game-icon.png" />
+  <link rel="apple-touch-icon" href="images/game-icon.png" />
+
+  <!-- Open Graph / Facebook, Discord, Slack, etc. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Holistic Game" />
+  <meta property="og:title" content="Holistic Game — Relaxing Merge Puzzle Across 10 Islands" />
+  <meta property="og:description" content="Combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. A calm, satisfying merge puzzle — free to play." />
+  <meta property="og:image" content="https://www.holisticgame.com/images/game-preview.jpg" />
+  <meta property="og:url" content="https://www.holisticgame.com/" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Holistic Game — Relaxing Merge Puzzle Across 10 Islands" />
+  <meta name="twitter:description" content="Combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. A calm, satisfying merge puzzle — free to play." />
+  <meta name="twitter:image" content="https://www.holisticgame.com/images/game-preview.jpg" />
+
+  <!-- Structured data so search engines understand this is a playable game -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Holistic Game",
+    "description": "Holistic Game is a calming merge puzzle: combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world.",
+    "genre": ["Puzzle", "Merge game"],
+    "applicationCategory": "Game",
+    "operatingSystem": "Any (Web Browser)",
+    "url": "https://www.holisticgame.com/",
+    "image": "https://www.holisticgame.com/images/game-preview.jpg",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <style>
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
   <!-- Opens the connection to the CDN the supabase-js script tag (bottom of
        body) loads from ahead of time, so that request doesn't also have to
        pay for DNS + TLS handshake once the parser finally reaches it. -->
@@ -2701,6 +2763,7 @@ button {
 </head>
 <body>
   <main class="screen">
+    <h1 class="visually-hidden">Holistic Game — Relaxing Merge Puzzle Across 10 Islands</h1>
     <!-- game-layout holds two siblings side by side (stacked on mobile):
          .stage-frame, which now contains ONLY the game world image, the
          board of planting circles, the map screen and the "next item"
@@ -2719,7 +2782,7 @@ button {
              orientation:landscape/max-height:600px/max-width:1199px
              CSS block for .stage-title further up. -->
         <div class="stage-title" id="stageTitle" aria-hidden="true"></div>
-        <section class="stage" id="stage" aria-label="Wellness Garden game world">
+        <section class="stage" id="stage" aria-label="Holistic Game world">
           <div class="stars"></div>
 
           <div class="board-wrap">
@@ -2784,7 +2847,7 @@ button {
                 onerror="this.style.display='none'; document.getElementById('brandFallbackText').style.display='block';"
               >
               <span class="brand-fallback-text" id="brandFallbackText">Holistic Game</span>
-              <strong id="worldName">Wellness Garden</strong>
+              <strong id="worldName">Underwater</strong>
             </div>
           </div>
 
@@ -3697,6 +3760,7 @@ function getItem(level) {
     let collection = [];
     let currentWorldKey = WORLD_KEYS[0];
 
+
     // Difficulty is a local device preference (not part of the cloud
     // save) — "easy" merges any touching cluster of 3+ regardless of
     // shape (the game's original behavior), "hard" only merges straight
@@ -3710,6 +3774,9 @@ function getItem(level) {
     let onMap = true;         // true while the map screen is showing instead of the board
     let justUnlockedKey = null; // world key to pulse on the map right after it unlocks
     let resetBoardOnEnterKey = null; // world key whose board should start empty next time enterWorld() opens it — set by checkWorldClear() right after an island is cleared (5/5) and the next one unlocks
+    let isLoadingGarden = false; // true while loadFromCloud() is populating state — guards setWorld() from firing a sync mid-load, see setWorld() below
+    let cloudSaveReadyForUser = null; // only this user_id may write to Supabase after cloud load/no-row handling has completed
+    let lastKnownClearedWorlds = []; // local safety snapshot so auth-status flickers never erase map progression in memory
 
     const stageEl = document.getElementById("stage");
     const gameLayoutEl = document.getElementById("gameLayout");
@@ -3950,6 +4017,11 @@ function getItem(level) {
 
     function cloneBoard(source) { return source.map(row => row.slice()); }
 
+    // Same odds as the original: level 3 only has a shot (7%) once
+    // score > 2400; level 2 gets a boosted shot (18%) once score > 900,
+    // otherwise it's the "roll >= 0.80" fallback; level 1 is the common
+    // case (80% base chance). Level 4 and 5 are never return values here
+    // — those can only ever be reached by merging.
     function randomNextLevel() {
       const roll = Math.random();
       if (score > 2400 && roll < 0.07) return 3;
@@ -3975,7 +4047,9 @@ function getItem(level) {
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
       renderCollection();
-      syncToCloud(false, true);
+      if (!isLoadingGarden) {
+        syncToCloud(false, true);
+      }
       applyStageAspectRatio(key);
     }
 
@@ -4300,17 +4374,22 @@ function getItem(level) {
         return;
       }
       hideMap();
-      // First time opening the island that just unlocked (see
-      // checkWorldClear() below) — start it with a clean, empty board
-      // instead of carrying over the full board from the island that
-      // was just cleared.
-      if (key === resetBoardOnEnterKey) {
+      // Any time we're actually switching to a different world, start it
+      // with a clean, empty board instead of carrying over the tiles from
+      // whatever world was on screen before (they'd otherwise stay on the
+      // board and just get re-painted with the new world's art — see the
+      // "old tiles survive the new world in the new world's skin" bug).
+      // This does NOT touch clearedWorlds, so progress/unlocks are unaffected.
+      if (key !== currentWorldKey) {
         resetBoardOnEnterKey = null;
         board = createEmptyBoard();
         history = [];
+        collection = [];
         addStartingTiles();
-        nextLevel = randomNextLevel();
+        nextLevel = 1; // guaranteed level 1 for the first tile of a new world
         resetSeenLevelIntros(key); // fresh play-through of this world — level reveals should replay
+        seenLevelIntros[key].add(1); // level 1 is guaranteed as the first tile — mark it seen right away
+        collection.push(1); // ...and give it its collection icon immediately, so order tracking starts at 1
       }
       setWorld(key); // already flushes an immediate sync internally
       render();
@@ -4358,11 +4437,12 @@ function getItem(level) {
     // hasn't been marked cleared yet, mark it, unlock the next island,
     // and drop the player back on the map with the new island pulsing.
     function checkWorldClear(createdLevel) {
-      if (createdLevel < CLEAR_ITEM_LEVEL) return;
-      if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return;
-      if (isWorldCleared(currentWorldKey)) return;
+      if (createdLevel < CLEAR_ITEM_LEVEL) return false;
+      if (!MAP_WORLD_KEYS.includes(currentWorldKey)) return false;
+      if (isWorldCleared(currentWorldKey)) return false;
 
-      clearedWorlds.push(currentWorldKey);
+      clearedWorlds = Array.from(new Set([...(Array.isArray(clearedWorlds) ? clearedWorlds : []), currentWorldKey]));
+      lastKnownClearedWorlds = clearedWorlds.slice();
       playWorldClearFanfare();
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
       const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
@@ -4373,16 +4453,22 @@ function getItem(level) {
         // pretending the next island just opened.
         showToast("Island cleared!");
         setTimeout(() => { showMap(null); openGuestUpsellModal("cleared"); }, 1100);
-        return;
+        return true;
       }
 
       showToast(nextKey ? "Island cleared! A new one has opened" : "Island cleared!");
       resetBoardOnEnterKey = nextKey; // next island starts on a fresh board — see enterWorld()
       syncToCloud(false, true);
       setTimeout(() => showMap(nextKey), 1100);
+      return true;
     }
 
-    function newGarden() {
+    // Resets local board state only — does NOT touch clearedWorlds and does
+    // NOT sync to the cloud. Used when we can't be sure it's safe to write
+    // (see loadFromCloud()'s no-data/error paths below) — a genuine new
+    // player still gets saved the moment they place their first tile, via
+    // the debounced syncToCloud(false) in placeTile().
+    function resetGardenStateLocally() {
       board = createEmptyBoard();
       score = 0;
       moves = 0;
@@ -4391,7 +4477,17 @@ function getItem(level) {
       nextLevel = 1;
       addStartingTiles();
       resetSeenLevelIntros(currentWorldKey); // fresh play-through of this world — level reveals should replay
+      seenLevelIntros[currentWorldKey].add(1); // level 1 is guaranteed as the first tile — mark it seen right away
+      collection.push(1); // ...and give it its collection icon immediately, so order tracking starts at 1
       render();
+    }
+
+    // User-facing "start over" action (Again button, explicit new-garden
+    // flows) — resets local state AND immediately writes it to the cloud.
+    // Do NOT call this from loadFromCloud()'s failure paths — see
+    // resetGardenStateLocally() above.
+    function newGarden() {
+      resetGardenStateLocally();
       showToast("New garden planted");
       syncToCloud(false, true);
     }
@@ -4491,7 +4587,7 @@ function getItem(level) {
         collection,
         current_world: currentWorldKey,
         best,
-        cleared_worlds: clearedWorlds,
+        cleared_worlds: Array.isArray(clearedWorlds) ? clearedWorlds.slice() : [],
         map_page: mapPage,
         updated_at: new Date().toISOString()
       };
@@ -4504,22 +4600,49 @@ function getItem(level) {
     // schedules a write within SYNC_DEBOUNCE_MS; pass immediate=true for
     // writes that must land right away (explicit Save, clearing an
     // island, switching/leaving a world) rather than get coalesced.
-    const SYNC_DEBOUNCE_MS = 900;
-    let syncTimer = null;
-    let syncPendingFeedback = false;
+const SYNC_DEBOUNCE_MS = 900;
+let syncTimer = null;
+let syncPendingFeedback = false;
 
-    async function performSync(showFeedback) {
-      if (!currentUser || typeof sb === "undefined") return;
-      try {
-        const { error } = await sb.from(GARDEN_TABLE).upsert(currentSaveRow(), { onConflict: "user_id" });
-        if (error) throw error;
-        if (showFeedback) showToast("Garden saved");
-      } catch (err) {
-        console.error("syncToCloud() error:", err);
-        if (showFeedback) showToast("Could not save — try again");
-      }
+let saveCounter = 0; // TEMP DEBUG
+
+async function performSync(showFeedback) {
+  if (!currentUser || typeof sb === "undefined") return;
+  if (isLoadingGarden || cloudSaveReadyForUser !== currentUser.id) {
+    console.warn("syncToCloud() skipped: garden is not ready for cloud writes yet", {
+      user: currentUser && currentUser.id,
+      cloudSaveReadyForUser,
+      isLoadingGarden
+    });
+    return;
+  }
+  try {
+    saveCounter++;
+    const row = currentSaveRow();
+    console.log(
+      `SAVE #${saveCounter}`,
+      "cleared_worlds:",
+      JSON.stringify(row.cleared_worlds),
+      "updated_at:",
+      row.updated_at
+    );
+    const { error } = await sb
+      .from(GARDEN_TABLE)
+      .upsert(row, { onConflict: "user_id" });
+    if (error) throw error;
+    if (Array.isArray(row.cleared_worlds)) {
+      lastKnownClearedWorlds = row.cleared_worlds.slice();
     }
-
+    if (showFeedback) {
+      showToast("Garden saved");
+    }
+  } catch (err) {
+    console.error("syncToCloud() error:", err);
+    if (showFeedback) {
+      showToast("Could not save — try again");
+    }
+  }
+}
     function syncToCloud(showFeedback, immediate) {
       if (!currentUser || typeof sb === "undefined") return;
       syncPendingFeedback = syncPendingFeedback || !!showFeedback;
@@ -4553,7 +4676,13 @@ function getItem(level) {
     window.addEventListener("pagehide", flushPendingSync);
 
     async function loadFromCloud() {
-      if (!currentUser || typeof sb === "undefined") { newGarden(); return; }
+      isLoadingGarden = true;
+      if (!currentUser || typeof sb === "undefined") {
+        isLoadingGarden = false;
+        cloudSaveReadyForUser = null;
+        resetGardenStateLocally();
+        return;
+      }
       try {
         const { data, error } = await sb
           .from(GARDEN_TABLE)
@@ -4570,23 +4699,44 @@ function getItem(level) {
           collection = data.collection || [];
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
-          clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds : [];
+          clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds.slice() : [];
+          lastKnownClearedWorlds = clearedWorlds.slice();
+          cloudSaveReadyForUser = currentUser.id;
           mapPage = 1; // only one map page now (all 10 islands on one image) — kept as a var for the cloud row's shape
           history = [];
           setWorld(currentWorldKey);
+          isLoadingGarden = false;
           bestStatEl.textContent = formatNumber(best);
           render();
           showMap(null); // land on the map first every time the garden loads
           showToast("Garden restored");
         } else {
-          // First time this account plays — start fresh and create the row.
-          newGarden();
+          // No row found for this user. This SHOULD only mean "first time
+          // this account plays" — but if it fires for a returning player
+          // (e.g. an RLS/session-timing hiccup on this query), calling the
+          // cloud-writing newGarden() here would silently wipe their real
+          // saved progress. Use the local-only reset instead: a genuine
+          // new player still gets saved on their first move (see
+          // resetGardenStateLocally()'s comment above).
+          console.warn("loadFromCloud(): no row found for user", currentUser.id, "— starting local-only fresh garden (not synced yet)"); // TEMP DEBUG
+          cloudSaveReadyForUser = currentUser.id;
+          isLoadingGarden = false;
+          resetGardenStateLocally();
           showMap(null);
         }
       } catch (err) {
         console.error("loadFromCloud() error:", err);
         showToast("Could not load your garden");
-        newGarden();
+        cloudSaveReadyForUser = null;
+        isLoadingGarden = false;
+        // Deliberately NOT calling newGarden() here — a transient load
+        // failure must never overwrite the real cloud save with a blank
+        // one. Keep the last known map progression in memory too; a
+        // later successful load will replace it with the real cloud data.
+        if (Array.isArray(lastKnownClearedWorlds)) {
+          clearedWorlds = lastKnownClearedWorlds.slice();
+        }
+        resetGardenStateLocally();
       }
     }
 
@@ -4597,21 +4747,37 @@ function getItem(level) {
       moves++;
       const createdLevels = resolveMerges(r, c); // every level created this move, in ascending order (a single move can cascade through several)
       const createdLevel = createdLevels.length ? Math.max(...createdLevels) : 0;
-      if (createdLevel >= 3) collection.push(createdLevel);
+      // First-time-ever reaching a given level (2 through the top level)
+      // this playthrough — drives the big celebratory reveal AND which
+      // icons land in the collection strip. Computed once here (instead
+      // of once per merge) so each level gets exactly one collection icon
+      // per playthrough, not a duplicate every time it's merged again.
+      //
+      // IMPORTANT: randomNextLevel() can hand out a level-2 (or level-3)
+      // tile directly, with no merge involved. If we only looked at
+      // createdLevels here, a directly-spawned level-2 tile would never
+      // get marked as "reached" until it was later merged — so a player
+      // could merge their way to level 3 (a real createdLevels entry)
+      // before level 2 ever got registered, and the collection strip
+      // would show 3 landing before 2. registerLevelsReached() folds in
+      // the level of the tile that was just placed, and backfills any
+      // skipped intermediate levels, so the strip always fills in strict
+      // ascending/chronological order.
+      const touchedLevels = [nextLevel, ...createdLevels].filter(level => level >= 2);
+      const newlyReachedLevels = registerLevelsReached(touchedLevels);
+      newlyReachedLevels.forEach(level => collection.push(level));
       nextLevel = randomNextLevel();
       updateBest();
-      checkWorldClear(createdLevel);
+      const clearedThisMove = checkWorldClear(createdLevel);
       render();
       if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
       else if (createdLevel > 0) showToast("Beautiful merge");
-      // First-time-ever reaching a given level (2 through the top level)
-      // gets the big celebratory reveal — see showLevelReveal() below.
-      // Queued so a move that cascades through multiple new levels in
-      // one go still shows them one at a time instead of overlapping.
-      const newlyReachedLevels = createdLevels.filter(level => level >= 2 && markLevelFirstSeen(level));
       if (newlyReachedLevels.length) queueLevelReveals(newlyReachedLevels);
       if (isFull()) showGameOver();
-      syncToCloud(false);
+      // A world-clear already forced an immediate save above. Avoid a second
+      // delayed save from the same move, because auth/premium listeners can
+      // briefly reset local state before the debounce fires.
+      if (!clearedThisMove) syncToCloud(false);
     }
 
     function resolveMerges(startR, startC) {
@@ -4664,6 +4830,25 @@ function getItem(level) {
       if (set.has(level)) return false;
       set.add(level);
       return true;
+    }
+
+    // Given the levels touched by a single move (the placed tile's level
+    // plus any levels produced by merging), mark every not-yet-seen level
+    // from 2 up through the highest one touched as "reached" — backfilling
+    // any that got skipped (e.g. a level-2 tile was spawned directly and
+    // never merged, or level 3 was reached by merging spawned level-2
+    // tiles before a "real" level-2 merge ever happened). This guarantees
+    // the collection strip / reveal queue always receives levels in
+    // strict ascending order, so a higher level can never land before a
+    // lower one.
+    function registerLevelsReached(levels) {
+      if (!levels.length) return [];
+      const maxLevel = Math.max(...levels);
+      const newlyReached = [];
+      for (let lvl = 2; lvl <= maxLevel; lvl++) {
+        if (markLevelFirstSeen(lvl)) newlyReached.push(lvl);
+      }
+      return newlyReached;
     }
 
     const LEVEL_REVEAL_HOLD_MS = 1500; // how long the big icon stays centered before flying down
@@ -5020,6 +5205,14 @@ function getItem(level) {
     let gardenLoadedForUser = null; // tracks which user_id we've already loaded, to avoid reloading on unrelated premium-status refreshes
 
     function onAuthOrPremiumChange() {
+      // Guard against a debounced sync (queued by syncToCloud(false), see
+      // placeTile()) firing AFTER an auth-state flicker resets local state
+      // below — without this, a stale timer could still send whatever
+      // currentSaveRow() looks like at that later moment (e.g. a wiped
+      // clearedWorlds) and overwrite good cloud data. See the "cleared_worlds
+      // keeps coming back empty" bug.
+      if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; syncPendingFeedback = false; }
+
       // Drives the CSS rule that shows/hides #premiumBox — see
       // `#gameLayout.on-map:not(.is-logged-in) .premium-box` above.
       gameLayoutEl.classList.toggle("is-logged-in", !!currentUser);
@@ -5028,19 +5221,31 @@ function getItem(level) {
         closeGuestUpsellModal();
         if (gardenLoadedForUser !== currentUser.id) {
           gardenLoadedForUser = currentUser.id;
+          cloudSaveReadyForUser = null;
           loadFromCloud();
         }
       } else {
+        console.warn("AUTH RESET FIRED — currentUser is null, clearedWorlds being wiped to []"); // TEMP DEBUG
+        console.trace("AUTH RESET trace"); // TEMP DEBUG
         gardenLoadedForUser = null;
+        cloudSaveReadyForUser = null;
         // Reset the visible board so a previous account's garden never
         // lingers on screen for whoever uses this device/browser next,
         // then drop the guest onto a fresh, playable island 1 — no
         // account required. Progress here is session-only (never synced
         // to Supabase, see syncToCloud()'s currentUser guard).
+        // Do not blindly wipe clearedWorlds here: auth/premium can briefly
+        // report null during refresh and that was erasing map progress in
+        // memory after a correct save. Guests still cannot unlock island 2+
+        // because isWorldUnlocked() requires currentUser.
         board = createEmptyBoard();
         score = 0; moves = 0; history = []; collection = []; nextLevel = 1; best = 0;
-        clearedWorlds = []; mapPage = 1;
+        clearedWorlds = Array.isArray(lastKnownClearedWorlds) ? lastKnownClearedWorlds.slice() : [];
+        mapPage = 1;
         addStartingTiles();
+        resetSeenLevelIntros(WORLD_KEYS[0]); // fresh guest playthrough — level reveals should replay
+        seenLevelIntros[WORLD_KEYS[0]].add(1); // level 1 is guaranteed as the first tile — mark it seen right away
+        collection.push(1); // ...and give it its collection icon immediately, so order tracking starts at 1
         setWorld(WORLD_KEYS[0]); // also resets background/name display and re-renders
         bestStatEl.textContent = formatNumber(best);
         render();
@@ -5050,7 +5255,18 @@ function getItem(level) {
 
     stageFrameEl.style.setProperty("--board-cols", COLS); // match the CSS var to the COLS this page actually loaded with
     stageFrameEl.style.setProperty("--board-rows", ROWS); // match the CSS var to the ROWS this page actually loaded with
+    // Guarded with isLoadingGarden too: currentUser can already be truthy
+    // here (auth.js may hydrate a cached session synchronously) even though
+    // loadFromCloud() — which populates the real clearedWorlds — hasn't run
+    // yet (it only fires later via onPremiumStatusChange() below). Without
+    // this guard, setWorld()'s internal syncToCloud(false, true) could fire
+    // right here and overwrite the real cloud save with the still-default
+    // (empty) clearedWorlds. See the "cleared_worlds keeps coming back
+    // empty" bug — confirmed via stack trace pointing at this exact line.
+    isLoadingGarden = true;
+    cloudSaveReadyForUser = null;
     setWorld(currentWorldKey); // sets an initial background (and picker dots) before auth resolves
+    isLoadingGarden = false;
     addStartingTiles();
     render();
     showMap(null); // land on the map immediately — island 1 is playable before auth even resolves
