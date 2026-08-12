@@ -4736,18 +4736,19 @@ async function performSync(showFeedback) {
       moves++;
       const createdLevels = resolveMerges(r, c); // every level created this move, in ascending order (a single move can cascade through several)
       const createdLevel = createdLevels.length ? Math.max(...createdLevels) : 0;
-      if (createdLevel >= 3) collection.push(createdLevel);
+      // First-time-ever reaching a given level (2 through the top level)
+      // this playthrough — drives the big celebratory reveal AND which
+      // icons land in the collection strip. Computed once here (instead
+      // of once per merge) so each level gets exactly one collection icon
+      // per playthrough, not a duplicate every time it's merged again.
+      const newlyReachedLevels = createdLevels.filter(level => level >= 2 && markLevelFirstSeen(level));
+      newlyReachedLevels.filter(level => level >= 3).forEach(level => collection.push(level));
       nextLevel = randomNextLevel();
       updateBest();
       const clearedThisMove = checkWorldClear(createdLevel);
       render();
       if (createdLevel >= 5) showToast(`${getItem(5).name} awakened`);
       else if (createdLevel > 0) showToast("Beautiful merge");
-      // First-time-ever reaching a given level (2 through the top level)
-      // gets the big celebratory reveal — see showLevelReveal() below.
-      // Queued so a move that cascades through multiple new levels in
-      // one go still shows them one at a time instead of overlapping.
-      const newlyReachedLevels = createdLevels.filter(level => level >= 2 && markLevelFirstSeen(level));
       if (newlyReachedLevels.length) queueLevelReveals(newlyReachedLevels);
       if (isFull()) showGameOver();
       // A world-clear already forced an immediate save above. Avoid a second
