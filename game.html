@@ -4746,8 +4746,20 @@ async function performSync(showFeedback) {
       // icons land in the collection strip. Computed once here (instead
       // of once per merge) so each level gets exactly one collection icon
       // per playthrough, not a duplicate every time it's merged again.
-      const newlyReachedLevels = createdLevels.filter(level => level >= 2 && markLevelFirstSeen(level));
-      newlyReachedLevels.filter(level => level >= 2).forEach(level => collection.push(level));
+      //
+      // IMPORTANT: randomNextLevel() can hand out a level-2 (or level-3)
+      // tile directly, with no merge involved. If we only looked at
+      // createdLevels here, a directly-spawned level-2 tile would never
+      // get marked as "reached" until it was later merged — so a player
+      // could merge their way to level 3 (a real createdLevels entry)
+      // before level 2 ever got registered, and the collection strip
+      // would show 3 landing before 2. registerLevelsReached() folds in
+      // the level of the tile that was just placed, and backfills any
+      // skipped intermediate levels, so the strip always fills in strict
+      // ascending/chronological order.
+      const touchedLevels = [nextLevel, ...createdLevels].filter(level => level >= 2);
+      const newlyReachedLevels = registerLevelsReached(touchedLevels);
+      newlyReachedLevels.forEach(level => collection.push(level));
       nextLevel = randomNextLevel();
       updateBest();
       const clearedThisMove = checkWorldClear(createdLevel);
@@ -4812,6 +4824,25 @@ async function performSync(showFeedback) {
       if (set.has(level)) return false;
       set.add(level);
       return true;
+    }
+
+    // Given the levels touched by a single move (the placed tile's level
+    // plus any levels produced by merging), mark every not-yet-seen level
+    // from 2 up through the highest one touched as "reached" — backfilling
+    // any that got skipped (e.g. a level-2 tile was spawned directly and
+    // never merged, or level 3 was reached by merging spawned level-2
+    // tiles before a "real" level-2 merge ever happened). This guarantees
+    // the collection strip / reveal queue always receives levels in
+    // strict ascending order, so a higher level can never land before a
+    // lower one.
+    function registerLevelsReached(levels) {
+      if (!levels.length) return [];
+      const maxLevel = Math.max(...levels);
+      const newlyReached = [];
+      for (let lvl = 2; lvl <= maxLevel; lvl++) {
+        if (markLevelFirstSeen(lvl)) newlyReached.push(lvl);
+      }
+      return newlyReached;
     }
 
     const LEVEL_REVEAL_HOLD_MS = 1500; // how long the big icon stays centered before flying down
