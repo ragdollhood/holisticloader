@@ -4552,18 +4552,6 @@ async function performSync(showFeedback) {
   }
 }
 
-const { error } = await sb
-  .from(GARDEN_TABLE)
-  .upsert(row, { onConflict: "user_id" });
-  
-        if (error) throw error;
-        if (showFeedback) showToast("Garden saved");
-      } catch (err) {
-        console.error("syncToCloud() error:", err);
-        if (showFeedback) showToast("Could not save — try again");
-      }
-    }
-
     function syncToCloud(showFeedback, immediate) {
       if (!currentUser || typeof sb === "undefined") return;
       syncPendingFeedback = syncPendingFeedback || !!showFeedback;
