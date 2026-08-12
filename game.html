@@ -4566,6 +4566,8 @@ function getItem(level) {
           .select("*")
           .eq("user_id", currentUser.id)
           .maybeSingle();
+        console.log("LOAD DATA:", data);
+console.log("LOAD USER:", currentUser.id);
         if (error) throw error;
 
         if (data) {
@@ -4577,6 +4579,7 @@ function getItem(level) {
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
           clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds : [];
+          console.log("LOADED clearedWorlds:", clearedWorlds);
           mapPage = 1; // only one map page now (all 10 islands on one image) — kept as a var for the cloud row's shape
           history = [];
           setWorld(currentWorldKey);
