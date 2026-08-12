@@ -3,7 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wellness Garden Premium | Holistic Loader</title>
+  <title>Holistic Game — Relaxing Merge Puzzle Across 10 Islands</title>
+  <meta name="description" content="Holistic Game is a calming merge puzzle: combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. Free to play in your browser." />
+  <meta name="keywords" content="Holistic Game, merge game, merge puzzle, relaxing puzzle game, island game, browser puzzle game, wellness puzzle game" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Holistic Game" />
+  <meta name="application-name" content="Holistic Game" />
+  <meta name="theme-color" content="#10091b" />
+  <!-- Update to the real deployed URL before publishing. -->
+  <link rel="canonical" href="https://www.holisticgame.com/" />
+
+  <!-- Open Graph / Facebook, Discord, Slack, etc. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Holistic Game" />
+  <meta property="og:title" content="Holistic Game — Relaxing Merge Puzzle Across 10 Islands" />
+  <meta property="og:description" content="Combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. A calm, satisfying merge puzzle — free to play." />
+  <meta property="og:image" content="https://www.holisticgame.com/images/game-holisticgametiteltext.png" />
+  <meta property="og:url" content="https://www.holisticgame.com/" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Holistic Game — Relaxing Merge Puzzle Across 10 Islands" />
+  <meta name="twitter:description" content="Combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. A calm, satisfying merge puzzle — free to play." />
+  <meta name="twitter:image" content="https://www.holisticgame.com/images/game-holisticgametiteltext.png" />
+
+  <!-- Structured data so search engines understand this is a playable game -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Holistic Game",
+    "description": "Holistic Game is a calming merge puzzle: combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world.",
+    "genre": ["Puzzle", "Merge game"],
+    "applicationCategory": "Game",
+    "operatingSystem": "Any (Web Browser)",
+    "url": "https://www.holisticgame.com/",
+    "image": "https://www.holisticgame.com/images/game-holisticgametiteltext.png",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <style>
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
   <!-- Opens the connection to the CDN the supabase-js script tag (bottom of
        body) loads from ahead of time, so that request doesn't also have to
        pay for DNS + TLS handshake once the parser finally reaches it. -->
@@ -2701,6 +2757,7 @@ button {
 </head>
 <body>
   <main class="screen">
+    <h1 class="visually-hidden">Holistic Game — Relaxing Merge Puzzle Across 10 Islands</h1>
     <!-- game-layout holds two siblings side by side (stacked on mobile):
          .stage-frame, which now contains ONLY the game world image, the
          board of planting circles, the map screen and the "next item"
@@ -2719,7 +2776,7 @@ button {
              orientation:landscape/max-height:600px/max-width:1199px
              CSS block for .stage-title further up. -->
         <div class="stage-title" id="stageTitle" aria-hidden="true"></div>
-        <section class="stage" id="stage" aria-label="Wellness Garden game world">
+        <section class="stage" id="stage" aria-label="Holistic Game world">
           <div class="stars"></div>
 
           <div class="board-wrap">
@@ -2784,7 +2841,7 @@ button {
                 onerror="this.style.display='none'; document.getElementById('brandFallbackText').style.display='block';"
               >
               <span class="brand-fallback-text" id="brandFallbackText">Holistic Game</span>
-              <strong id="worldName">Wellness Garden</strong>
+              <strong id="worldName">Underwater</strong>
             </div>
           </div>
 
@@ -3697,6 +3754,18 @@ function getItem(level) {
     let collection = [];
     let currentWorldKey = WORLD_KEYS[0];
 
+    // Levels randomNextLevel() is allowed to deal as the next tile: only
+    // ones that have actually appeared on the board this playthrough (via
+    // a merge), so the player can never receive a level "for free" before
+    // they've built up to it themselves. Level 1 is always in here since
+    // it's the guaranteed first tile. Reset alongside the board — see
+    // resetPresentedLevels() and its call sites (mirrors
+    // resetSeenLevelIntros()'s reset points).
+    let presentedLevels = new Set([1]);
+    function resetPresentedLevels() {
+      presentedLevels = new Set([1]);
+    }
+
     // Difficulty is a local device preference (not part of the cloud
     // save) — "easy" merges any touching cluster of 3+ regardless of
     // shape (the game's original behavior), "hard" only merges straight
@@ -3953,12 +4022,14 @@ function getItem(level) {
 
     function cloneBoard(source) { return source.map(row => row.slice()); }
 
-    // Only ever hands out level 1 — level 2, 3, 4, and 5 tiles must now be
-    // reached exclusively by merging, never dealt for free as the next
-    // tile. (Previously this rolled a chance at level 2 or level 3 based
-    // on score; that's removed entirely.)
+    // Only ever hands out a level that has already appeared on the board
+    // this playthrough (tracked in presentedLevels — level 1 is always in
+    // there, since it's the guaranteed first tile). Never introduces a
+    // level the player hasn't reached yet via merging, so nothing is ever
+    // given for free.
     function randomNextLevel() {
-      return 1;
+      const options = Array.from(presentedLevels);
+      return options[Math.floor(Math.random() * options.length)];
     }
 
     // setWorld("underwaterKingdom") / setWorld("dragonsValley") / setWorld("iceCavern")
@@ -4316,7 +4387,8 @@ function getItem(level) {
         board = createEmptyBoard();
         history = [];
         addStartingTiles();
-        nextLevel = randomNextLevel();
+        resetPresentedLevels(); // fresh world — only level 1 is "presented" until the player merges something
+        nextLevel = randomNextLevel(); // guaranteed level 1, since presentedLevels only has {1} right now
         resetSeenLevelIntros(key); // fresh play-through of this world — level reveals should replay
       }
       setWorld(key); // already flushes an immediate sync internally
@@ -4403,6 +4475,7 @@ function getItem(level) {
       history = [];
       collection = [];
       nextLevel = 1;
+      resetPresentedLevels(); // fresh playthrough — only level 1 is "presented" until the player merges something
       addStartingTiles();
       resetSeenLevelIntros(currentWorldKey); // fresh play-through of this world — level reveals should replay
       render();
@@ -4627,6 +4700,12 @@ async function performSync(showFeedback) {
           best = typeof data.best === "number" ? data.best : 0;
           clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds.slice() : [];
           lastKnownClearedWorlds = clearedWorlds.slice();
+          // Rebuild presentedLevels from the restored save: level 1 always,
+          // plus every level currently sitting on the board, plus every
+          // level collection ever recorded (levels 3+ created via merge,
+          // even ones since merged away again) — so randomNextLevel() only
+          // offers levels this player has genuinely already reached.
+          presentedLevels = new Set([1, ...board.flat().filter(level => level > 0), ...collection]);
           cloudSaveReadyForUser = currentUser.id;
           mapPage = 1; // only one map page now (all 10 islands on one image) — kept as a var for the cloud row's shape
           history = [];
@@ -4711,6 +4790,7 @@ async function performSync(showFeedback) {
           const createdItem = getItem(level + 1);
           score += createdItem.score * group.length;
           createdLevels.push(level + 1);
+          presentedLevels.add(level + 1); // this level has now appeared — eligible for randomNextLevel() going forward
           spawnBurst(currentR, currentC, getItemImageUrl(createdItem));
           playMergeGong();
           keepMerging = true;
@@ -5134,6 +5214,7 @@ async function performSync(showFeedback) {
         // because isWorldUnlocked() requires currentUser.
         board = createEmptyBoard();
         score = 0; moves = 0; history = []; collection = []; nextLevel = 1; best = 0;
+        resetPresentedLevels(); // fresh guest session — only level 1 is "presented" until the player merges something
         clearedWorlds = Array.isArray(lastKnownClearedWorlds) ? lastKnownClearedWorlds.slice() : [];
         mapPage = 1;
         addStartingTiles();
