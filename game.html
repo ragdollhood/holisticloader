@@ -4517,19 +4517,30 @@ function getItem(level) {
         saveCounter++;
         console.log(`SAVE #${saveCounter}`, "cleared_worlds:", JSON.stringify(row.cleared_worlds), "updated_at:", row.updated_at); // TEMP DEBUG
         console.trace(`SAVE #${saveCounter} trace`); // TEMP DEBUG
-        saveCounter++;
+
+saveCounter++;
+
+const row = currentSaveRow();
 
 console.log(
   `SAVE #${saveCounter}`,
-  JSON.stringify(currentSaveRow().cleared_worlds),
-  currentSaveRow().updated_at
+  "cleared_worlds:",
+  JSON.stringify(row.cleared_worlds),
+  "updated_at:",
+  row.updated_at
 );
 
-if (currentSaveRow().cleared_worlds.length === 0) {
+if (row.cleared_worlds.length === 0) {
   console.error("EMPTY SAVE DETECTED");
   console.trace("EMPTY SAVE TRACE");
+} else {
+  console.trace(`SAVE #${saveCounter} trace`);
 }
-        const { error } = await sb.from(GARDEN_TABLE).upsert(row, { onConflict: "user_id" });
+
+const { error } = await sb
+  .from(GARDEN_TABLE)
+  .upsert(row, { onConflict: "user_id" });
+  
         if (error) throw error;
         if (showFeedback) showToast("Garden saved");
       } catch (err) {
