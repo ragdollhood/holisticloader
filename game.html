@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wellness Game | Holistic Loader</title>
+  <title>Wellness Garden Premium | Holistic Loader</title>
   <!-- Opens the connection to the CDN the supabase-js script tag (bottom of
        body) loads from ahead of time, so that request doesn't also have to
        pay for DNS + TLS handshake once the parser finally reaches it. -->
@@ -187,10 +187,7 @@
       width: 0;
       height: 0;
     }
-/* Allow account dropdown to escape the side panel only while open */
-.side-panel.account-menu-open {
-  overflow: visible !important;
-}
+
     .side-panel .top-row {
       display: flex;
       align-items: center;
@@ -4308,11 +4305,13 @@ function getItem(level) {
         return;
       }
       hideMap();
-      // First time opening the island that just unlocked (see
-      // checkWorldClear() below) — start it with a clean, empty board
-      // instead of carrying over the full board from the island that
-      // was just cleared.
-      if (key === resetBoardOnEnterKey) {
+      // Any time we're actually switching to a different world, start it
+      // with a clean, empty board instead of carrying over the tiles from
+      // whatever world was on screen before (they'd otherwise stay on the
+      // board and just get re-painted with the new world's art — see the
+      // "old tiles survive the new world in the new world's skin" bug).
+      // This does NOT touch clearedWorlds, so progress/unlocks are unaffected.
+      if (key !== currentWorldKey) {
         resetBoardOnEnterKey = null;
         board = createEmptyBoard();
         history = [];
@@ -5235,55 +5234,5 @@ async function registerVisit() {
 
 registerVisit();
   </script>
-  <script>
-(function setupAccountMenuOverflowFix() {
-
-  function connect() {
-    const sidePanel = document.getElementById("sidePanel");
-    const accountMenu = document.getElementById("accountMenu");
-
-    if (!sidePanel || !accountMenu) {
-      return false;
-    }
-
-    const syncState = () => {
-      sidePanel.classList.toggle(
-        "account-menu-open",
-        accountMenu.classList.contains("show")
-      );
-    };
-
-    syncState();
-
-    const observer = new MutationObserver(syncState);
-
-    observer.observe(accountMenu, {
-      attributes: true,
-      attributeFilter: ["class"]
-    });
-
-    document.addEventListener("click", () => {
-      setTimeout(syncState, 0);
-    });
-
-    return true;
-  }
-
-  if (connect()) {
-    return;
-  }
-
-  let attempts = 0;
-
-  const retryTimer = setInterval(() => {
-    attempts++;
-
-    if (connect() || attempts > 100) {
-      clearInterval(retryTimer);
-    }
-  }, 200);
-
-})();
-</script>
 </body>
 </html>
