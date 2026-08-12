@@ -187,7 +187,10 @@
       width: 0;
       height: 0;
     }
-
+/* Allow account dropdown to escape the side panel only while open */
+.side-panel.account-menu-open {
+  overflow: visible !important;
+}
     .side-panel .top-row {
       display: flex;
       align-items: center;
@@ -5232,5 +5235,55 @@ async function registerVisit() {
 
 registerVisit();
   </script>
+  <script>
+(function setupAccountMenuOverflowFix() {
+
+  function connect() {
+    const sidePanel = document.getElementById("sidePanel");
+    const accountMenu = document.getElementById("accountMenu");
+
+    if (!sidePanel || !accountMenu) {
+      return false;
+    }
+
+    const syncState = () => {
+      sidePanel.classList.toggle(
+        "account-menu-open",
+        accountMenu.classList.contains("show")
+      );
+    };
+
+    syncState();
+
+    const observer = new MutationObserver(syncState);
+
+    observer.observe(accountMenu, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+
+    document.addEventListener("click", () => {
+      setTimeout(syncState, 0);
+    });
+
+    return true;
+  }
+
+  if (connect()) {
+    return;
+  }
+
+  let attempts = 0;
+
+  const retryTimer = setInterval(() => {
+    attempts++;
+
+    if (connect() || attempts > 100) {
+      clearInterval(retryTimer);
+    }
+  }, 200);
+
+})();
+</script>
 </body>
 </html>
