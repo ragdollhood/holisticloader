@@ -115,8 +115,17 @@
 }
 
 #authForm{ display:flex; flex-direction:column; gap:6px; }
+/* #authEmailRow wraps the email label+input (added so the row can be
+   hidden entirely in "Create a password" mode). It needs the same
+   flex-column behavior as #authForm itself, otherwise the input inside
+   it — no longer a direct flex child of #authForm — loses the
+   stretch-to-full-width sizing and renders narrower than the password
+   field below it. */
+#authEmailRow{ display:flex; flex-direction:column; gap:6px; }
 #authForm label{ font-size:11.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-top:10px; }
 #authForm input{
+  box-sizing:border-box;
+  width:100%;
   font-size:14px; color:var(--ink); background:rgba(244,241,234,.06);
   border:1px solid var(--line); border-radius:10px; padding:11px 13px;
   outline:none; transition:border-color .2s ease;
@@ -172,46 +181,3 @@
   color:var(--bg); background:var(--gold);
   padding:8px 12px;
 }
-
-/* =======================================================================
-   ADS (Google AdSense) — see adsense.js
-   Free users only; automatically hidden for premium/trial via .ad-hidden,
-   toggled in JS. Kept visually calm/glassy to match the rest of the UI
-   instead of looking like a bolted-on ad unit. Both placements already
-   sit inside `.map-only` elements in the markup, so they only ever show
-   on the start/map screen — never over the board, mid-merge, during a
-   level reveal, or a world-clear animation.
-   ======================================================================= */
-.ad-slot{
-  width:100%; min-height:100px; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:6px; overflow:hidden;
-  background:var(--glass); border:1px solid var(--line); border-radius:14px;
-  padding:8px; transition:opacity .2s ease;
-}
-.ad-slot.ad-hidden{ display:none; }
-.ad-slot .ad-label{
-  font-size:10px; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--muted); opacity:.65; align-self:flex-start;
-}
-.ad-slot ins.adsbygoogle{ width:100%; }
-
-/* Map-screen placement — sits below the island artwork, calm and out of
-   the way of the islands themselves. */
-.ad-slot--map{ margin-top:12px; max-width:480px; }
-
-/* "Remove Ads" upsell — sits right under the sidebar ad for free users. */
-.ad-upsell{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  width:100%; margin-top:8px; padding:10px 12px;
-  background:var(--glass); border:1px solid var(--gold); border-radius:12px;
-  transition:opacity .2s ease;
-}
-.ad-upsell.ad-hidden{ display:none; }
-.ad-upsell p{ margin:0; font-size:12px; line-height:1.35; color:var(--ink); }
-.ad-upsell button{
-  flex:none; font-family:var(--ui,inherit); font-size:12px; font-weight:600;
-  color:var(--bg); background:var(--gold); border:none; border-radius:999px;
-  padding:8px 14px; cursor:pointer; white-space:nowrap;
-  transition:background .2s ease;
-}
-.ad-upsell button:hover{ background:var(--gold-soft,var(--gold)); }
