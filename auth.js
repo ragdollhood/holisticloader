@@ -172,6 +172,12 @@ function renderTrialBanner() {
   const banner = document.getElementById("trialBanner");
   if (!banner) return;
 
+  // Pages that opt out of the trial messaging entirely (currently just
+  // game.html — a one-time "Remove Ads" purchase, not the Premium
+  // subscription trial) never show this banner, no matter how many
+  // trial days the account actually has left.
+  if (window.HL_HIDE_TRIAL_UI) { banner.style.display = "none"; return; }
+
   if (currentUser && !isPaidPremium && isPremium) {
     const daysLeft = getTrialDaysRemaining(currentUser);
     if (daysLeft > 0 && daysLeft <= 4) {
@@ -330,6 +336,8 @@ function _buildAuthDom() {
         </button>
         <div id="accountMenu" role="menu">
           <div id="accountEmailLabel"></div>
+          <button id="magicLinkBtn" type="button" role="menuitem">Email me a magic link</button>
+          <button id="createPasswordBtn" type="button" role="menuitem">Create a password</button>
           <button id="manageSubBtn" type="button" role="menuitem" style="display:none">Manage Subscription</button>
           <button id="logoutBtn" type="button" role="menuitem">Logout</button>
         </div>
@@ -349,8 +357,10 @@ function _buildAuthDom() {
         <button id="authModalClose" type="button" aria-label="Close">&times;</button>
         <h2 id="authModalTitle">Log in</h2>
         <form id="authForm" novalidate>
-          <label for="authEmail">Email</label>
-          <input id="authEmail" type="email" autocomplete="email" required>
+          <div id="authEmailRow">
+            <label for="authEmail">Email</label>
+            <input id="authEmail" type="email" autocomplete="email" required>
+          </div>
           <label for="authPassword">Password</label>
           <input id="authPassword" type="password" autocomplete="current-password" required minlength="6">
           <div id="authRow">
@@ -415,18 +425,36 @@ function _wireAuthDom() {
     const submitBtn = document.getElementById("authSubmit");
     const forgotRow = document.getElementById("authRow");
     const passwordInput = document.getElementById("authPassword");
+    const emailRow = document.getElementById("authEmailRow");
     const trialLabel = startTrialBtn ? startTrialBtn.querySelector("span") : null;
 
-    if (mode === "register") {
-      title.textContent = "Start your free trial";
-      submitBtn.textContent = "Start Free Trial";
+    // "setPassword" is a third mode, only reachable from the account
+    // menu's "Create a password" button for an already logged-in user —
+    // it reuses this same form but just for the password field, calling
+    // sb.auth.updateUser({ password }) instead of register/login (see
+    // the form submit handler below). The trial/read-more footer links
+    // don't apply here, so they're hidden too.
+    if (startTrialBtn) startTrialBtn.style.display = mode === "setPassword" ? "none" : "";
+    const readMoreBtn = document.getElementById("readMorePremiumBtn");
+    if (readMoreBtn) readMoreBtn.style.display = mode === "setPassword" ? "none" : "";
+    if (emailRow) emailRow.style.display = mode === "setPassword" ? "none" : "";
+    passwordInput.required = true;
+
+    if (mode === "setPassword") {
+      title.textContent = "Create a password";
+      submitBtn.textContent = "Save Password";
+      if (forgotRow) forgotRow.style.display = "none";
+      passwordInput.setAttribute("autocomplete", "new-password");
+    } else if (mode === "register") {
+      title.textContent = window.HL_HIDE_TRIAL_UI ? "Create your account" : "Start your free trial";
+      submitBtn.textContent = window.HL_HIDE_TRIAL_UI ? "Create Account" : "Start Free Trial";
       if (trialLabel) trialLabel.textContent = "Back to Login";
       if (forgotRow) forgotRow.style.display = "none";
       passwordInput.setAttribute("autocomplete", "new-password");
     } else {
       title.textContent = "Log in";
       submitBtn.textContent = "Log in";
-      if (trialLabel) trialLabel.textContent = "Free Trial (14 Days)";
+      if (trialLabel) trialLabel.textContent = window.HL_HIDE_TRIAL_UI ? "Create an account" : "Free Trial (14 Days)";
       if (forgotRow) forgotRow.style.display = "";
       passwordInput.setAttribute("autocomplete", "current-password");
     }
@@ -437,7 +465,11 @@ function _wireAuthDom() {
     form.reset();
     _setAuthMode(mode || "login");
     modal.classList.add("show");
-    document.getElementById("authEmail").focus();
+    if (mode === "setPassword") {
+      document.getElementById("authPassword").focus();
+    } else {
+      document.getElementById("authEmail").focus();
+    }
   }
   function closeModal() {
     modal.classList.remove("show");
@@ -525,6 +557,49 @@ function _wireAuthDom() {
     await openBillingPortal(manageSubBtn);
   };
 
+  // "Email me a magic link" — sends a one-time passwordless login link
+  // to the CURRENT account's email (no typing required), handy for
+  // anyone who registered without ever setting a memorable password.
+  // Doesn't touch or require an existing password.
+  const magicLinkBtn = document.getElementById("magicLinkBtn");
+  if (magicLinkBtn) {
+    magicLinkBtn.onclick = async () => {
+      if (!currentUser) return;
+      magicLinkBtn.disabled = true;
+      const original = magicLinkBtn.textContent;
+      try {
+        const { error } = await sb.auth.signInWithOtp({
+          email: currentUser.email,
+          options: { emailRedirectTo: window.location.href }
+        });
+        if (error) throw error;
+        magicLinkBtn.textContent = "Check your email!";
+      } catch (err) {
+        console.error("signInWithOtp error:", err);
+        magicLinkBtn.textContent = "Couldn't send — try again";
+      } finally {
+        setTimeout(() => {
+          magicLinkBtn.textContent = original;
+          magicLinkBtn.disabled = false;
+        }, 3000);
+      }
+    };
+  }
+
+  // "Create a password" — opens the same login/register modal, but in
+  // a dedicated mode that shows only the password field and calls
+  // sb.auth.updateUser({ password }) on submit (see form.onsubmit
+  // below). Lets an account created via magic link (or one whose
+  // owner just forgot they have a password) set/replace one.
+  const createPasswordBtn = document.getElementById("createPasswordBtn");
+  if (createPasswordBtn) {
+    createPasswordBtn.onclick = () => {
+      if (!currentUser) return;
+      closeAccountMenu();
+      openModal("setPassword");
+    };
+  }
+
   // "Forgot password?" — sends the Supabase reset email. The link inside
   // that email points at reset-password.html, which reads the recovery
   // token from the URL and lets the user set a new password.
@@ -567,14 +642,24 @@ function _wireAuthDom() {
     submitBtn.disabled = true;
 
     try {
-      if (_authMode === "register") {
+      if (_authMode === "setPassword") {
+        const { error } = await sb.auth.updateUser({ password });
+        if (error) throw error;
+        showAuthMessage("Password saved! You can log in with it next time.", "success");
+        setTimeout(closeModal, 1400);
+      } else if (_authMode === "register") {
         const result = await registerUser(email, password);
         if (result && result.session) {
           // Email confirmation is OFF in Supabase — signUp already
           // returned a session, so onAuthStateChange fires and the
           // trial (based on the new account's created_at) is active
           // right away.
-          showAuthMessage("Your free trial has started! Enjoy full Premium access for 14 days.", "success");
+          showAuthMessage(
+            window.HL_HIDE_TRIAL_UI
+              ? "Account created! You can now continue."
+              : "Your free trial has started! Enjoy full Premium access for 14 days.",
+            "success"
+          );
           setTimeout(closeModal, 1400);
         } else {
           // Email confirmation is ON — there's no session yet. The

@@ -3035,10 +3035,6 @@ button {
         <div class="hud ad-slot map-only" id="sidebarAdSlot" aria-label="Advertisement">
           <span class="ad-label">Advertisement</span>
         </div>
-        <div class="ad-upsell map-only" id="sidebarAdUpsell">
-          <p>Enjoy an ad-free experience for a one-time $2.99</p>
-          <button type="button" id="sidebarRemoveAdsBtn">Remove Ads</button>
-        </div>
 
         <!-- home-thumb ("back to the map") starts out here for mobile;
              on desktop/laptop layoutSideExtras() (JS) moves it into
@@ -3266,6 +3262,12 @@ button {
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Tells auth.js this page is a one-time $2.99 "Remove Ads" purchase
+       flow, not the Holistic Loader Premium subscription — so it should
+       build the login/account UI without any 14-day-trial messaging
+       (trial banner + "Free Trial (14 Days)" button). Other pages don't
+       set this flag, so the trial UI still shows there as before. -->
+  <script>window.HL_HIDE_TRIAL_UI = true;</script>
   <script src="auth.js"></script>
   <script src="adsense.js"></script>
   <script>
@@ -4109,7 +4111,7 @@ function getItem(level) {
     // the webhook (server-side, NOT in this file) knows which Supabase
     // user_id to credit — see the Supabase/Stripe notes shared
     // alongside this file for the webhook + schema.
-    const STRIPE_REMOVE_ADS_LINK = "https://buy.stripe.com/test_14AeV5gPo5XO8iZ7SZ4F201";
+    const STRIPE_REMOVE_ADS_LINK = "https://buy.stripe.com/bJe3cn77K6wY9UY2dk0kE01";
 
     function startRemoveAdsPurchase() {
       if (!currentUser) { openGuestUpsellModal("buyAds"); return; }
@@ -4120,7 +4122,12 @@ function getItem(level) {
       const returnUrl = new URL(window.location.href);
       returnUrl.searchParams.set("purchase", "success");
       url.searchParams.set("success_url", returnUrl.toString());
-      window.open(url.toString(), "_blank", "noopener");
+      // Direct, same-tab redirect straight to the Stripe checkout page.
+      // Stripe (via success_url) sends the player back to this exact
+      // game.html URL (with ?purchase=success) once payment completes —
+      // see checkReturnFromPurchase() below, which then polls for the
+      // webhook having landed.
+      window.location.href = url.toString();
     }
 
     // Whether the *current* signed-in user has ads_removed=true in
@@ -4184,10 +4191,12 @@ function getItem(level) {
     // screen — AdBanner() itself additionally hides them for anyone with
     // Premium OR a completed Remove Ads purchase (see adsense.js).
     if (typeof AdBanner === "function") {
-      AdBanner("sidebarAdSlot", "YOUR_SIDEBAR_SLOT_ID", "auto", "sidebarAdUpsell");
+      // No upsellId here anymore — the single "Remove Ads" offer lives
+      // only in the .remove-ads-card above (#removeAdsBuyBtn), so the
+      // button text/CTA isn't duplicated next to the ad slot too.
+      AdBanner("sidebarAdSlot", "YOUR_SIDEBAR_SLOT_ID", "auto");
       AdBanner("mapAdSlot", "YOUR_MAP_SLOT_ID", "auto");
     }
-    document.getElementById("sidebarRemoveAdsBtn").addEventListener("click", startRemoveAdsPurchase);
 
     function createEmptyBoard() {
       return Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => 0));
