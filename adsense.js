@@ -15,19 +15,24 @@
           <script src="adsense.js"></script>
 
    WHAT THIS FILE DOES
-     1. canShowAds() — false for ANY premium access (paid OR active
-        trial, i.e. auth.js's `isPremium`), true for everyone else.
-        Ads are a free-tier-only thing; trial users get the same
-        ad-free experience as paying customers.
+     1. canShowAds() — false if EITHER (a) auth.js's `isPremium` (a
+        Holistic Loader Premium member) or (b) window.userAdsRemoved
+        (game.html's flag for the one-time $2.99 Remove Ads purchase,
+        looked up from the ad_removals Supabase table) is true; true
+        for everyone else. These are two independent entitlements —
+        a non-Premium account that bought Remove Ads stays ad-free
+        even though isPremium is false for them.
      2. AdBanner(containerId, slotId, format, upsellId) — mounts (once)
         a Google AdSense unit inside the element #containerId, and
         keeps it — plus an optional #upsellId "Remove Ads" strip next
-        to it — in sync with premium status. Safe to call once per
-        containerId per page load; a second call for the same id is a
-        no-op besides re-syncing visibility.
+        to it — in sync with both entitlements above. Safe to call
+        once per containerId per page load; a second call for the same
+        id is a no-op besides re-syncing visibility.
      3. Auto re-syncs every mounted banner whenever premium status
-        changes (login, logout, trial expiry, purchase) via auth.js's
-        onPremiumStatusChange().
+        changes (login, logout, purchase) via auth.js's
+        onPremiumStatusChange() AND whenever game.html calls
+        refreshAllAdBanners() directly after refreshing
+        window.userAdsRemoved (e.g. right after a completed purchase).
 
    PLACEMENT RULE (already followed by game.html's markup):
      Only ever mount AdBanner() inside elements that use the existing
@@ -45,10 +50,19 @@ const AD_CLIENT = "ca-pub-1322447721565676";
 const _adBanners = [];
 
 function canShowAds() {
-  // isPremium (from auth.js) is true for BOTH paid and trial users —
-  // neither should ever see an ad. Falls back to "show ads" if auth.js
-  // hasn't loaded yet, since that only happens for guests anyway.
-  return typeof isPremium !== "undefined" ? !isPremium : true;
+  // Ads are hidden for anyone with EITHER entitlement:
+  //  - isPremium (from auth.js): Holistic Loader Premium members.
+  //  - window.userAdsRemoved (set by game.html's refreshAdsRemovedStatus(),
+  //    reading the ad_removals table): the one-time $2.99 Remove Ads
+  //    purchase. This is intentionally a separate, independent flag —
+  //    a non-Premium account that bought Remove Ads should stay
+  //    ad-free even though isPremium is false for them.
+  // Falls back to "show ads" if auth.js hasn't loaded yet, since that
+  // only happens for guests anyway (and guests can't hold either
+  // entitlement).
+  const premium = typeof isPremium !== "undefined" ? !!isPremium : false;
+  const adsRemoved = window.userAdsRemoved === true;
+  return !(premium || adsRemoved);
 }
 
 /**

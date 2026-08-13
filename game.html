@@ -21,9 +21,9 @@
 
   <!-- Browser tab icon / bookmark icon / PWA home-screen icon.
        One square PNG covers all of these; browsers pick the sizes they need. -->
-  <link rel="icon" type="image/png" href="images/game-icon.jpg" />
-  <link rel="shortcut icon" type="image/png" href="images/game-icon.jpg" />
-  <link rel="apple-touch-icon" href="images/game-icon.jpg" />
+  <link rel="icon" type="image/png" href="images/game-icon.png" />
+  <link rel="shortcut icon" type="image/png" href="images/game-icon.png" />
+  <link rel="apple-touch-icon" href="images/game-icon.png" />
 
   <!-- Open Graph / Facebook, Discord, Slack, etc. -->
   <meta property="og:type" content="website" />
@@ -549,7 +549,7 @@
        score/account readouts) doesn't need to change. */
     .score { order: 1; }
     .how-to-play { order: 2; }
-    .premium-box { order: 3; }
+    .remove-ads-card, .holistic-member-line, .premium-active-badge { order: 3; }
 
     /* On the map screen the logo stands on its own — no glass "pill"
        box behind it (the .hud look is right for text/stat readouts,
@@ -1525,9 +1525,10 @@ button {
          stay visible here despite this override. */
       .side-panel .how-to-play h3, .side-panel .how-to-play ol { display: none; }
 
-      .premium-box { padding: 6px; gap: 6px; }
-      .side-panel .premium-box > *:not(.premium-trial-btn) { display: none; }
-      .side-panel .premium-box .premium-trial-btn { margin-top: 0; }
+      .remove-ads-card { padding: 6px; gap: 6px; }
+      .side-panel .remove-ads-card > *:not(.remove-ads-btn) { display: none; }
+      .side-panel .remove-ads-card .remove-ads-btn { margin-top: 0; }
+      .side-panel .holistic-member-line { display: none; }
 
       /* "Next item" card, during gameplay — shrunk down from the full
          desktop card (which stretches to fill leftover side-panel
@@ -1879,19 +1880,22 @@ button {
       color: var(--text);
     }
 
-    /* ---------- Premium upsell box ----------
-       Sits right under the How to Play panel (same map-only visibility
-       window — see .how-to-play above), but ONLY while logged out.
-       #gameLayout gets an "is-logged-in" class in onAuthOrPremiumChange()
-       (JS below); that's what the second half of the selector below
-       hides it on. Hidden by default (no map-only class needed) so it
-       never flashes visible before that class is set.
-       Styled to mirror the #premiumCard "free trial" card on index.html
-       (gold eyebrow pill, gradient serif headline, checklist, blue
-       trial CTA + gold outline buy button) — see the shared .premium-*
-       / .gcm-* rules further below, used by both this box and
-       #guestClearModal. */
-    .premium-box {
+    /* ---------- Monetization: single "Remove Ads" offer ----------
+       This is the ONLY purchasable offer shown in-game (a one-time
+       $2.99 purchase — no subscriptions, no membership pricing; those
+       live exclusively on holisticloader.com). Sits right under the
+       How to Play panel (same map-only visibility window — see
+       .how-to-play above).
+       Visibility is driven by #gameLayout's "ads-removed" class,
+       toggled in refreshMonetizationUI() (JS below) whenever premium
+       status OR the ads_removed purchase flag changes:
+         - ads still showing  -> .remove-ads-card + .holistic-member-line
+         - ads already gone   -> .premium-active-badge only
+       Styled with the same gold eyebrow pill + gradient serif headline
+       used elsewhere (see the shared .premium-*/.gcm-* rules further
+       below, still used by #guestClearModal), plus a soft lavender
+       glow to match the game's gold+lavender palette. */
+    .remove-ads-card {
       display: none;
       position: relative;
       overflow: hidden;
@@ -1904,45 +1908,94 @@ button {
       border: 1px solid rgba(248,217,139,.36);
       background:
         radial-gradient(circle at 20% 0%, rgba(248,217,139,.22), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(201,167,255,.16), transparent 60%),
         linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03)), var(--glass);
       box-shadow: 0 16px 40px rgba(0,0,0,.28), 0 0 0 1px rgba(255,217,138,.06) inset;
     }
 
-    #gameLayout.on-map:not(.is-logged-in) .premium-box {
+    #gameLayout.on-map:not(.ads-removed) .remove-ads-card {
       display: flex;
     }
 
-    .premium-box .premium-badge {
-      display: inline-flex;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      font-weight: 900;
-      font-size: 9.5px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: #2a1c05;
-      background: linear-gradient(135deg, #ffe3a3, #d9a441);
-      padding: 5px 11px;
-      border-radius: 999px;
+    .remove-ads-price {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700; font-style: italic;
+      font-size: 26px; line-height: 1;
+      margin: 2px 0 10px;
+      background: linear-gradient(100deg, #fff8ec 0%, #f0d19f 45%, #fff8ec 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
     }
 
-    .premium-box p {
-      margin: 0;
+    .remove-ads-note {
+      margin: 8px 0 0;
       font-family: Arial, sans-serif;
-      font-size: 12px;
-      line-height: 1.5;
+      font-size: 11px;
       color: var(--muted);
+      text-align: center;
+      width: 100%;
     }
 
-    .premium-box button {
+    .remove-ads-card button {
       align-self: stretch;
       margin-top: 4px;
     }
 
+    /* Subtle secondary line for existing Holistic Loader members —
+       deliberately far less prominent than the card above: no card
+       chrome, no gold border, just quiet helper text. Same map-only /
+       not-ads-removed visibility window as the card. */
+    .holistic-member-line {
+      display: none;
+      width: 100%;
+      margin: 10px 0 0;
+      padding: 0 2px;
+      font-family: Arial, sans-serif;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: var(--muted);
+      text-align: center;
+    }
+    #gameLayout.on-map:not(.ads-removed):not(.is-logged-in) .holistic-member-line {
+      display: block;
+    }
+    .holistic-member-line button {
+      font-family: Arial, sans-serif; font-size: 11.5px; font-weight: 700;
+      color: var(--lav); background: none; border: none; padding: 0;
+      cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+    }
+    .holistic-member-line button:hover { color: var(--gold); }
+
+    /* Shown instead of the two blocks above once ads are actually gone
+       (Premium OR a completed ads_removed purchase) — calm, quiet
+       confirmation rather than another offer. */
+    .premium-active-badge {
+      display: none;
+      width: 100%;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(159,224,178,.4);
+      background: linear-gradient(145deg, rgba(159,224,178,.12), rgba(255,255,255,.03)), var(--glass);
+    }
+    #gameLayout.on-map.ads-removed .premium-active-badge {
+      display: flex;
+    }
+    .premium-active-check {
+      font-family: Arial, sans-serif; font-weight: 900; font-size: 12.5px;
+      color: #9ed7a7; white-space: nowrap;
+    }
+    .premium-active-sub {
+      font-family: Arial, sans-serif; font-size: 11.5px; color: var(--muted);
+    }
+
     /* ---------- Shared "premium card" building blocks ----------
-       Used by the sidebar .premium-box AND #guestClearModal, so the
-       upsell always reads as the same product across the game — a
-       smaller cousin of index.html's #premiumCard free-trial card. */
+       Reused by the sidebar .remove-ads-card AND #guestClearModal so
+       everything reads as the same visual family (gold eyebrow pill,
+       gradient serif headline) — a smaller cousin of index.html's
+       #premiumCard. Neither of those two now pitches a subscription:
+       the card sells the one-time $2.99 ad removal, and the modal is
+       just a "create a free account to save your progress" nudge. */
     .premium-eyebrow, .gcm-eyebrow {
       display: inline-flex; align-items: center; gap: 6px;
       font-family: Arial, sans-serif; font-weight: 900; font-size: 9.5px;
@@ -1987,18 +2040,23 @@ button {
       color: var(--gold); font-size: 9.5px; font-weight: 900;
     }
 
-    .premium-trial-btn, .gcm-trial-btn {
+    /* Mobile map-screen floating CTA — see the max-width:1199px query
+       further down for its layout. Same gradient pill previously used
+       for the "Free Trial" button; now used for the single Remove Ads
+       offer instead. Hidden by default everywhere else so it never
+       affects desktop. */
+    .mobile-remove-ads-btn {
       width: 100%; display: flex; flex-direction: column; align-items: center;
       gap: 2px; padding: 12px 14px; border-radius: 999px; cursor: pointer;
       border: none; background: linear-gradient(135deg, #5EA8FF, #7C6BFF);
       color: #fff; box-shadow: 0 12px 30px rgba(124,107,255,.4);
       margin-bottom: 8px; text-decoration: none;
     }
-    .premium-trial-btn .ptCta, .gcm-trial-btn .ptCta {
+    .mobile-remove-ads-btn .ptCta {
       font-family: Arial, sans-serif; font-weight: 900; font-size: 12px;
       letter-spacing: .01em; text-transform: none;
     }
-    .premium-trial-btn .ptNote, .gcm-trial-btn .ptNote {
+    .mobile-remove-ads-btn .ptNote {
       font-family: Arial, sans-serif; font-weight: 700; font-size: 9.5px;
       letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.88);
     }
@@ -2006,9 +2064,9 @@ button {
     /* New standalone button (mobile map screen only — see the
        max-width:1199px query further down for its actual layout).
        Hidden by default everywhere else so it never affects desktop. */
-    .mobile-map-trial-btn { display: none; }
+    .mobile-map-cta-btn { display: none; }
 
-    .premium-buy-btn, .gcm-buy-btn {
+    .remove-ads-btn, .premium-buy-btn {
       display: flex; align-items: center; justify-content: center;
       width: 100%; padding: 11px 12px; border-radius: 999px;
       font-family: Arial, sans-serif; font-weight: 900; font-size: 11px;
@@ -2017,15 +2075,15 @@ button {
       text-decoration: none; margin-bottom: 8px; cursor: pointer;
       transition: background .2s ease, color .2s ease;
     }
-    .premium-buy-btn:hover, .gcm-buy-btn:hover { background: var(--gold); color: #24162c; }
+    .remove-ads-btn:hover, .premium-buy-btn:hover { background: var(--gold); color: #24162c; }
 
-    .premium-login-link, .gcm-login-link {
+    .gcm-login-link {
       display: block; width: 100%; text-align: center;
       background: none; border: none; padding: 4px 0; cursor: pointer;
       font-family: Arial, sans-serif; font-size: 11px; color: var(--muted);
       text-decoration: underline; text-underline-offset: 2px;
     }
-    .premium-login-link:hover, .gcm-login-link:hover { color: var(--text); }
+    .gcm-login-link:hover { color: var(--text); }
 
     /* ---------- #guestClearModal specifics ---------- */
     .guest-clear-card { text-align: center; }
@@ -2259,24 +2317,22 @@ button {
        and every readout/button inside the panel shrinks its padding
        and type so the image can still claim most of the screen. */
     /* Laptop/desktop only: bigger text in the start-screen side box
-       (the "How to play" panel + the "Unlock Every Island" premium
-       upsell underneath it) that sits to the right of the map. Scoped
-       to .premium-box specifically (not the shared .premium-*/.gcm-*
-       rules above, which the #guestClearModal popup also uses) so the
-       modal's own type scale is untouched. */
+       (the "How to play" panel + the Remove Ads card underneath it)
+       that sits to the right of the map. Scoped to .remove-ads-card
+       specifically (not the shared .premium-*/.gcm-* rules above,
+       which the #guestClearModal popup also uses) so the modal's own
+       type scale is untouched. */
     @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       .how-to-play h3 { font-size: 15px; }
       .how-to-play li { font-size: 14px; line-height: 1.5; }
 
-      .premium-box .premium-badge { font-size: 11px; }
-      .premium-box .premium-headline { font-size: 21px; }
-      .premium-box p { font-size: 13.5px; }
-      .premium-box .premium-checklist li { font-size: 13.5px; }
-      .premium-box .premium-checklist .chk { width: 19px; height: 19px; font-size: 10.5px; }
-      .premium-box .premium-trial-btn .ptCta { font-size: 13px; }
-      .premium-box .premium-trial-btn .ptNote { font-size: 10.5px; }
-      .premium-box .premium-buy-btn { font-size: 12.5px; }
-      .premium-box .premium-login-link { font-size: 12px; }
+      .remove-ads-card .premium-eyebrow { font-size: 11px; }
+      .remove-ads-card .premium-headline { font-size: 21px; }
+      .remove-ads-card .premium-sub { font-size: 13.5px; }
+      .remove-ads-card .remove-ads-price { font-size: 30px; }
+      .remove-ads-card .remove-ads-btn { font-size: 12.5px; }
+      .remove-ads-card .remove-ads-note { font-size: 12px; }
+      .holistic-member-line { font-size: 12.5px; }
     }
 
     /* Mirrors DESKTOP_MEDIA_QUERY (JS) — matches whenever the desktop/
@@ -2717,13 +2773,14 @@ button {
          order:-1 above and .top-row's space-between). */
       #gameLayout.on-map #authRoot { order: 1; }
 
-      /* New "Free Trial" button (see the markup right after
+      /* "Remove Ads" floating button (see the markup right after
          #gameLayout closes) — sits below the map image, in the space
          freed up by shrinking the map (see .map-brand's comment
-         above). Only ever shown on mobile's map screen; base rule
-         (.mobile-map-trial-btn { display:none }) keeps it off desktop
+         above). Only ever shown on mobile's map screen while ads
+         haven't already been removed; base rule
+         (.mobile-map-cta-btn { display:none }) keeps it off desktop
          and off the gameplay board. */
-      #gameLayout.on-map .mobile-map-trial-btn {
+      #gameLayout.on-map:not(.ads-removed) .mobile-map-cta-btn {
         display: flex;
         width: auto;
         flex: 0 0 auto;
@@ -2937,37 +2994,49 @@ button {
           </ol>
         </div>
 
-        <!-- Premium upsell — shown only while logged out (see
-             onAuthOrPremiumChange()), same map-only visibility window
-             as the How to Play box just above it. -->
-        <div class="hud premium-box map-only" id="premiumBox" aria-label="Get Premium">
-          <span class="premium-eyebrow">14 Days Free</span>
-          <h3 class="premium-headline">Unlock Every Island</h3>
-          <p class="premium-sub"></p>
-          <ul class="premium-checklist">
-            <li><span class="chk">✓</span>All Islands Unlocked</li>
-            <li><span class="chk">✓</span>Cloud Save &amp; Sync</li>
-            <li><span class="chk">✓</span>Full Premium on holisticloader.com</li>
-          </ul>
-          <button type="button" class="premium-trial-btn" id="premiumBoxTrialBtn">
-            <span class="ptCta">Start Free 14-Day Trial</span>
-            <span class="ptNote">No card required</span>
-          </button>
-          <a class="premium-buy-btn" id="premiumBoxBuyBtn" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00" target="_blank" rel="noopener">Get Premium — $4.99/mo</a>
-          <button type="button" class="premium-login-link" id="premiumBoxLoginBtn">Already have an account? Log in</button>
+        <!-- Monetization — the ONE purchasable offer in the game (see
+             refreshMonetizationUI()). Islands and cloud save are free
+             for everyone with an account; the only thing for sale here
+             is removing ads. Same map-only visibility window as the
+             How to Play box just above it. -->
+        <div class="hud remove-ads-card map-only" id="removeAdsCard" aria-label="Remove Ads">
+          <span class="premium-eyebrow">Remove Ads</span>
+          <h3 class="premium-headline">Play Without Interruptions</h3>
+          <p class="premium-sub">Enjoy an ad-free gameplay experience with a one-time purchase.</p>
+          <div class="remove-ads-price">$2.99</div>
+          <button type="button" class="remove-ads-btn" id="removeAdsBuyBtn">Remove Ads</button>
+          <p class="remove-ads-note">No recurring fees.</p>
         </div>
 
-        <!-- Sidebar ad — free users only, hidden automatically for anyone
-             with premium/trial access (see adsense.js / canShowAds()).
-             map-only, same visibility window as How to Play / Premium
-             above it, so it only ever appears on the map/start screen —
-             never mid-merge, on the board, during level reveals, or
-             world-clear animations. -->
+        <!-- Quiet nudge for existing Holistic Loader members — not a
+             second offer, just a helpful link into the same login
+             modal the account icon opens. Same visibility window as
+             the card above (hidden once ads are already gone). -->
+        <p class="holistic-member-line map-only" id="holisticMemberLine">
+          Already a Holistic Loader member?
+          <button type="button" id="holisticMemberSignInBtn">Sign in here</button>
+        </p>
+
+        <!-- Shown instead of the two blocks above once ads are already
+             gone (Premium sign-in OR a completed ads_removed purchase)
+             — see refreshMonetizationUI(). -->
+        <div class="hud premium-active-badge map-only" id="premiumActiveBadge" aria-label="Premium active">
+          <span class="premium-active-check">✓ Premium Active</span>
+          <span class="premium-active-sub">Ad-free experience enabled</span>
+        </div>
+
+        <!-- Sidebar ad — free users only, hidden automatically for
+             anyone with Premium or a completed Remove Ads purchase
+             (see adsense.js / canShowAds()). map-only, same visibility
+             window as How to Play / Remove Ads above it, so it only
+             ever appears on the map/start screen — never mid-merge, on
+             the board, during level reveals, or world-clear
+             animations. -->
         <div class="hud ad-slot map-only" id="sidebarAdSlot" aria-label="Advertisement">
           <span class="ad-label">Advertisement</span>
         </div>
         <div class="ad-upsell map-only" id="sidebarAdUpsell">
-          <p>Enjoy an ad-free experience with Holistic Premium</p>
+          <p>Enjoy an ad-free experience for a one-time $2.99</p>
           <button type="button" id="sidebarRemoveAdsBtn">Remove Ads</button>
         </div>
 
@@ -3079,14 +3148,15 @@ button {
         <div class="next-box" id="nextBox" aria-label="Back to map and next item"></div>
       </aside>
 
-      <!-- Mobile-only, map-screen-only "Free Trial" button — sits below
+      <!-- Mobile-only, map-screen-only "Remove Ads" button — sits below
            the (shrunk) map image once #gameLayout has .on-map, see the
-           max-width:1199px .mobile-map-trial-btn rules and
-           #mobileMapTrialBtn's click handler (JS) further down. Hidden
-           everywhere else (desktop, or during gameplay) by default. -->
-      <button type="button" class="premium-trial-btn mobile-map-trial-btn" id="mobileMapTrialBtn">
-        <span class="ptCta">Free Trial (14 Days)</span>
-        <span class="ptNote">No card needed!</span>
+           max-width:1199px .mobile-map-cta-btn rules and
+           #mobileMapRemoveAdsBtn's click handler (JS) further down.
+           Hidden everywhere else (desktop, gameplay, or once ads are
+           already removed) by default. -->
+      <button type="button" class="mobile-remove-ads-btn mobile-map-cta-btn" id="mobileMapRemoveAdsBtn">
+        <span class="ptCta">Remove Ads — $2.99</span>
+        <span class="ptNote">One-time purchase</span>
       </button>
     </div>
   </main>
@@ -3175,22 +3245,17 @@ button {
     <div class="modal-card guest-clear-card">
       <button type="button" class="modal-close" id="guestClearCloseBtn" aria-label="Close">✕</button>
       <p class="gcm-kicker" id="guestClearKicker">Island 1 cleared! 🌱</p>
-      <p class="gcm-warning">Heads up — your progress won't be saved unless you log in.</p>
+      <p class="gcm-warning" id="guestClearWarning">Heads up — your progress won't be saved unless you log in.</p>
 
       <div class="gcm-block">
-        <span class="gcm-eyebrow">14 Days Free</span>
+        <span class="gcm-eyebrow">Free Account</span>
         <h2 class="gcm-headline" id="guestClearModalTitle">Unlock the Full Experience</h2>
-        <p class="gcm-sub">Create a free account to save your garden and unlock every island.</p>
+        <p class="gcm-sub">Create a free account to save your garden and unlock every island — no payment required.</p>
         <ul class="gcm-checklist">
           <li><span class="chk">✓</span>All 10 Islands Unlocked</li>
           <li><span class="chk">✓</span>Cloud Save &amp; Sync</li>
-          <li><span class="chk">✓</span>Full Premium on holisticloader.com</li>
         </ul>
-        <button type="button" class="gcm-trial-btn" id="guestClearTrialBtn">
-          <span class="ptCta">Start Free 14-Day Trial</span>
-          <span class="ptNote">No card required</span>
-        </button>
-        <a class="gcm-buy-btn" id="guestClearBuyBtn" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00" target="_blank" rel="noopener">Get Premium for $4.99/month</a>
+        <button type="button" class="gcm-buy-btn" id="guestClearSignUpBtn">Create Free Account</button>
         <button type="button" class="gcm-login-link" id="guestClearLoginBtn">Already have an account? Log in</button>
       </div>
 
@@ -3937,10 +4002,8 @@ function getItem(level) {
       layoutSideExtras();
     });
 
-    const mobileMapTrialBtnEl = document.getElementById("mobileMapTrialBtn");
-    mobileMapTrialBtnEl.addEventListener("click", () => {
-      if (typeof window.openFreeTrialSignup === "function") window.openFreeTrialSignup();
-    });
+    const mobileMapRemoveAdsBtnEl = document.getElementById("mobileMapRemoveAdsBtn");
+    mobileMapRemoveAdsBtnEl.addEventListener("click", startRemoveAdsPurchase);
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
     document.getElementById("diffEasyBtn").addEventListener("click", () => setDifficulty("easy"));
@@ -3983,17 +4046,20 @@ function getItem(level) {
       if (accountBtn) accountBtn.click();
     }
 
-    // Sidebar "Unlock Every Island" info box (map-only, logged-out-only —
-    // see .premium-box CSS). Trial goes straight into register mode,
-    // Buy is a plain link to Stripe, Login opens the login modal.
-    document.getElementById("premiumBoxTrialBtn").addEventListener("click", () => {
-      if (typeof window.openFreeTrialSignup === "function") window.openFreeTrialSignup();
-      else openLoginModal();
-    });
-    document.getElementById("premiumBoxLoginBtn").addEventListener("click", openLoginModal);
+    // Sidebar Remove Ads card (map-only, hidden once ads are already
+    // gone — see .remove-ads-card CSS / refreshMonetizationUI()). Buy
+    // starts the Stripe purchase; the member line opens the login
+    // modal for existing Holistic Loader accounts. Neither shows any
+    // subscription pricing — that lives only on holisticloader.com.
+    document.getElementById("removeAdsBuyBtn").addEventListener("click", startRemoveAdsPurchase);
+    document.getElementById("holisticMemberSignInBtn").addEventListener("click", openLoginModal);
 
-    // "Level cleared" / "island locked" upsell popup for guests — see
-    // openGuestUpsellModal() / checkWorldClear() / enterWorld() below.
+    // "Level cleared" / "island locked" / "need an account to buy"
+    // nudge for guests — see openGuestUpsellModal() /
+    // checkWorldClear() / enterWorld() / startRemoveAdsPurchase()
+    // below. Islands and cloud save are free with any account now, so
+    // this is just a "create a free account" prompt — no pricing, no
+    // trial.
     const guestClearModalEl = document.getElementById("guestClearModal");
     function closeGuestUpsellModal() {
       guestClearModalEl.classList.remove("show");
@@ -4001,21 +4067,26 @@ function getItem(level) {
     }
     function openGuestUpsellModal(reason) {
       const kicker = document.getElementById("guestClearKicker");
+      const warning = document.getElementById("guestClearWarning");
       if (kicker) {
         kicker.textContent = reason === "locked"
           ? "This island is locked"
-          : reason === "ads"
-          ? "Enjoy an ad-free experience with Holistic Premium"
+          : reason === "buyAds"
+          ? "Sign in to remove ads"
           : "Island 1 cleared! 🌱";
+      }
+      if (warning) {
+        warning.textContent = reason === "buyAds"
+          ? "An account keeps your ad-free purchase with you wherever you play."
+          : "Heads up — your progress won't be saved unless you log in.";
       }
       guestClearModalEl.classList.add("show");
       document.body.classList.add("any-modal-open");
     }
     document.getElementById("guestClearCloseBtn").addEventListener("click", closeGuestUpsellModal);
-    document.getElementById("guestClearTrialBtn").addEventListener("click", () => {
+    document.getElementById("guestClearSignUpBtn").addEventListener("click", () => {
       closeGuestUpsellModal();
-      if (typeof window.openFreeTrialSignup === "function") window.openFreeTrialSignup();
-      else openLoginModal();
+      openLoginModal();
     });
     document.getElementById("guestClearLoginBtn").addEventListener("click", () => {
       closeGuestUpsellModal();
@@ -4026,21 +4097,97 @@ function getItem(level) {
       if (e.target === guestClearModalEl) closeGuestUpsellModal();
     });
 
+    // ---------- Monetization: Remove Ads ($2.99, one-time) ----------
+    // The only purchasable offer in the game. A purchase needs an
+    // account so it can be recorded server-side (see ad_removals in
+    // Supabase) and follow the player across devices/sessions — guests
+    // are asked to sign in first via the same free-account modal used
+    // elsewhere, not sent straight to Stripe.
+    //
+    // STRIPE_REMOVE_ADS_LINK should be a Stripe Payment Link for a
+    // single $2.99 one-time price. client_reference_id is appended so
+    // the webhook (server-side, NOT in this file) knows which Supabase
+    // user_id to credit — see the Supabase/Stripe notes shared
+    // alongside this file for the webhook + schema.
+    const STRIPE_REMOVE_ADS_LINK = "https://buy.stripe.com/REPLACE_WITH_REMOVE_ADS_PAYMENT_LINK";
+
+    function startRemoveAdsPurchase() {
+      if (!currentUser) { openGuestUpsellModal("buyAds"); return; }
+      const url = new URL(STRIPE_REMOVE_ADS_LINK);
+      url.searchParams.set("client_reference_id", currentUser.id);
+      // Bounce back here with a flag so refreshAdsRemovedStatus() knows
+      // to poll for the webhook having landed (it's async — see below).
+      const returnUrl = new URL(window.location.href);
+      returnUrl.searchParams.set("purchase", "success");
+      url.searchParams.set("success_url", returnUrl.toString());
+      window.open(url.toString(), "_blank", "noopener");
+    }
+
+    // Whether the *current* signed-in user has ads_removed=true in
+    // Supabase (independent of Holistic Loader Premium, which auth.js
+    // already tracks via isPremium). Populated by
+    // refreshAdsRemovedStatus() below; adsense.js's canShowAds() reads
+    // this same flag off window.
+    window.userAdsRemoved = false;
+
+    async function refreshAdsRemovedStatus() {
+      if (!currentUser || typeof sb === "undefined") {
+        window.userAdsRemoved = false;
+        refreshMonetizationUI();
+        return;
+      }
+      try {
+        const { data, error } = await sb
+          .from("ad_removals")
+          .select("ads_removed")
+          .eq("user_id", currentUser.id)
+          .maybeSingle();
+        if (error) throw error;
+        window.userAdsRemoved = !!(data && data.ads_removed);
+      } catch (err) {
+        console.error("refreshAdsRemovedStatus() error:", err);
+      }
+      refreshMonetizationUI();
+    }
+
+    // Drives every "ads are gone" UI state in one place: the sidebar
+    // Remove Ads card / member line vs. the Premium Active badge (see
+    // .ads-removed CSS above), the mobile floating button, and every
+    // mounted AdBanner (via canShowAds() picking up window.userAdsRemoved).
+    function refreshMonetizationUI() {
+      const adsRemoved = (typeof isPremium !== "undefined" && isPremium) || window.userAdsRemoved === true;
+      gameLayoutEl.classList.toggle("ads-removed", adsRemoved);
+      if (typeof refreshAllAdBanners === "function") refreshAllAdBanners();
+    }
+
+    // If we're back from a Stripe purchase, the webhook may still be
+    // landing — poll briefly instead of assuming it's already there.
+    (function checkReturnFromPurchase() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("purchase") !== "success") return;
+      params.delete("purchase");
+      const cleanUrl = window.location.pathname + (params.toString() ? "?" + params.toString() : "") + window.location.hash;
+      window.history.replaceState({}, "", cleanUrl);
+      let attempts = 0;
+      const poll = setInterval(async () => {
+        attempts++;
+        await refreshAdsRemovedStatus();
+        if (window.userAdsRemoved || attempts >= 6) clearInterval(poll);
+      }, 2000);
+    })();
+
     // ---------- Ads (Google AdSense, see adsense.js) ----------
     // Replace "YOUR_SIDEBAR_SLOT_ID" / "YOUR_MAP_SLOT_ID" with the actual
     // ad unit slot IDs from your AdSense dashboard (Ads -> By ad unit ->
     // create a "Display ad" for each placement). Both slots are map-only
     // in the markup/CSS, so they only ever render on the map/start
     // screen — AdBanner() itself additionally hides them for anyone with
-    // premium or trial access.
+    // Premium OR a completed Remove Ads purchase (see adsense.js).
     if (typeof AdBanner === "function") {
       AdBanner("sidebarAdSlot", "YOUR_SIDEBAR_SLOT_ID", "auto", "sidebarAdUpsell");
       AdBanner("mapAdSlot", "YOUR_MAP_SLOT_ID", "auto");
     }
-    document.getElementById("sidebarRemoveAdsBtn").addEventListener("click", () => {
-      if (!currentUser) { openGuestUpsellModal("ads"); return; }
-      window.open("https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00", "_blank", "noopener");
-    });
+    document.getElementById("sidebarRemoveAdsBtn").addEventListener("click", startRemoveAdsPurchase);
 
     function createEmptyBoard() {
       return Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => 0));
@@ -5260,8 +5407,9 @@ async function performSync(showFeedback) {
       // keeps coming back empty" bug.
       if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; syncPendingFeedback = false; }
 
-      // Drives the CSS rule that shows/hides #premiumBox — see
-      // `#gameLayout.on-map:not(.is-logged-in) .premium-box` above.
+      // Drives the CSS rule that shows/hides the "Sign in here" member
+      // line — see `#gameLayout.on-map:not(.is-logged-in) .holistic-member-line`
+      // above.
       gameLayoutEl.classList.toggle("is-logged-in", !!currentUser);
 
       if (currentUser) {
@@ -5271,6 +5419,10 @@ async function performSync(showFeedback) {
           cloudSaveReadyForUser = null;
           loadFromCloud();
         }
+        // Look up this account's Remove Ads purchase (independent of
+        // Premium, already reflected via isPremium) and refresh the
+        // Remove Ads card / Premium Active badge / ad banners.
+        refreshAdsRemovedStatus();
       } else {
         console.warn("AUTH RESET FIRED — currentUser is null, clearedWorlds being wiped to []"); // TEMP DEBUG
         console.trace("AUTH RESET trace"); // TEMP DEBUG
@@ -5297,6 +5449,8 @@ async function performSync(showFeedback) {
         bestStatEl.textContent = formatNumber(best);
         render();
         showMap(null);
+        window.userAdsRemoved = false;
+        refreshMonetizationUI();
       }
     }
 
