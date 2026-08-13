@@ -4156,14 +4156,36 @@ function getItem(level) {
     // The only purchasable offer in the game. A purchase needs an
     // account so it can be recorded server-side (see ad_removals in
     // Supabase) and follow the player across devices/sessions — guests
-    // are asked to sign in first via the same free-account modal used
-    // elsewhere, not sent straight to Stripe.
+    // are asked to create an account first via openCreateAccountModal(),
+    // not sent straight to Stripe.
     //
-    // The Stripe Checkout Session itself is created server-side by the
-    // create-checkout-session Edge Function, NOT here — the browser
-    // never gets to decide which Supabase user_id a purchase is
-    // attributed to. See supabase/functions/create-checkout-session,
-    // confirm-purchase, and stripe-webhook alongside this file.
+    // TEMPORARY (sandbox/test mode): redirects straight to a static
+    // Stripe Payment Link instead of calling the create-checkout-session
+    // Edge Function. That Edge Function is what's *supposed* to create
+    // the Checkout Session server-side (see supabase/functions/
+    // create-checkout-session, confirm-purchase, and stripe-webhook
+    // alongside this file) — but right now it (or something upstream)
+    // was returning as if the purchase already existed, which skipped
+    // Stripe entirely and marked ads as removed for free. Using the
+    // fixed Payment Link sidesteps that until the Edge Function itself
+    // is fixed/verified.
+    //
+    // To switch back to the dynamic flow later: restore the
+    // sb.functions.invoke("create-checkout-session") call (see git
+    // history / comment block removed here) once that function is
+    // confirmed to only ever report alreadyOwned when a real
+    // ad_removals row with ads_removed=true exists for the user.
+    //
+    // Dashboard setup needed for this Payment Link (one-time, in Stripe):
+    //   Payment Link -> "After payment" -> "Don't show confirmation page,
+    //   redirect customers to your website" -> URL:
+    //   https://YOURDOMAIN/game.html?purchase=success&session_id={CHECKOUT_SESSION_ID}
+    //   (the {CHECKOUT_SESSION_ID} placeholder is filled in by Stripe).
+    //   Without this, checkReturnFromPurchase() below just falls back
+    //   to polling refreshAdsRemovedStatus() until the webhook writes
+    //   the ad_removals row — slower, but still works.
+    const STRIPE_REMOVE_ADS_PAYMENT_LINK = "https://buy.stripe.com/test_14AeV5gPo5XO8iZ7SZ4F201";
+
     async function startRemoveAdsPurchase() {
       if (!currentUser) {
         // No guest upsell modal here on purpose — Remove Ads has
@@ -4176,32 +4198,26 @@ function getItem(level) {
         return;
       }
 
+      if (window.userAdsRemoved) {
+        // refreshAdsRemovedStatus() already confirmed this account owns
+        // it (a real read of ad_removals, independent of the flaky
+        // Edge Function) — nothing to buy, just make sure the UI agrees.
+        refreshMonetizationUI();
+        return;
+      }
+
       const buyBtn = document.getElementById("removeAdsBuyBtn");
       const mobileBuyBtn = document.getElementById("mobileMapRemoveAdsBtn");
       [buyBtn, mobileBuyBtn].forEach(b => { if (b) b.disabled = true; });
 
-      try {
-        const { data, error } = await sb.functions.invoke("create-checkout-session");
-        if (error) throw error;
-
-        if (data && data.alreadyOwned) {
-          // Server already has this account down as ads_removed=true —
-          // just refresh the UI instead of sending them to Stripe again.
-          window.userAdsRemoved = true;
-          refreshMonetizationUI();
-          return;
-        }
-
-        if (!data || !data.url) throw new Error("No checkout URL returned");
-        // Same-tab redirect straight to Stripe-hosted Checkout. Stripe
-        // sends the player back to game.html?purchase=success&session_id=...
-        // once payment completes — see checkReturnFromPurchase() below.
-        window.location.href = data.url;
-      } catch (err) {
-        console.error("startRemoveAdsPurchase() error:", err);
-        showToast("Couldn't start checkout — please try again.");
-        [buyBtn, mobileBuyBtn].forEach(b => { if (b) b.disabled = false; });
-      }
+      // Same-tab redirect straight to Stripe-hosted Checkout via the
+      // Payment Link. client_reference_id lets the webhook tie the
+      // resulting payment back to this Supabase user_id; prefilled_email
+      // just saves them retyping it on Stripe's page.
+      const url = new URL(STRIPE_REMOVE_ADS_PAYMENT_LINK);
+      url.searchParams.set("client_reference_id", currentUser.id);
+      if (currentUser.email) url.searchParams.set("prefilled_email", currentUser.email);
+      window.location.href = url.toString();
     }
 
     // Whether the *current* signed-in user has ads_removed=true in
