@@ -4216,6 +4216,7 @@ function getItem(level) {
     // .ads-removed CSS above), the mobile floating button, and every
     // mounted AdBanner (via canShowAds() picking up window.userAdsRemoved).
     function refreshMonetizationUI() {
+      console.log("[HolisticGame] refreshMonetizationUI() build 2026-08-13-guard — currentUser:", !!currentUser, "isPremium:", typeof isPremium !== "undefined" ? isPremium : "(undefined)", "userAdsRemoved:", window.userAdsRemoved);
       // Logged-out players can NEVER show as ads-removed/Premium Active,
       // full stop — regardless of whatever isPremium currently holds.
       // isPremium is a global owned by auth.js and only gets recomputed
