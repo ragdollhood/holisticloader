@@ -4143,16 +4143,26 @@ function getItem(level) {
         refreshMonetizationUI();
         return;
       }
+      // Capture which account this query is for — if the user logs out
+      // (or a different account logs in) before Supabase responds, a
+      // stale response for the OLD account must NOT overwrite the
+      // current (correct) state. Without this guard, logging out while
+      // this request is still in flight could leave userAdsRemoved
+      // (and the "Premium Active" badge) stuck on from the previous
+      // account.
+      const requestedUserId = currentUser.id;
       try {
         const { data, error } = await sb
           .from("ad_removals")
           .select("ads_removed")
-          .eq("user_id", currentUser.id)
+          .eq("user_id", requestedUserId)
           .maybeSingle();
         if (error) throw error;
+        if (!currentUser || currentUser.id !== requestedUserId) return; // stale response — ignore
         window.userAdsRemoved = !!(data && data.ads_removed);
       } catch (err) {
         console.error("refreshAdsRemovedStatus() error:", err);
+        if (!currentUser || currentUser.id !== requestedUserId) return; // stale response — ignore
       }
       refreshMonetizationUI();
     }
