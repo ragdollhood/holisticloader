@@ -4048,69 +4048,27 @@ function getItem(level) {
       if (accountBtn) accountBtn.click();
     }
 
-    // Opens the same modal as openLoginModal(), then tries to switch it
-    // to its "create account" / sign-up tab, for flows (like Remove Ads)
-    // that specifically want a new guest to land on account creation
-    // rather than sign-in.
+    // Opens the same login/create-account modal auth.js builds into
+    // #authRoot, directly in "create account" mode — for flows (like
+    // Remove Ads) that want a logged-out guest to land on account
+    // creation rather than sign-in.
     //
-    // auth.js is loaded externally and isn't part of this file, so this
-    // is a best-effort helper rather than a real API call: it opens the
-    // modal, then polls briefly for a sign-up tab/link to appear (its
-    // markup is injected asynchronously by auth.js after accountBtn
-    // gets clicked) and clicks it.
-    //
-    // IMPORTANT: SIGNUP_TAB_SELECTORS below is a guess at common
-    // patterns. If your actual auth.js modal doesn't match any of
-    // them, open the modal once, inspect the sign-up tab/button in
-    // devtools, and add/replace the selector here — this is the one
-    // place that needs adjusting to your real auth.js markup.
-    const SIGNUP_TAB_SELECTORS = [
-      '[data-mode="signup"]',
-      '[data-auth-mode="signup"]',
-      '[data-tab="signup"]',
-      '#authSignupTab',
-      '#authRoot [data-testid="signup-tab"]'
-    ];
-
-    function findSignupTabEl() {
-      for (const sel of SIGNUP_TAB_SELECTORS) {
-        const el = document.querySelector(sel);
-        if (el) return el;
-      }
-      // Fallback: scan buttons/links for sign-up-ish text inside the
-      // auth modal, in case auth.js doesn't expose a data-attribute hook.
-      const candidates = document.querySelectorAll(
-        '#authRoot button, #authRoot a, [class*="auth"] button, [class*="auth"] a'
-      );
-      for (const el of candidates) {
-        const text = (el.textContent || "").trim().toLowerCase();
-        if (text.includes("sign up") || text.includes("create account") || text.includes("create your account")) {
-          return el;
-        }
-      }
-      return null;
-    }
-
+    // auth.js already exposes exactly this as a real API:
+    // window.openFreeTrialSignup() calls its internal openModal("register"),
+    // which shows the modal in register mode. Since this page already
+    // sets window.HL_HIDE_TRIAL_UI = true (see near the auth.js <script>
+    // tag), auth.js's own mode-label logic (_setAuthMode() in auth.js)
+    // shows "Create your account" / "Create Account" here instead of
+    // free-trial copy — no extra flag needed on our side.
     function openCreateAccountModal() {
-      openLoginModal();
-
-      let attempts = 0;
-      const maxAttempts = 20; // ~2s at 100ms — modal markup is injected async by auth.js
-      const poll = setInterval(() => {
-        attempts++;
-        const signupTab = findSignupTabEl();
-        if (signupTab) {
-          signupTab.click();
-          clearInterval(poll);
-        } else if (attempts >= maxAttempts) {
-          clearInterval(poll);
-          console.warn(
-            "openCreateAccountModal(): couldn't find a sign-up tab in the auth modal — " +
-            "it opened in whatever mode auth.js defaults to. Update SIGNUP_TAB_SELECTORS " +
-            "in game.html to match your auth.js markup."
-          );
-        }
-      }, 100);
+      if (typeof window.openFreeTrialSignup === "function") {
+        window.openFreeTrialSignup();
+      } else {
+        // auth.js didn't load / hasn't defined it yet — fall back to
+        // the normal login modal rather than doing nothing.
+        console.warn("openCreateAccountModal(): window.openFreeTrialSignup() not found — falling back to openLoginModal().");
+        openLoginModal();
+      }
     }
 
     // Sidebar Remove Ads card (map-only, hidden once ads are already
