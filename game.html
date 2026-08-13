@@ -4216,6 +4216,21 @@ function getItem(level) {
     // .ads-removed CSS above), the mobile floating button, and every
     // mounted AdBanner (via canShowAds() picking up window.userAdsRemoved).
     function refreshMonetizationUI() {
+      // Logged-out players can NEVER show as ads-removed/Premium Active,
+      // full stop — regardless of whatever isPremium currently holds.
+      // isPremium is a global owned by auth.js and only gets recomputed
+      // async (refreshPremiumStatus()); if this function ever runs
+      // during a brief window where currentUser has already gone null
+      // but isPremium hasn't caught up yet (auth-state flicker — see
+      // the "AUTH RESET FIRED" logging in onAuthOrPremiumChange), that
+      // stale true must not leak into the UI. This check is the single
+      // source of truth for that, independent of fixing the race itself.
+      if (!currentUser) {
+        window.userAdsRemoved = false;
+        gameLayoutEl.classList.remove("ads-removed");
+        if (typeof refreshAllAdBanners === "function") refreshAllAdBanners();
+        return;
+      }
       const adsRemoved = (typeof isPremium !== "undefined" && isPremium) || window.userAdsRemoved === true;
       gameLayoutEl.classList.toggle("ads-removed", adsRemoved);
       if (typeof refreshAllAdBanners === "function") refreshAllAdBanners();
