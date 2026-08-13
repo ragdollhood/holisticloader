@@ -4063,34 +4063,66 @@ function getItem(level) {
     // this is just a "create a free account" prompt — no pricing, no
     // trial.
     const guestClearModalEl = document.getElementById("guestClearModal");
+    let guestUpsellReason = null; // remembered so the two entry buttons below know which flow they're in
     function closeGuestUpsellModal() {
       guestClearModalEl.classList.remove("show");
       document.body.classList.remove("any-modal-open");
     }
     function openGuestUpsellModal(reason) {
+      guestUpsellReason = reason;
       const kicker = document.getElementById("guestClearKicker");
       const warning = document.getElementById("guestClearWarning");
       if (kicker) {
         kicker.textContent = reason === "locked"
           ? "This island is locked"
           : reason === "buyAds"
-          ? "Sign in to remove ads"
+          ? "Create Your Free Account"
           : "Island 1 cleared! 🌱";
       }
       if (warning) {
         warning.textContent = reason === "buyAds"
-          ? "An account keeps your ad-free purchase with you wherever you play."
+          ? "Save your progress. Restore purchases on any device. Enjoy ad-free gameplay."
           : "Heads up — your progress won't be saved unless you log in.";
       }
       guestClearModalEl.classList.add("show");
       document.body.classList.add("any-modal-open");
     }
+
+    /* ---------- Pending purchase intent ----------
+       Remembers "the player was trying to buy Remove Ads" across the
+       trip through account creation/login, so onAuthOrPremiumChange()
+       can resume straight into Stripe Checkout the moment a session
+       exists — no second click needed. Uses localStorage (not
+       sessionStorage) so it survives an email-confirmation link opening
+       in a new tab on the SAME browser; stamped with an expiry so a
+       stale intent can never fire a purchase days later. If email
+       confirmation opens on a DIFFERENT device, the intent simply won't
+       be there and the player just clicks Remove Ads again — acceptable
+       for a $2.99 item. */
+    const PENDING_INTENT_KEY = "hl_pending_purchase_intent";
+    function setPendingPurchaseIntent(intent) {
+      localStorage.setItem(PENDING_INTENT_KEY, JSON.stringify({
+        intent, expires: Date.now() + 30 * 60 * 1000 // 30 minutes
+      }));
+    }
+    function consumePendingPurchaseIntent() {
+      const raw = localStorage.getItem(PENDING_INTENT_KEY);
+      localStorage.removeItem(PENDING_INTENT_KEY);
+      if (!raw) return null;
+      try {
+        const { intent, expires } = JSON.parse(raw);
+        return (expires > Date.now()) ? intent : null;
+      } catch { return null; }
+    }
+
     document.getElementById("guestClearCloseBtn").addEventListener("click", closeGuestUpsellModal);
     document.getElementById("guestClearSignUpBtn").addEventListener("click", () => {
+      if (guestUpsellReason === "buyAds") setPendingPurchaseIntent("removeAds");
       closeGuestUpsellModal();
       openLoginModal();
     });
     document.getElementById("guestClearLoginBtn").addEventListener("click", () => {
+      if (guestUpsellReason === "buyAds") setPendingPurchaseIntent("removeAds");
       closeGuestUpsellModal();
       openLoginModal();
     });
@@ -4106,28 +4138,40 @@ function getItem(level) {
     // are asked to sign in first via the same free-account modal used
     // elsewhere, not sent straight to Stripe.
     //
-    // STRIPE_REMOVE_ADS_LINK should be a Stripe Payment Link for a
-    // single $2.99 one-time price. client_reference_id is appended so
-    // the webhook (server-side, NOT in this file) knows which Supabase
-    // user_id to credit — see the Supabase/Stripe notes shared
-    // alongside this file for the webhook + schema.
-    const STRIPE_REMOVE_ADS_LINK = "https://buy.stripe.com/test_14AeV5gPo5XO8iZ7SZ4F201";
-
-    function startRemoveAdsPurchase() {
+    // The Stripe Checkout Session itself is created server-side by the
+    // create-checkout-session Edge Function, NOT here — the browser
+    // never gets to decide which Supabase user_id a purchase is
+    // attributed to. See supabase/functions/create-checkout-session,
+    // confirm-purchase, and stripe-webhook alongside this file.
+    async function startRemoveAdsPurchase() {
       if (!currentUser) { openGuestUpsellModal("buyAds"); return; }
-      const url = new URL(STRIPE_REMOVE_ADS_LINK);
-      url.searchParams.set("client_reference_id", currentUser.id);
-      // Bounce back here with a flag so refreshAdsRemovedStatus() knows
-      // to poll for the webhook having landed (it's async — see below).
-      const returnUrl = new URL(window.location.href);
-      returnUrl.searchParams.set("purchase", "success");
-      url.searchParams.set("success_url", returnUrl.toString());
-      // Direct, same-tab redirect straight to the Stripe checkout page.
-      // Stripe (via success_url) sends the player back to this exact
-      // game.html URL (with ?purchase=success) once payment completes —
-      // see checkReturnFromPurchase() below, which then polls for the
-      // webhook having landed.
-      window.location.href = url.toString();
+
+      const buyBtn = document.getElementById("removeAdsBuyBtn");
+      const mobileBuyBtn = document.getElementById("mobileMapRemoveAdsBtn");
+      [buyBtn, mobileBuyBtn].forEach(b => { if (b) b.disabled = true; });
+
+      try {
+        const { data, error } = await sb.functions.invoke("create-checkout-session");
+        if (error) throw error;
+
+        if (data && data.alreadyOwned) {
+          // Server already has this account down as ads_removed=true —
+          // just refresh the UI instead of sending them to Stripe again.
+          window.userAdsRemoved = true;
+          refreshMonetizationUI();
+          return;
+        }
+
+        if (!data || !data.url) throw new Error("No checkout URL returned");
+        // Same-tab redirect straight to Stripe-hosted Checkout. Stripe
+        // sends the player back to game.html?purchase=success&session_id=...
+        // once payment completes — see checkReturnFromPurchase() below.
+        window.location.href = data.url;
+      } catch (err) {
+        console.error("startRemoveAdsPurchase() error:", err);
+        showToast("Couldn't start checkout — please try again.");
+        [buyBtn, mobileBuyBtn].forEach(b => { if (b) b.disabled = false; });
+      }
     }
 
     // Whether the *current* signed-in user has ads_removed=true in
@@ -4177,20 +4221,53 @@ function getItem(level) {
       if (typeof refreshAllAdBanners === "function") refreshAllAdBanners();
     }
 
-    // If we're back from a Stripe purchase, the webhook may still be
-    // landing — poll briefly instead of assuming it's already there.
+    // If we're back from a Stripe purchase: try the fast synchronous
+    // confirm-purchase Edge Function first (works even if the webhook
+    // hasn't landed yet, since it verifies the session directly against
+    // Stripe). Fall back to a short poll only if that call itself fails
+    // — the webhook is still writing ad_removals in the background
+    // either way, so this is belt-and-suspenders, not the only path.
     (function checkReturnFromPurchase() {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("purchase") !== "success") return;
+      const purchase = params.get("purchase");
+      const sessionId = params.get("session_id");
+      if (!purchase) return;
+
       params.delete("purchase");
+      params.delete("session_id");
       const cleanUrl = window.location.pathname + (params.toString() ? "?" + params.toString() : "") + window.location.hash;
       window.history.replaceState({}, "", cleanUrl);
-      let attempts = 0;
-      const poll = setInterval(async () => {
-        attempts++;
-        await refreshAdsRemovedStatus();
-        if (window.userAdsRemoved || attempts >= 6) clearInterval(poll);
-      }, 2000);
+
+      if (purchase === "cancelled") {
+        showToast("Checkout cancelled — no charge was made.");
+        return;
+      }
+      if (purchase !== "success") return;
+
+      (async function confirmAndRefresh() {
+        if (sessionId && currentUser) {
+          try {
+            const { data, error } = await sb.functions.invoke("confirm-purchase", {
+              body: { session_id: sessionId }
+            });
+            if (!error && data && data.adsRemoved) {
+              window.userAdsRemoved = true;
+              refreshMonetizationUI();
+              showToast("Ads removed — thank you!");
+              return;
+            }
+          } catch (err) {
+            console.error("confirm-purchase failed, falling back to polling:", err);
+          }
+        }
+
+        let attempts = 0;
+        const poll = setInterval(async () => {
+          attempts++;
+          await refreshAdsRemovedStatus();
+          if (window.userAdsRemoved || attempts >= 6) clearInterval(poll);
+        }, 2000);
+      })();
     })();
 
     // ---------- Ads (Google AdSense, see adsense.js) ----------
@@ -5441,7 +5518,15 @@ async function performSync(showFeedback) {
         // Look up this account's Remove Ads purchase (independent of
         // Premium, already reflected via isPremium) and refresh the
         // Remove Ads card / Premium Active badge / ad banners.
-        refreshAdsRemovedStatus();
+        refreshAdsRemovedStatus().then(() => {
+          // If the player got here via "Create account" / "Log in" from
+          // the Remove Ads upsell modal, resume straight into Stripe
+          // Checkout now that a session exists — no second click needed.
+          const pending = consumePendingPurchaseIntent();
+          if (pending === "removeAds" && !window.userAdsRemoved) {
+            startRemoveAdsPurchase();
+          }
+        });
       } else {
         console.warn("AUTH RESET FIRED — currentUser is null, clearedWorlds being wiped to []"); // TEMP DEBUG
         console.trace("AUTH RESET trace"); // TEMP DEBUG
