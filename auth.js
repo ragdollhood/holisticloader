@@ -436,7 +436,12 @@ function _wireAuthDom() {
     // don't apply here, so they're hidden too.
     if (startTrialBtn) startTrialBtn.style.display = mode === "setPassword" ? "none" : "";
     const readMoreBtn = document.getElementById("readMorePremiumBtn");
-    if (readMoreBtn) readMoreBtn.style.display = mode === "setPassword" ? "none" : "";
+    // "Read more about Premium" only ever makes sense on pages that
+    // actually sell the Premium subscription — never on the
+    // HL_HIDE_TRIAL_UI (game.html / Remove Ads) flow, in any mode.
+    if (readMoreBtn) {
+      readMoreBtn.style.display = (mode === "setPassword" || window.HL_HIDE_TRIAL_UI) ? "none" : "";
+    }
     if (emailRow) emailRow.style.display = mode === "setPassword" ? "none" : "";
     passwordInput.required = true;
 
@@ -454,7 +459,11 @@ function _wireAuthDom() {
     } else {
       title.textContent = "Log in";
       submitBtn.textContent = "Log in";
-      if (trialLabel) trialLabel.textContent = window.HL_HIDE_TRIAL_UI ? "Create an account" : "Free Trial (14 Days)";
+      // On the Remove Ads flow (game.html) the footer button below
+      // "Log in" points at removing ads instead of a Premium trial —
+      // it still just switches the form to register mode underneath,
+      // since an account is required either way.
+      if (trialLabel) trialLabel.textContent = window.HL_HIDE_TRIAL_UI ? "Remove Ads for $2.99" : "Free Trial (14 Days)";
       if (forgotRow) forgotRow.style.display = "";
       passwordInput.setAttribute("autocomplete", "current-password");
     }
