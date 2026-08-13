@@ -336,8 +336,6 @@ function _buildAuthDom() {
         </button>
         <div id="accountMenu" role="menu">
           <div id="accountEmailLabel"></div>
-          <button id="magicLinkBtn" type="button" role="menuitem">Email me a magic link</button>
-          <button id="createPasswordBtn" type="button" role="menuitem">Create a password</button>
           <button id="manageSubBtn" type="button" role="menuitem" style="display:none">Manage Subscription</button>
           <button id="logoutBtn" type="button" role="menuitem">Logout</button>
         </div>
@@ -425,32 +423,18 @@ function _wireAuthDom() {
     const submitBtn = document.getElementById("authSubmit");
     const forgotRow = document.getElementById("authRow");
     const passwordInput = document.getElementById("authPassword");
-    const emailRow = document.getElementById("authEmailRow");
     const trialLabel = startTrialBtn ? startTrialBtn.querySelector("span") : null;
 
-    // "setPassword" is a third mode, only reachable from the account
-    // menu's "Create a password" button for an already logged-in user —
-    // it reuses this same form but just for the password field, calling
-    // sb.auth.updateUser({ password }) instead of register/login (see
-    // the form submit handler below). The trial/read-more footer links
-    // don't apply here, so they're hidden too.
-    if (startTrialBtn) startTrialBtn.style.display = mode === "setPassword" ? "none" : "";
     const readMoreBtn = document.getElementById("readMorePremiumBtn");
     // "Read more about Premium" only ever makes sense on pages that
     // actually sell the Premium subscription — never on the
-    // HL_HIDE_TRIAL_UI (game.html / Remove Ads) flow, in any mode.
+    // HL_HIDE_TRIAL_UI (game.html / Remove Ads) flow.
     if (readMoreBtn) {
-      readMoreBtn.style.display = (mode === "setPassword" || window.HL_HIDE_TRIAL_UI) ? "none" : "";
+      readMoreBtn.style.display = window.HL_HIDE_TRIAL_UI ? "none" : "";
     }
-    if (emailRow) emailRow.style.display = mode === "setPassword" ? "none" : "";
     passwordInput.required = true;
 
-    if (mode === "setPassword") {
-      title.textContent = "Create a password";
-      submitBtn.textContent = "Save Password";
-      if (forgotRow) forgotRow.style.display = "none";
-      passwordInput.setAttribute("autocomplete", "new-password");
-    } else if (mode === "register") {
+    if (mode === "register") {
       title.textContent = window.HL_HIDE_TRIAL_UI ? "Create your account" : "Start your free trial";
       submitBtn.textContent = window.HL_HIDE_TRIAL_UI ? "Create Account" : "Start Free Trial";
       if (trialLabel) trialLabel.textContent = "Back to Login";
@@ -474,11 +458,7 @@ function _wireAuthDom() {
     form.reset();
     _setAuthMode(mode || "login");
     modal.classList.add("show");
-    if (mode === "setPassword") {
-      document.getElementById("authPassword").focus();
-    } else {
-      document.getElementById("authEmail").focus();
-    }
+    document.getElementById("authEmail").focus();
   }
   function closeModal() {
     modal.classList.remove("show");
@@ -566,49 +546,6 @@ function _wireAuthDom() {
     await openBillingPortal(manageSubBtn);
   };
 
-  // "Email me a magic link" — sends a one-time passwordless login link
-  // to the CURRENT account's email (no typing required), handy for
-  // anyone who registered without ever setting a memorable password.
-  // Doesn't touch or require an existing password.
-  const magicLinkBtn = document.getElementById("magicLinkBtn");
-  if (magicLinkBtn) {
-    magicLinkBtn.onclick = async () => {
-      if (!currentUser) return;
-      magicLinkBtn.disabled = true;
-      const original = magicLinkBtn.textContent;
-      try {
-        const { error } = await sb.auth.signInWithOtp({
-          email: currentUser.email,
-          options: { emailRedirectTo: window.location.href }
-        });
-        if (error) throw error;
-        magicLinkBtn.textContent = "Check your email!";
-      } catch (err) {
-        console.error("signInWithOtp error:", err);
-        magicLinkBtn.textContent = "Couldn't send — try again";
-      } finally {
-        setTimeout(() => {
-          magicLinkBtn.textContent = original;
-          magicLinkBtn.disabled = false;
-        }, 3000);
-      }
-    };
-  }
-
-  // "Create a password" — opens the same login/register modal, but in
-  // a dedicated mode that shows only the password field and calls
-  // sb.auth.updateUser({ password }) on submit (see form.onsubmit
-  // below). Lets an account created via magic link (or one whose
-  // owner just forgot they have a password) set/replace one.
-  const createPasswordBtn = document.getElementById("createPasswordBtn");
-  if (createPasswordBtn) {
-    createPasswordBtn.onclick = () => {
-      if (!currentUser) return;
-      closeAccountMenu();
-      openModal("setPassword");
-    };
-  }
-
   // "Forgot password?" — sends the Supabase reset email. The link inside
   // that email points at reset-password.html, which reads the recovery
   // token from the URL and lets the user set a new password.
@@ -651,12 +588,7 @@ function _wireAuthDom() {
     submitBtn.disabled = true;
 
     try {
-      if (_authMode === "setPassword") {
-        const { error } = await sb.auth.updateUser({ password });
-        if (error) throw error;
-        showAuthMessage("Password saved! You can log in with it next time.", "success");
-        setTimeout(closeModal, 1400);
-      } else if (_authMode === "register") {
+      if (_authMode === "register") {
         const result = await registerUser(email, password);
         if (result && result.session) {
           // Email confirmation is OFF in Supabase — signUp already

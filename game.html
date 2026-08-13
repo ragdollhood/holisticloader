@@ -1981,6 +1981,25 @@ button {
     #gameLayout.on-map.ads-removed .premium-active-badge {
       display: flex;
     }
+
+    /* Belt-and-suspenders: adsense.js's AdBanner()/canShowAds() is
+       *supposed* to hide these ad slots for anyone with ads removed,
+       but that lives in a separate file and wasn't reliably hiding the
+       placeholder "Advertisement" boxes after a purchase (see the
+       bug where Premium Active showed but ads stayed visible). This
+       CSS rule hides them unconditionally the moment #gameLayout has
+       .ads-removed — same source of truth refreshMonetizationUI()
+       already maintains — regardless of what adsense.js does or
+       doesn't do. !important beats any inline style AdBanner() sets
+       on the injected ad markup.
+       TODO: once adsense.js's own hiding is confirmed reliable, this
+       can be relaxed to a lower-priority fallback if desired — leaving
+       it as the primary guard for now is safer than trusting a file
+       that already caused this bug once. */
+    #gameLayout.ads-removed #sidebarAdSlot,
+    #gameLayout.ads-removed #mapAdSlot {
+      display: none !important;
+    }
     .premium-active-check {
       font-family: Arial, sans-serif; font-weight: 900; font-size: 12.5px;
       color: #9ed7a7; white-space: nowrap;
