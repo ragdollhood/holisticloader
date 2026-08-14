@@ -2058,18 +2058,6 @@ button {
       margin: 10px auto 2px;
     }
 
-    /* Sidebar ad slot — already position:static (see ".side-panel
-       .hud" above); just needs its own size. Capped narrower than the
-       panel's own width so a portrait creative doesn't dominate the
-       compact list of cards around it, and keeps the creative's real
-       480x678 ratio so it never looks stretched or squashed. */
-    #sidebarAdSlot {
-      width: 100%;
-      max-width: 240px;
-      aspect-ratio: 480 / 678;
-      margin: 0 auto;
-    }
-
     /* Safety net matching the same "content taller than its box
        shouldn't just vanish" fix already applied to .side-panel and
        html/body: .map-screen's base rule is overflow:hidden (needed
@@ -2084,7 +2072,6 @@ button {
       overflow-x: hidden;
     }
 
-    #gameLayout.ads-removed #sidebarAdSlot,
     #gameLayout.ads-removed #mapAdSlot {
       display: none !important;
     }

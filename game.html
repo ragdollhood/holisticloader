@@ -300,35 +300,6 @@
           <span class="premium-active-sub">Ad-free experience enabled</span>
         </div>
 
-        <!-- Sidebar ad — free users only, hidden automatically for
-             anyone with Premium or a completed Remove Ads purchase
-             (see adsense.js / canShowAds()). map-only, same visibility
-             window as How to Play / Remove Ads above it, so it only
-             ever appears on the map/start screen — never mid-merge, on
-             the board, during level reveals, or world-clear
-             animations.
-
-             TEMPORARY: .house-ad-creative is a static self-promo image
-             standing in for a real AdSense unit while that's still
-             pending approval. Delete just this inner <picture> block
-             (leave the surrounding #sidebarAdSlot div and its ad-label
-             alone) once adsense.js is wired up to fill this slot for
-             real. -->
-        <div class="hud ad-slot map-only" id="sidebarAdSlot" aria-label="Advertisement">
-          <span class="ad-label">Advertisement</span>
-          <a class="house-ad-link" href="https://kidsgonnaplay.com/activity-book" target="_blank" rel="noopener sponsored">
-            <picture class="house-ad-creative">
-              <source srcset="images/ad-kidsgonnaplayactive.webp" type="image/webp">
-              <img
-                src="images/ad-kidsgonnaplayactive.jpg"
-                alt="Kids Gonna Play activity book — 50+ coloring pages, mazes and word searches"
-                width="480" height="678"
-                loading="lazy" decoding="async"
-              >
-            </picture>
-          </a>
-        </div>
-
         <!-- home-thumb ("back to the map") starts out here for mobile;
              on desktop/laptop layoutSideExtras() (JS) moves it into
              #nextBox instead, alongside the next-item badge — see that
