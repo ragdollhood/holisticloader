@@ -1303,6 +1303,30 @@ function getItem(level) {
       new ResizeObserver(() => layoutMapFrame()).observe(stageFrameEl);
     }
 
+    // Toggles .can-scroll on the side panel whenever its content is
+    // actually taller than the panel's own (stretched, capped) height —
+    // gates the bottom fade-cue in the short-landscape-phone CSS (see
+    // the orientation:landscape/max-height:600px query in game.css) so
+    // it only appears when there's really something to scroll to.
+    // Re-checked on resize/orientation change AND via ResizeObserver on
+    // the panel itself, since its content can grow taller later without
+    // any resize event firing at all — e.g. once a real ad finishes
+    // loading into #sidebarAdSlot and takes up real height instead of
+    // the empty placeholder box it starts as.
+    function refreshSidePanelScrollability() {
+      if (!sidePanelEl) return;
+      const scrollable = sidePanelEl.scrollHeight > sidePanelEl.clientHeight + 1;
+      sidePanelEl.classList.toggle("can-scroll", scrollable);
+    }
+    if (sidePanelEl) {
+      refreshSidePanelScrollability();
+      if (typeof ResizeObserver !== "undefined") {
+        new ResizeObserver(refreshSidePanelScrollability).observe(sidePanelEl);
+      }
+      window.addEventListener("resize", refreshSidePanelScrollability);
+      window.addEventListener("orientationchange", refreshSidePanelScrollability);
+    }
+
     // Both the mobile (portrait) and laptop (landscape) map images are
     // needed the moment login resolves (the map is the landing screen)
     // and are otherwise only fetched lazily on first display — warm the

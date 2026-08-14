@@ -80,7 +80,25 @@
     html, body {
       margin: 0;
       min-height: 100%;
-      overflow: hidden;
+      /* Was overflow:hidden. .screen is sized to a flat 100svh (see
+         below) with no awareness of anything that might ever sit
+         ABOVE it in the page — e.g. a Google AdSense top anchor ad,
+         which docks itself at the very top of <body> and pushes
+         everything else down by exactly its own height. With
+         overflow:hidden here, that push has nowhere to go: the bottom
+         slice of the page — the exact height the ad just took —
+         becomes genuinely unreachable, not just scrolled out of view
+         but rendered outside the page entirely, with no scrollbar or
+         gesture that can ever reach it. Every OTHER "content taller
+         than its box" case in this file is already handled by an
+         internal overflow-y:auto on that specific box (.side-panel,
+         .modal-card, etc.), so this change is a last-resort safety
+         net one level up, not a replacement for those — it only ever
+         does anything on the rare page-level overflow those inner
+         fixes can't reach (like a top-anchor ad's own push), since
+         normal gameplay never grows past .screen's own 100svh box. */
+      overflow-x: hidden;
+      overflow-y: auto;
       font-family: Georgia, "Times New Roman", serif;
       background: #10091b;
       color: var(--text);
@@ -1392,6 +1410,41 @@ button {
         --sp-width: clamp(190px, 26vw, 300px);
         --gl-gap: clamp(6px, 1.2vw, 14px);
         --screen-pad: clamp(6px, 1vw, 12px);
+      }
+
+      /* Belt-and-suspenders on top of the base .side-panel rule's
+         overflow-y:auto + min-height:0 (which is what actually makes
+         the panel scrollable here, once .game-layout below gives it a
+         definite stretched height to scroll within): explicit
+         max-height as a second guarantee the browser never lets the
+         panel's box grow past its stretched size even in edge cases,
+         plus -webkit-overflow-scrolling:touch for smooth momentum
+         scrolling on older iOS Safari (same pairing already used on
+         .modal-card for the same short-landscape case), and
+         overscroll-behavior:contain so a scroll that hits the top/
+         bottom edge of the panel doesn't bubble up and rubber-band the
+         whole (non-scrolling) page behind it. */
+      .side-panel {
+        max-height: 100%;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+
+      /* Visual "there's more below" cue: fades only the last ~28px of
+         the panel toward transparent, using a mask so it's a soft
+         fade rather than a hard cut-off edge. Gated behind .can-scroll
+         (toggled by JS — see the ResizeObserver in game.js — only when
+         the panel's content is actually taller than the panel itself),
+         so a viewport where everything already fits never gets its
+         last visible item dimmed for no reason. Bottom-only on
+         purpose: this is a static mask with no scroll-POSITION
+         awareness (just scroll-ABILITY), so fading the top too would
+         incorrectly dim the top-row icons even while already scrolled
+         all the way up. Purely visual — the actual scrolling is the
+         overflow-y:auto on the base .side-panel rule. */
+      .side-panel.can-scroll {
+        mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
       }
 
       /* A touch more conservative than the base 96svh cap: with
