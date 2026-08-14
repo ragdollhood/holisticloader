@@ -2088,6 +2088,20 @@ button {
       outline: none;
     }
 
+    /* Interstitial "about to start playing" ad card (#playAdModal) —
+       reuses the .modal / .modal-card shell (see further down) but,
+       unlike the text-heavy modals that shell was built for, this one
+       is just the portrait creative edge-to-edge, so padding is
+       zeroed and the card is clipped to the image's own rounded
+       corners. Sized/aspect-ratio matches the real 480x678 creative
+       so it's never stretched or squashed. */
+    .modal-card.play-ad-card {
+      width: min(320px, 86vw);
+      aspect-ratio: 480 / 678;
+      padding: 0;
+      overflow: hidden;
+    }
+
     /* Safety net matching the same "content taller than its box
        shouldn't just vanish" fix already applied to .side-panel and
        html/body: .map-screen's base rule is overflow:hidden (needed

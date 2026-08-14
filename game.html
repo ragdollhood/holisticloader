@@ -526,6 +526,37 @@
     </div>
   </div>
 
+  <!-- "About to start playing" interstitial ad — shown right as the
+       player leaves the map and a level begins (see the observer
+       script near the end of the page, which watches #gameLayout for
+       its "on-map" class being removed). Free users only; skipped
+       automatically once ads are removed (Premium sign-in or the
+       one-time purchase) — same as #mapAdSlot.
+
+       TEMPORARY: like #mapAdSlot / the old #sidebarAdSlot, this is a
+       static self-promo image standing in for a real AdSense unit
+       while that's still pending approval. Once adsense.js can fill
+       this placement for real, swap the <a>/<picture> block below for
+       the ad unit and drop the click-to-dismiss ✕ if the network's
+       own unit already provides one. -->
+  <div class="modal" id="playAdModal" role="dialog" aria-modal="true" aria-label="Advertisement">
+    <div class="modal-card play-ad-card">
+      <button type="button" class="modal-close" id="playAdCloseBtn" aria-label="Close advertisement">✕</button>
+      <span class="ad-label">Advertisement</span>
+      <a class="house-ad-link" href="https://kidsgonnaplay.com/activity-book" target="_blank" rel="noopener sponsored">
+        <picture class="house-ad-creative">
+          <source srcset="images/ad-kidsgonnaplayactive.webp" type="image/webp">
+          <img
+            src="images/ad-kidsgonnaplayactive.jpg"
+            alt="Kids Gonna Play activity book — 50+ coloring pages, mazes and word searches"
+            width="480" height="678"
+            loading="lazy" decoding="async"
+          >
+        </picture>
+      </a>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <!-- Tells auth.js this page is a one-time $2.99 "Remove Ads" purchase
        flow, not the Holistic Loader Premium subscription — so it should
@@ -540,27 +571,81 @@
   <script>window.HL_PAGE_NAME = "game";</script>
   <script src="visits.js"></script>
 
-  <!-- Lets the visitor dismiss the map-screen ad via the ✕ in its
-       corner. Remembered in localStorage so it stays closed on later
-       visits too, independent of the ads-removed purchase/premium
-       flag (which is handled separately by adsense.js). -->
+  <!-- Ties the two placeholder "house ads" (#mapAdSlot on the map
+       screen, #playAdModal right before a level starts) to
+       #gameLayout's state so:
+         - the map ad reappears every time the player arrives back on
+           the map (closing it with its ✕ only dismisses that one
+           viewing, it isn't remembered across visits)
+         - the interstitial ad pops up right as gameplay begins, i.e.
+           whenever #gameLayout's "on-map" class is removed
+         - both are skipped instantly once ads are removed (Premium
+           sign-in or the one-time purchase adds #gameLayout's
+           "ads-removed" class — see refreshMonetizationUI() in
+           game.js/auth.js) -->
   <script>
   (function () {
-    var slot = document.getElementById('mapAdSlot');
-    var btn = document.getElementById('mapAdCloseBtn');
-    if (!slot || !btn) return;
-    var STORAGE_KEY = 'hl_map_ad_dismissed';
-    try {
-      if (localStorage.getItem(STORAGE_KEY) === '1') {
-        slot.style.display = 'none';
+    var gameLayout = document.getElementById('gameLayout');
+    var mapAdSlot = document.getElementById('mapAdSlot');
+    var mapAdCloseBtn = document.getElementById('mapAdCloseBtn');
+    var playAdModal = document.getElementById('playAdModal');
+    var playAdCloseBtn = document.getElementById('playAdCloseBtn');
+    if (!gameLayout) return;
+
+    function adsRemoved() {
+      return gameLayout.classList.contains('ads-removed');
+    }
+    function showMapAd() {
+      if (mapAdSlot && !adsRemoved()) mapAdSlot.style.display = '';
+    }
+    function hideMapAd() {
+      if (mapAdSlot) mapAdSlot.style.display = 'none';
+    }
+    function showPlayAd() {
+      if (playAdModal && !adsRemoved()) playAdModal.classList.add('show');
+    }
+    function hidePlayAd() {
+      if (playAdModal) playAdModal.classList.remove('show');
+    }
+
+    if (mapAdCloseBtn) {
+      mapAdCloseBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        hideMapAd();
+      });
+    }
+    if (playAdCloseBtn) {
+      playAdCloseBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        hidePlayAd();
+      });
+    }
+    if (playAdModal) {
+      // Clicking the dimmed backdrop (not the card itself) also dismisses it.
+      playAdModal.addEventListener('click', function (e) {
+        if (e.target === playAdModal) hidePlayAd();
+      });
+    }
+
+    var wasOnMap = gameLayout.classList.contains('on-map');
+    if (wasOnMap) showMapAd();
+
+    var observer = new MutationObserver(function () {
+      if (adsRemoved()) {
+        hideMapAd();
+        hidePlayAd();
       }
-    } catch (e) {}
-    btn.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      slot.style.display = 'none';
-      try { localStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
+      var isOnMap = gameLayout.classList.contains('on-map');
+      if (isOnMap && !wasOnMap) {
+        showMapAd();
+      } else if (!isOnMap && wasOnMap) {
+        showPlayAd();
+      }
+      wasOnMap = isOnMap;
     });
+    observer.observe(gameLayout, { attributes: true, attributeFilter: ['class'] });
   })();
   </script>
 </body>
