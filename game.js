@@ -901,8 +901,6 @@ function getItem(level) {
     // ad_removals before creating a session — the client never claims
     // ownership or constructs a Stripe URL itself.
 
-    const REMOVE_ADS_PAYMENT_LINK = "https://buy.stripe.com/7sY9ALfEgaNe6IM8BI0kE02";
-
     async function startRemoveAdsPurchase() {
       if (!currentUser) {
         // Remove Ads needs an account so the purchase can follow the
@@ -926,24 +924,24 @@ function getItem(level) {
       });
 
       try {
-        const email = (currentUser.email || "").trim().toLowerCase();
-        const checkoutUrl = new URL(REMOVE_ADS_PAYMENT_LINK);
+        // sb.functions.invoke() automatically attaches the current
+        // user's access token as the Authorization header (same
+        // pattern as openBillingPortal() in auth.js). The Edge
+        // Function re-derives the user from that token server-side
+        // and independently checks ad_removals before creating a
+        // session — the client never claims ownership or constructs
+        // a Stripe URL itself, and payment_method_types is locked
+        // down server-side too.
+        const { data, error } = await sb.functions.invoke("create-checkout-session");
 
-        // Stripe Payment Links support client_reference_id. The webhook
-        // receives this value in checkout.session.completed, so it can
-        // activate Remove Ads for the exact Supabase user who clicked.
-        checkoutUrl.searchParams.set("client_reference_id", currentUser.id);
-
-        // Prefill the Stripe email field to reduce mistakes. The webhook
-        // still uses client_reference_id first, so this is only a backup.
-        if (email) {
-          checkoutUrl.searchParams.set("prefilled_email", email);
+        if (error) throw error;
+        if (data && data.alreadyOwned) {
+          refreshMonetizationUI();
+          return;
         }
+        if (!data || !data.url) throw new Error("No checkout URL returned");
 
-        localStorage.setItem("hl_remove_ads_checkout_user_id", currentUser.id);
-        localStorage.setItem("hl_remove_ads_checkout_email", email);
-
-        window.location.href = checkoutUrl.toString();
+        window.location.href = data.url;
       } catch (err) {
         console.error("startRemoveAdsPurchase() error:", err);
         showToast("Couldn't start checkout — please try again.");
