@@ -1986,6 +1986,104 @@ button {
        can be relaxed to a lower-priority fallback if desired — leaving
        it as the primary guard for now is safer than trusting a file
        that already caused this bug once. */
+    /* ---------- House ad creative ----------
+       Both #mapAdSlot and #sidebarAdSlot were, until now, completely
+       unstyled — just a bare .hud box (position:absolute, sized to
+       nothing but the "Advertisement" label's own text) waiting for
+       adsense.js to inject a real ad unit into it later. With real
+       ad-network approval still pending, these two rules give the
+       *temporary* self-promo images (.house-ad-creative, added in the
+       HTML above) a sensible size and position in the meantime — see
+       the TEMPORARY comments in the markup for what to remove once
+       real AdSense units are wired in; nothing here needs to change
+       when that happens, since it only targets .house-ad-creative. */
+    .ad-slot {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 0;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+    .house-ad-link { display: block; width: 100%; height: 100%; }
+    .house-ad-creative { display: block; width: 100%; height: 100%; }
+    .house-ad-creative img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+
+    /* Small "Advertisement" disclosure badge, overlaid in the corner
+       of the creative rather than taking its own line — keeps the ad
+       clearly labeled without eating into the (small) space actually
+       available for the creative itself. */
+    .ad-label {
+      position: absolute;
+      top: 6px;
+      left: 9px;
+      z-index: 1;
+      font-family: Arial, sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .9);
+      background: rgba(0, 0, 0, .45);
+      padding: 2px 8px;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    /* Map ad slot — sits inside .map-screen's single-column grid
+       (.map-screen.show { display:grid; place-items:center; }),
+       stacked after .map-frame (the map artwork) in source order.
+       .hud's BASE rule sets position:absolute with no top/left ever
+       defined for this element specifically, which pulled it out of
+       that grid flow entirely and left the browser to fall back to
+       an approximate "static position" — the cause of the ad
+       floating oddly mid-map, overlapping the island artwork, before
+       there was any real content inside it to notice. Resetting to
+       position:static here puts it back in normal grid flow: its own
+       centered row directly below the map art, the same place any
+       other real AdSense "in-content" unit would normally expect to
+       render. Width is capped well below the map's own width so a
+       landscape (3:2) creative reads as a modest banner underneath
+       the map, not a second competing image the same size as the
+       game world itself. */
+    .ad-slot--map {
+      position: static;
+      width: min(70%, 320px);
+      aspect-ratio: 3 / 2;
+      margin: 10px auto 2px;
+    }
+
+    /* Sidebar ad slot — already position:static (see ".side-panel
+       .hud" above); just needs its own size. Capped narrower than the
+       panel's own width so a portrait creative doesn't dominate the
+       compact list of cards around it, and keeps the creative's real
+       480x678 ratio so it never looks stretched or squashed. */
+    #sidebarAdSlot {
+      width: 100%;
+      max-width: 240px;
+      aspect-ratio: 480 / 678;
+      margin: 0 auto;
+    }
+
+    /* Safety net matching the same "content taller than its box
+       shouldn't just vanish" fix already applied to .side-panel and
+       html/body: .map-screen's base rule is overflow:hidden (needed
+       for the map artwork's rounded corners), which would silently
+       clip the ad banner on a viewport too short to fit brand + title
+       + map art + ad all at once. Scoped to .show (not the base rule)
+       so it only ever affects the fallback edge case, never the
+       rounded-corner clipping the map artwork itself relies on day to
+       day. */
+    .map-screen.show {
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
     #gameLayout.ads-removed #sidebarAdSlot,
     #gameLayout.ads-removed #mapAdSlot {
       display: none !important;
