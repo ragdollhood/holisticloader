@@ -901,7 +901,7 @@ function getItem(level) {
     // ad_removals before creating a session — the client never claims
     // ownership or constructs a Stripe URL itself.
 
-    const REMOVE_ADS_PAYMENT_LINK = "https://buy.stripe.com/bJe3cn77K6wY9UY2dk0kE01";
+    const REMOVE_ADS_PAYMENT_LINK = "https://buy.stripe.com/7sY9ALfEgaNe6IM8BI0kE02";
 
     async function startRemoveAdsPurchase() {
       if (!currentUser) {
