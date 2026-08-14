@@ -1780,7 +1780,16 @@
   // risken för sprakande ljud (buffer underruns) på just den hårdvaran, utan
   // att påverka upplevelsen på starkare datorer/telefoner.
   const _cores=navigator.hardwareConcurrency||4;
-  const _perfScale=_cores<=2?.55:_cores<=4?.75:1;
+  // navigator.hardwareConcurrency ensamt underskattar hur lätt en telefon/
+  // platta får sprakigt ljud: en mobil rapporterar ofta lika många kärnor
+  // som en dator, men delar dem med skärm/UI-rendering, strypper klockan
+  // vid värme och har generellt mindre marginal för att hinna fylla ljud-
+  // kortets buffer i tid — vilket hörs som skorr/sprak även när desktop-
+  // varianten av samma sida låter helt ren. Lägg därför på en extra, separat
+  // säkerhetsmarginal för touch-/mobila enheter, oavsett kärnantal.
+  const _isMobile=/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ||
+                   (navigator.maxTouchPoints>1 && /Mac/i.test(navigator.platform)); // iPadOS uppger sig som Mac
+  const _perfScale=(_cores<=2?.55:_cores<=4?.75:1) * (_isMobile?.7:1);
   const MAX_NEW_WEIGHT_PER_SEC=Math.round(130*_perfScale);
   const MAX_LIVE_WEIGHT=Math.round(130*_perfScale);
   function voiceGateOpen(weight){
@@ -1896,7 +1905,17 @@
 
       gCluster=ac.createGain(); gCluster.gain.value=0;
       gCluster.connect(strikeBus);
-      [[1,.95],[1.41,.7],[2.15,.55],[2.69,.45],[3.36,.34],[4.07,.26],[5.43,.16]].forEach(function(rw){
+      // klangkören spelar KONSTANT i bakgrunden (bara volymen ändras när man
+      // drar i gongen), så antalet oscillatorer här är en fast CPU-baslast
+      // hela tiden appen är öppen — oavsett om gongen ens rörs. På en svag
+      // enhet (mobil/platta) är just den ständiga baslasten, ovanpå allt
+      // annat, det som kan knuffa ljudkortets buffer över kanten och ge
+      // skorr/sprak. De fyra starkaste partialerna (.45 och uppåt) behåller
+      // sitt detunade par för den svävande klangen — det hörs tydligt. De tre
+      // svagaste (.34/.26/.16, knappt hörbara i mixen) får bara EN oscillator
+      // var istället för två, vilket halverar deras andel av baslasten utan
+      // att man kan höra skillnad.
+      [[1,.95],[1.41,.7],[2.15,.55],[2.69,.45]].forEach(function(rw){
         var r=rw[0],w=rw[1];
         [-1,1].forEach(function(s){
           const o=ac.createOscillator(); o.type='sine';
@@ -1905,6 +1924,14 @@
           o.connect(g).connect(gCluster); o.start();
           gClusterOscs.push({o:o,r:r});
         });
+      });
+      [[3.36,.34],[4.07,.26],[5.43,.16]].forEach(function(rw){
+        var r=rw[0],w=rw[1];
+        const o=ac.createOscillator(); o.type='sine';
+        o.frequency.value=gongF()*r; o.detune.value=(Math.random()*2-1)*7;
+        const g=ac.createGain(); g.gain.value=w*.5;
+        o.connect(g).connect(gCluster); o.start();
+        gClusterOscs.push({o:o,r:r});
       });
 
       bSing=ac.createGain(); bSing.gain.value=0;
@@ -1917,9 +1944,15 @@
         bSingOscs.push({o:o,s:s});
       });
 
-      // monokordens dronkör: övertonsserie som väcks av gnidningen
+      // monokordens dronkör: övertonsserie som väcks av gnidningen — precis
+      // som gongens klangkör ovan spelar den här kören konstant i bakgrunden
+      // (bara volymen ändras vid gnidning), så den är också en fast CPU-
+      // baslast oavsett om monokordet rörs. De tre lägsta, starkaste över-
+      // tonerna (n=1-3) behåller sitt detunade par för svävningen; de tre
+      // svagaste (n=4-6, redan tystast i mixen) får en oscillator var istället
+      // för två — mindre baslast, omärkbart i ljudet.
       monoG=ac.createGain(); monoG.gain.value=0; monoG.connect(strikeBus);
-      [1,2,3,4,5,6].forEach(function(n){
+      [1,2,3].forEach(function(n){
         [-1,1].forEach(function(s){
           const o=ac.createOscillator(); o.type='sine';
           o.frequency.value=monoF()*n; o.detune.value=s*(2+n);
@@ -1927,6 +1960,13 @@
           o.connect(g).connect(monoG); o.start();
           monoOscs.push({o:o,n:n});
         });
+      });
+      [4,5,6].forEach(function(n){
+        const o=ac.createOscillator(); o.type='sine';
+        o.frequency.value=monoF()*n; o.detune.value=(Math.random()*2-1)*(2+n);
+        const g=ac.createGain(); g.gain.value=.5/n;
+        o.connect(g).connect(monoG); o.start();
+        monoOscs.push({o:o,n:n});
       });
 
       // hav, åska och regn: ett gemensamt brus genom tre olika filter
