@@ -1,35 +1,14 @@
-/* visits.js — SHARED across every Holistic Loader page (about, breathing,
-   game, index, instruments, nutriloader, store, yoga-loader, ...). One
-   copy, one place to fix bugs or change the tracking table, instead of
-   the same ~65 lines pasted into each page with a different `page:`
-   value each time.
+/* visits.js — extracted from game.html for caching/perf.
+   Depends on SUPABASE_URL / SUPABASE_ANON_KEY globals defined by
+   auth.js, and must load after game.js (same position as the
+   original inline <script> block it replaces). */
 
-   WHERE TO LOAD IT:
-     Near the end of <body>, AFTER supabase-js and auth.js (this file
-     uses the shared SUPABASE_URL / SUPABASE_ANON_KEY globals auth.js
-     defines — loading it any earlier throws "SUPABASE_URL is not
-     defined" and silently drops that page's visit, caught by the
-     try/catch below but never sent). Set window.HL_PAGE_NAME right
-     before the <script src="visits.js"> tag so this file knows which
-     page it's running on:
+/* ---------- Visit tracking (same "visits" table as nutriloader.html,
+   just with page: "game" instead of page: "nutriloader" so you can
+   filter by page in Supabase). auth.js (loaded above) already defines
+   the shared SUPABASE_URL / SUPABASE_ANON_KEY consts this uses. ---------- */
 
-       <script src="auth.js"></script>
-       <script>window.HL_PAGE_NAME = "breathing";</script>
-       <script src="visits.js"></script>
-
-   Existing page: values, kept as-is so historical Supabase rows stay
-   comparable — just set HL_PAGE_NAME to the matching one per page:
-     about.html         → (not currently tracked)
-     breathing.html      → "breathing"
-     game.html            → "game"
-     index.html            → "startsida"
-     instruments.html      → "instruments"
-     nutriloader.html      → "nutriloader"
-     store.html            → "shop"
-     yoga-loader.html      → "yoga"
-*/
-
-/* owner's own visitor IDs — never counted as visits */
+/* owner's own visitor IDs — never counted as visits (same list as nutriloader.html) */
 const EXCLUDED_VISITOR_IDS = [
   "183871a4-aa9b-4eaa-8668-2cd14de446c2",
   "9fe82a0f-073b-43ac-b5ec-27e3637fc35e",
@@ -62,15 +41,6 @@ async function registerVisit() {
   const visitorId = getVisitorId();
   if (EXCLUDED_VISITOR_IDS.includes(visitorId)) return;
 
-  const pageName = window.HL_PAGE_NAME;
-  if (!pageName) {
-    // Fails loudly in the console instead of silently mislabeling (or
-    // dropping) the visit — set window.HL_PAGE_NAME before this
-    // script tag on every page that includes it.
-    console.error("visits.js: window.HL_PAGE_NAME was not set — visit not recorded.");
-    return;
-  }
-
   try {
     const country = await getVisitorCountry();
 
@@ -84,7 +54,7 @@ async function registerVisit() {
       },
       body: JSON.stringify({
         site: "holisticloader",
-        page: pageName,
+        page: "game",
         page_url: window.location.pathname,
         visitor_id: visitorId,
         country: country
