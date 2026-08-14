@@ -901,79 +901,58 @@ function getItem(level) {
     // ad_removals before creating a session — the client never claims
     // ownership or constructs a Stripe URL itself.
 
-async function startRemoveAdsPurchase() {
-  if (!currentUser) {
-    setPendingPurchaseIntent("removeAds");
-    openCreateAccountModal();
-    return;
-  }
+    const REMOVE_ADS_PAYMENT_LINK = "https://buy.stripe.com/bJe3cn77K6wY9UY2dk0kE01";
 
-  if (window.userAdsRemoved) {
-    refreshMonetizationUI();
-    return;
-  }
+    async function startRemoveAdsPurchase() {
+      if (!currentUser) {
+        // Remove Ads needs an account so the purchase can follow the
+        // player across devices. After signup/login,
+        // onAuthOrPremiumChange() will resume this purchase flow.
+        setPendingPurchaseIntent("removeAds");
+        openCreateAccountModal();
+        return;
+      }
 
-  const buyBtn = document.getElementById("removeAdsBuyBtn");
-  const mobileBuyBtn = document.getElementById("mobileMapRemoveAdsBtn");
-  [buyBtn, mobileBuyBtn].forEach((b) => {
-    if (b) b.disabled = true;
-  });
+      if (window.userAdsRemoved) {
+        refreshMonetizationUI();
+        return;
+      }
 
-  try {
-    console.log("Starting Remove Ads purchase...");
-    console.log("currentUser:", currentUser);
+      const buyBtn = document.getElementById("removeAdsBuyBtn");
+      const mobileBuyBtn = document.getElementById("mobileMapRemoveAdsBtn");
 
-    const {
-      data: { session },
-      error: sessionError,
-    } = await sb.auth.getSession();
+      [buyBtn, mobileBuyBtn].forEach((b) => {
+        if (b) b.disabled = true;
+      });
 
-    console.log("Supabase session exists:", !!session);
-    console.log("Supabase user id:", session?.user?.id || null);
-    console.log("Access token exists:", !!session?.access_token);
+      try {
+        const email = (currentUser.email || "").trim().toLowerCase();
+        const checkoutUrl = new URL(REMOVE_ADS_PAYMENT_LINK);
 
-    if (sessionError) {
-      console.error("Session error:", sessionError);
-      throw sessionError;
+        // Stripe Payment Links support client_reference_id. The webhook
+        // receives this value in checkout.session.completed, so it can
+        // activate Remove Ads for the exact Supabase user who clicked.
+        checkoutUrl.searchParams.set("client_reference_id", currentUser.id);
+
+        // Prefill the Stripe email field to reduce mistakes. The webhook
+        // still uses client_reference_id first, so this is only a backup.
+        if (email) {
+          checkoutUrl.searchParams.set("prefilled_email", email);
+        }
+
+        localStorage.setItem("hl_remove_ads_checkout_user_id", currentUser.id);
+        localStorage.setItem("hl_remove_ads_checkout_email", email);
+
+        window.location.href = checkoutUrl.toString();
+      } catch (err) {
+        console.error("startRemoveAdsPurchase() error:", err);
+        showToast("Couldn't start checkout — please try again.");
+
+        [buyBtn, mobileBuyBtn].forEach((b) => {
+          if (b) b.disabled = false;
+        });
+      }
     }
-
-    if (!session?.access_token) {
-      throw new Error("No active Supabase access token found");
-    }
-
-    const { data, error } = await sb.functions.invoke("create-checkout-session", {
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    });
-
-    console.log("create-checkout-session response:", { data, error });
-
-    if (error) {
-      throw error;
-    }
-
-    if (data && data.alreadyOwned) {
-      window.userAdsRemoved = true;
-      refreshMonetizationUI();
-      return;
-    }
-
-    if (!data || !data.url) {
-      throw new Error("create-checkout-session returned no checkout URL");
-    }
-
-    window.location.href = data.url;
-  } catch (err) {
-    console.error("startRemoveAdsPurchase() error:", err);
-    showToast("Couldn't start checkout — please try again.");
-
-    [buyBtn, mobileBuyBtn].forEach((b) => {
-      if (b) b.disabled = false;
-    });
-  }
-}
-
 
     // Whether the *current* signed-in user has ads_removed=true in
     // Supabase (independent of Holistic Loader Premium, which auth.js
