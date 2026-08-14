@@ -2051,11 +2051,20 @@ button {
        landscape (3:2) creative reads as a modest banner underneath
        the map, not a second competing image the same size as the
        game world itself. */
+    /* Sized with vmin (the SMALLER of viewport width/height) rather
+       than a plain % of width, specifically so it stays a clearly
+       modest banner — well under the map artwork's own footprint —
+       in BOTH phone orientations: vmin tracks width in portrait
+       (where height is the larger dimension) and tracks height in
+       landscape (where width is the larger dimension), so the ad
+       never balloons to dominate the screen in either case, and the
+       ✕ close button (in its top-right corner) always stays inside a
+       comfortably small box. */
     .ad-slot--map {
       position: relative;
-      width: min(70%, 320px);
+      width: min(38vmin, 170px);
       aspect-ratio: 3 / 2;
-      margin: 10px auto 2px;
+      margin: 8px auto 2px;
     }
 
     /* Desktop/laptop (min-width:1200px) only: instead of stacking below
