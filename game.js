@@ -626,6 +626,7 @@ function getItem(level) {
     const worldPickerEl = document.getElementById("worldPicker");
     const mapScreenEl = document.getElementById("mapScreen");
     const mapFrameEl = document.getElementById("mapFrame"); // holds the artwork + island badges — see .map-frame CSS
+    const mapAdSlotEl = document.getElementById("mapAdSlot"); // see the reserved-space comment in layoutMapFrame() below
     const mapTitleEl = document.getElementById("mapTitle");
     const mapBrandEl = document.getElementById("mapBrand");
     const sidePanelEl = document.getElementById("sidePanel");
@@ -1279,8 +1280,35 @@ function getItem(level) {
     function layoutMapFrame() {
       if (!onMap) return;
       const boxW = mapScreenEl.clientWidth;
-      const boxH = mapScreenEl.clientHeight;
+      let boxH = mapScreenEl.clientHeight;
       if (!boxW || !boxH) return;
+
+      // Reserve room for #mapAdSlot when it's stacked below the map
+      // artwork in normal document/grid flow (mobile/tablet — see
+      // .ad-slot--map's own min-width:1200px override in the CSS,
+      // the only place it switches to an absolute overlay ON TOP of
+      // the map instead). Without this, the map artwork below was
+      // always sized to fill the FULL box height with no idea the ad
+      // also needs to fit underneath it in the same box — pushing the
+      // ad (and its ✕) below the visible area, reachable only by
+      // scrolling, which on a short mobile viewport made the ad look
+      // like it had taken over the entire game-map box and made the
+      // close button hard to find/tap.
+      // Checked via computed position (not a hardcoded breakpoint list)
+      // so this stays correct however the ad ends up sized/positioned,
+      // and via offsetParent (not a display/visibility check) so a
+      // display:none ad (ads-removed, or not yet loaded) never reserves
+      // space for nothing.
+      if (mapAdSlotEl && mapAdSlotEl.offsetParent !== null) {
+        const adStyle = getComputedStyle(mapAdSlotEl);
+        if (adStyle.position !== "absolute" && adStyle.position !== "fixed") {
+          const adRect = mapAdSlotEl.getBoundingClientRect();
+          const adMarginTop = parseFloat(adStyle.marginTop) || 0;
+          const adMarginBottom = parseFloat(adStyle.marginBottom) || 0;
+          boxH = Math.max(1, boxH - (adRect.height + adMarginTop + adMarginBottom));
+        }
+      }
+
       const boxRatio = boxW / boxH;
       let drawW, drawH;
       if (currentMapRatio > boxRatio) {
