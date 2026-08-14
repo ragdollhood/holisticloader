@@ -86,17 +86,39 @@ function AdBanner(containerId, slotId, format, upsellId) {
   if (el.dataset.adMounted === "true") { _syncAdBanner(entry); return; }
   el.dataset.adMounted = "true";
 
-  el.insertAdjacentHTML("beforeend", `
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="${AD_CLIENT}"
-         data-ad-slot="${slotId}"
-         data-ad-format="${format || "auto"}"
-         data-full-width-responsive="true"></ins>
-  `);
-
-  _adBanners.push(entry);
-  _syncAdBanner(entry); // correct show/hide before the first real paint
+  // data-full-width-responsive="true" + data-ad-format="auto" tells
+  // AdSense's own script to measure the container and pick whatever
+  // size it thinks is best. For a small, CSS-capped box like this one
+  // (~150-170px on mobile — see .ad-slot--map in game.css) that
+  // "best" size regularly comes out bigger than the box, and Google's
+  // script sets it directly as inline width/height on the <ins> and
+  // its inner iframe — which our old CSS couldn't reliably clip. So
+  // instead: explicitly size the <ins> in px to the container's own,
+  // already-laid-out box (read AFTER it's actually on screen, not at
+  // parse time when it may still be 0×0) and drop full-width-
+  // responsive so AdSense fills exactly that fixed size rather than
+  // renegotiating its own.
+  function mountSized() {
+    const rect = el.getBoundingClientRect();
+    const w = Math.round(rect.width);
+    const h = Math.round(rect.height);
+    if (!w || !h) {
+      // Not laid out yet (e.g. still display:none behind another
+      // screen) — try again next frame instead of guessing a size.
+      requestAnimationFrame(mountSized);
+      return;
+    }
+    el.insertAdjacentHTML("beforeend", `
+      <ins class="adsbygoogle"
+           style="display:inline-block;width:${w}px;height:${h}px"
+           data-ad-client="${AD_CLIENT}"
+           data-ad-slot="${slotId}"
+           data-ad-format="${format && format !== "auto" ? format : "rectangle"}"></ins>
+    `);
+    _adBanners.push(entry);
+    _syncAdBanner(entry); // correct show/hide before the first real paint
+  }
+  mountSized();
 }
 
 function _syncAdBanner(entry) {

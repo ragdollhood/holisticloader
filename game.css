@@ -2003,6 +2003,17 @@ button {
       padding: 0;
       overflow: hidden;
       border-radius: 20px;
+      /* overflow:hidden alone only clips normally-flowed content. A
+         real AdSense unit's iframe can (and on narrow/responsive
+         slots like this one, does) end up wider/taller than this box
+         and/or positioned in a way overflow:hidden doesn't catch —
+         that's what let the map ad balloon to fill the whole mobile
+         screen and cover the ✕ button. contain:paint forces this box
+         to ALSO act as the containing block for its contents and
+         hard-clips anything inside to its own edges, no matter what
+         size or position the ad content tries to use internally. */
+      contain: paint;
+      isolation: isolate;
     }
     .house-ad-link { display: block; width: 100%; height: 100%; }
     .house-ad-creative { display: block; width: 100%; height: 100%; }
