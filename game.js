@@ -901,58 +901,79 @@ function getItem(level) {
     // ad_removals before creating a session — the client never claims
     // ownership or constructs a Stripe URL itself.
 
-    async function startRemoveAdsPurchase() {
-      if (!currentUser) {
-        // No guest upsell modal here on purpose — Remove Ads has
-        // nothing to do with islands/cloud save, so it skips straight
-        // to account creation. setPendingPurchaseIntent() is what lets
-        // onAuthOrPremiumChange() resume this function automatically
-        // once a session exists (see that function below).
-        setPendingPurchaseIntent("removeAds");
-        openCreateAccountModal();
-        return;
-      }
+async function startRemoveAdsPurchase() {
+  if (!currentUser) {
+    setPendingPurchaseIntent("removeAds");
+    openCreateAccountModal();
+    return;
+  }
 
-      if (window.userAdsRemoved) {
-        // refreshAdsRemovedStatus() already confirmed this account owns
-        // it (a real read of ad_removals) — nothing to buy, just make
-        // sure the UI agrees.
-        refreshMonetizationUI();
-        return;
-      }
+  if (window.userAdsRemoved) {
+    refreshMonetizationUI();
+    return;
+  }
 
-      const buyBtn = document.getElementById("removeAdsBuyBtn");
-      const mobileBuyBtn = document.getElementById("mobileMapRemoveAdsBtn");
-      [buyBtn, mobileBuyBtn].forEach(b => { if (b) b.disabled = true; });
+  const buyBtn = document.getElementById("removeAdsBuyBtn");
+  const mobileBuyBtn = document.getElementById("mobileMapRemoveAdsBtn");
+  [buyBtn, mobileBuyBtn].forEach((b) => {
+    if (b) b.disabled = true;
+  });
 
-      try {
-        const { data, error } = await sb.functions.invoke("create-checkout-session", {});
-        if (error) throw error;
+  try {
+    console.log("Starting Remove Ads purchase...");
+    console.log("currentUser:", currentUser);
 
-        if (data && data.alreadyOwned) {
-          // Server-side truth (a real ad_removals row) wins over
-          // whatever the client currently believes.
-          window.userAdsRemoved = true;
-          refreshMonetizationUI();
-          return;
-        }
+    const {
+      data: { session },
+      error: sessionError,
+    } = await sb.auth.getSession();
 
-        if (!data || !data.url) {
-          throw new Error("create-checkout-session returned no checkout URL");
-        }
+    console.log("Supabase session exists:", !!session);
+    console.log("Supabase user id:", session?.user?.id || null);
+    console.log("Access token exists:", !!session?.access_token);
 
-        // Same-tab redirect to Stripe-hosted Checkout. client_reference_id
-        // and metadata.supabase_user_id are set server-side in
-        // create-checkout-session from the caller's own auth token, so
-        // there's nothing for the client to attach here.
-        window.location.href = data.url;
-        // Buttons stay disabled — we're navigating away.
-      } catch (err) {
-        console.error("startRemoveAdsPurchase() error:", err);
-        showToast("Couldn't start checkout — please try again.");
-        [buyBtn, mobileBuyBtn].forEach(b => { if (b) b.disabled = false; });
-      }
+    if (sessionError) {
+      console.error("Session error:", sessionError);
+      throw sessionError;
     }
+
+    if (!session?.access_token) {
+      throw new Error("No active Supabase access token found");
+    }
+
+    const { data, error } = await sb.functions.invoke("create-checkout-session", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    console.log("create-checkout-session response:", { data, error });
+
+    if (error) {
+      throw error;
+    }
+
+    if (data && data.alreadyOwned) {
+      window.userAdsRemoved = true;
+      refreshMonetizationUI();
+      return;
+    }
+
+    if (!data || !data.url) {
+      throw new Error("create-checkout-session returned no checkout URL");
+    }
+
+    window.location.href = data.url;
+  } catch (err) {
+    console.error("startRemoveAdsPurchase() error:", err);
+    showToast("Couldn't start checkout — please try again.");
+
+    [buyBtn, mobileBuyBtn].forEach((b) => {
+      if (b) b.disabled = false;
+    });
+  }
+}
+
 
     // Whether the *current* signed-in user has ads_removed=true in
     // Supabase (independent of Holistic Loader Premium, which auth.js
