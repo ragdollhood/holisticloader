@@ -2062,9 +2062,28 @@ button {
        comfortably small box. */
     .ad-slot--map {
       position: relative;
-      width: min(38vmin, 170px);
+      /* Both width AND height forced explicitly (not just width +
+         aspect-ratio) with !important, so the box's size can't end up
+         larger than intended no matter what else touches it later —
+         including anything adsense.js's AdBanner() does to this
+         element once a real ad is wired in (inline styles from an ad
+         script would otherwise be able to override a plain width/
+         aspect-ratio rule like the one this replaces). */
+      width: min(38vmin, 170px) !important;
+      max-width: 170px !important;
+      height: calc(min(38vmin, 170px) * 2 / 3) !important;
+      max-height: 114px !important;
       aspect-ratio: 3 / 2;
       margin: 8px auto 2px;
+    }
+
+    /* Belt-and-suspenders: whatever ends up INSIDE the ad slot — the
+       placeholder <picture>/<img> today, or a real AdSense <ins>/
+       <iframe> later — is capped to the slot's own box no matter what
+       size it would otherwise want to render at. */
+    .ad-slot--map > * {
+      max-width: 100% !important;
+      max-height: 100% !important;
     }
 
     /* Desktop/laptop (min-width:1200px) only: instead of stacking below
