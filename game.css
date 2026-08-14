@@ -2058,6 +2058,28 @@ button {
       margin: 10px auto 2px;
     }
 
+    /* Desktop/laptop (min-width:1200px) only: instead of stacking below
+       the (much taller, at this width) map artwork — which pushed the
+       ad far enough down that it sat below the fold and needed a
+       scroll to see in full — the ad becomes an absolutely-positioned
+       overlay centered on the map screen itself, floating in the
+       middle of the visible area no matter how tall the map art is.
+       Sized at 2x the mobile/tablet dimensions (320px -> 640px). Sits
+       above the map artwork (z-index) but still safely below any real
+       modal (.modal is z-index:40). */
+    @media (min-width: 1200px) {
+      .ad-slot--map {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(70%, 640px);
+        aspect-ratio: 3 / 2;
+        margin: 0;
+        z-index: 20;
+      }
+    }
+
     /* Dismiss (✕) button for the map-screen ad, top-right corner —
        mirrors .modal-close's look but smaller, sized to sit inside
        the ad's rounded card without covering much of the creative. */
