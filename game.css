@@ -2073,17 +2073,14 @@ button {
        comfortably small box. */
     .ad-slot--map {
       position: relative;
-      /* Both width AND height forced explicitly (not just width +
-         aspect-ratio) with !important, so the box's size can't end up
-         larger than intended no matter what else touches it later —
-         including anything adsense.js's AdBanner() does to this
-         element once a real ad is wired in (inline styles from an ad
-         script would otherwise be able to override a plain width/
-         aspect-ratio rule like the one this replaces). */
-      width: min(38vmin, 170px) !important;
-      max-width: 170px !important;
-      height: calc(min(38vmin, 170px) * 2 / 3) !important;
-      max-height: 114px !important;
+      /* Hard-coded fixed px, no vmin/calc — deliberately as simple as
+         possible so there's nothing left that could compute out
+         larger on any given device. ~20% of the previous 170×114
+         footprint, per request. */
+      width: 34px !important;
+      max-width: 34px !important;
+      height: 23px !important;
+      max-height: 23px !important;
       aspect-ratio: 3 / 2;
       margin: 8px auto 2px;
     }
@@ -2145,6 +2142,21 @@ button {
       cursor: pointer;
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
+    }
+    /* The map ad box is now only 34x23px (see .ad-slot--map) — the
+       normal 24px close button and text label would each individually
+       be bigger than the whole box. Scaled way down just for this
+       placement; #playAdModal's close button is untouched. */
+    #mapAdSlot .ad-slot-close {
+      top: 1px;
+      right: 1px;
+      width: 10px;
+      height: 10px;
+      font-size: 6px;
+      border-width: 1px;
+    }
+    #mapAdSlot .ad-label {
+      display: none;
     }
     .ad-slot-close:hover,
     .ad-slot-close:focus-visible {
