@@ -123,6 +123,14 @@ function _firePremiumChangeListeners() {
    created_at (Supabase Auth user.created_at). */
 function hasPremiumAccess(user, profileData) {
   if (profileData && profileData.premium) return true;
+  // game.html (window.HL_HIDE_TRIAL_UI = true) has no free-trial premium
+  // at all — "Create your account" there exists purely to let a guest
+  // pay the one-time $2.99 Remove Ads charge, so a brand-new account
+  // must NOT get 14 days of isPremium=true (that was masking the ads
+  // as already removed and short-circuiting the Stripe redirect). The
+  // trial stays fully intact on every other page that loads auth.js
+  // without setting this flag.
+  if (window.HL_HIDE_TRIAL_UI) return false;
   if (!user || !user.created_at) return false;
   const createdAt = new Date(user.created_at).getTime();
   const trialEnds = createdAt + (14 * 24 * 60 * 60 * 1000);
