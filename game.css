@@ -2093,11 +2093,26 @@ button {
        unlike the text-heavy modals that shell was built for, this one
        is just the portrait creative edge-to-edge, so padding is
        zeroed and the card is clipped to the image's own rounded
-       corners. Sized/aspect-ratio matches the real 480x678 creative
-       so it's never stretched or squashed. */
+       corners.
+
+       Sizing: width is the SMALLEST of three caps —
+         320px                              (desktop/laptop ceiling)
+         86vw                               (never crowd narrow phones)
+         (100svh - 36px) * 480/678          (never taller than the
+                                              viewport once .modal's own
+                                              18px top+bottom padding is
+                                              subtracted)
+       That third cap is what actually matters on phones: since height
+       is locked to width via aspect-ratio, deriving the max width FROM
+       the max available height guarantees the whole card — including
+       the ✕ pinned to its top-right corner — always fits on screen,
+       in both portrait AND landscape, with no cropping and nothing to
+       scroll to reach. max-height/overflow-y below are just a safety
+       net in case of rounding. */
     .modal-card.play-ad-card {
-      width: min(320px, 86vw);
+      width: min(320px, 86vw, calc((100svh - 36px) * 480 / 678));
       aspect-ratio: 480 / 678;
+      max-height: calc(100svh - 36px);
       padding: 0;
       overflow: hidden;
     }
