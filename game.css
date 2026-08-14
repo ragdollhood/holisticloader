@@ -2052,10 +2052,40 @@ button {
        the map, not a second competing image the same size as the
        game world itself. */
     .ad-slot--map {
-      position: static;
+      position: relative;
       width: min(70%, 320px);
       aspect-ratio: 3 / 2;
       margin: 10px auto 2px;
+    }
+
+    /* Dismiss (✕) button for the map-screen ad, top-right corner —
+       mirrors .modal-close's look but smaller, sized to sit inside
+       the ad's rounded card without covering much of the creative. */
+    .ad-slot-close {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 7;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(10,8,20,.55);
+      color: #fff;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .ad-slot-close:hover,
+    .ad-slot-close:focus-visible {
+      background: rgba(10,8,20,.8);
+      outline: none;
     }
 
     /* Safety net matching the same "content taller than its box
