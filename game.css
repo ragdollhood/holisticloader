@@ -2089,9 +2089,12 @@ button {
       }
     }
 
-    /* Dismiss (✕) button for the map-screen ad, top-right corner —
-       mirrors .modal-close's look but smaller, sized to sit inside
-       the ad's rounded card without covering much of the creative. */
+    /* Dismiss (✕) button — dark circle + white icon so it reads clearly
+       against any bright ad creative (the lighter .modal-close style
+       used by the real popups blended into this image and was hard to
+       spot). Shared by both placeholder house ads: the map-screen
+       banner (#mapAdCloseBtn) and the "about to start playing"
+       interstitial (#playAdCloseBtn). */
     .ad-slot-close {
       position: absolute;
       top: 6px;
