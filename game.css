@@ -2062,7 +2062,20 @@ button {
        landscape (3:2) creative reads as a modest banner underneath
        the map, not a second competing image the same size as the
        game world itself. */
-    /* Sized with vmin (the SMALLER of viewport width/height) rather
+    /* Centered overlay on ALL breakpoints (mobile portrait, mobile
+       landscape, and desktop) — floating in the middle of the map
+       screen no matter how tall/wide the map art is, instead of
+       sitting in normal grid flow below it. Grid flow was the root
+       cause of the "ad lands in the wrong place" bug: .map-screen.show
+       is display:grid with only ONE implicit column, so the ad's row
+       was whatever height the grid happened to give it, and on a
+       viewport too short to fit brand + title + map art + ad (mobile
+       portrait, and especially mobile landscape) it could get pushed
+       partly off-screen or rendered against the wrong edge. Absolute-
+       positioning + translate(-50%,-50%) sidesteps all of that: the ad
+       is simply centered on the box, always, in both orientations.
+
+       Sized with vmin (the SMALLER of viewport width/height) rather
        than a plain % of width, specifically so it stays a clearly
        modest banner — well under the map artwork's own footprint —
        in BOTH phone orientations: vmin tracks width in portrait
@@ -2070,19 +2083,19 @@ button {
        landscape (where width is the larger dimension), so the ad
        never balloons to dominate the screen in either case, and the
        ✕ close button (in its top-right corner) always stays inside a
-       comfortably small box. */
+       comfortably sized, tappable box. clamp()'s lower bound keeps it
+       from shrinking to an unreadable postage stamp on very short
+       landscape windows; the upper bound keeps it a "small" ad even
+       on a big phone or a tablet in portrait. */
     .ad-slot--map {
-      position: relative;
-      /* Hard-coded fixed px, no vmin/calc — deliberately as simple as
-         possible so there's nothing left that could compute out
-         larger on any given device. ~20% of the previous 170×114
-         footprint, per request. */
-      width: 34px !important;
-      max-width: 34px !important;
-      height: 23px !important;
-      max-height: 23px !important;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: clamp(120px, 42vmin, 220px);
       aspect-ratio: 3 / 2;
-      margin: 8px auto 2px;
+      margin: 0;
+      z-index: 20;
     }
 
     /* Belt-and-suspenders: whatever ends up INSIDE the ad slot — the
@@ -2094,25 +2107,14 @@ button {
       max-height: 100% !important;
     }
 
-    /* Desktop/laptop (min-width:1200px) only: instead of stacking below
-       the (much taller, at this width) map artwork — which pushed the
-       ad far enough down that it sat below the fold and needed a
-       scroll to see in full — the ad becomes an absolutely-positioned
-       overlay centered on the map screen itself, floating in the
-       middle of the visible area no matter how tall the map art is.
-       Sized at 2x the mobile/tablet dimensions (320px -> 640px). Sits
-       above the map artwork (z-index) but still safely below any real
-       modal (.modal is z-index:40). */
+    /* Desktop/laptop (min-width:1200px) only: same centered-overlay
+       approach as mobile above, just a bigger box (2x the mobile/
+       tablet dimensions, 320px -> 640px) since there's room for it.
+       Sits above the map artwork (z-index) but still safely below any
+       real modal (.modal is z-index:40). */
     @media (min-width: 1200px) {
       .ad-slot--map {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         width: min(70%, 640px);
-        aspect-ratio: 3 / 2;
-        margin: 0;
-        z-index: 20;
       }
     }
 
@@ -2142,21 +2144,6 @@ button {
       cursor: pointer;
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
-    }
-    /* The map ad box is now only 34x23px (see .ad-slot--map) — the
-       normal 24px close button and text label would each individually
-       be bigger than the whole box. Scaled way down just for this
-       placement; #playAdModal's close button is untouched. */
-    #mapAdSlot .ad-slot-close {
-      top: 1px;
-      right: 1px;
-      width: 10px;
-      height: 10px;
-      font-size: 6px;
-      border-width: 1px;
-    }
-    #mapAdSlot .ad-label {
-      display: none;
     }
     .ad-slot-close:hover,
     .ad-slot-close:focus-visible {
