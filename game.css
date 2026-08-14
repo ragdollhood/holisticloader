@@ -1140,6 +1140,26 @@ button {
       background-position: center;
     }
 
+    /* Mobile/tablet (anything under the desktop/laptop overlay
+       breakpoint — see .ad-slot--map's own min-width:1200px override
+       further down, which is the ONLY place the ad stops stacking
+       under the map and instead floats on top of it): layoutMapFrame()
+       (JS) sizes .map-frame's width/height as an inline style to fill
+       the full height of .map-screen, with no idea that #mapAdSlot
+       also needs to fit underneath it in the same box. That let the
+       map artwork claim the whole box, pushing the ad (and its ✕)
+       below the visible area — reachable only by scrolling, which on
+       a short viewport made the ad look like it had taken over the
+       entire game-map box and made the close button hard to find/tap.
+       Capping the map artwork's height here reserves guaranteed room
+       for the ad below it so both are always visible together without
+       scrolling. !important is required to win over that inline style. */
+    @media (max-width: 1199px) {
+      .map-frame {
+        max-height: calc(100% - 132px) !important;
+      }
+    }
+
     /* Title image sitting directly on top of the map artwork, centered
        horizontally — laptop/desktop only (see the min-width query
        below). Replaces images/game-holistigametitel.png, which used to
@@ -2149,6 +2169,29 @@ button {
       max-height: calc(100svh - 36px);
       padding: 0;
       overflow: hidden;
+    }
+
+    /* #playAdModal — per request, styled to match how #mapAdSlot reads
+       on the map screen: no opaque dark backdrop blocking the game
+       world behind it (unlike every other .modal, which is a true
+       "stop and read this" dialog), and pinned to the top-left corner
+       instead of centered, with a larger ✕ since it's now sitting on
+       its own rather than centered over dimmed content. */
+    #playAdModal {
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      place-items: start;
+    }
+
+    #playAdModal .play-ad-card {
+      margin: 0;
+    }
+
+    #playAdModal .ad-slot-close {
+      width: 34px;
+      height: 34px;
+      font-size: 16px;
     }
 
     /* Safety net matching the same "content taller than its box
