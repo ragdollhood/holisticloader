@@ -650,6 +650,17 @@ function getItem(level) {
     // (excluded by the other two clauses).
     const MOBILE_LANDSCAPE_QUERY = window.matchMedia("(orientation: landscape) and (max-height: 600px) and (max-width: 1199px)");
 
+    // Same idea as MOBILE_LANDSCAPE_QUERY above, but WITHOUT the
+    // max-height:600px restriction — matches a tablet in landscape
+    // too (which is too tall to trigger DESKTOP_MEDIA_QUERY/
+    // MOBILE_LANDSCAPE_QUERY and so falls into layoutSideExtras()'s
+    // "mobile" else-branch below, same as mobile portrait). Used only
+    // to decide the next-item badge's placement within that branch,
+    // so a tablet turned sideways gets the same bottom-left stage
+    // overlay a phone in landscape gets, instead of the portrait-style
+    // score-row pill.
+    const LANDSCAPE_UNDER_DESKTOP_QUERY = window.matchMedia("(orientation: landscape) and (max-width: 1199px)");
+
     // Moves just the title wordmark image (+ its text fallback) between
     // its usual home in the side-panel's top-row (next to the world
     // name) and #stageTitle, overlaid on the game-world art's top-left
@@ -716,12 +727,22 @@ function getItem(level) {
           nextItemLabelEl.textContent = "Next item";
         }
         mapScreenEl.insertBefore(mapBrandEl, mapTitleEl);
+      } else if (LANDSCAPE_UNDER_DESKTOP_QUERY.matches) {
+        // Tablet in landscape (too tall for MOBILE_LANDSCAPE_QUERY to
+        // count it as "short", so it lands in this else-branch same as
+        // mobile portrait): still landscape though, so match the phone-
+        // landscape treatment — next-item badge overlaid bottom-left on
+        // the stage — instead of the portrait-style score-row pill.
+        stageEl.appendChild(nextItemGroupEl);
+        nextItemLabelEl.textContent = "Next";
+        scoreBoxEl.appendChild(homeBtnEl);
+        topRowEl.insertBefore(mapBrandEl, authRootEl);
       } else {
-        // Mobile: next-item badge sits first in the score row (directly
-        // under the board image, no longer overlaid on top of it),
-        // then the 3 stats, then "Back to start" at the very end — see
-        // the max-width:1199px .score rules for the matching 5-column
-        // layout.
+        // Mobile portrait: next-item badge sits first in the score row
+        // (directly under the board image, no longer overlaid on top
+        // of it), then the 3 stats, then "Back to start" at the very
+        // end — see the max-width:1199px .score rules for the matching
+        // 5-column layout.
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.appendChild(homeBtnEl);
         // Logo goes inside the icon bar, before the login icon — its
@@ -734,6 +755,9 @@ function getItem(level) {
     layoutStageTitle();
     MOBILE_LANDSCAPE_QUERY.addEventListener("change", () => {
       layoutStageTitle();
+      layoutSideExtras();
+    });
+    LANDSCAPE_UNDER_DESKTOP_QUERY.addEventListener("change", () => {
       layoutSideExtras();
     });
 

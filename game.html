@@ -74,7 +74,7 @@
        body) loads from ahead of time, so that request doesn't also have to
        pay for DNS + TLS handshake once the parser finally reaches it. -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preload" as="image" href="images/game-holisticgametiteltext.png" fetchpriority="high">
+  <link rel="preload" as="image" href="images/game-holisticgametiteltext.webp" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="auth-ui.css">
   <link rel="stylesheet" href="game.css">
 </head>
@@ -308,7 +308,6 @@
         <div class="hud score gameplay-only" id="scoreBox" aria-label="Game stats">
           <button type="button" class="home-thumb" id="homeBtn" aria-label="Back to the map">
             <span class="home-thumb-label">Back to start</span>
-            <img class="home-thumb-img" src="images/thumbs/game-home.jpg" alt="World map" loading="lazy" decoding="async">
             <svg class="home-thumb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <path d="M3 11.5 12 4l9 7.5"></path>
               <path d="M5.5 9.5V19a1 1 0 0 0 1 1H9.5a.5.5 0 0 0 .5-.5V15a2 2 0 0 1 4 0v4.5a.5.5 0 0 0 .5.5h3a1 1 0 0 0 1-1V9.5"></path>

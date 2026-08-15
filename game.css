@@ -677,10 +677,9 @@
     .stat b { display: block; color: var(--gold2); font-family: Arial, sans-serif; font-size: 15px; }
     .stat span { display: block; margin-top: 2px; color: var(--muted); font-family: Arial, sans-serif; font-weight: 800; font-size: 9px; letter-spacing: .10em; text-transform: uppercase; }
 
-    /* HOME THUMBNAIL — a snapshot of the world map (images/thumbs/
-       game-home.jpg), now a compact square icon sitting to the left of
-       the score stats instead of its own big card. Same click
-       destination as the Map button (showMap(null)). */
+    /* HOME button — "back to the map" — a compact square icon sitting
+       to the left of the score stats. Same click destination as the
+       Map button (showMap(null)). */
     .home-thumb {
       display: flex;
       align-items: center;
@@ -694,24 +693,11 @@
       width: 50px;
     }
 
-    .home-thumb-img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform .15s ease;
-    }
-
-    .home-thumb:hover .home-thumb-img,
-    .home-thumb:focus-visible .home-thumb-img {
-      transform: scale(1.08);
-    }
-
     /* HOME icon + mobile label — only ever shown on the mobile HUD (see
        the max-width:1199px query further down), which also hides
-       .home-thumb-img/.home-thumb-label there instead. Hidden here by
-       default so desktop/laptop keeps its existing thumbnail + "Back to
-       start" caption untouched. */
+       .home-thumb-label there instead. Hidden here by default so
+       desktop/laptop keeps its existing "Back to start" caption
+       untouched. */
     .home-thumb-icon,
     .home-thumb-mobile-label {
       display: none;
@@ -1063,6 +1049,62 @@ button {
 
       #gameLayout:not(.on-map) .stage .next-item-label {
         display: none;
+      }
+    }
+
+    /* Tablet in landscape: same "next-item badge as a bare bottom-left
+       stage overlay" treatment as the short-mobile-landscape block
+       above, but for viewports too TALL to match max-height:600px
+       (a tablet turned sideways is still landscape/max-width:1199px,
+       just with a lot more svh than a phone — see
+       LANDSCAPE_UNDER_DESKTOP_QUERY in the JS, which now moves the
+       badge into .stage here too instead of the portrait score-row
+       pill). Matches the exact width/orientation slice of the
+       "(max-width:1199px) and (min-height:601px)" portrait/tall-
+       landscape query further down that would otherwise style this as
+       a boxed pill — so this block has to explicitly reset every
+       property that pill styling sets (background/border/padding on
+       the group, and the seed's own background/border/glow) back to
+       the plain floating-icon look, not just reposition it. The
+       higher-specificity selectors here (#id + .stage + .class) win
+       over that plain-class pill block regardless of source order. */
+    @media (orientation: landscape) and (max-width: 1199px) and (min-height: 601px) {
+      #gameLayout:not(.on-map) .next-box {
+        display: none;
+      }
+
+      #gameLayout:not(.on-map) .stage .next-item-group {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: auto;
+        z-index: 6;
+        flex: 0 0 auto;
+        min-width: 0;
+        background: none;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+      }
+
+      #gameLayout:not(.on-map) .stage .next-item-label {
+        display: none;
+      }
+
+      #gameLayout:not(.on-map) .stage .next-seed {
+        width: 62px;
+        height: 62px;
+        border-radius: 20px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(248,217,139,.28);
+        box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      #gameLayout:not(.on-map) .stage .next-seed .item-icon {
+        width: 66%;
+        height: 66%;
       }
     }
 
@@ -2182,12 +2224,27 @@ button {
 
     /* Mobile PORTRAIT only: half the size of the default above. Position
        stays top-left (inherited from #playAdModal's place-items:start,
-       unconditional above) — only the size changes here. Landscape is
-       left completely untouched since its existing height-derived cap
-       already reads well. */
+       unconditional above) — only the size changes here. */
     @media (max-width: 1199px) and (orientation: portrait) {
       .modal-card.play-ad-card {
         width: min(160px, 43vw, calc((100svh - 36px) * 240 / 678));
+      }
+    }
+
+    /* LANDSCAPE, under desktop width (phone AND tablet): the base
+       rule's height-derived cap — (100svh - 36px) * 480/678 — was
+       written assuming a short viewport (a phone turned sideways,
+       ~380-430svh), where it naturally lands on a small card. A
+       tablet in landscape has much more svh (~700-900px) at a similar
+       width, so the same formula produces a noticeably bigger card
+       even though the device reads the same "landscape phone-ish"
+       layout to the user. Adding a flat pixel ceiling here — sized to
+       roughly what the formula already gives a typical phone in
+       landscape — makes tablets land on the same small card instead
+       of scaling up with the extra height. */
+    @media (max-width: 1199px) and (orientation: landscape) {
+      .modal-card.play-ad-card {
+        width: min(320px, 86vw, calc((100svh - 36px) * 480 / 678), 280px);
       }
     }
 
@@ -2782,7 +2839,6 @@ button {
          space than the three stat pills beside it instead of matching
          them. flex: 1 1 0 makes it share the row equally with them. */
       .home-thumb { flex: 1 1 0; flex-direction: column; align-items: center; justify-content: center; padding: 9px 8px; gap: 4px; width: auto; height: auto; min-width: 0; }
-      .home-thumb-img,
       .home-thumb-label { display: none; }
       .home-thumb-icon { display: block; width: 22px; height: 22px; color: var(--gold2); }
       .home-thumb-mobile-label {
