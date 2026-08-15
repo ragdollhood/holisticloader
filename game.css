@@ -2288,6 +2288,15 @@ button {
     #gameLayout.ads-removed #mapAdSlot {
       display: none !important;
     }
+    /* Same belt-and-suspenders guarantee as #mapAdSlot above, applied to
+       the interstitial "about to start playing" ad card. Previously this
+       one relied solely on the JS observer in game.html (showPlayAd()'s
+       !adsRemoved() check) with no CSS fallback — the exact gap that
+       already caused the "Premium Active showed but ads stayed visible"
+       bug for #mapAdSlot before that rule was added. */
+    #gameLayout.ads-removed #playAdModal {
+      display: none !important;
+    }
     .premium-active-check {
       font-family: Arial, sans-serif; font-weight: 900; font-size: 12.5px;
       color: #9ed7a7; white-space: nowrap;
