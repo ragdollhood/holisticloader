@@ -561,7 +561,12 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 #premiumGameLink img{display:block;width:100%;height:100%;object-fit:cover}
 @media(min-width:660px){
   #premiumCard{flex:1 1 0}
-  #premiumGameLink{flex:1 1 0;aspect-ratio:auto}
+  /* Match the premium card's WIDTH (equal flex share) but stay square —
+     align-self:start instead of the container's default stretch, so this
+     tile keeps its own aspect-ratio:1/1 height instead of being pulled
+     to match the taller card's height (which was squashing it into a
+     wide rectangle and cropping the image's sides via object-fit:cover). */
+  #premiumGameLink{flex:1 1 0;align-self:flex-start}
 }
 @media(max-width:560px){
   #premiumGameLink{border-radius:22px}
