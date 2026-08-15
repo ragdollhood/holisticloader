@@ -1025,7 +1025,11 @@ function getItem(level) {
       const params = new URLSearchParams(window.location.search);
       const purchase = params.get("purchase");
       const sessionId = params.get("session_id");
-      if (!purchase) return;
+      // Trigger on EITHER signal: our own create-checkout-session flow
+      // sets purchase=success&session_id=..., but a Stripe Payment
+      // Link's default redirect only appends session_id. Treat a bare
+      // session_id as an implicit "success" so both work the same way.
+      if (!purchase && !sessionId) return;
 
       params.delete("purchase");
       params.delete("session_id");
@@ -1036,7 +1040,7 @@ function getItem(level) {
         showToast("Checkout cancelled — no charge was made.");
         return;
       }
-      if (purchase !== "success") return;
+      if (purchase && purchase !== "success") return;
 
       (async function confirmAndRefresh() {
         if (sessionId && currentUser) {
