@@ -1393,6 +1393,26 @@
   const FMIN=20, FMAX=20000;
   const $=id=>document.getElementById(id);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Anpassa visuell/ljudmässig belastning efter enhetens uppskattade prestanda:
+  // navigator.hardwareConcurrency (antal CPU-kärnor webbläsaren rapporterar)
+  // är ett grovt men användbart mått. Svagare enheter (färre kärnor, ofta
+  // äldre plattor/telefoner) får en lägre gräns. Flyttad hit (tidigare
+  // definierad långt senare i filen, efter #cosmos-sektionen) så att KOSMOS-
+  // lagrets tak nedan också kan skalas — tidigare skalades bara #fx-lagrets
+  // gnistor/blixtar, inte bakgrundens galaxer/norrsken/supernovor/meteorer,
+  // vilket lämnade den delen av animationen lika tung på svaga telefoner som
+  // på starka datorer.
+  const _cores=navigator.hardwareConcurrency||4;
+  // navigator.hardwareConcurrency ensamt underskattar hur lätt en telefon/
+  // platta får sprakigt ljud/hackig grafik: en mobil rapporterar ofta lika
+  // många kärnor som en dator, men delar dem med skärm/UI-rendering, strypper
+  // klockan vid värme och har generellt mindre marginal — vilket syns som
+  // hack även när desktop-varianten av samma sida är helt mjuk. Lägg därför
+  // på en extra, separat säkerhetsmarginal för touch-/mobila enheter, oavsett
+  // kärnantal.
+  const _isMobile=/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ||
+                   (navigator.maxTouchPoints>1 && /Mac/i.test(navigator.platform)); // iPadOS uppger sig som Mac
+  const _perfScale=(_cores<=2?.55:_cores<=4?.75:1) * (_isMobile?.7:1);
 
   /* hamburger menu: toggles the panel holding Login + Get Premium + How to use + Contact */
   (function(){
@@ -1478,7 +1498,14 @@
   // utan gräns här växer arrayen snabbare än den hinner självdö vid intensivt
   // spel. Varje bildruta måste då rita fler och fler dyra canvas-gradienter,
   // vilket är det som till slut fryser/kraschar sidan.
-  const NOVA_CAP=28, METEOR_CAP=20;
+  // Skalade med _perfScale (samma mått som redan används för #fx-lagrets
+  // SPARK_CAP/BURST_CAP/BOLT_CAP och för ljudmotorns polyfoni-tak) — annars
+  // var det här bakgrundslagret lika tungt på en svag telefon som på en
+  // stark dator/telefon, vilket gav hackig grafik OCH hackigt ljud på
+  // svagare enheter (huvudtråden hann inte med att både rita och schemalägga
+  // nya toner i tid).
+  const NOVA_CAP=Math.round(28*_perfScale), METEOR_CAP=Math.round(20*_perfScale);
+  const RIBBON_CAP=Math.round(22*_perfScale);
   let energy=0, toneActive=false, lastPal='gong';
   const PALETTES={
     gong:[[255,210,120],[255,160,90]],     // guld → bärnsten, som gongbilden
@@ -1525,7 +1552,7 @@
 
   function mix(c1,c2,t){return [0,1,2].map(i=>Math.round(c1[i]+(c2[i]-c1[i])*t))}
   function emitRibbon(pal){
-    if(ribbons.length>22) return;
+    if(ribbons.length>RIBBON_CAP) return;
     const pq=PALETTES[pal];
     ribbons.push({
       cx:Math.random()*innerWidth,
@@ -1767,29 +1794,15 @@
   // längre ner, både när en ton klingar ut naturligt och när den avlivas i förtid.
   let voiceTimestamps=[];      // {t,w}-poster för nyligen SKAPADE noder (flödesspärr)
   let liveVoiceWeight=0;       // summan av nod-poäng som klingar just nu (samtidighetsspärr)
+  // Anpassa gränserna efter enhetens uppskattade prestanda istället för ett
+  // fast värde — _cores/_isMobile/_perfScale beräknas nu högre upp i filen
+  // (innan #cosmos-sektionen) så samma skalning kan återanvändas där också.
   // 160 gav harpan gott om plats men tvingade ljudmotorn att beräkna mer
   // samtidigt klingande ljud än den här sortens dator hinner rendera i
   // realtid — knaster/klick är den klassiska signaturen av att ljudkortets
   // buffer inte hinner fyllas i tid. 130 är en säkrare medelväg; tillsammans
   // med softClip-ändringen ovan och den lättare harpvikten nedan får harpan
   // ändå påtagligt mer utrymme än ursprungliga 110, utan att knastra.
-  // Anpassa gränserna efter enhetens uppskattade prestanda istället för ett
-  // fast värde: navigator.hardwareConcurrency (antal CPU-kärnor webbläsaren
-  // rapporterar) är ett grovt men användbart mått. Svagare enheter (färre
-  // kärnor, ofta äldre plattor/telefoner) får en lägre gräns, vilket minskar
-  // risken för sprakande ljud (buffer underruns) på just den hårdvaran, utan
-  // att påverka upplevelsen på starkare datorer/telefoner.
-  const _cores=navigator.hardwareConcurrency||4;
-  // navigator.hardwareConcurrency ensamt underskattar hur lätt en telefon/
-  // platta får sprakigt ljud: en mobil rapporterar ofta lika många kärnor
-  // som en dator, men delar dem med skärm/UI-rendering, strypper klockan
-  // vid värme och har generellt mindre marginal för att hinna fylla ljud-
-  // kortets buffer i tid — vilket hörs som skorr/sprak även när desktop-
-  // varianten av samma sida låter helt ren. Lägg därför på en extra, separat
-  // säkerhetsmarginal för touch-/mobila enheter, oavsett kärnantal.
-  const _isMobile=/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) ||
-                   (navigator.maxTouchPoints>1 && /Mac/i.test(navigator.platform)); // iPadOS uppger sig som Mac
-  const _perfScale=(_cores<=2?.55:_cores<=4?.75:1) * (_isMobile?.7:1);
   const MAX_NEW_WEIGHT_PER_SEC=Math.round(130*_perfScale);
   const MAX_LIVE_WEIGHT=Math.round(130*_perfScale);
   function voiceGateOpen(weight){
