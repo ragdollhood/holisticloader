@@ -176,6 +176,9 @@ a{color:inherit}
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
+@supports(padding:max(0px)){
+  #topNav{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+}
 #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px;pointer-events:none}
 #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
@@ -544,6 +547,21 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   #premiumChecklist{grid-template-columns:1fr;gap:9px}
 }
 
+/* ===== small "also try our game" badge — pinned to the bottom-right
+   corner of the premium card, overlapping it slightly like a promo
+   sticker. Lives in #premiumSection (not inside #premiumCard, which
+   has overflow:hidden) so the small downward overhang isn't clipped. ===== */
+#premiumGameLink{position:absolute;z-index:2;right:18px;bottom:-10px;
+  display:block;width:64px;height:64px;border-radius:16px;overflow:hidden;
+  border:1.5px solid var(--gold);box-shadow:0 12px 28px rgba(0,0,0,.5),0 0 0 4px rgba(11,8,6,.9);
+  transition:transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s ease}
+#premiumGameLink:hover,#premiumGameLink:focus-visible{transform:translateY(-3px) scale(1.06);
+  box-shadow:0 16px 34px rgba(0,0,0,.55),0 0 0 4px rgba(11,8,6,.9)}
+#premiumGameLink img{display:block;width:100%;height:100%;object-fit:cover}
+@media(max-width:560px){
+  #premiumGameLink{width:52px;height:52px;right:14px;bottom:-8px;border-radius:13px}
+}
+
 /* ===== footer ===== */
 #siteFooter{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
   gap:22px;flex-wrap:wrap;padding:32px 20px max(26px,env(safe-area-inset-bottom));
@@ -720,6 +738,9 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
         <span class="ptNote">No card required</span>
       </button>
     </div>
+    <a id="premiumGameLink" href="game.html" aria-label="Play Holistic Game">
+      <img src="images/game-preview.jpg" alt="Holistic Game" loading="lazy" decoding="async">
+    </a>
   </section>
 
   <!-- FOOTER -->
