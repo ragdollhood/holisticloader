@@ -503,7 +503,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   transform:translateX(-50%);pointer-events:none;
   background:radial-gradient(50% 52% at 50% 30%, rgba(255,214,140,.23), transparent 70%);
   filter:blur(24px)}
-#premiumCard{position:relative;overflow:hidden;border-radius:28px;padding:40px 34px 34px;text-align:center;flex:1 1 0;min-width:0;
+#premiumCard{position:relative;overflow:hidden;border-radius:28px;padding:40px 34px 34px;text-align:center;flex:0 0 auto;min-width:0;
   background:linear-gradient(165deg,rgba(60,44,22,.94) 0%,rgba(34,24,15,.96) 55%,rgba(16,11,8,.97) 100%);
   box-shadow:0 26px 58px rgba(0,0,0,.54),0 0 0 1px rgba(255,217,138,.08) inset,inset 0 1px 1px rgba(255,255,255,.1);
   animation:premiumCardGlow 3.6s ease-in-out infinite}
@@ -552,7 +552,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 /* ===== "also try our game" tile — same size as the premium card, sitting
    right beside it (stacked on narrow screens where there's no room for
    two side-by-side boxes). ===== */
-#premiumGameLink{position:relative;z-index:1;display:block;flex:1 1 0;min-width:0;
+#premiumGameLink{position:relative;z-index:1;display:block;flex:0 0 auto;min-width:0;
   border-radius:28px;overflow:hidden;aspect-ratio:1/1;
   border:1.5px solid var(--gold);box-shadow:0 26px 58px rgba(0,0,0,.54),0 0 0 1px rgba(255,217,138,.08) inset;
   transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease}
@@ -560,7 +560,8 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   box-shadow:0 30px 64px rgba(0,0,0,.58),0 0 0 1px rgba(255,217,138,.14) inset}
 #premiumGameLink img{display:block;width:100%;height:100%;object-fit:cover}
 @media(min-width:660px){
-  #premiumGameLink{aspect-ratio:auto}
+  #premiumCard{flex:1 1 0}
+  #premiumGameLink{flex:1 1 0;aspect-ratio:auto}
 }
 @media(max-width:560px){
   #premiumGameLink{border-radius:22px}
