@@ -2180,6 +2180,17 @@ button {
       overflow: hidden;
     }
 
+    /* Mobile PORTRAIT only: half the size of the default above. Position
+       stays top-left (inherited from #playAdModal's place-items:start,
+       unconditional above) — only the size changes here. Landscape is
+       left completely untouched since its existing height-derived cap
+       already reads well. */
+    @media (max-width: 1199px) and (orientation: portrait) {
+      .modal-card.play-ad-card {
+        width: min(160px, 43vw, calc((100svh - 36px) * 240 / 678));
+      }
+    }
+
     /* #playAdModal — per request, styled to match how #mapAdSlot reads
        on the map screen: no opaque dark backdrop blocking the game
        world behind it (unlike every other .modal, which is a true

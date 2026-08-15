@@ -1025,11 +1025,7 @@ function getItem(level) {
       const params = new URLSearchParams(window.location.search);
       const purchase = params.get("purchase");
       const sessionId = params.get("session_id");
-      // Trigger on EITHER signal: our own create-checkout-session flow
-      // sets purchase=success&session_id=..., but a Stripe Payment
-      // Link's default redirect only appends session_id. Treat a bare
-      // session_id as an implicit "success" so both work the same way.
-      if (!purchase && !sessionId) return;
+      if (!purchase) return;
 
       params.delete("purchase");
       params.delete("session_id");
@@ -1040,7 +1036,7 @@ function getItem(level) {
         showToast("Checkout cancelled — no charge was made.");
         return;
       }
-      if (purchase && purchase !== "success") return;
+      if (purchase !== "success") return;
 
       (async function confirmAndRefresh() {
         if (sessionId && currentUser) {
@@ -1080,7 +1076,16 @@ function getItem(level) {
       // only in the .remove-ads-card above (#removeAdsBuyBtn), so the
       // button text/CTA isn't duplicated next to the ad slot too.
       AdBanner("sidebarAdSlot", "YOUR_SIDEBAR_SLOT_ID", "auto");
-      AdBanner("mapAdSlot", "YOUR_MAP_SLOT_ID", "auto");
+      // mapAdSlot still holds the TEMPORARY static house-ad picture
+      // (see the comment on #mapAdSlot in game.html). Mounting a real
+      // AdSense unit into the same box on top of that placeholder
+      // creates a second, empty/unfilled <ins> stacked below the
+      // picture in the flex column — which is what shows up as a
+      // blurry extra box under the landscape ad on mobile. Leave this
+      // commented out until "YOUR_MAP_SLOT_ID" is replaced with a
+      // real, approved AdSense slot ID AND the static <picture> block
+      // is removed from game.html at the same time.
+      // AdBanner("mapAdSlot", "YOUR_MAP_SLOT_ID", "auto");
     }
 
     function createEmptyBoard() {
