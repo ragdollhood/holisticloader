@@ -133,8 +133,8 @@
     <p>Holistic Game is designed to collect as little as possible. Depending on how you play, the following may apply:</p>
     <ul>
       <li><strong>Game progress.</strong> Your garden/level progress is saved automatically. For guests, this is stored in your browser (via the CrazyGames Data Module, backed by <code>localStorage</code>). If you are signed into a CrazyGames account while playing on CrazyGames, your save is instead tied to that account so it can follow you across devices.</li>
-      <li><strong>A random visitor ID.</strong> A randomly generated identifier is stored in your browser's local storage to distinguish repeat visits from new ones. It is not linked to your name or any other personal identifier.</li>
-      <li><strong>Approximate location.</strong> When you visit, your IP address is used to look up your country (via a third-party lookup service — see below) for basic visit statistics. We do not store your IP address ourselves.</li>
+      <li><strong>A random visitor ID.</strong> If you agree to the visit-statistics prompt shown on your first visit, a randomly generated identifier is stored in your browser's local storage to distinguish repeat visits from new ones. It is not linked to your name or any other personal identifier, and it is only created if you say yes.</li>
+      <li><strong>Approximate location.</strong> If you agree to that same prompt, your IP address is used to look up your country (via a third-party lookup service — see below) for basic visit statistics. We do not store your IP address ourselves.</li>
       <li><strong>Local game preferences.</strong> Settings such as difficulty are stored locally in your browser and are not transmitted anywhere.</li>
       <li><strong>Standard technical information.</strong> Our hosting provider and the platforms we rely on (such as CrazyGames) may log routine technical information — for example browser type or device type — as part of normally operating and securing their services.</li>
     </ul>
@@ -158,7 +158,8 @@
     <p>These services may process information according to their own privacy policies, which we encourage you to review.</p>
 
     <h2>Cookies &amp; Local Storage</h2>
-    <p>Holistic Game does not use tracking or advertising cookies of its own. It uses your browser's local storage to remember your visitor ID, game save, and preferences on your device. Third-party services embedded in the game (such as CrazyGames' advertising) may set their own cookies or similar technologies, governed by their own policies.</p>
+    <p>Holistic Game does not use tracking or advertising cookies of its own. It uses your browser's local storage to remember your game save and preferences on your device — this is essential to how the game works and doesn't require a prompt.</p>
+    <p>The anonymous visit statistics described above are different: the first time you visit, you're asked whether it's OK to log an anonymous visit. If you say no, no visitor ID is created and nothing is sent to Supabase — only your "no" is remembered locally, so you aren't asked again. Third-party services embedded in the game (such as CrazyGames' advertising) may set their own cookies or similar technologies, governed by their own policies.</p>
 
     <h2>Data Storage</h2>
     <p>We take reasonable measures to protect the limited information described above. It is stored either in your own browser (progress, preferences, visitor ID) or on the secure infrastructure of the third-party services listed above.</p>
@@ -174,7 +175,7 @@
       <li>Deletion of your personal data</li>
       <li>Withdrawal of consent where applicable</li>
     </ul>
-    <p>Since we hold very little data ourselves — mainly a randomly generated visitor ID with no personal information attached — most of these requests can be satisfied simply by clearing your browser's local storage for this site. For anything else, you can contact us below.</p>
+    <p>Since we hold very little data ourselves — mainly a randomly generated visitor ID with no personal information attached, and only if you agreed to it — most of these requests can be satisfied simply by clearing your browser's local storage for this site, or by declining/withdrawing consent when prompted. For anything else, you can contact us below.</p>
 
     <h2>Changes to This Policy</h2>
     <p>This Privacy Policy may be updated from time to time. Continued use of the game after changes are published constitutes acceptance of the updated policy.</p>
