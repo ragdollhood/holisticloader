@@ -1997,6 +1997,31 @@ button {
     }
     .holistic-member-line button:hover { color: var(--gold); }
 
+    /* Quiet footer link to the Privacy Policy — shown only on the
+       start/map screen (relies on the shared .map-only visibility rule
+       above: .side-panel .map-only, #gameLayout.on-map .side-panel
+       .map-only). order:4 pins it to the very bottom of the side panel,
+       one step after the Remove Ads / member-login / premium-active
+       block's order:3. */
+    .privacy-policy-link {
+      order: 4;
+      width: 100%;
+      justify-content: center;
+      margin: 10px 0 0;
+      padding: 0 2px;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      text-align: center;
+    }
+    .privacy-policy-link a {
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .privacy-policy-link a:hover {
+      color: var(--gold);
+    }
+
     /* Shown instead of the two blocks above once ads are actually gone
        (Premium OR a completed ads_removed purchase) — calm, quiet
        confirmation rather than another offer. */
@@ -2509,6 +2534,96 @@ button {
     }
 
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Cookie / data-storage consent banner — deliberately NOT a
+       full-screen .modal: it sits pinned to the bottom edge so people
+       can keep looking at (and even playing on) the page behind it
+       while deciding. z-index sits below .modal (40) so an actual
+       modal — e.g. the "island cleared" upsell — still wins if both
+       are somehow open at once, but above ordinary page content. */
+    .cookie-consent {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 35;
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 16px clamp(14px, 4vw, 28px);
+      background: linear-gradient(0deg, rgba(16,9,27,.97), rgba(16,9,27,.90));
+      border-top: 1px solid rgba(248,217,139,.28);
+      box-shadow: 0 -18px 50px rgba(0,0,0,.45);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .cookie-consent.show { display: flex; }
+
+    .cookie-consent-text {
+      flex: 1 1 320px;
+      margin: 0;
+      max-width: 640px;
+      font-family: Arial, sans-serif;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .cookie-consent-text a {
+      color: var(--lav);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .cookie-consent-text a:hover { color: var(--gold); }
+
+    .cookie-consent-actions {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 10px;
+    }
+
+    .cookie-consent-actions button {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .cookie-consent-actions button#cookieAcceptBtn {
+      border: none;
+      color: #2a1a0a;
+      background: linear-gradient(135deg, var(--gold2), var(--gold));
+    }
+
+    .cookie-consent-actions button.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--border);
+    }
+
+    .cookie-consent-actions button.secondary:hover {
+      background: rgba(255,255,255,.14);
+    }
+
+    @media (max-width: 520px) {
+      .cookie-consent {
+        justify-content: stretch;
+      }
+      .cookie-consent-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+      .cookie-consent-actions button {
+        flex: 1 1 0;
+      }
+    }
 
     .modal {
       position: fixed;

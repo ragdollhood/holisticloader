@@ -406,6 +406,15 @@
              mobile, which keeps its original stage-overlay + score-row
              placement untouched. -->
         <div class="next-box" id="nextBox" aria-label="Back to map and next item"></div>
+
+        <!-- Footer link shown only on the start/map screen, pinned to the
+             very bottom of the side panel via .privacy-policy-link's
+             order:4 (one step after the Remove Ads / member-login /
+             premium-active block's order:3). Reuses the existing
+             .map-only visibility rule (hidden during gameplay). -->
+        <p class="map-only privacy-policy-link" id="privacyPolicyLine">
+          <a href="game-privacy-policy.html">Privacy Policy</a>
+        </p>
       </aside>
 
       <!-- Mobile-only, map-screen-only "Remove Ads" button — sits below
@@ -556,6 +565,25 @@
     </div>
   </div>
 
+  <!-- Cookie / data-storage consent banner — a quiet bar pinned to the
+       bottom of the viewport (NOT a blocking full-screen .modal, so it
+       never gets in the way of playing) asking whether it's okay to
+       save info (progress, preferences, ad measurement) locally and via
+       Supabase. Shown once per browser until a choice is made — see the
+       localStorage-driven script further down, right after
+       #cookieConsentBanner's own markup. Links out to the same Privacy
+       Policy page as the side-panel footer link above. -->
+  <div class="cookie-consent" id="cookieConsentBanner" role="dialog" aria-live="polite" aria-label="Cookie and data storage consent">
+    <p class="cookie-consent-text">
+      We use cookies and similar local storage to save your progress and preferences, and to measure ad performance. See our
+      <a href="game-privacy-policy.html">Privacy Policy</a> for details.
+    </p>
+    <div class="cookie-consent-actions">
+      <button type="button" class="secondary" id="cookieDeclineBtn">Decline</button>
+      <button type="button" id="cookieAcceptBtn">Accept</button>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <!-- Tells auth.js this page is a one-time $2.99 "Remove Ads" purchase
        flow, not the Holistic Loader Premium subscription — so it should
@@ -645,6 +673,47 @@
       wasOnMap = isOnMap;
     });
     observer.observe(gameLayout, { attributes: true, attributeFilter: ['class'] });
+  })();
+  </script>
+
+  <!-- Shows #cookieConsentBanner once per browser (until Accept/Decline
+       is pressed), remembering the choice in localStorage under
+       "hl_cookie_consent" so it doesn't nag on every visit. Purely a
+       notice/preference record for now — it doesn't itself gate
+       adsense.js or Supabase, so no other file needs to change; wire
+       those up to read localStorage.getItem('hl_cookie_consent') later
+       if/when they need to respect a "declined" choice. -->
+  <script>
+  (function () {
+    var STORAGE_KEY = 'hl_cookie_consent';
+    var banner = document.getElementById('cookieConsentBanner');
+    if (!banner) return;
+
+    var acceptBtn = document.getElementById('cookieAcceptBtn');
+    var declineBtn = document.getElementById('cookieDeclineBtn');
+
+    var stored;
+    try {
+      stored = localStorage.getItem(STORAGE_KEY);
+    } catch (e) {
+      stored = null; // e.g. storage blocked/unavailable — just skip the banner
+    }
+
+    if (!stored) {
+      banner.classList.add('show');
+    }
+
+    function respond(value) {
+      try {
+        localStorage.setItem(STORAGE_KEY, value);
+      } catch (e) {
+        // Storage unavailable — nothing to persist, just dismiss visually.
+      }
+      banner.classList.remove('show');
+    }
+
+    if (acceptBtn) acceptBtn.addEventListener('click', function () { respond('accepted'); });
+    if (declineBtn) declineBtn.addEventListener('click', function () { respond('declined'); });
   })();
   </script>
 </body>
