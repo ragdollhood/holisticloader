@@ -323,7 +323,7 @@ const WORLD_ITEM_IMAGES = {
     4: "images/game-item-magic4",
     5: "images/game-item-magic5"
   },
-  cosmos: {
+  crystalPalace: {
     1: "images/game-item-rymd1",
     2: "images/game-item-rymd2",
     3: "images/game-item-rymd3",
