@@ -586,6 +586,13 @@ function getItem(level) {
     let best = 0;
     let history = [];
     let collection = [];
+    // Levels that have actually been CREATED at least once via a real
+    // merge (3+ same-level tiles combining), for this world/playthrough.
+    // Level 1 is always in here (it's the base tile, never merged into
+    // existence). This is what gates randomNextLevel() below — see the
+    // comment there for why it's a separate thing from `collection`.
+    let unlockedLevels = new Set([1]);
+    function resetUnlockedLevels() { unlockedLevels = new Set([1]); }
     let currentWorldKey = WORLD_KEYS[0];
 
 
@@ -1139,12 +1146,21 @@ function getItem(level) {
     // otherwise it's the "roll >= 0.80" fallback; level 1 is the common
     // case (80% base chance). Level 4 and 5 are never return values here
     // — those can only ever be reached by merging.
+    //
+    // GATED by unlockedLevels: a level can only ever be handed out as the
+    // next item once it has actually been CREATED at least once through a
+    // real merge in this world/playthrough — level 2 can't appear until
+    // three level-1s have merged into one, level 3 can't appear until
+    // three level-2s have merged into one, and so on. Until a level is
+    // unlocked, any roll that would have picked it quietly falls back to
+    // level 1 instead, so the player is never handed a tile "from the
+    // future" that skips the merge chain.
     function randomNextLevel() {
       const roll = Math.random();
-      if (score > 2400 && roll < 0.07) return 3;
-      if (score > 900 && roll < 0.18) return 2;
+      if (score > 2400 && roll < 0.07 && unlockedLevels.has(3)) return 3;
+      if (score > 900 && roll < 0.18 && unlockedLevels.has(2)) return 2;
       if (roll < 0.80) return 1;
-      return 2;
+      return unlockedLevels.has(2) ? 2 : 1;
     }
 
     // setWorld("underwaterKingdom") / setWorld("dragonsValley") / setWorld("iceCavern")
@@ -1553,6 +1569,7 @@ function getItem(level) {
         board = createEmptyBoard();
         history = [];
         collection = [];
+        resetUnlockedLevels();
         addStartingTiles();
         nextLevel = 1; // guaranteed level 1 for the first tile of a new world
         resetSeenLevelIntros(key); // fresh play-through of this world — level reveals should replay
@@ -1642,6 +1659,7 @@ function getItem(level) {
       moves = 0;
       history = [];
       collection = [];
+      resetUnlockedLevels();
       nextLevel = 1;
       addStartingTiles();
       resetSeenLevelIntros(currentWorldKey); // fresh play-through of this world — level reveals should replay
@@ -1668,7 +1686,7 @@ function getItem(level) {
     }
 
     function saveHistory() {
-      history.push({ board: cloneBoard(board), nextLevel, score, moves, collection: collection.slice() });
+      history.push({ board: cloneBoard(board), nextLevel, score, moves, collection: collection.slice(), unlockedLevels: new Set(unlockedLevels) });
       if (history.length > 20) history.shift();
     }
 
@@ -1680,6 +1698,9 @@ function getItem(level) {
       score = previous.score;
       moves = previous.moves;
       collection = previous.collection.slice();
+      // Fall back to just [1] for history entries saved before this field
+      // existed (older in-memory history from the same session).
+      unlockedLevels = previous.unlockedLevels ? new Set(previous.unlockedLevels) : new Set([1]);
       render();
       showToast("One step back");
       syncToCloud(false, true);
@@ -1742,6 +1763,14 @@ function getItem(level) {
          alter table public.garden_saves
            add column if not exists cleared_worlds jsonb not null default '[]',
            add column if not exists map_page int not null default 1;
+
+       ADDING THE UNLOCKED-LEVELS COLUMN — if garden_saves already existed
+       before the merge-gated next-item fix, run this once too (existing
+       rows will default to level 1 only, which is the safe/correct
+       starting point — see the loadFromCloud() fallback below):
+
+         alter table public.garden_saves
+           add column if not exists unlocked_levels jsonb not null default '[1]';
     ----------------------------------------------------------------- */
     const GARDEN_TABLE = "garden_saves";
 
@@ -1757,6 +1786,7 @@ function getItem(level) {
         best,
         cleared_worlds: Array.isArray(clearedWorlds) ? clearedWorlds.slice() : [],
         map_page: mapPage,
+        unlocked_levels: Array.from(unlockedLevels),
         updated_at: new Date().toISOString()
       };
     }
@@ -1865,6 +1895,14 @@ async function performSync(showFeedback) {
           score = data.score || 0;
           moves = data.moves || 0;
           collection = data.collection || [];
+          // Older rows saved before this column existed have no
+          // unlocked_levels — default to just [1] rather than assuming
+          // every level is unlocked, so the merge-gate applies to
+          // existing players' saves too (a returning player whose board
+          // still has level-2+ tiles sitting on it isn't blocked from
+          // playing; they just won't get MORE of that level as a "next"
+          // tile until they merge one again in this state).
+          unlockedLevels = new Set(Array.isArray(data.unlocked_levels) && data.unlocked_levels.length ? data.unlocked_levels : [1]);
           currentWorldKey = (typeof data.current_world === "string" && WORLD_BACKGROUNDS[data.current_world]) ? data.current_world : WORLD_KEYS[0];
           best = typeof data.best === "number" ? data.best : 0;
           clearedWorlds = Array.isArray(data.cleared_worlds) ? data.cleared_worlds.slice() : [];
@@ -1966,6 +2004,7 @@ async function performSync(showFeedback) {
           const createdItem = getItem(level + 1);
           score += createdItem.score * group.length;
           createdLevels.push(level + 1);
+          unlockedLevels.add(level + 1); // this level has now genuinely been merged into existence — randomNextLevel() may offer it from here on
           spawnBurst(currentR, currentC, getItemImageUrl(createdItem));
           playMergeGong();
           keepMerging = true;
@@ -2421,6 +2460,7 @@ async function performSync(showFeedback) {
         // because isWorldUnlocked() requires currentUser.
         board = createEmptyBoard();
         score = 0; moves = 0; history = []; collection = []; nextLevel = 1; best = 0;
+        resetUnlockedLevels();
         clearedWorlds = Array.isArray(lastKnownClearedWorlds) ? lastKnownClearedWorlds.slice() : [];
         mapPage = 1;
         addStartingTiles();
