@@ -278,6 +278,13 @@ const WORLD_ITEM_IMAGES = {
     4: "images/game-item-magic4",
     5: "images/game-item-magic5"
   },
+  beachBirds: {
+    1: "images/game-item-bird1",
+    2: "images/game-item-bird2",
+    3: "images/game-item-bird3",
+    4: "images/game-item-bird4",
+    5: "images/game-item-bird5"
+  },
   treasureCave: {
     1: "images/game-item-treasure1",
     2: "images/game-item-treasure2",
@@ -285,15 +292,26 @@ const WORLD_ITEM_IMAGES = {
     4: "images/game-item-treasure4",
     5: "images/game-item-treasure5"
   },
-  // Growth progression: speckled egg → hatching chick → fluffy fledgling
-  // → young bird → fully-plumed phoenix-like adult, matching the
-  // level-1-to-5 rarity/value ramp the shared ITEMS array uses.
-  beachBirds: {
-    1: "images/game-item-bird1",
-    2: "images/game-item-bird2",
-    3: "images/game-item-bird3",
-    4: "images/game-item-bird4",
-    5: "images/game-item-bird5"
+cherryBlossom: {
+    1: "images/game-item-cherry1",
+    2: "images/game-item-cherry2",
+    3: "images/game-item-cherry3",
+    4: "images/game-item-cherry4",
+    5: "images/game-item-cherry5"
+  },
+  jungleRuins: {
+    1: "images/game-item-tree1",
+    2: "images/game-item-tree2",
+    3: "images/game-item-tree3",
+    4: "images/game-item-tree4",
+    5: "images/game-item-tree5"
+  },
+  mountainTop: {
+    1: "images/game-item-fox1",
+    2: "images/game-item-fox2",
+    3: "images/game-item-fox3",
+    4: "images/game-item-fox4",
+    5: "images/game-item-fox5"
   },
   theForest: {
     1: "images/game-item-forest1",
@@ -308,20 +326,6 @@ const WORLD_ITEM_IMAGES = {
     3: "images/game-item-drake3",
     4: "images/game-item-drake4",
     5: "images/game-item-drake5"
-  },
-  cherryBlossom: {
-    1: "images/game-item-cherry1",
-    2: "images/game-item-cherry2",
-    3: "images/game-item-cherry3",
-    4: "images/game-item-cherry4",
-    5: "images/game-item-cherry5"
-  },
-  mountainTop: {
-    1: "images/game-item-magic1",
-    2: "images/game-item-magic2",
-    3: "images/game-item-magic3",
-    4: "images/game-item-magic4",
-    5: "images/game-item-magic5"
   },
   crystalPalace: {
     1: "images/game-item-rymd1",
