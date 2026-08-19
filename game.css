@@ -2833,6 +2833,34 @@ button {
         display: contents;
       }
 
+      /* display:contents above makes .side-panel stop generating its
+         own box — every one of its children (score, collection,
+         actions, difficulty, etc.) becomes a direct flex child of
+         .game-layout instead. That also makes the max-height:46svh +
+         overflow-y:auto set on .side-panel a few lines up completely
+         ineffective: that box no longer exists, so there's no scroll
+         container left for that content.
+
+         In portrait this isn't noticeable — plenty of vertical room
+         (100svh) there for everything to fit regardless. But in
+         landscape (horizontal mobile/tablet, height > 600px, the
+         branch of this query that applies here) the height budget is
+         much tighter. If .stage-frame (flex:1 1 auto; min-height:0)
+         shrinks to nothing and the fixed content still doesn't fit
+         within calc(100svh - 10px), there's no scroll to fall back
+         on — the collection box (which sits after score in DOM
+         order) can end up partly or fully outside the visible area
+         with no way to scroll to it.
+
+         Fix: give #gameLayout:not(.on-map) itself (now the actual
+         scroll container post display:contents) the overflow
+         handling that used to live only on .side-panel. */
+      #gameLayout:not(.on-map) {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+
       #gameLayout:not(.on-map) .side-panel .top-row {
         order: -1;
         position: relative;
