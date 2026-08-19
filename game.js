@@ -355,18 +355,6 @@ const WORLD_BACKGROUNDS = {
   theForest:         "images/game-world8",
   mountainTop:       "images/game-world9",
   crystalPalace:     "images/game-world10",
-
-  iceCavern:       "images/game-world11",
-  lavenderGarden:  "images/game-world12",
-  jungleTemple:    "images/game-world13",
-  desertOasis:     "images/game-world14",
-  cosmos:          "images/game-world15",
-
-  crystalFalls:      "images/game-world16",
-  enchantedForest: "images/game-world17",
-  lavendelMeadow:    "images/game-world18",
-  moonlitPond:     "images/game-world19",
-  bambooForest:    "images/game-world20"
 };
 
 // ---------- WebP support detection (with format fallback) ----------
@@ -434,17 +422,6 @@ const WORLD_LABELS = {
   mountainTop:       "Mountain Top",       // island 9
   crystalPalace:     "Crystal Palace",     // island 10
 
-  // Islands 11-20 — not on the current map art, names unchanged.
-  lavendelMeadow:    "Lavendel Meadow",
-  iceCavern:       "Ice Cavern",
-  cosmos:          "Cosmos",
-  desertOasis:     "Desert Oasis",
-  jungleTemple:    "Jungle Temple",
-  enchantedForest: "Enchanted Forest",
-  lavenderGarden:  "Lavender Garden",
-  bambooForest:    "Bamboo Forest",
-  moonlitPond:     "Moonlit Pond",
-  crystalFalls:      "Crystal Falls"
 };
 
 /* -----------------------------------------------------------------
