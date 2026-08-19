@@ -634,7 +634,6 @@ function getItem(level) {
     const levelRevealDoneEl = document.getElementById("levelRevealDone");
     const gameOverTextEl = document.getElementById("gameOverText");
     const worldNameEl = document.getElementById("worldName");
-    const worldPickerEl = document.getElementById("worldPicker");
     const mapScreenEl = document.getElementById("mapScreen");
     const mapFrameEl = document.getElementById("mapFrame"); // holds the artwork + island badges — see .map-frame CSS
     const mapAdSlotEl = document.getElementById("mapAdSlot"); // see the reserved-space comment in layoutMapFrame() below
@@ -1169,7 +1168,7 @@ function getItem(level) {
 
     // setWorld("underwaterKingdom") / setWorld("dragonsValley") / setWorld("iceCavern")
     // / setWorld("cosmos") — call this from anywhere (auto-progression below,
-    // the world-picker dots, or your own console/menu) to swap both the
+    // or your own console/menu) to swap both the
     // stage backdrop AND every tile's icon set at once.
     function setWorld(key) {
       if (!WORLD_BACKGROUNDS[key]) {
@@ -1179,7 +1178,6 @@ function getItem(level) {
       currentWorldKey = key;
       stageEl.style.setProperty("--world-bg", `url("${getWorldBackgroundUrl(key)}")`);
       worldNameEl.textContent = WORLD_LABELS[key] || key;
-      renderWorldPicker();
       invalidateBoardRenderCache(); // same levels can look different in the new world (WORLD_ITEM_IMAGES) — force a full repaint
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
@@ -1465,30 +1463,6 @@ function getItem(level) {
       stageFrameEl.style.setProperty("--board-rows", ROWS);
       board = reshapeBoardToDims(board);
       render();
-    }
-
-    // NOTE: this no longer functions as a clickable world-switcher — the
-    // shortcuts were removed per request. It still builds the same set of
-    // dot elements it always did purely to preserve #worldPicker's
-    // rendered height (see the CSS comment on .world-picker), since
-    // .stage-frame is flex:1 1 auto in the mobile layout and would
-    // otherwise grow into any space freed up here, changing the game
-    // board's size. The box itself is visibility:hidden + pointer-events:
-    // none (CSS), so there's no click listener and no .active state to
-    // maintain.
-    let worldPickerBuilt = false;
-    function renderWorldPicker() {
-      if (!worldPickerBuilt) {
-        worldPickerEl.innerHTML = "";
-        WORLD_KEYS.forEach(key => {
-          const btn = document.createElement("button");
-          btn.className = "world-dot";
-          btn.tabIndex = -1;
-          btn.dataset.worldKey = key;
-          worldPickerEl.appendChild(btn);
-        });
-        worldPickerBuilt = true;
-      }
     }
 
     /* -----------------------------------------------------------------
