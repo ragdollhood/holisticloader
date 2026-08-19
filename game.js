@@ -246,8 +246,8 @@ function playWorldClearFanfare() {
         to lose.)
 
    Add a new world by adding one more key to WORLD_BACKGROUNDS and
-   WORLD_LABELS below — setWorld() and renderWorldPicker() both
-   iterate WORLD_KEYS automatically, no other code changes needed.
+   WORLD_LABELS below — setWorld() iterates WORLD_KEYS automatically,
+   no other code changes needed.
 ----------------------------------------------------------------- */
 const ITEMS = [
   { level: 1, image: "images/game-item1", name: "Seed",     score: 5 },
@@ -355,6 +355,18 @@ const WORLD_BACKGROUNDS = {
   theForest:         "images/game-world8",
   mountainTop:       "images/game-world9",
   crystalPalace:     "images/game-world10",
+
+  iceCavern:       "images/game-world11",
+  lavenderGarden:  "images/game-world12",
+  jungleTemple:    "images/game-world13",
+  desertOasis:     "images/game-world14",
+  cosmos:          "images/game-world15",
+
+  crystalFalls:      "images/game-world16",
+  enchantedForest: "images/game-world17",
+  lavendelMeadow:    "images/game-world18",
+  moonlitPond:     "images/game-world19",
+  bambooForest:    "images/game-world20"
 };
 
 // ---------- WebP support detection (with format fallback) ----------
@@ -422,6 +434,17 @@ const WORLD_LABELS = {
   mountainTop:       "Mountain Top",       // island 9
   crystalPalace:     "Crystal Palace",     // island 10
 
+  // Islands 11-20 — not on the current map art, names unchanged.
+  lavendelMeadow:    "Lavendel Meadow",
+  iceCavern:       "Ice Cavern",
+  cosmos:          "Cosmos",
+  desertOasis:     "Desert Oasis",
+  jungleTemple:    "Jungle Temple",
+  enchantedForest: "Enchanted Forest",
+  lavenderGarden:  "Lavender Garden",
+  bambooForest:    "Bamboo Forest",
+  moonlitPond:     "Moonlit Pond",
+  crystalFalls:      "Crystal Falls"
 };
 
 /* -----------------------------------------------------------------
@@ -1444,41 +1467,28 @@ function getItem(level) {
       render();
     }
 
-    // Built once (fixed set of dots) instead of torn down and rebuilt
-    // on every setWorld() call — after the first render, only the
-    // .active class needs to move, which is far cheaper than 20 fresh
-    // buttons + 20 fresh listeners every time a world changes.
+    // NOTE: this no longer functions as a clickable world-switcher — the
+    // shortcuts were removed per request. It still builds the same set of
+    // dot elements it always did purely to preserve #worldPicker's
+    // rendered height (see the CSS comment on .world-picker), since
+    // .stage-frame is flex:1 1 auto in the mobile layout and would
+    // otherwise grow into any space freed up here, changing the game
+    // board's size. The box itself is visibility:hidden + pointer-events:
+    // none (CSS), so there's no click listener and no .active state to
+    // maintain.
     let worldPickerBuilt = false;
     function renderWorldPicker() {
       if (!worldPickerBuilt) {
         worldPickerEl.innerHTML = "";
         WORLD_KEYS.forEach(key => {
-          const label = WORLD_LABELS[key] || key;
           const btn = document.createElement("button");
           btn.className = "world-dot";
-          btn.title = label;
-          btn.setAttribute("aria-label", label);
+          btn.tabIndex = -1;
           btn.dataset.worldKey = key;
           worldPickerEl.appendChild(btn);
         });
-        worldPickerEl.addEventListener("click", (e) => {
-          const btn = e.target.closest(".world-dot");
-          if (btn) {
-            // Manually picking a world from these dots always starts a
-            // fresh game there (empty board, score/moves/collection
-            // reset) — NOT just a visual re-skin of whatever's
-            // currently on the board. setWorld() first so newGarden()'s
-            // resetSeenLevelIntros()/WORLD_ITEM_IMAGES lookups already
-            // see the new world.
-            setWorld(btn.dataset.worldKey);
-            newGarden();
-          }
-        });
         worldPickerBuilt = true;
       }
-      worldPickerEl.querySelectorAll(".world-dot").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.worldKey === currentWorldKey);
-      });
     }
 
     /* -----------------------------------------------------------------

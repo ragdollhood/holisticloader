@@ -875,6 +875,12 @@ button {
       box-shadow: none;
     }
 
+    /* Kept sized exactly as before (see the HTML comment on
+       #worldPicker) so removing the visible world-switcher dots doesn't
+       shrink the side panel and grow the game board into the freed
+       space. visibility:hidden (not display:none) removes it from view
+       and from click/keyboard interaction while still reserving its
+       layout box; pointer-events:none is belt-and-suspenders. */
     .world-picker {
       display: flex;
       flex-wrap: wrap;
@@ -885,6 +891,8 @@ button {
       border: 1px solid rgba(255,255,255,.14);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
+      visibility: hidden;
+      pointer-events: none;
     }
 
     /* Desktop/laptop-only box at the bottom of the side panel holding
@@ -1508,8 +1516,8 @@ button {
          With no definite height on .game-layout, a flex container's
          auto height is the tallest child's UNSTRETCHED (natural
          content) size — not .stage-frame's fixed height — so if
-         .side-panel's stacked content (top row + score + world-picker
-         + collection + next-box, all at their natural sizes) added up
+         .side-panel's stacked content (top row + score + world-picker + collection
+         + next-box, all at their natural sizes) added up
          to more than .stage-frame's height, .game-layout simply grew
          to fit it. That growth pushed the whole layout past .screen's
          100svh, which html/body's overflow:hidden then clipped with
@@ -3248,7 +3256,12 @@ button {
          ".collection" selector, silently keeping them visible on any
          short viewport — including mobile in landscape ("horizontal")
          during actual gameplay, exactly where this was reported as
-         still showing the little world-switching circles. */
+         still showing the little world-switching circles. #worldPicker
+         is already visibility:hidden everywhere (see its base rule),
+         but it's switched to display:none here too so it stops
+         reserving layout space on very short screens, same as before
+         the shortcuts were hidden — otherwise the game board would be
+         smaller here than it used to be. */
       .side-panel .world-picker { display: none; }
       .side-panel .collection { display: none; }
     }

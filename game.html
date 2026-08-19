@@ -319,7 +319,15 @@
           <div class="stat"><b id="bestStat">0</b><span>Best</span></div>
         </div>
 
-        <div class="world-picker gameplay-only" id="worldPicker" aria-label="Choose world"></div>
+        <!-- Kept in the DOM (but invisible + inert, see .world-picker's
+             visibility:hidden/pointer-events:none in the CSS) purely so
+             its layout footprint still occupies the same space it always
+             did. .stage-frame is flex:1 1 auto in the mobile/portrait
+             layout, so removing this box outright shrinks the side panel
+             and lets the game board grow into the freed space — this
+             placeholder keeps the board's size unchanged while the world
+             shortcuts themselves are no longer visible or clickable. -->
+        <div class="world-picker gameplay-only" id="worldPicker" aria-hidden="true"></div>
 
         <div class="hud collection gameplay-only" id="collection" aria-label="Rewards created"></div>
 
