@@ -1592,12 +1592,8 @@ button {
          into two tall rows here, which was the single biggest
          contributor to pushing .next-box off screen. Shrunk to match
          the size mobile portrait already uses. */
-      /* Box height halved again per request (mobile landscape only):
-         vertical padding and icon size both roughly halved from the
-         values just above, so the strip takes about half the height
-         it did before while staying legible. */
-      .collection { padding: 2px 8px; gap: 3px; }
-      .collection .item-icon { width: 13px; height: 13px; }
+      .collection { padding: 4px 8px; gap: 4px; }
+      .collection .item-icon { width: 25px; height: 25px; }
 
       .actions { padding: 5px; gap: 4px; }
       .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
