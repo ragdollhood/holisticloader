@@ -1459,8 +1459,13 @@ function getItem(level) {
     // on every setWorld() call — after the first render, only the
     // .active class needs to move, which is far cheaper than 20 fresh
     // buttons + 20 fresh listeners every time a world changes.
+    // The #worldPicker element itself has been removed from game2.html
+    // (it let players jump to ANY world directly, bypassing the map's
+    // unlock/progression gate — not wanted here). setWorld() still calls
+    // this every time it runs, so this just no-ops safely instead.
     let worldPickerBuilt = false;
     function renderWorldPicker() {
+      if (!worldPickerEl) return;
       if (!worldPickerBuilt) {
         worldPickerEl.innerHTML = "";
         WORLD_KEYS.forEach(key => {
