@@ -3211,12 +3211,10 @@ button {
       #guestClearModal .gcm-checklist li { font-size: 11px; }
     }
 
-    @media (max-height: 650px) {
-      /* .side-panel prefix (not just the bare class) is required here:
-         this element also carries .gameplay-only, and ".side-panel
-         .gameplay-only { display:flex }" (higher specificity than a
-         single class) was winning over a plain ".collection" selector,
-         silently keeping it visible on any short viewport — including
-         mobile in landscape ("horizontal") during actual gameplay. */
-      .side-panel .collection { display: none; }
-    }
+    /* .collection used to be force-hidden on any viewport shorter than
+       650px here (including mobile landscape gameplay), via
+       ".side-panel .collection { display:none }" — that hid the
+       collected-items strip from players in landscape mode entirely.
+       .side-panel already scrolls (overflow-y:auto, see the base
+       .side-panel rule above), so there's no need to hide it: it just
+       becomes one more scrollable row on short viewports instead. */
