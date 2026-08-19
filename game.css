@@ -1416,8 +1416,8 @@ button {
          --sp-width is left as it was (harmless either way, and the
          panel still needs the room). */
       :root {
-        --board-left: 19%;
-        --board-top: calc(17% + 24px);
+        --board-left: 6%;
+        --board-top: calc(9% + 38px);
         --board-width: 88%;
         --board-height: 84%;
         --sp-width: clamp(190px, 26vw, 300px);
