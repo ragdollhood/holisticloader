@@ -304,7 +304,8 @@
       margin-top: 8px;
     }
 
-    .side-panel .hud {
+    .side-panel .hud,
+    .side-panel .world-picker {
       position: static;
       inset: auto;
       left: auto; right: auto; top: auto; bottom: auto;
@@ -874,6 +875,18 @@ button {
       box-shadow: none;
     }
 
+    .world-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(18, 9, 28, .45);
+      border: 1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
     /* Desktop/laptop-only box at the bottom of the side panel holding
        the back-to-map thumbnail above the next-item badge (see
        layoutSideExtras() in the JS, which moves both elements in here
@@ -1094,6 +1107,18 @@ button {
         height: 66%;
       }
     }
+
+    .world-dot {
+      width: 12px;
+      height: 12px;
+      padding: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,.30);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,.24);
+    }
+
+    .world-dot.active { background: linear-gradient(135deg, var(--gold), var(--lav)); box-shadow: 0 0 18px rgba(248,217,139,.36); }
 
     /* ---------- Map screen ----------
        Shown instead of the board on first load (and any time the player
@@ -1483,8 +1508,8 @@ button {
          With no definite height on .game-layout, a flex container's
          auto height is the tallest child's UNSTRETCHED (natural
          content) size — not .stage-frame's fixed height — so if
-         .side-panel's stacked content (top row + score + collection
-         + next-box, all at their natural sizes) added up
+         .side-panel's stacked content (top row + score + world-picker
+         + collection + next-box, all at their natural sizes) added up
          to more than .stage-frame's height, .game-layout simply grew
          to fit it. That growth pushed the whole layout past .screen's
          100svh, which html/body's overflow:hidden then clipped with
@@ -1572,7 +1597,7 @@ button {
         min-height: 0;
       }
 
-      /* The boxes ABOVE .next-box (score/collection/
+      /* The boxes ABOVE .next-box (score/world-picker/collection/
          actions) were still using their full desktop padding/icon
          sizes here — sized for a real laptop's much taller side panel.
          On this short viewport that ate most of the available height
@@ -1589,6 +1614,9 @@ button {
       .stat { padding: 5px 6px; min-width: 0; }
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
+
+      .world-picker { padding: 6px; gap: 5px; }
+      .world-dot { width: 9px; height: 9px; }
 
       /* Collection icons default to 50px (see .collection .item-icon
          base rule) — sized for a desktop side panel with room to
@@ -2904,7 +2932,7 @@ button {
          end-of-panel position (.score { order: 1 } near the top of this
          stylesheet, meant for the start screen's how-to-play/premium
          stacking order) so on mobile gameplay it renders immediately
-         after .stage-frame instead of after collection/
+         after .stage-frame instead of after world-picker/collection/
          actions — i.e. directly under the game-world image, matching
          the desktop/laptop behavior above. */
       #gameLayout:not(.on-map) .side-panel .score.gameplay-only { order: 0; }
@@ -2965,6 +2993,7 @@ button {
         border-radius: 999px;
       }
 
+      .world-picker { padding: 6px; gap: 6px; }
       /* Achievement/collection strip (box #3) — height halved per
          request by shrinking its item icons (the icon size is what
          drives this box's height) rather than clipping it, so nothing
@@ -3041,7 +3070,7 @@ button {
          image (not overlaid on top of it) — logo centered in the bar,
          how-to-play + account icon pinned to its right edge. The map
          image itself fills whatever height is left below that bar.
-         Every other side-panel box (score/collection/
+         Every other side-panel box (score/world-picker/collection/
          actions, plus the old text how-to-play box) is hidden here
          since none of it applies before a board is open. */
       .screen:has(#gameLayout.on-map) { padding: 0; }
@@ -3213,10 +3242,13 @@ button {
 
     @media (max-height: 650px) {
       /* .side-panel prefix (not just the bare class) is required here:
-         this element also carries .gameplay-only, and ".side-panel
+         both elements also carry .gameplay-only, and ".side-panel
          .gameplay-only { display:flex }" (higher specificity than a
-         single class) was winning over a plain ".collection" selector,
-         silently keeping it visible on any short viewport — including
-         mobile in landscape ("horizontal") during actual gameplay. */
+         single class) was winning over a plain ".world-picker"/
+         ".collection" selector, silently keeping them visible on any
+         short viewport — including mobile in landscape ("horizontal")
+         during actual gameplay, exactly where this was reported as
+         still showing the little world-switching circles. */
+      .side-panel .world-picker { display: none; }
       .side-panel .collection { display: none; }
     }
