@@ -246,8 +246,8 @@ function playWorldClearFanfare() {
         to lose.)
 
    Add a new world by adding one more key to WORLD_BACKGROUNDS and
-   WORLD_LABELS below — setWorld() and renderWorldPicker() both
-   iterate WORLD_KEYS automatically, no other code changes needed.
+   WORLD_LABELS below — setWorld() iterates WORLD_KEYS automatically,
+   no other code changes needed.
 ----------------------------------------------------------------- */
 const ITEMS = [
   { level: 1, image: "images/game-item1", name: "Seed",     score: 5 },
@@ -634,7 +634,6 @@ function getItem(level) {
     const levelRevealDoneEl = document.getElementById("levelRevealDone");
     const gameOverTextEl = document.getElementById("gameOverText");
     const worldNameEl = document.getElementById("worldName");
-    const worldPickerEl = document.getElementById("worldPicker");
     const mapScreenEl = document.getElementById("mapScreen");
     const mapFrameEl = document.getElementById("mapFrame"); // holds the artwork + island badges — see .map-frame CSS
     const mapAdSlotEl = document.getElementById("mapAdSlot"); // see the reserved-space comment in layoutMapFrame() below
@@ -1179,7 +1178,6 @@ function getItem(level) {
       currentWorldKey = key;
       stageEl.style.setProperty("--world-bg", `url("${getWorldBackgroundUrl(key)}")`);
       worldNameEl.textContent = WORLD_LABELS[key] || key;
-      renderWorldPicker();
       invalidateBoardRenderCache(); // same levels can look different in the new world (WORLD_ITEM_IMAGES) — force a full repaint
       renderBoard();   // existing tiles must switch to the new world's icons immediately
       renderNext();
@@ -1465,43 +1463,6 @@ function getItem(level) {
       stageFrameEl.style.setProperty("--board-rows", ROWS);
       board = reshapeBoardToDims(board);
       render();
-    }
-
-    // Built once (fixed set of dots) instead of torn down and rebuilt
-    // on every setWorld() call — after the first render, only the
-    // .active class needs to move, which is far cheaper than 20 fresh
-    // buttons + 20 fresh listeners every time a world changes.
-    let worldPickerBuilt = false;
-    function renderWorldPicker() {
-      if (!worldPickerBuilt) {
-        worldPickerEl.innerHTML = "";
-        WORLD_KEYS.forEach(key => {
-          const label = WORLD_LABELS[key] || key;
-          const btn = document.createElement("button");
-          btn.className = "world-dot";
-          btn.title = label;
-          btn.setAttribute("aria-label", label);
-          btn.dataset.worldKey = key;
-          worldPickerEl.appendChild(btn);
-        });
-        worldPickerEl.addEventListener("click", (e) => {
-          const btn = e.target.closest(".world-dot");
-          if (btn) {
-            // Manually picking a world from these dots always starts a
-            // fresh game there (empty board, score/moves/collection
-            // reset) — NOT just a visual re-skin of whatever's
-            // currently on the board. setWorld() first so newGarden()'s
-            // resetSeenLevelIntros()/WORLD_ITEM_IMAGES lookups already
-            // see the new world.
-            setWorld(btn.dataset.worldKey);
-            newGarden();
-          }
-        });
-        worldPickerBuilt = true;
-      }
-      worldPickerEl.querySelectorAll(".world-dot").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.worldKey === currentWorldKey);
-      });
     }
 
     /* -----------------------------------------------------------------
