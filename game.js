@@ -250,11 +250,11 @@ function playWorldClearFanfare() {
    no other code changes needed.
 ----------------------------------------------------------------- */
 const ITEMS = [
-  { level: 1, image: "images/game-item1", name: "Seed",     score: 5 },
-  { level: 2, image: "images/game-item2", name: "Sprout",   score: 22 },
-  { level: 3, image: "images/game-item3", name: "Bloom",    score: 80 },
-  { level: 4, image: "images/game-item4", name: "Shard",    score: 260 },
-  { level: 5, image: "images/game-item5", name: "Lotus",    score: 780 }
+  { level: 1, image: "images/game-item1", name: "Level 1",     score: 5 },
+  { level: 2, image: "images/game-item2", name: "Level 2",   score: 22 },
+  { level: 3, image: "images/game-item3", name: "Level 3",    score: 80 },
+  { level: 4, image: "images/game-item4", name: "Level 4",    score: 260 },
+  { level: 5, image: "images/game-item5", name: "Level 5",    score: 780 }
 ];
 
 // Per-world item-art overrides — keyed by world key, then indexed by
@@ -354,19 +354,7 @@ const WORLD_BACKGROUNDS = {
   dragonsValley:     "images/game-world7",
   theForest:         "images/game-world8",
   mountainTop:       "images/game-world9",
-  crystalPalace:     "images/game-world10",
-
-  iceCavern:       "images/game-world11",
-  lavenderGarden:  "images/game-world12",
-  jungleTemple:    "images/game-world13",
-  desertOasis:     "images/game-world14",
-  cosmos:          "images/game-world15",
-
-  crystalFalls:      "images/game-world16",
-  enchantedForest: "images/game-world17",
-  lavendelMeadow:    "images/game-world18",
-  moonlitPond:     "images/game-world19",
-  bambooForest:    "images/game-world20"
+  crystalPalace:     "images/game-world10"
 };
 
 // ---------- WebP support detection (with format fallback) ----------
@@ -433,18 +421,6 @@ const WORLD_LABELS = {
   theForest:         "The Forest",         // island 8
   mountainTop:       "Mountain Top",       // island 9
   crystalPalace:     "Crystal Palace",     // island 10
-
-  // Islands 11-20 — not on the current map art, names unchanged.
-  lavendelMeadow:    "Lavendel Meadow",
-  iceCavern:       "Ice Cavern",
-  cosmos:          "Cosmos",
-  desertOasis:     "Desert Oasis",
-  jungleTemple:    "Jungle Temple",
-  enchantedForest: "Enchanted Forest",
-  lavenderGarden:  "Lavender Garden",
-  bambooForest:    "Bamboo Forest",
-  moonlitPond:     "Moonlit Pond",
-  crystalFalls:      "Crystal Falls"
 };
 
 /* -----------------------------------------------------------------
