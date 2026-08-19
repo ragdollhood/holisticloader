@@ -1381,11 +1381,7 @@ button {
          is the one knob to turn if this needs to be bigger/smaller —
          raise it further if the artwork is still visibly small, or back
          it off if real edges of the art start getting clipped. */
-      :root { --mobile-landscape-item-scale: 3.4; }
-      .tile .item-icon {
-        transform: scale(var(--mobile-landscape-item-scale));
-        transform-origin: center;
-      }
+      .tile .item-icon { width: 96%; height: 96%; }
 
       /* Measured this instead of guessing: on a short viewport the
          stage-frame's height is always the binding constraint (it's
@@ -1795,7 +1791,7 @@ button {
     @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       .tile .item-icon { width: 96%; height: 96%; }
     }
-    .collection .item-icon { width: 50px; height: 50px; }
+    .collection .item-icon { width: 26px; height: 26px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
 
     /* Small contained placeholder shown when an item-icon 404s, so a
@@ -1838,11 +1834,12 @@ button {
     .collection {
       width: 100%;
       display: flex;
-      gap: 6px;
-      justify-content: center;
+      gap: 5px;
+      justify-content: flex-start;
+      align-items: center;
       flex-wrap: wrap;
-      padding: 10px 14px;
-      border-radius: 24px;
+      padding: 6px 10px;
+      border-radius: 16px;
       pointer-events: none;
     }
 
