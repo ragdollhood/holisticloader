@@ -250,11 +250,11 @@ function playWorldClearFanfare() {
    iterate WORLD_KEYS automatically, no other code changes needed.
 ----------------------------------------------------------------- */
 const ITEMS = [
-  { level: 1, image: "images/game-item1", name: "Level 1",     score: 5 },
-  { level: 2, image: "images/game-item2", name: "Level 2",   score: 22 },
-  { level: 3, image: "images/game-item3", name: "Level 3",    score: 80 },
-  { level: 4, image: "images/game-item4", name: "Level 4",    score: 260 },
-  { level: 5, image: "images/game-item5", name: "Level 5",    score: 780 }
+  { level: 1, image: "images/game-item1", name: "Seed",     score: 5 },
+  { level: 2, image: "images/game-item2", name: "Sprout",   score: 22 },
+  { level: 3, image: "images/game-item3", name: "Bloom",    score: 80 },
+  { level: 4, image: "images/game-item4", name: "Shard",    score: 260 },
+  { level: 5, image: "images/game-item5", name: "Lotus",    score: 780 }
 ];
 
 // Per-world item-art overrides — keyed by world key, then indexed by
@@ -264,70 +264,70 @@ const ITEMS = [
 // art (see getItemImageUrl() below) — every image here needs BOTH a
 // .webp AND a .png file present in images/.
 const WORLD_ITEM_IMAGES = {
-  troll: {
+  iceCavern: {
     1: "images/game11-20/game-item-11troll1",
     2: "images/game11-20/game-item-11troll2",
     3: "images/game11-20/game-item-11troll3",
     4: "images/game11-20/game-item-11troll4",
     5: "images/game11-20/game-item-11troll5"
   },
-  desert: {
+  lavenderGarden: {
     1: "images/game11-20/game-item-12desert1",
     2: "images/game11-20/game-item-12desert2",
     3: "images/game11-20/game-item-12desert3",
     4: "images/game11-20/game-item-12desert4",
     5: "images/game11-20/game-item-12desert5"
   },
-  pastry: {
+  jungleTemple: {
     1: "images/game11-20/game-item-13forest1",
     2: "images/game11-20/game-item-13forest2",
     3: "images/game11-20/game-item-13forest3",
     4: "images/game11-20/game-item-13forest4",
     5: "images/game11-20/game-item-13forest5"
   },
-  purplefox: {
+  desertOasis: {
     1: "images/game11-20/game-item-14fox1",
     2: "images/game11-20/game-item-14fox2",
     3: "images/game11-20/game-item-14fox3",
     4: "images/game11-20/game-item-14fox4",
     5: "images/game11-20/game-item-14fox5"
   },
-  glacier: {
+  cosmos: {
     1: "images/game11-20/game-item-15glacier1",
     2: "images/game11-20/game-item-15glacier2",
     3: "images/game11-20/game-item-15glacier3",
     4: "images/game11-20/game-item-15glacier4",
     5: "images/game11-20/game-item-15glacier5"
   },
-  garden: {
+  crystalFalls: {
     1: "images/game11-20/game-item-16magic1",
     2: "images/game11-20/game-item-16magic2",
     3: "images/game11-20/game-item-16magic3",
     4: "images/game11-20/game-item-16magic4",
     5: "images/game11-20/game-item-16magic5"
   },
-  waterfall: {
+  enchantedForest: {
     1: "images/game11-20/game-item17-plant1",
     2: "images/game11-20/game-item17-plant2",
     3: "images/game11-20/game-item17-plant3",
     4: "images/game11-20/game-item17-plant4",
     5: "images/game11-20/game-item17-plant5"
   },
-  djungle: {
+  lavendelMeadow: {
     1: "images/game11-20/game-item-18djungle1",
     2: "images/game11-20/game-item-18djungle2",
     3: "images/game11-20/game-item-18djungle3",
     4: "images/game11-20/game-item-18djungle4",
     5: "images/game11-20/game-item-18djungle5"
   },
-  icecave: {
+  moonlitPond: {
     1: "images/game11-20/game-item-19crystal1",
     2: "images/game11-20/game-item-19crystal2",
     3: "images/game11-20/game-item-19crystal3",
     4: "images/game11-20/game-item-19crystal4",
     5: "images/game11-20/game-item-19crystal5"
   },
-  cosmos: {
+  bambooForest: {
     1: "images/game11-20/game-item-20rymd1",
     2: "images/game11-20/game-item-20rymd2",
     3: "images/game11-20/game-item-20rymd3",
@@ -345,16 +345,16 @@ const WORLD_ITEM_IMAGES = {
 // .webp or .jpg depending on what the browser actually supports, so
 // every world needs BOTH a .webp AND a .jpg file present.
 const WORLD_BACKGROUNDS = {
-  troll:       "images/game11-20/game-world11",
-  desert:  "images/game11-20/game-world12",
-  pastry:    "images/game11-20/game-world13",
-  purplefox:     "images/game11-20/game-world14",
-  glacier:          "images/game11-20/game-world15",
-  garden:    "images/game11-20/game-world16",
-  waterfall: "images/game11-20/game-world17",
-  djungle:  "images/game11-20/game-world18",
-  icecave:     "images/game11-20/game-world19",
-  cosmos:    "images/game11-20/game-world20"
+  iceCavern:       "images/game11-20/game-world11",
+  lavenderGarden:  "images/game11-20/game-world12",
+  jungleTemple:    "images/game11-20/game-world13",
+  desertOasis:     "images/game11-20/game-world14",
+  cosmos:          "images/game11-20/game-world15",
+  crystalFalls:    "images/game11-20/game-world16",
+  enchantedForest: "images/game11-20/game-world17",
+  lavendelMeadow:  "images/game11-20/game-world18",
+  moonlitPond:     "images/game11-20/game-world19",
+  bambooForest:    "images/game11-20/game-world20"
 };
 
 // ---------- WebP support detection (with format fallback) ----------
@@ -406,18 +406,33 @@ function getMapBackgroundUrl(page) {
 const WORLD_KEYS = Object.keys(WORLD_BACKGROUNDS);
 
 const WORLD_LABELS = {
+  // Islands 1-10 (map order) — key names now match their theme directly:
+  // 1. Underwater Kingdom  2. Sunset Place  3. The Bird Beach
+  // 4. Treasure Cave       5. Cherry Blossom 6. Jungle Ruins
+  // 7. Dragons Valley      8. The Forest      9. Mountain Top
+  // 10. Crystal Palace
+  underwaterKingdom: "Underwater", // island 1
+  sunsetPlace:       "Sunset Place",       // island 2
+  beachBirds:        "The Bird Beach",        // island 3
+  treasureCave:      "Treasure Cave",      // island 4
+  cherryBlossom:     "Cherry Blossom",     // island 5
+  jungleRuins:       "Jungle Ruins",       // island 6
+  dragonsValley:     "Dragons Valley",     // island 7
+  theForest:         "The Forest",         // island 8
+  mountainTop:       "Mountain Top",       // island 9
+  crystalPalace:     "Crystal Palace",     // island 10
 
-  troll:    "The Trolls", // island 11
-  desert:       "The Desert",       // island 12
-  pastry:        "The Meadow",        // island 13
-  purplefox:      "The Foxes",      // island 14
-  glacier:     "The Glacier",     // island 15
-  garden:       "The Garden",       // island 16
-  waterfall:     "The Waterfall",     // island 17
-  djungle:         "The Djungle",         // island 18
-  icecave:       "The Icecave",       // island 19
-  cosmos:     "The Universe",     // island 20
-
+  // Islands 11-20 — not on the current map art, names unchanged.
+  lavendelMeadow:    "Lavendel Meadow",
+  iceCavern:       "Ice Cavern",
+  cosmos:          "Cosmos",
+  desertOasis:     "Desert Oasis",
+  jungleTemple:    "Jungle Temple",
+  enchantedForest: "Enchanted Forest",
+  lavenderGarden:  "Lavender Garden",
+  bambooForest:    "Bamboo Forest",
+  moonlitPond:     "Moonlit Pond",
+  crystalFalls:      "Crystal Falls"
 };
 
 /* -----------------------------------------------------------------
@@ -1444,13 +1459,8 @@ function getItem(level) {
     // on every setWorld() call — after the first render, only the
     // .active class needs to move, which is far cheaper than 20 fresh
     // buttons + 20 fresh listeners every time a world changes.
-    // The #worldPicker element itself has been removed from game2.html
-    // (it let players jump to ANY world directly, bypassing the map's
-    // unlock/progression gate — not wanted here). setWorld() still calls
-    // this every time it runs, so this just no-ops safely instead.
     let worldPickerBuilt = false;
     function renderWorldPicker() {
-      if (!worldPickerEl) return;
       if (!worldPickerBuilt) {
         worldPickerEl.innerHTML = "";
         WORLD_KEYS.forEach(key => {
