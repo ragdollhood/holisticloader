@@ -1381,7 +1381,11 @@ button {
          is the one knob to turn if this needs to be bigger/smaller —
          raise it further if the artwork is still visibly small, or back
          it off if real edges of the art start getting clipped. */
-      .tile .item-icon { width: 96%; height: 96%; }
+      :root { --mobile-landscape-item-scale: 3.4; }
+      .tile .item-icon {
+        transform: scale(var(--mobile-landscape-item-scale));
+        transform-origin: center;
+      }
 
       /* Measured this instead of guessing: on a short viewport the
          stage-frame's height is always the binding constraint (it's
@@ -1416,10 +1420,10 @@ button {
          --sp-width is left as it was (harmless either way, and the
          panel still needs the room). */
       :root {
-        --board-left: 6%;
-        --board-top: calc(9% + 38px);
-        --board-width: 88%;
-        --board-height: 84%;
+        --board-left: 19%;
+        --board-top: calc(17% + 24px);
+        --board-width: 62%;
+        --board-height: 54%;
         --sp-width: clamp(190px, 26vw, 300px);
         --gl-gap: clamp(6px, 1.2vw, 14px);
         --screen-pad: clamp(6px, 1vw, 12px);
@@ -1592,12 +1596,8 @@ button {
          into two tall rows here, which was the single biggest
          contributor to pushing .next-box off screen. Shrunk to match
          the size mobile portrait already uses. */
-      /* Box height halved again per request (mobile landscape only):
-         vertical padding and icon size both roughly halved from the
-         values just above, so the strip takes about half the height
-         it did before while staying legible. */
-      .collection { padding: 2px 8px; gap: 3px; }
-      .collection .item-icon { width: 13px; height: 13px; }
+      .collection { padding: 4px 8px; gap: 4px; }
+      .collection .item-icon { width: 25px; height: 25px; }
 
       .actions { padding: 5px; gap: 4px; }
       .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
@@ -1795,7 +1795,7 @@ button {
     @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       .tile .item-icon { width: 96%; height: 96%; }
     }
-    .collection .item-icon { width: 26px; height: 26px; }
+    .collection .item-icon { width: 50px; height: 50px; }
     .merge-burst .item-icon { width: 106px; height: 106px; }
 
     /* Small contained placeholder shown when an item-icon 404s, so a
@@ -1838,12 +1838,11 @@ button {
     .collection {
       width: 100%;
       display: flex;
-      gap: 5px;
-      justify-content: flex-start;
-      align-items: center;
+      gap: 6px;
+      justify-content: center;
       flex-wrap: wrap;
-      padding: 6px 10px;
-      border-radius: 16px;
+      padding: 10px 14px;
+      border-radius: 24px;
       pointer-events: none;
     }
 
@@ -2832,34 +2831,6 @@ button {
          stays below the image, right where it already was. */
       #gameLayout:not(.on-map) .side-panel {
         display: contents;
-      }
-
-      /* display:contents above makes .side-panel stop generating its
-         own box — every one of its children (score, collection,
-         actions, difficulty, etc.) becomes a direct flex child of
-         .game-layout instead. That also makes the max-height:46svh +
-         overflow-y:auto set on .side-panel a few lines up completely
-         ineffective: that box no longer exists, so there's no scroll
-         container left for that content.
-
-         In portrait this isn't noticeable — plenty of vertical room
-         (100svh) there for everything to fit regardless. But in
-         landscape (horizontal mobile/tablet, height > 600px, the
-         branch of this query that applies here) the height budget is
-         much tighter. If .stage-frame (flex:1 1 auto; min-height:0)
-         shrinks to nothing and the fixed content still doesn't fit
-         within calc(100svh - 10px), there's no scroll to fall back
-         on — the collection box (which sits after score in DOM
-         order) can end up partly or fully outside the visible area
-         with no way to scroll to it.
-
-         Fix: give #gameLayout:not(.on-map) itself (now the actual
-         scroll container post display:contents) the overflow
-         handling that used to live only on .side-panel. */
-      #gameLayout:not(.on-map) {
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
       }
 
       #gameLayout:not(.on-map) .side-panel .top-row {
