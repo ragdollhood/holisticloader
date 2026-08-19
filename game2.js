@@ -1706,65 +1706,51 @@ function getItem(level) {
        always the only copy — one row per account, upserted on every
        move.
 
+       IMPORTANT — this is a STANDALONE game sharing the same Supabase
+       project (and the same logged-in accounts) as the original 20-world
+       game. It intentionally uses its OWN table (garden_saves_game2, not
+       garden_saves) so a returning player's save here never gets mixed
+       up with — or overwritten by — their save in the original game.
+       Using the same table name as the original would make a logged-in
+       player's board come back full of tiles from the OTHER game the
+       moment they enter a world here.
+
        REQUIRED ONE-TIME SUPABASE SETUP (run once in the SQL Editor,
        same project as auth.js's `profiles`/`log_entries` tables):
 
-         create table public.garden_saves (
+         create table public.garden_saves_game2 (
            user_id       uuid primary key references auth.users(id) on delete cascade,
            board         jsonb not null default '[]',
            next_level    int not null default 1,
            score         int not null default 0,
            moves         int not null default 0,
            collection    jsonb not null default '[]',
-           current_world text not null default 'lavendelMeadow',
+           current_world text not null default 'iceCavern',
            best          int not null default 0,
            cleared_worlds jsonb not null default '[]',
            map_page      int not null default 1,
            updated_at    timestamptz not null default now()
          );
 
-         alter table public.garden_saves enable row level security;
+         alter table public.garden_saves_game2 enable row level security;
 
          create policy "Users can view their own garden"
-         on public.garden_saves for select
+         on public.garden_saves_game2 for select
          to authenticated
          using (auth.uid() = user_id);
 
          create policy "Users can insert their own garden"
-         on public.garden_saves for insert
+         on public.garden_saves_game2 for insert
          to authenticated
          with check (auth.uid() = user_id);
 
          create policy "Users can update their own garden"
-         on public.garden_saves for update
+         on public.garden_saves_game2 for update
          to authenticated
          using (auth.uid() = user_id)
          with check (auth.uid() = user_id);
-
-       MIGRATING AN EXISTING TABLE — if garden_saves already exists from
-       before (current_world was an int index into a 10-world scenery
-       list), run this once instead of the create table above:
-
-         alter table public.garden_saves
-           alter column current_world type text using 'lavendelMeadow',
-           alter column current_world set default 'lavendelMeadow';
-
-       ADDING THE MAP COLUMNS — if garden_saves already existed before
-       the map screen was added, run this once too:
-
-         alter table public.garden_saves
-           add column if not exists cleared_worlds jsonb not null default '[]',
-           add column if not exists map_page int not null default 1;
-
-       ADDING THE UNLOCKED-LEVELS COLUMN — if garden_saves already existed
-       before the merge-gated next-item fix, run this once too (existing
-       rows will default to level 1 only, which is the safe/correct
-       starting point — see the loadFromCloud() fallback below):
-
-         alter table public.garden_saves
-           add column if not exists unlocked_levels jsonb not null default '[1]';
     ----------------------------------------------------------------- */
-    const GARDEN_TABLE = "garden_saves";
+    const GARDEN_TABLE = "garden_saves_game2";
 
     function currentSaveRow() {
       return {
