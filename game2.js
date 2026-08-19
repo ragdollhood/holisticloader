@@ -1540,24 +1540,24 @@ function getItem(level) {
         return;
       }
       hideMap();
-      // Any time we're actually switching to a different world, start it
-      // with a clean, empty board instead of carrying over the tiles from
-      // whatever world was on screen before (they'd otherwise stay on the
-      // board and just get re-painted with the new world's art — see the
-      // "old tiles survive the new world in the new world's skin" bug).
+      // Every time a world is opened — including re-entering the world
+      // that's already showing — start it with a clean, empty board
+      // instead of carrying over whatever tiles were left on it (they'd
+      // otherwise stay on the board, or get re-painted with the new
+      // world's art if the world actually changed — see the "old tiles
+      // survive the new world in the new world's skin" bug, and the
+      // separate "re-opening the same world keeps the old garden" bug).
       // This does NOT touch clearedWorlds, so progress/unlocks are unaffected.
-      if (key !== currentWorldKey) {
-        resetBoardOnEnterKey = null;
-        board = createEmptyBoard();
-        history = [];
-        collection = [];
-        resetUnlockedLevels();
-        addStartingTiles();
-        nextLevel = 1; // guaranteed level 1 for the first tile of a new world
-        resetSeenLevelIntros(key); // fresh play-through of this world — level reveals should replay
-        seenLevelIntros[key].add(1); // level 1 is guaranteed as the first tile — mark it seen right away
-        collection.push(1); // ...and give it its collection icon immediately, so order tracking starts at 1
-      }
+      resetBoardOnEnterKey = null;
+      board = createEmptyBoard();
+      history = [];
+      collection = [];
+      resetUnlockedLevels();
+      addStartingTiles();
+      nextLevel = 1; // guaranteed level 1 for the first tile of a new world
+      resetSeenLevelIntros(key); // fresh play-through of this world — level reveals should replay
+      seenLevelIntros[key].add(1); // level 1 is guaranteed as the first tile — mark it seen right away
+      collection.push(1); // ...and give it its collection icon immediately, so order tracking starts at 1
       setWorld(key); // already flushes an immediate sync internally
       render();
     }
