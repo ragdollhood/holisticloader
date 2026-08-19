@@ -2330,7 +2330,21 @@ async function performSync(showFeedback) {
 
     function renderCollection() {
       collectionEl.innerHTML = "";
-      collection.slice(-12).forEach(level => {
+      // Guard against the same level ever getting a second icon in the
+      // strip — normally registerLevelsReached()/markLevelFirstSeen()
+      // already prevent this per world-playthrough, but this dedupe is a
+      // cheap belt-and-suspenders safety net at render time so a
+      // duplicate push (e.g. from an edge case in that upstream gating)
+      // can never actually show twice. Keeps first-seen order, which is
+      // also chronological order since `collection` is only ever
+      // appended to.
+      const seenLevels = new Set();
+      const uniqueLevels = collection.filter(level => {
+        if (seenLevels.has(level)) return false;
+        seenLevels.add(level);
+        return true;
+      });
+      uniqueLevels.slice(-12).forEach(level => {
         collectionEl.appendChild(createItemIcon(getItem(level)));
       });
     }
