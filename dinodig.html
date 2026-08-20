@@ -39,7 +39,7 @@ img{-webkit-user-drag:none;user-select:none}
   border-radius:14px;
   overflow:hidden;
   box-shadow:0 25px 60px #00000090,0 0 0 6px #3a220f;
-  background-image:url("images/fossil-map.png");
+  background-image:url("images/dinodig/fossil-map.png");
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
@@ -175,9 +175,9 @@ img{-webkit-user-drag:none;user-select:none}
   <div class="dig-bg"><canvas id="digCanvas"></canvas></div>
   <aside class="inventory panel"><h2>SKELETON PARTS</h2><div id="slots" class="grid"></div></aside>
   <div class="tools">
-    <button class="tool btn active" data-tool="pick"><img class="tool-icon" src="images/pickaxe.png" alt="Pickaxe">PICKAXE<br><small>rock and stone</small></button>
-    <button class="tool btn" data-tool="brush"><img class="tool-icon" src="images/brush.png" alt="Brush">BRUSH<br><small>dust and sand</small></button>
-    <button class="tool btn" data-tool="bucket"><img class="tool-icon" src="images/bucket.png" alt="Bucket">BUCKET<br><small>clear debris</small></button>
+    <button class="tool btn active" data-tool="pick"><img class="tool-icon" src="images/dinodig/pickaxe.png" alt="Pickaxe">PICKAXE<br><small>rock and stone</small></button>
+    <button class="tool btn" data-tool="brush"><img class="tool-icon" src="images/dinodig/brush.png" alt="Brush">BRUSH<br><small>dust and sand</small></button>
+    <button class="tool btn" data-tool="bucket"><img class="tool-icon" src="images/dinodig/bucket.png" alt="Bucket">BUCKET<br><small>clear debris</small></button>
   </div>
   <button id="buildBtn" class="build btn" disabled>Locked<br><small>Find all parts</small></button>
   <button class="back btn" data-go="mapScreen" aria-label="Back to map">←</button>
@@ -315,16 +315,16 @@ function makeImgEl(src, alt, cls){
 /* ---------------- Asset registry (all Image objects declared up front) ---------------- */
 
 const ASSETS = {
-  digBg: loadImage('images/digsite-bg.png'),
-  rock: loadImage('images/rock.png'),
-  dust: loadImage('images/dust.png'),
-  debris: loadImage('images/debris.png'),
+  digBg: loadImage('images/dinodig/digsite-bg.png'),
+  rock: loadImage('images/dinodig/rock.png'),
+  dust: loadImage('images/dinodig/dust.png'),
+  debris: loadImage('images/dinodig/debris.png'),
   fossil: {
-    skull: loadImage('images/fossil-skull.png'),
-    rib: loadImage('images/fossil-rib.png'),
-    leg: loadImage('images/fossil-leg.png'),
-    tail: loadImage('images/fossil-tail.png'),
-    claw: loadImage('images/fossil-claw.png')
+    skull: loadImage('images/dinodig/fossil-skull.png'),
+    rib: loadImage('images/dinodig/fossil-rib.png'),
+    leg: loadImage('images/dinodig/fossil-leg.png'),
+    tail: loadImage('images/dinodig/fossil-tail.png'),
+    claw: loadImage('images/dinodig/fossil-claw.png')
   }
 };
 
@@ -333,34 +333,34 @@ const FOSSIL_PATTERN = ['skull','rib','leg','tail','claw','rib','leg','tail','cl
 
 /* ---------------- Dinosaur library (add new dinosaurs here only) ----------------
    To add Spinosaurus / Stegosaurus for real: drop the two matching PNGs into
-   images/ and flip comingSoon to false below. No other code needs to change. */
+   images/dinodig/ and flip comingSoon to false below. No other code needs to change. */
 const DINO_LIBRARY = {
   trex: {
     name: 'Tyrannosaurus rex', period: 'Cretaceous', diet: 'Carnivore',
     fact: 'One of the most powerful predators ever to walk the earth, with a bite stronger than any other land animal.',
-    skeleton: loadImage('images/trex-complete-skeleton.png'),
-    alive: loadImage('images/trex-alive.png'),
+    skeleton: loadImage('images/dinodig/trex-complete-skeleton.png'),
+    alive: loadImage('images/dinodig/trex-alive.png'),
     comingSoon: false
   },
   triceratops: {
     name: 'Triceratops', period: 'Cretaceous', diet: 'Herbivore',
     fact: 'Easy to spot thanks to its three horns and the wide bony frill that guarded against predators.',
-    skeleton: loadImage('images/triceratops-complete-skeleton.png'),
-    alive: loadImage('images/triceratops-alive.png'),
+    skeleton: loadImage('images/dinodig/triceratops-complete-skeleton.png'),
+    alive: loadImage('images/dinodig/triceratops-alive.png'),
     comingSoon: false
   },
   stegosaurus: {
     name: 'Stegosaurus', period: 'Jurassic', diet: 'Herbivore',
     fact: 'Known for the large bony plates along its back and the sharp spikes on its tail.',
-    skeleton: loadImage('images/stegosaurus-complete-skeleton.png'),
-    alive: loadImage('images/stegosaurus-alive.png'),
+    skeleton: loadImage('images/dinodig/stegosaurus-complete-skeleton.png'),
+    alive: loadImage('images/dinodig/stegosaurus-alive.png'),
     comingSoon: true
   },
   spinosaurus: {
     name: 'Spinosaurus', period: 'Cretaceous', diet: 'Fish-eater',
     fact: 'The largest known carnivorous dinosaur, with a sail-like ridge on its back and a taste for water.',
-    skeleton: loadImage('images/spinosaurus-complete-skeleton.png'),
-    alive: loadImage('images/spinosaurus-alive.png'),
+    skeleton: loadImage('images/dinodig/spinosaurus-complete-skeleton.png'),
+    alive: loadImage('images/dinodig/spinosaurus-alive.png'),
     comingSoon: true
   },
   mystery: {
@@ -382,7 +382,7 @@ const LEVELS = [
 ];
 
 /* Site hotspot centers as % of the map image (1536x1024), measured directly
-   from images/fossil-map.png so each hotspot sits exactly on its numbered
+   from images/dinodig/fossil-map.png so each hotspot sits exactly on its numbered
    badge regardless of screen size (the .map-wrap keeps the image's 3:2
    aspect ratio at every viewport, so these percentages never drift). */
 const SITE_POS = [
@@ -629,7 +629,7 @@ function collect(b){
   found++;
   const slot = $('#slot' + j);
   slot.innerHTML = '';
-  slot.appendChild(makeImgEl('images/fossil-' + b.type + '.png', b.type));
+  slot.appendChild(makeImgEl('images/dinodig/fossil-' + b.type + '.png', b.type));
   slot.classList.add('found');
   $('#count').textContent = found + '/' + FOSSIL_PATTERN.length;
   $('#bar').style.width = (found / FOSSIL_PATTERN.length * 100) + '%';
@@ -724,7 +724,7 @@ function startBuild(){
     piece.className = 'piece';
     piece.dataset.i = i;
     piece.dataset.type = type;
-    piece.appendChild(makeImgEl('images/fossil-' + type + '.png', type));
+    piece.appendChild(makeImgEl('images/dinodig/fossil-' + type + '.png', type));
     piecesEl.appendChild(piece);
   });
 
@@ -739,7 +739,7 @@ function startBuild(){
     zone.style.top = p[1] + '%';
     zone.style.width = '18%';
     zone.style.height = '22%';
-    zone.appendChild(makeImgEl('images/fossil-' + FOSSIL_PATTERN[i] + '.png', FOSSIL_PATTERN[i]));
+    zone.appendChild(makeImgEl('images/dinodig/fossil-' + FOSSIL_PATTERN[i] + '.png', FOSSIL_PATTERN[i]));
     zonesEl.appendChild(zone);
   });
 
