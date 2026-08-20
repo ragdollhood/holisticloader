@@ -645,6 +645,16 @@ function getItem(level) {
     // score-row pill.
     const LANDSCAPE_UNDER_DESKTOP_QUERY = window.matchMedia("(orientation: landscape) and (max-width: 1199px)");
 
+    // Pure width check for "mobile version" (matches the max-width:1199px
+    // threshold the CSS itself already uses for every mobile-only rule,
+    // including BOTH .side-panel .difficulty-rules toast blocks — the
+    // short-mobile-landscape one and the portrait/tall-landscape one).
+    // Unlike DESKTOP_MEDIA_QUERY, this never counts a narrow phone as
+    // "desktop" just because it's briefly in short landscape — it only
+    // ever tracks width, so laptop/desktop (>=1200px) is the only thing
+    // excluded.
+    const MOBILE_WIDTH_QUERY = window.matchMedia("(max-width: 1199px)");
+
     // Moves just the title wordmark image (+ its text fallback) between
     // its usual home in the side-panel's top-row (next to the world
     // name) and #stageTitle, overlaid on the game-world art's top-left
@@ -756,20 +766,23 @@ function getItem(level) {
     document.getElementById("diffHardBtn").addEventListener("click", () => { setDifficulty("hard"); showDifficultyRulesToast(); });
     setDifficulty(difficulty); // reflect the stored/default preference in the button styling on load — NOT wrapped in showDifficultyRulesToast(), so loading a saved preference stays silent and only an actual tap flashes the toast
 
-    // Mobile-landscape only (see .side-panel .difficulty-rules.show in
-    // the CSS, scoped to the same MOBILE_LANDSCAPE_QUERY breakpoint):
-    // briefly flashes the illustrated Easy/Hard rule diagram center-
-    // screen for 1.5s, then fades it out — same timing/interaction
-    // pattern as showToast()'s "Beautiful merge" toast, so it reads as
-    // a momentary confirmation rather than a permanent fixture eating
-    // side-panel space. Desktop/laptop and mobile-portrait are
-    // untouched: the CSS only turns .difficulty-rules into this
-    // fixed-position toast within that one media query, so calling
-    // this outside it (guarded below) would have nothing to show
-    // against anyway.
+    // Mobile only (see .side-panel .difficulty-rules.show in the CSS,
+    // which turns the illustrated Easy/Hard legend into this toast in
+    // BOTH mobile-width media queries — short landscape and portrait/
+    // tall-landscape — so this now fires across all of mobile, not
+    // just short landscape): briefly flashes the illustrated Easy/Hard
+    // rule diagram center-screen for 1.5s, then fades it out — same
+    // timing/interaction pattern as showToast()'s "Beautiful merge"
+    // toast, so it reads as a momentary confirmation rather than a
+    // permanent fixture eating side-panel space. Desktop/laptop
+    // (>=1200px) is untouched: the CSS never turns .difficulty-rules
+    // into this fixed-position toast there (it stays the permanent
+    // under-the-buttons legend instead), so calling this outside
+    // mobile width (guarded below) would have nothing to show against
+    // anyway.
     let difficultyRulesToastTimer = null;
     function showDifficultyRulesToast() {
-      if (!MOBILE_LANDSCAPE_QUERY.matches) return;
+      if (!MOBILE_WIDTH_QUERY.matches) return;
       const rulesEl = document.getElementById("difficultyRules");
       if (!rulesEl) return;
       clearTimeout(difficultyRulesToastTimer);
