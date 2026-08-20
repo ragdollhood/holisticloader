@@ -11,7 +11,7 @@
   <meta name="application-name" content="Mergico" />
   <meta name="theme-color" content="#10091b" />
   <!-- Update to the real deployed URL before publishing. -->
-  <link rel="canonical" href="https://holisticloader.com/game" />
+  <link rel="canonical" href="https://holisticloader.com/game2" />
 
   <!-- Google AdSense — loads the ad library site-wide. adsense.js (loaded
        later, after auth.js) decides per-visitor whether any ad actually
@@ -60,7 +60,7 @@
     "genre": ["Puzzle", "Merge game"],
     "applicationCategory": "Game",
     "operatingSystem": "Any (Web Browser)",
-    "url": "https://holisticloader.com/game",
+    "url": "https://holisticloader.com/game2",
     "image": "https://holisticloader.com/images/game-preview.jpg",
     "offers": {
       "@type": "Offer",
@@ -74,7 +74,7 @@
        body) loads from ahead of time, so that request doesn't also have to
        pay for DNS + TLS handshake once the parser finally reaches it. -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preload" as="image" href="images/game-holisticgametiteltext.webp" type="image/webp" fetchpriority="high">
+  <link rel="preload" as="image" href="images/mergico2.webp" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="auth-ui.css">
   <link rel="stylesheet" href="game2.css">
 </head>
@@ -155,7 +155,7 @@
                just the next-item artwork in its little frame. The
                "Next item" caption is mobile-only (see .next-item-label)
                and stays hidden/desktop-inert otherwise. -->
-          <div class="next-item-group" id="nextItemGroup">
+          <div class="next-item-group gameplay-only" id="nextItemGroup">
             <span class="next-item-label" id="nextItemLabel">Next item</span>
             <div class="next-seed" id="nextTile" aria-label="Next item to place"></div>
           </div>
@@ -607,7 +607,7 @@
          - both are skipped instantly once ads are removed (Premium
            sign-in or the one-time purchase adds #gameLayout's
            "ads-removed" class — see refreshMonetizationUI() in
-           game.js/auth.js) -->
+           game2.js/auth.js) -->
   <script>
   (function () {
     var gameLayout = document.getElementById('gameLayout');
