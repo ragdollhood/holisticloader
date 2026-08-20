@@ -1466,10 +1466,10 @@ button {
          --sp-width is left as it was (harmless either way, and the
          panel still needs the room). */
       :root {
-        --board-left: 19%;
-        --board-top: calc(17% + 24px);
-        --board-width: 62%;
-        --board-height: 54%;
+        --board-left: 6%;
+        --board-top: calc(9% + 38px);
+        --board-width: 88%;
+        --board-height: 84%;
         --sp-width: clamp(190px, 26vw, 300px);
         --gl-gap: clamp(6px, 1.2vw, 14px);
         --screen-pad: clamp(6px, 1vw, 12px);
@@ -3093,9 +3093,45 @@ button {
       .actions { padding: 5px; gap: 4px; }
       .difficulty { padding: 5px; gap: 4px; }
       /* Mobile drops the illustrated circles/arrows/checkmark legend
-         entirely and instead shows a short text hint right on the
-         Easy/Hard buttons themselves (see .diff-mobile-hint). */
-      .side-panel .difficulty-rules { display: none; }
+         from its permanent spot under the Easy/Hard toggle, and instead
+         shows a short text hint right on the buttons themselves (see
+         .diff-mobile-hint) PLUS the same center-screen "tap Easy/Hard,
+         see the full legend for 1.5s, then fade" toast that mobile
+         landscape already uses (see showDifficultyRulesToast() in the
+         JS and the matching .side-panel .difficulty-rules rules in the
+         orientation:landscape/max-height:600px query above) — same
+         position:fixed + opacity/transform transition + .show class,
+         just duplicated here so it also applies in portrait (and in
+         landscape that's tall enough to miss the max-height:600px
+         query above, which this broader max-width:1199px query still
+         covers). Kept out of document flow (position:fixed) so, same
+         as landscape, it never reserves permanent height in the panel. */
+      .side-panel .difficulty-rules {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        z-index: 30;
+        display: flex;
+        width: auto;
+        max-width: min(78vw, 260px);
+        padding: 10px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: rgba(16,9,27,.88);
+        box-shadow: 0 18px 60px rgba(0,0,0,.44), 0 0 28px rgba(248,217,139,.18);
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(.92);
+        transition: opacity .25s ease, transform .25s ease;
+      }
+      .side-panel .difficulty-rules.show {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .diff-rule-group { gap: 1px; }
+      .diff-rule-label { font-size: 8.5px; }
+      .diff-rule-svg { width: 60%; margin: 0 auto; }
       .diff-mobile-hint { display: inline; }
       button { padding: 6px 8px; font-size: 8px; }
 
