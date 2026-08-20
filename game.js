@@ -701,13 +701,16 @@ function getItem(level) {
         // ".home-thumb { display:none }" desktop rule) so it's still
         // ready to be used the moment the layout drops back to mobile.
         if (MOBILE_LANDSCAPE_QUERY.matches) {
-          // Short mobile-landscape phone: keep the next-item badge as
-          // a stage overlay (its original spot) instead of moving it
-          // into #nextBox like real desktop/laptop does — see the
-          // matching CSS block ("Mobile-landscape ... next-item badge
-          // stays ... as an overlay") a few hundred lines up.
-          stageEl.appendChild(nextItemGroupEl);
-          nextItemLabelEl.textContent = "Next";
+          // Short mobile-landscape phone: the next-item badge moves
+          // into the side panel itself now, inserted directly before
+          // #collection so it takes over that prominent slot (with
+          // collection demoted to a slim strip right below it) —
+          // instead of floating as a bare icon overlay on the board
+          // art like it used to. See the matching CSS block
+          // (".side-panel .next-item-group ...") a few hundred lines
+          // up for the card styling that goes with this.
+          sidePanelEl.insertBefore(nextItemGroupEl, collectionEl);
+          nextItemLabelEl.textContent = "Next item";
         } else {
           nextBoxEl.appendChild(nextItemGroupEl);
           nextItemLabelEl.textContent = "Next item";
@@ -751,9 +754,30 @@ function getItem(level) {
     mobileMapRemoveAdsBtnEl.addEventListener("click", startRemoveAdsPurchase);
 
     document.getElementById("newBtn").addEventListener("click", newGarden);
-    document.getElementById("diffEasyBtn").addEventListener("click", () => setDifficulty("easy"));
-    document.getElementById("diffHardBtn").addEventListener("click", () => setDifficulty("hard"));
-    setDifficulty(difficulty); // reflect the stored/default preference in the button styling on load
+    document.getElementById("diffEasyBtn").addEventListener("click", () => { setDifficulty("easy"); showDifficultyRulesToast(); });
+    document.getElementById("diffHardBtn").addEventListener("click", () => { setDifficulty("hard"); showDifficultyRulesToast(); });
+    setDifficulty(difficulty); // reflect the stored/default preference in the button styling on load — NOT wrapped in showDifficultyRulesToast(), so loading a saved preference stays silent and only an actual tap flashes the toast
+
+    // Mobile-landscape only (see .side-panel .difficulty-rules.show in
+    // the CSS, scoped to the same MOBILE_LANDSCAPE_QUERY breakpoint):
+    // briefly flashes the illustrated Easy/Hard rule diagram center-
+    // screen for 1.5s, then fades it out — same timing/interaction
+    // pattern as showToast()'s "Beautiful merge" toast, so it reads as
+    // a momentary confirmation rather than a permanent fixture eating
+    // side-panel space. Desktop/laptop and mobile-portrait are
+    // untouched: the CSS only turns .difficulty-rules into this
+    // fixed-position toast within that one media query, so calling
+    // this outside it (guarded below) would have nothing to show
+    // against anyway.
+    let difficultyRulesToastTimer = null;
+    function showDifficultyRulesToast() {
+      if (!MOBILE_LANDSCAPE_QUERY.matches) return;
+      const rulesEl = document.getElementById("difficultyRules");
+      if (!rulesEl) return;
+      clearTimeout(difficultyRulesToastTimer);
+      rulesEl.classList.add("show");
+      difficultyRulesToastTimer = setTimeout(() => rulesEl.classList.remove("show"), 1500);
+    }
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
     document.getElementById("closeModalBtn").addEventListener("click", hideModal);
 
