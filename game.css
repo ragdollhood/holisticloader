@@ -3358,3 +3358,27 @@ button {
        .side-panel already scrolls (overflow-y:auto, see the base
        .side-panel rule above), so there's no need to hide it: it just
        becomes one more scrollable row on short viewports instead. */
+
+    /* ---------- Mobile "rotate to portrait" cover ----------
+       On mobile widths (max-width:1199px, same threshold the rest of
+       this file already uses for "mobile"), a full-screen image blocks
+       the entire game the whole time the phone is held in landscape
+       ("horisontellt") — the game underneath is neither visible nor
+       reachable while this is showing. Implemented as a body::before
+       pseudo-element (not a real DOM node) so nothing needs to change
+       in the HTML/JS: it simply paints over everything, since a
+       position:fixed box with a z-index above every other z-index in
+       this file (highest elsewhere is 70) always wins. Appears the
+       instant orientation:landscape starts matching and disappears the
+       instant it stops (i.e. the phone is turned back to portrait) —
+       no JS/timer needed either way, since this is a pure media-query
+       match, not a one-time trigger. */
+    @media (max-width: 1199px) and (orientation: landscape) {
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        background: #10091b url("images/game-mobilehorisontal.jpg") center center / cover no-repeat;
+      }
+    }
