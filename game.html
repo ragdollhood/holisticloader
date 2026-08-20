@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mergico — Relaxing Merge Puzzle Across 10 Islands</title>
-  <meta name="description" content="Mergico is a calming merge puzzle: combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. Free to play in your browser." />
-  <meta name="keywords" content="Mergico, merge game, merge puzzle, relaxing puzzle game, island game, browser puzzle game, wellness puzzle game" />
+  <title>Holistic Game — Relaxing Merge Puzzle Across 10 Islands</title>
+  <meta name="description" content="Holistic Game is a calming merge puzzle: combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. Free to play in your browser." />
+  <meta name="keywords" content="Holistic Game, merge game, merge puzzle, relaxing puzzle game, island game, browser puzzle game, wellness puzzle game" />
   <meta name="robots" content="index, follow" />
-  <meta name="author" content="Mergico" />
-  <meta name="application-name" content="Mergico" />
+  <meta name="author" content="Holistic Game" />
+  <meta name="application-name" content="Holistic Game" />
   <meta name="theme-color" content="#10091b" />
   <!-- Update to the real deployed URL before publishing. -->
   <link rel="canonical" href="https://holisticloader.com/game" />
@@ -38,15 +38,15 @@
 
   <!-- Open Graph / Facebook, Discord, Slack, etc. -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Mergico" />
-  <meta property="og:title" content="Mergico — Relaxing Merge Puzzle Across 10 Islands" />
+  <meta property="og:site_name" content="Holistic Game" />
+  <meta property="og:title" content="Holistic Game — Relaxing Merge Puzzle Across 10 Islands" />
   <meta property="og:description" content="Combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. A calm, satisfying merge puzzle — free to play." />
   <meta property="og:image" content="https://holisticloader.com/images/game-preview.jpg" />
   <meta property="og:url" content="https://holisticloader.com/game" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Mergico — Relaxing Merge Puzzle Across 10 Islands" />
+  <meta name="twitter:title" content="Holistic Game — Relaxing Merge Puzzle Across 10 Islands" />
   <meta name="twitter:description" content="Combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world. A calm, satisfying merge puzzle — free to play." />
   <meta name="twitter:image" content="https://holisticloader.com/images/game-preview.jpg" />
 
@@ -55,8 +55,8 @@
   {
     "@context": "https://schema.org",
     "@type": "VideoGame",
-    "name": "Mergico",
-    "description": "Mergico is a calming merge puzzle: combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world.",
+    "name": "Holistic Game",
+    "description": "Holistic Game is a calming merge puzzle: combine tiles to grow higher-level items, clear each island, and unlock a new hand-painted world.",
     "genre": ["Puzzle", "Merge game"],
     "applicationCategory": "Game",
     "operatingSystem": "Any (Web Browser)",
@@ -74,13 +74,13 @@
        body) loads from ahead of time, so that request doesn't also have to
        pay for DNS + TLS handshake once the parser finally reaches it. -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preload" as="image" href="images/mergico.webp" type="image/webp" fetchpriority="high">
+  <link rel="preload" as="image" href="images/game-holisticgametiteltext.webp" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="auth-ui.css">
   <link rel="stylesheet" href="game.css">
 </head>
 <body>
   <main class="screen">
-    <h1 class="visually-hidden">Mergico — Relaxing Merge Puzzle Across 10 Islands</h1>
+    <h1 class="visually-hidden">Holistic Game — Relaxing Merge Puzzle Across 10 Islands</h1>
     <!-- game-layout holds two siblings side by side (stacked on mobile):
          .stage-frame, which now contains ONLY the game world image, the
          board of planting circles, the map screen and the "next item"
@@ -99,7 +99,7 @@
              orientation:landscape/max-height:600px/max-width:1199px
              CSS block for .stage-title further up. -->
         <div class="stage-title" id="stageTitle" aria-hidden="true"></div>
-        <section class="stage" id="stage" aria-label="Mergico world">
+        <section class="stage" id="stage" aria-label="Holistic Game world">
           <div class="stars"></div>
 
           <div class="board-wrap">
@@ -111,13 +111,13 @@
               <img
                 class="map-brand-img"
                 id="mapBrandImg"
-                src="images/mergico.png"
-                alt="Mergico"
+                src="images/game-holisticgametiteltext.png"
+                alt="Holistic Game"
                 fetchpriority="high"
                 decoding="async"
                 onerror="this.style.display='none'; document.getElementById('mapBrandFallback').style.display='block';"
               >
-              <span class="map-brand-fallback" id="mapBrandFallback">Mergico</span>
+              <span class="map-brand-fallback" id="mapBrandFallback">Holistic Game</span>
             </div>
             <div class="map-title" id="mapTitle">Choose an island</div>
             <div class="map-frame" id="mapFrame"></div>
@@ -175,11 +175,11 @@
               <img
                 class="brand-logo"
                 id="brandLogo"
-                src="images/mergico.png"
-                alt="Mergico"
+                src="images/game-holisticgametiteltext.png"
+                alt="Holistic Game"
                 onerror="this.style.display='none'; document.getElementById('brandFallback').style.display='block';"
               >
-              <span class="brand-fallback" id="brandFallback">Mergico</span>
+              <span class="brand-fallback" id="brandFallback">Holistic Game</span>
             </div>
 
             <!-- Shown only during gameplay (small wordmark image above
@@ -189,11 +189,11 @@
               <img
                 class="brand-logo-text"
                 id="brandLogoText"
-                src="images/mergico.png"
-                alt="Mergico"
+                src="images/game-holisticgametiteltext.png"
+                alt="Holistic Game"
                 onerror="this.style.display='none'; document.getElementById('brandFallbackText').style.display='block';"
               >
-              <span class="brand-fallback-text" id="brandFallbackText">Mergico</span>
+              <span class="brand-fallback-text" id="brandFallbackText">Holistic Game</span>
               <strong id="worldName">Underwater</strong>
             </div>
           </div>

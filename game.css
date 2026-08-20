@@ -1017,25 +1017,59 @@ button {
     }
 
     /* Mobile-landscape ("horizontal") gameplay only: the next-item
-       badge stays (or rather, is put back) as an overlay on the
-       game-world art itself — bottom-left corner, flush against the
-       edges — instead of living in the side panel's .next-box card
-       (see the DESKTOP_MEDIA_QUERY branch of layoutSideExtras() in
-       the JS, which now special-cases this narrower breakpoint). With
+       badge moves off the game-world art entirely and into the side
+       panel instead, inserted directly before #collection (see
+       layoutSideExtras() in the JS) — it's now the panel's big,
+       prominent card, with collection demoted to a slim strip right
+       below it (see .side-panel .collection further down). With
        nothing left inside it, .next-box itself is hidden here so it
-       doesn't show up as an empty card. Icon only, no caption. */
+       doesn't show up as an empty card. */
     @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
       #gameLayout:not(.on-map) .next-box {
         display: none;
       }
 
-      #gameLayout:not(.on-map) .stage .next-item-group {
-        left: 0;
-        bottom: 0;
+      /* Overrides the base .next-item-group's position:absolute/left/
+         bottom overlay placement — as a direct .side-panel child now,
+         it needs to be a normal in-flow block instead, styled like
+         every other "hud" card in the panel (.score/.actions/etc): a
+         glass background/border/blur instead of the bare
+         floating-icon look it had as a stage overlay. */
+      .side-panel .next-item-group {
+        position: static;
+        width: 100%;
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 10px 12px;
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.06)), var(--glass);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow: 0 18px 50px rgba(0,0,0,.30);
       }
 
-      #gameLayout:not(.on-map) .stage .next-item-label {
-        display: none;
+      /* Shown now (unlike the old bare stage-overlay version, which
+         hid this) — it's a real labeled card, same as desktop's
+         .next-box .next-item-label. */
+      .side-panel .next-item-label {
+        display: block;
+        font-size: 11px;
+        flex: 0 0 auto;
+      }
+
+      .side-panel .next-seed {
+        width: 90px;
+        height: 90px;
+        border-radius: 20px;
+      }
+
+      .side-panel .next-seed .item-icon {
+        width: 66%;
+        height: 66%;
       }
     }
 
@@ -1590,30 +1624,57 @@ button {
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      /* Collection icons default to 50px (see .collection .item-icon
-         base rule) — sized for a desktop side panel with room to
-         spare. At 50px each, even a handful of collected items wrap
-         into two tall rows here, which was the single biggest
-         contributor to pushing .next-box off screen. Shrunk to match
-         the size mobile portrait already uses. */
-      .collection { padding: 4px 8px; gap: 4px; }
-      .collection .item-icon { width: 25px; height: 25px; }
+      /* Collection is now just a slim strip under the big next-item
+         card above (see .side-panel .next-item-group) — shrunk to
+         ~20px tall total per request: 3px top + 3px bottom padding
+         around a 14px icon = 20px. ".side-panel" prefix (not just the
+         bare class) is required: the later, unscoped base rules
+         further down this file (".collection { padding: 6px 10px;
+         ...}" and ".collection .item-icon { width: 50px; ...}")
+         share the exact same specificity as a plain ".collection" /
+         ".collection .item-icon" selector here, so — being later in
+         source order — they'd silently win over this regardless of
+         which one a browser evaluated first. */
+      .side-panel .collection { padding: 3px 8px; gap: 3px; }
+      .side-panel .collection .item-icon { width: 14px; height: 14px; }
 
       .actions { padding: 5px; gap: 4px; }
       .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
       .difficulty { padding: 5px; gap: 4px; }
       .difficulty button { padding: 7px 8px; font-size: 9px; min-width: 0; }
-      /* Show the illustrated legend (circles + dashed arrow + checkmark)
-         instead of the text hint on the buttons themselves — just
-         "Easy"/"Hard" on the buttons, the diagrams explain the rule
-         below. Compacted (smaller padding/gap/label/svg) so the whole
-         panel still fits within the game-world image's height, now
-         that .next-box (emptied earlier in this same breakpoint) isn't
-         competing for that space. */
+      /* Illustrated legend (circles + dashed arrow + checkmark) no
+         longer sits permanently in the panel here — tapping Easy/Hard
+         now flashes it center-screen for 1.5s instead (see
+         showDifficultyRulesToast() in the JS), same "appear, hold,
+         fade" pattern .toast/.level-reveal already use elsewhere.
+         Taken out of document flow (position:fixed) so it also isn't
+         reserving permanent height in the panel any more. Same
+         specificity note as .side-panel .collection above applies
+         here too — ".side-panel" prefix is what makes this win over
+         the later, unscoped base ".difficulty-rules { display:flex;
+         ...}" rule regardless of source order. */
       .side-panel .difficulty-rules {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        z-index: 30;
         display: flex;
-        padding: 4px 8px;
-        gap: 3px;
+        width: auto;
+        max-width: min(78vw, 260px);
+        padding: 10px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: rgba(16,9,27,.88);
+        box-shadow: 0 18px 60px rgba(0,0,0,.44), 0 0 28px rgba(248,217,139,.18);
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(.92);
+        transition: opacity .25s ease, transform .25s ease;
+      }
+      .side-panel .difficulty-rules.show {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%) scale(1);
       }
       .diff-rule-group { gap: 1px; }
       .diff-rule-label { font-size: 8.5px; }
