@@ -1,0 +1,3281 @@
+/* game.css — extracted from game.html for caching/perf.
+   Source order preserved exactly as it was inline: this file
+   must be linked AFTER auth-ui.css (see #authRoot cascade note
+   below) so the same-specificity, later-wins rule still applies. */
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    :root {
+      --gold: #f8d98b;
+      --gold2: #fff2bd;
+      --lav: #c9a7ff;
+      --text: #fff8ee;
+      --muted: rgba(255, 248, 238, 0.72);
+      --glass: rgba(20, 10, 30, 0.42);
+      --glass-strong: rgba(20, 10, 30, 0.70);
+      --border: rgba(255, 255, 255, 0.20);
+      --shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
+
+      /* Aliases so auth-ui.css (built against --ink/--line/--bg) reads
+         the same palette as the rest of this page. */
+      --ink: var(--text);
+      --line: var(--border);
+      --bg: #10091b;
+
+  /* ---------- Layout budget (desktop/laptop) ----------
+     The exact same values used by .screen's padding, .game-layout's
+     gap, and .side-panel's width — duplicated here as variables so
+     .stage-frame (below) can size itself against the REAL horizontal
+     space left over after the side panel + gaps + page padding,
+     instead of a flat "78vw" guess. Without this, narrowing the
+     browser window could ask for a stage-frame wider than what's
+     actually left, forcing the flex row to shrink it unevenly (height
+     stays fixed, width gets squeezed) — which distorts the frame's
+     aspect ratio away from the map/world image's real ratio and made
+     the artwork appear cropped at the edges. Sizing against this
+     budget instead means the frame always fits, so nothing ever needs
+     to be cropped — any leftover room just becomes empty air on the
+     sides of the box, and the numbered island badges (positioned in
+     % of that same box) stay exactly where the map artwork puts them. */
+  --screen-pad: clamp(8px, 1.6vw, 18px);
+  --gl-gap: clamp(10px, 1.8vw, 22px);
+  --sp-width: clamp(200px, 21vw, 300px);
+  --stage-max-w: calc(100vw - (var(--screen-pad) * 2) - var(--gl-gap) - var(--sp-width));
+
+  /* Laptop/desktop board bounding box — shrunk a bit (from 64%/60% to
+     58%/54%) and re-centered (left +3% for the narrower width), plus
+     pushed further down (top +5% beyond the recentering amount) so the
+     circles sit a little lower under the brand/HUD area. Mobile
+     completely overrides all four of these inside its own media query
+     (see max-width:1199px below), so this block only ever affects
+     desktop/laptop. */
+  --board-left: 21%;
+  --board-top: calc(24% + 38px);
+
+  /* These two are deliberately unequal — they define a bounding BOX
+     (58% wide x 54% tall of the stage), not the grid's actual shape.
+     The height leaves room below the board for the next-seed panel /
+     controls. The grid itself (.board, via .board-wrap + cqmin — see
+     below) always sizes itself to the largest SQUARE that fits inside
+     this box, centered, so the 5x5 cells stay perfectly square/circular
+     no matter how non-square this bounding box or the stage image is. */
+  --board-width: 58%;
+  --board-height: 54%;
+
+}
+
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      /* Was overflow:hidden. .screen is sized to a flat 100svh (see
+         below) with no awareness of anything that might ever sit
+         ABOVE it in the page — e.g. a Google AdSense top anchor ad,
+         which docks itself at the very top of <body> and pushes
+         everything else down by exactly its own height. With
+         overflow:hidden here, that push has nowhere to go: the bottom
+         slice of the page — the exact height the ad just took —
+         becomes genuinely unreachable, not just scrolled out of view
+         but rendered outside the page entirely, with no scrollbar or
+         gesture that can ever reach it. Every OTHER "content taller
+         than its box" case in this file is already handled by an
+         internal overflow-y:auto on that specific box (.side-panel,
+         .modal-card, etc.), so this change is a last-resort safety
+         net one level up, not a replacement for those — it only ever
+         does anything on the rare page-level overflow those inner
+         fixes can't reach (like a top-anchor ad's own push), since
+         normal gameplay never grows past .screen's own 100svh box. */
+      overflow-x: hidden;
+      overflow-y: auto;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #10091b;
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100svh;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(201, 167, 255, .24), transparent 34%),
+        radial-gradient(circle at 84% 10%, rgba(248, 217, 139, .18), transparent 32%),
+        linear-gradient(135deg, #10091b, #271638 62%, #12091d);
+    }
+
+    .screen {
+      width: 100vw;
+      height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(8px, 1.6vw, 18px);
+      position: relative;
+    }
+
+    /* ---------- Game layout ----------
+       Two siblings, side by side: .stage-frame (the game-world image —
+       board of planting circles + the "next item" preview, nothing
+       else) and .side-panel (a tall vertical strip holding every button
+       and readout that used to float on top of the artwork). Stacked
+       instead (image on top, panel below) on narrow/mobile widths — see
+       the max-width:1199px and landscape media queries further down. */
+    .game-layout {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: clamp(10px, 1.8vw, 22px);
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+.stage-frame {
+  position: relative;
+
+  /* --stage-ratio (image width / image height) defaults to a square
+     until applyStageAspectRatio() (JS, below) measures the CURRENT
+     world image's real natural size and overwrites it — so the frame
+     always matches whatever that image's actual proportions are,
+     instead of assuming square. Only touched on desktop/laptop widths;
+     on mobile it's left at its default 1 and the media query further
+     down takes over sizing entirely (own width/height rules, own
+     forced-square .stage), so this doesn't affect the phone layout.
+
+     Height is capped by TWO independent budgets, and the smaller one
+     wins: 96svh (vertical room) and calc(var(--stage-max-w) / ratio)
+     (the height that exactly fills the REAL leftover horizontal room
+     — see --stage-max-w above — without the side panel/gaps/padding
+     being pushed off-screen). Only height is ever set explicitly;
+     width stays auto and is derived from aspect-ratio, so the browser
+     never has to shrink width and height independently (the thing
+     that broke the aspect ratio and made the map look cropped) — the
+     box arrives at its final size already matching the image's real
+     proportions, with any spare room simply left empty on the sides. */
+  --stage-ratio: 1;
+  height: min(96svh, calc(var(--stage-max-w) / var(--stage-ratio)));
+  width: auto;
+  aspect-ratio: var(--stage-ratio);
+  flex: 0 0 auto;
+
+  /* Column/row counts for the game grid: 5x5 by default, overridden by
+     JS (see COLS/ROWS + DESKTOP_MEDIA_QUERY below) — 7x5 on desktop/
+     laptop widths, 5x5 on mobile too now (mobile used to drop the top
+     row of the board — see ROWS_MOBILE — but that row has been added
+     back). */
+  --board-cols: 5;
+  --board-rows: 5;
+}
+
+    /* The vertical panel itself — everything inside it stacks top to
+       bottom in normal flow (no absolute positioning), so it grows
+       exactly as tall as its content needs and simply scrolls if a
+       very short viewport can't fit all of it. */
+    .side-panel {
+      position: relative;
+      width: var(--sp-width);
+      flex: 0 0 auto;
+      /* Without this, a flex item's default min-height:auto lets its
+         CONTENT'S natural height win over the stretched height coming
+         from .game-layout's align-items:stretch — so on a viewport too
+         short for everything to fit (e.g. a phone in landscape, using
+         this same side-by-side layout — see the min-width:1200px /
+         landscape media queries), the panel just grows taller than its
+         box instead of scrolling, and that overflow then gets clipped
+         by html/body's own overflow:hidden further up. min-height:0
+         lets the panel actually respect its stretched height so
+         overflow-y:auto (below) can do its job and scroll instead. */
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 4px 2px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;      /* Firefox */
+      -ms-overflow-style: none;   /* old Edge/IE */
+    }
+
+    /* Chrome / Safari / new Edge — same "scrollable but no visible
+       scrollbar" effect as scrollbar-width:none above. */
+    .side-panel::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    .side-panel .top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Mobile-only "How to play" info icon (see #howToPlayBtn in the
+       markup) — hidden everywhere by default; the mobile media query
+       further down turns it on for the map screen only. Sized and
+       styled to match the account icon it sits next to. */
+    .howtoplay-btn {
+      display: none;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.06)), var(--glass);
+      color: var(--gold2);
+      cursor: pointer;
+    }
+
+    .howtoplay-btn:hover, .howtoplay-btn:focus-visible {
+      background: linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.10)), var(--glass);
+      outline: none;
+    }
+
+    /* Landscape-mobile-only alternative to the icon above — icon PLUS
+       the "How to Use" label, sitting inline in the side panel (see
+       the markup right before .how-to-play's <h3>) instead of in a
+       top icon bar. Hidden by default everywhere else; the
+       landscape-mobile media query further down turns it on and hides
+       the full h3+ol instructions in its place. */
+    .how-to-play-compact-btn {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.05)), var(--glass);
+      color: var(--gold2);
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .how-to-play-compact-btn svg { flex: 0 0 auto; }
+
+    .how-to-play-compact-btn:hover, .how-to-play-compact-btn:focus-visible {
+      background: linear-gradient(145deg, rgba(255,255,255,.22), rgba(255,255,255,.09)), var(--glass);
+      outline: none;
+    }
+
+    /* Copy inside the mobile How to Play modal — reuses .modal-card's
+       look but left-aligns the list instead of the card's default
+       centered text. */
+    .how-to-play-card {
+      text-align: center;
+    }
+
+    .how-to-play-card ol {
+      margin: 14px 0 20px;
+      padding-left: 20px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    /* Small illustration under "match 3+" (step 2) in both How to Play
+       lists — the same items merged whether they sit in a straight line
+       or at an angle to each other, so the diagram shows both layouts
+       feeding into the same merged result. */
+    .merge-demo {
+      display: block;
+      width: 100%;
+      max-width: 240px;
+      height: auto;
+      margin-top: 8px;
+    }
+
+    .side-panel .hud {
+      position: static;
+      inset: auto;
+      left: auto; right: auto; top: auto; bottom: auto;
+      transform: none;
+    }
+
+    /* Hidden while the map screen is showing (see #gameLayout.on-map
+       below) — only the brand/title row + account icon stay visible,
+       matching the original overlay behaviour where the map had its
+       own title and no other HUD chrome. */
+    .side-panel .gameplay-only { display: flex; }
+
+    /* Opposite of .gameplay-only above: hidden during gameplay, shown
+       only while the map screen is showing. Used for the "how to
+       play" info box, which only makes sense before a board is open. */
+    .side-panel .map-only { display: none; }
+    #gameLayout.on-map .side-panel .map-only { display: flex; }
+
+.stage {
+  position: absolute;
+  inset: 0;
+
+  border-radius: clamp(20px, 3vw, 36px);
+
+  /* Fallback color shows through if a world's image (images/game-world*.webp
+     or .jpg — see getWorldBackgroundUrl() below) is missing or still loading,
+     instead of leaving the stage plain black. */
+  background-color: #1b1030;
+  background-image: var(--world-bg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  box-shadow:
+    var(--shadow),
+    0 0 80px rgba(248,217,139,.14);
+
+  overflow: hidden;
+  isolation: isolate;
+
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+    /* Laptop/desktop only (NOT mobile landscape, which reuses this
+       same layout but is its own separate ask) — thicker frame border
+       around the game world/map image. True min-width:1200px only, on
+       purpose: no OR'd landscape/max-height clause here like the
+       other "desktop-ish" media queries in this file. */
+    @media (min-width: 1200px) {
+      .stage { border-width: 4px; }
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 47%, transparent 0 44%, rgba(16, 9, 27, .20) 66%, rgba(7, 3, 12, .54) 100%),
+        linear-gradient(to bottom, rgba(9, 5, 16, .18), rgba(9, 5, 16, .04) 45%, rgba(9, 5, 16, .30));
+      z-index: 1;
+    }
+
+    .stars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.78) 0 1px, transparent 1.4px),
+        radial-gradient(circle, rgba(248,217,139,.60) 0 1px, transparent 1.3px);
+      background-size: 130px 130px, 210px 210px;
+      opacity: .16;
+      animation: drift 28s linear infinite;
+      z-index: 2;
+    }
+
+    @keyframes drift { from { transform: translateY(0); } to { transform: translateY(-120px); } }
+
+    .hud {
+      position: absolute;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.06)), var(--glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 18px 50px rgba(0,0,0,.30);
+    }
+
+    .brand {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 10px 14px;
+      border-radius: 20px;
+      container-type: inline-size;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand small {
+      display: block;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--gold2);
+    }
+
+    .brand strong {
+      display: block;
+      margin-top: 2px;
+      font-size: clamp(16px, 8cqw, 26px);
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      color: #fff4d5;
+      white-space: normal;
+      overflow-wrap: break-word;
+    }
+
+    /* Logo image that replaces the old "Holistic Loader" text on the
+       MAP screen, where it stands alone (no world name shown there).
+       Sized to the brand pill's own height via cqw/clamp so it scales
+       with the layout instead of a fixed pixel size. Falls back to a
+       plain "HOLISTIC GAME" text label (see the inline onerror handler
+       on the <img> in the markup) if the file is missing or fails to
+       load. */
+    .brand-logo {
+      display: block;
+      max-width: 100%;
+      max-height: clamp(64px, 30cqw, 150px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .brand-fallback {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      font-size: clamp(15px, 7cqw, 22px);
+      color: #fff4d5;
+    }
+
+    /* Map-screen brand group (full logo, or its text fallback) vs.
+       gameplay brand group (small wordmark image + the current world's
+       name, stacked the same way the old "Holistic Loader" / world-name
+       text pair used to be). Only one group is ever visible at a time —
+       toggled by #gameLayout.on-map, the same class used to hide the
+       rest of the gameplay-only side-panel chrome while the map shows. */
+    .brand-map-logo {
+      display: none;
+      align-items: center;
+    }
+
+    .brand-gameplay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    #gameLayout.on-map .brand-map-logo { display: flex; }
+
+    /* Laptop/desktop only: the start-map title now sits directly on
+       top of the map image itself (see .map-brand below), so the old
+       side-panel logo pill is hidden here instead. Mobile keeps the
+       side-panel version untouched (see the max-width:1199px query). */
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
+      #gameLayout.on-map .brand-map-logo { display: none; }
+    }
+    #gameLayout.on-map .brand-gameplay { display: none; }
+
+    /* Laptop/desktop only: show the same brand box (logo + world name)
+       and stats/account box on the start-map screen as during
+       gameplay — not just gameplay-only anymore. Mobile keeps the
+       original map/gameplay swap untouched. */
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
+      #gameLayout.on-map .brand-gameplay { display: flex; }
+      #gameLayout.on-map .score.gameplay-only { display: grid; }
+      /* Map screen only: show just the small wordmark image, not the
+         current-world name text underneath it (that text still shows
+         normally once actual gameplay starts — see .brand-gameplay
+         above, which is only ever visible on-map on desktop). */
+      #gameLayout.on-map #worldName { display: none; }
+    }
+
+    /* Score box sits above the how-to-play box on the start screen —
+       both are flex children of .side-panel, reordered here instead
+       of in the markup so gameplay's own DOM order (used for the
+       score/account readouts) doesn't need to change. */
+    .score { order: 1; }
+    .how-to-play { order: 2; }
+    .remove-ads-card, .holistic-member-line, .premium-active-badge { order: 3; }
+
+    /* On the map screen the logo stands on its own — no glass "pill"
+       box behind it (the .hud look is right for text/stat readouts,
+       but just clips/cramps a big logo image). Border, background,
+       blur and shadow all come from the shared .hud class, so they're
+       switched off here with a more specific selector rather than
+       touching .hud itself (which the score/collection/etc. panels
+       still rely on). */
+    #gameLayout.on-map .brand {
+      background: none;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      padding: 0;
+    }
+
+    /* Small wordmark image that replaces just the old "Holistic Loader"
+       label on the gameplay view — sits above the world name, so it's
+       sized like that old small-caps label rather than the big map
+       logo. Falls back to plain "HOLISTIC GAME" text (see the inline
+       onerror handler) if the file is missing or fails to load. */
+    .brand-logo-text {
+      display: block;
+      max-width: 100%;
+      max-height: clamp(36px, 18cqw, 60px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .brand-fallback-text {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--gold2);
+    }
+
+    /* Holds the title wordmark image on top of the game-world art —
+       see #stageTitle in the markup and layoutStageTitle() in the JS,
+       which moves #brandLogoText/#brandFallbackText in here. Empty
+       (and hidden) on every breakpoint except mobile in landscape
+       ("horizontal") during actual gameplay — see the media query
+       below. On the map/start screen the wordmark stays in its usual
+       side-panel spot instead (layoutStageTitle() only moves it while
+       #gameLayout does NOT have .on-map). */
+    .stage-title {
+      display: none;
+    }
+
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      #gameLayout:not(.on-map) .stage-title {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      #gameLayout:not(.on-map) .stage-title .brand-logo-text {
+        max-height: 32px;
+      }
+
+      /* The wordmark image already moved into .stage-title above, so
+         all this box has left in it is the world-name text (see
+         layoutStageTitle() in the JS) — drop the whole box, text
+         included, to free up room in the side panel. Scoped to
+         gameplay (:not(.on-map)) so the map screen's own logo box
+         (.brand-map-logo, a different child of this same .brand
+         wrapper) is untouched. */
+      #gameLayout:not(.on-map) .top-row .brand {
+        display: none;
+      }
+
+      /* Let the next-item icon grow to fill essentially all of its
+         card now that the world-name box above freed up extra room —
+         drop the fixed min-height so it's purely flex-sized, and grow
+         the icon itself from 66% to fill nearly the whole card. */
+      #gameLayout:not(.on-map) .next-box .next-seed {
+        min-height: 0;
+      }
+
+      #gameLayout:not(.on-map) .next-box .next-seed .item-icon {
+        width: 92%;
+        height: 92%;
+      }
+
+      /* Login icon (#authRoot) is pinned position:fixed to the page's
+         true top-right corner (see the shared min-width:1200px /
+         landscape rule further up, and the tightened "right" value
+         further down in this same query) — but .top-row .brand is
+         flex:1 1 auto and, with little else left in that row on this
+         narrow breakpoint, grows all the way out to the side panel's
+         own right edge (flush with that same corner), so its box ends
+         up sitting directly under/against the icon. Reserving space on
+         the brand box's right keeps a clear gap between the two.
+         Matched with an equal left margin (rather than right-only) so
+         the box shrinks symmetrically and its own centered content
+         (justify-content:center, see .brand) lands on the row's TRUE
+         midpoint — the same midpoint .score's full-width stat row
+         below lines up on — instead of drifting left of it. This only
+         has a visible effect on the map/start screen: during actual
+         gameplay .top-row .brand is hidden outright (see the
+         :not(.on-map) rule above), so the reserved margin has nothing
+         to center there. */
+      .top-row .brand {
+        margin: 0 44px;
+      }
+    }
+
+    .score {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 22px;
+      display: grid;
+      grid-template-columns: auto repeat(3, 1fr);
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    /* Account icon (built into #authRoot by auth.js/auth-ui.css). On
+       mobile it stays a normal flex item at the end of .top-row (see
+       layoutSideExtras() in the JS) — auth-ui.css is linked before this
+       <style> block, so this rule (same specificity, later in source
+       order) wins the cascade over auth-ui.css's own absolute-corner
+       default without needing !important. Laptop/desktop overrides this
+       again further down (see the 1200px query) to pin it back to the
+       page's actual top-right corner, standing alone rather than
+       sharing the side panel's title row. */
+    #authRoot {
+      flex: 0 0 auto;
+      position: static;
+    }
+
+    /* Belt-and-suspenders fix for the account icon floating above modal
+       dialogs (auth-ui.css positions it fixed in the corner with its own
+       z-index we don't control) — while any .modal is open, hide it
+       outright so it can never sit on top of a modal's close button. */
+    body.any-modal-open #authRoot,
+    body.any-modal-open #accountBtn {
+      visibility: hidden !important;
+    }
+
+    /* auth-ui.css draws a rounded-rectangle frame (border + background)
+       around the account button, which sits right at this page's own
+       rounded stage corner and ends up looking clipped/misaligned.
+       Strip that frame here so only the circular person icon itself
+       (part of the icon's own SVG artwork, not a CSS border) shows. */
+    #accountBtn {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+
+    .stat {
+      min-width: 50px;
+      text-align: center;
+      padding: 8px 8px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .stat b { display: block; color: var(--gold2); font-family: Arial, sans-serif; font-size: 15px; }
+    .stat span { display: block; margin-top: 2px; color: var(--muted); font-family: Arial, sans-serif; font-weight: 800; font-size: 9px; letter-spacing: .10em; text-transform: uppercase; }
+
+    /* HOME button — "back to the map" — a compact square icon sitting
+       to the left of the score stats. Same click destination as the
+       Map button (showMap(null)). */
+    .home-thumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      width: 50px;
+    }
+
+    /* HOME icon + mobile label — only ever shown on the mobile HUD (see
+       the max-width:1199px query further down), which also hides
+       .home-thumb-label there instead. Hidden here by default so
+       desktop/laptop keeps its existing "Back to start" caption
+       untouched. */
+    .home-thumb-icon,
+    .home-thumb-mobile-label {
+      display: none;
+    }
+
+    /* The single HUD element allowed to remain on top of the game-world
+       image itself: just the next-item artwork, no caption/label box
+       around it (that copy now lives in the side panel's "Next item"
+       readout... actually it doesn't need one — the icon speaks for
+       itself). Positioned bottom-left, same spot the old next-box sat. */
+    /* Wrapper around the next-item badge — lets a mobile-only "Next item"
+       label be stacked above the icon (see .next-item-label) without
+       touching the icon's own absolute-position math. On desktop this
+       wrapper simply carries the exact same position .next-seed used to
+       have, so desktop looks byte-for-byte identical. */
+    .next-item-group {
+      position: absolute;
+      z-index: 6;
+      left: clamp(12px, 3vw, 26px);
+      bottom: clamp(12px, 3vw, 26px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Mobile-only caption shown above the next-item icon — hidden on
+       desktop/laptop (see the max-width:1199px query further down, which
+       turns it on and repositions the group to the bottom-right). */
+    .next-item-label {
+      display: none;
+    }
+
+    .next-seed {
+      width: 62px;
+      height: 62px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(248,217,139,.28);
+      box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* The "Next item" readout lives only as a small badge over the
+       game-world image itself, bottom-left (see .next-seed above) —
+       the old side-panel box has been removed. */
+
+  .actions {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  padding: 8px;
+
+  border-radius: 999px;
+}
+
+.actions button { flex: 1 1 0; }
+
+/* Same pill row as .actions, just for the Easy/Hard toggle underneath
+   it — see #difficultyBox in the markup and setDifficulty() (JS),
+   which swaps the "active" look (plain gold button) onto whichever
+   side is currently selected and drops the other one back to
+   button.secondary. */
+.difficulty {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+}
+
+.difficulty button { flex: 1 1 0; }
+
+/* Illustrated legend under the Easy/Hard toggle (see #difficultyRules in
+   the markup) — two small groups of tiny merge diagrams (built the same
+   way as .merge-demo in #howToPlayModal: circles + dashed arrow + green
+   checkmark) that make the Easy/Hard button tooltips visible at a glance
+   instead of only on hover. */
+.difficulty-rules {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 14px;
+}
+
+/* Only the group matching the currently-selected difficulty shows —
+   see setDifficulty() (JS), which toggles "mode-easy"/"mode-hard" on
+   #difficultyRules to match #diffEasyBtn/#diffHardBtn's own selected
+   state. Laptop/desktop and mobile-landscape only: mobile-portrait
+   hides #difficultyRules entirely regardless (see the
+   max-width:1199px query further down), so this never applies there. */
+.diff-rule-group {
+  display: none;
+  flex-direction: column;
+  gap: 3px;
+}
+
+#difficultyRules.mode-easy .diff-rule-group[data-rule="easy"],
+#difficultyRules.mode-hard .diff-rule-group[data-rule="hard"] {
+  display: flex;
+}
+
+.diff-rule-label {
+  font-family: Arial, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  color: var(--muted);
+}
+
+.diff-rule-label em { color: var(--gold); font-style: normal; }
+
+.diff-rule-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Short text hint appended to the Easy/Hard button labels — hidden on
+   desktop/laptop (where the full illustrated .difficulty-rules legend
+   below the buttons already explains the modes), shown only on mobile
+   (where that legend is hidden — see the max-width:1199px query) so
+   the rule is still visible at a glance without the circles/arrows. */
+.diff-mobile-hint {
+  display: none;
+}
+
+/* #homeActionBtn ("Home", next to "New") is desktop/laptop-only — see
+   the min-width:1200px override further down. Mobile keeps using the
+   small home-thumb icon in the score row instead, so this stays
+   hidden there. */
+#homeActionBtn { display: none; }
+
+button {
+  min-width: auto;
+
+  padding: 10px 12px;
+
+  border-radius: 999px;
+
+  font-family: Arial, sans-serif;
+  font-weight: 900;
+  font-size: 10px;
+
+  letter-spacing: .08em;
+  text-transform: uppercase;
+
+  color: #24162c;
+
+  background: linear-gradient(
+    135deg,
+    var(--gold2),
+    var(--gold)
+  );
+
+  box-shadow:
+    0 14px 34px rgba(248,217,139,.22);
+}
+
+    button.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: none;
+    }
+
+    /* Desktop/laptop-only box at the bottom of the side panel holding
+       the back-to-map thumbnail above the next-item badge (see
+       layoutSideExtras() in the JS, which moves both elements in here
+       instead of the score row / stage overlay once past the 1200px
+       breakpoint). Hidden by default so mobile — which never populates
+       it — never shows an empty pill; the min-width query below is the
+       only thing that turns it on, and only outside the map screen. */
+    .next-box {
+      display: none;
+      width: 100%;
+      padding: 14px;
+      border-radius: 22px;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
+      #gameLayout:not(.on-map) .next-box {
+        display: flex;
+
+        /* Grow to fill whatever vertical space is left over at the
+           bottom of the side panel (which is always exactly as tall
+           as the game image, thanks to .game-layout's
+           align-items:stretch) instead of leaving that space empty
+           below the card. Only the "next item" card (below) actually
+           stretches into the extra room — see .next-box
+           .next-item-group / .next-seed further down — the "back to
+           start" card above it keeps its own natural size. */
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+
+      /* Inside .next-box the badge is normal in-flow content, not the
+         absolute stage overlay mobile still uses. */
+      .next-box .next-item-group {
+        position: static;
+      }
+
+      /* Laptop/desktop: pin the account icon back to the page's own
+         top-right corner (matching auth-ui.css's original intent — see
+         the #authRoot comment above) instead of sharing the side
+         panel's title row. position:fixed sidesteps the fact that
+         #authRoot is nested deep inside .side-panel (itself
+         position:relative), which would otherwise anchor it to that
+         card instead of the actual viewport corner. Applies on both
+         the start/map screen and gameplay — the icon's position never
+         changes between them. */
+      #authRoot {
+        position: fixed;
+        top: clamp(10px, 2vw, 24px);
+        right: clamp(10px, 2vw, 24px);
+        z-index: 50;
+      }
+
+      /* Desktop's .score no longer contains the home-thumb (it now
+         lives in .next-box — see layoutSideExtras()) or the account
+         icon (that stays in .top-row — see layoutSideExtras()), so
+         it's just the 3 stat columns. */
+      .score {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: center;
+      }
+
+      /* Gameplay only (not the start/map screen): pull the score box
+         out of its default position at the bottom of the side panel
+         (see the .score { order: 1 } rule above, which is what the
+         start screen still relies on) so it sits directly under the
+         title row instead. */
+      #gameLayout:not(.on-map) .side-panel .score.gameplay-only {
+        order: 0;
+        /* .side-panel .gameplay-only (higher specificity than the plain
+           .score rule up above) forces display:flex on every gameplay-
+           only box, which left the 3 stat pills as un-stretched flex
+           items hugging the left edge instead of filling/centering
+           across the box. Reassert grid here, scoped to desktop
+           gameplay only, so the repeat(3, 1fr) columns above actually
+           take effect and the pills fill the row evenly. */
+        display: grid;
+      }
+
+      /* ---------- "Back to start" card ----------
+         Removed on desktop/laptop: the home-thumb image+caption card
+         no longer appears in #nextBox here. On this breakpoint the
+         home-thumb button is hidden entirely (see ".home-thumb" rule
+         a few lines below) and replaced by the #homeActionBtn button
+         that sits next to "New" in .actions instead — see that
+         button's own CSS/JS for the details. Mobile is untouched: it
+         still renders the small square home-thumb icon in the score
+         row, exactly as before. */
+      .home-thumb {
+        display: none;
+      }
+
+      /* Shows the "Home" button next to "New" — see .actions
+         #homeActionBtn's default display:none above, and the
+         #homeActionBtn click handler (JS) further down. */
+      #homeActionBtn {
+        display: block;
+      }
+
+      /* ---------- "Next item" card ----------
+         The badge grows from a small floating icon into its own full
+         card: gold caption above a large centered item icon. Stretches
+         to fill whatever room .next-box has left over (see
+         flex:1 1 auto on .next-box above) so the icon area grows down
+         to the bottom of the side panel instead of leaving empty space
+         under a fixed-size box. */
+      .next-box .next-item-group {
+        width: 100%;
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 18px 14px 24px;
+        border-radius: 24px;
+        background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03)), var(--glass);
+        border: 1px solid var(--border);
+        box-shadow: 0 18px 50px rgba(0,0,0,.30);
+        gap: 14px;
+      }
+
+      .next-box .next-item-label {
+        display: block;
+        font-size: 12px;
+        flex: 0 0 auto;
+      }
+
+      .next-box .next-seed {
+        width: 100%;
+        flex: 1 1 auto;
+        min-height: 140px;
+        height: auto;
+        border-radius: 22px;
+      }
+
+      .next-box .next-seed .item-icon {
+        width: 66%;
+        height: 66%;
+      }
+    }
+
+    /* Mobile-landscape ("horizontal") gameplay only: the next-item
+       badge moves off the game-world art entirely and into the side
+       panel instead, inserted directly before #collection (see
+       layoutSideExtras() in the JS) — it's now the panel's big,
+       prominent card, with collection demoted to a slim strip right
+       below it (see .side-panel .collection further down). With
+       nothing left inside it, .next-box itself is hidden here so it
+       doesn't show up as an empty card. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      #gameLayout:not(.on-map) .next-box {
+        display: none;
+      }
+
+      /* Overrides the base .next-item-group's position:absolute/left/
+         bottom overlay placement — as a direct .side-panel child now,
+         it needs to be a normal in-flow block instead, styled like
+         every other "hud" card in the panel (.score/.actions/etc): a
+         glass background/border/blur instead of the bare
+         floating-icon look it had as a stage overlay. */
+      .side-panel .next-item-group {
+        position: static;
+        width: 100%;
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 10px 12px;
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.06)), var(--glass);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow: 0 18px 50px rgba(0,0,0,.30);
+      }
+
+      /* Shown now (unlike the old bare stage-overlay version, which
+         hid this) — it's a real labeled card, same as desktop's
+         .next-box .next-item-label. */
+      .side-panel .next-item-label {
+        display: block;
+        font-size: 11px;
+        flex: 0 0 auto;
+      }
+
+      .side-panel .next-seed {
+        width: 90px;
+        height: 90px;
+        border-radius: 20px;
+      }
+
+      .side-panel .next-seed .item-icon {
+        width: 66%;
+        height: 66%;
+      }
+    }
+
+    /* Tablet in landscape: same "next-item badge as a bare bottom-left
+       stage overlay" treatment as the short-mobile-landscape block
+       above, but for viewports too TALL to match max-height:600px
+       (a tablet turned sideways is still landscape/max-width:1199px,
+       just with a lot more svh than a phone — see
+       LANDSCAPE_UNDER_DESKTOP_QUERY in the JS, which now moves the
+       badge into .stage here too instead of the portrait score-row
+       pill). Matches the exact width/orientation slice of the
+       "(max-width:1199px) and (min-height:601px)" portrait/tall-
+       landscape query further down that would otherwise style this as
+       a boxed pill — so this block has to explicitly reset every
+       property that pill styling sets (background/border/padding on
+       the group, and the seed's own background/border/glow) back to
+       the plain floating-icon look, not just reposition it. The
+       higher-specificity selectors here (#id + .stage + .class) win
+       over that plain-class pill block regardless of source order. */
+    @media (orientation: landscape) and (max-width: 1199px) and (min-height: 601px) {
+      #gameLayout:not(.on-map) .next-box {
+        display: none;
+      }
+
+      #gameLayout:not(.on-map) .stage .next-item-group {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: auto;
+        z-index: 6;
+        flex: 0 0 auto;
+        min-width: 0;
+        background: none;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+      }
+
+      #gameLayout:not(.on-map) .stage .next-item-label {
+        display: none;
+      }
+
+      #gameLayout:not(.on-map) .stage .next-seed {
+        width: 62px;
+        height: 62px;
+        border-radius: 20px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(248,217,139,.28);
+        box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      #gameLayout:not(.on-map) .stage .next-seed .item-icon {
+        width: 66%;
+        height: 66%;
+      }
+    }
+
+    /* ---------- Map screen ----------
+       Shown instead of the board on first load (and any time the player
+       taps "Map") — a single map image with all 10 islands.
+       images/game-karta1-10mobile.webp/.jpg on phones (portrait),
+       images/game-karta1-10laptop.webp/.jpg on desktop/laptop widths
+       (landscape) — see getMapBackgroundUrl() below.
+       Sits on top of the stage so the board underneath keeps its own
+       state untouched while hidden. */
+    .map-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      display: none;
+      background-color: #1b1030;
+      border-radius: clamp(20px, 3vw, 36px);
+      overflow: hidden;
+    }
+
+    /* place-items: center (not "stretch") is what makes the trick below
+       work: .map-frame is left at its "auto" size instead of being
+       stretched to fill .map-screen. */
+    .map-screen.show { display: grid; place-items: center; }
+
+    /* ---------- Map frame ----------
+       Holds the actual map artwork + the numbered island badges.
+       Previously the artwork lived directly on .map-screen via
+       background-size: contain, and the island badges (.island-btn)
+       were positioned in % of .map-screen's own box. That only lined
+       badges up with the artwork when .map-screen's box HAPPENED to
+       have the same aspect ratio as the image — any other shape left
+       "contain" pillar/letterboxing the image inside the box, while
+       the badges (unaware of that letterboxing) kept using the full
+       box's % coordinates and landed off the artwork. This was most
+       visible on wide-but-short "mobile-mode" browser windows (mobile
+       layout applies under 1200px width, not just on phones) — a
+       narrow, tall window happens to be close to the portrait map
+       image's own ratio, so it looked fine there, while a wider mobile
+       window pillarboxed heavily and pushed the badges into the empty
+       bars on the sides.
+
+       Fix: give .map-frame ITSELF the image's real aspect ratio and
+       let it fit inside the centered grid above — exactly the same
+       "shrink to fit, keep ratio" result as background-size: contain,
+       except now .map-frame's own box always exactly matches the
+       visible artwork with zero letterbox inside it. Badges are
+       appended into .map-frame (JS, renderMap()) so their % positions
+       are now relative to that exact box and always land on the
+       artwork, at any window shape.
+
+       Sizing itself (width/height below) is set as explicit inline px
+       by layoutMapFrame() (JS) rather than via a CSS aspect-ratio
+       here — see that function's comment for why. */
+    .map-frame {
+      position: relative;
+      max-width: 100%;
+      max-height: 100%;
+      background-image: var(--map-bg);
+      background-size: cover; /* == contain here since JS always sizes this box to the image's real ratio */
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    /* Title image sitting directly on top of the map artwork, centered
+       horizontally — laptop/desktop only (see the min-width query
+       below). Replaces images/game-holistigametitel.png, which used to
+       show in the side panel instead (see #gameLayout.on-map
+       .brand-map-logo above). Falls back to plain "Holistic Game" text
+       (see the inline onerror handler on the <img> in the markup) if
+       the file is missing or fails to load. */
+    .map-brand {
+      display: none;
+    }
+
+    /* Mobile-landscape ("horizontal") only: no title image over the
+       map artwork itself — the matching wordmark already shows in the
+       side panel (see .brand-gameplay/#brandLogoText, centered above
+       the score row there). #mapBrand's ID selector outranks the
+       broader .map-brand class rule below regardless of source order,
+       so this stays hidden on this one breakpoint while real desktop/
+       laptop (min-width:1200px) keeps the title on the map untouched. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      #mapBrand {
+        display: none;
+      }
+    }
+
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
+      .map-brand {
+        display: block;
+        position: absolute;
+        top: clamp(8px, 2vw, 22px);
+        /* +1cm (≈38px) to the right of the original clamp(10px, 2.4vw, 26px). */
+        left: calc(clamp(10px, 2.4vw, 26px) + 38px);
+        transform: none;
+        z-index: 3;
+        max-width: 30%;
+        text-align: left;
+      }
+    }
+
+    .map-brand-img {
+      display: block;
+      width: 100%;
+      max-height: clamp(64px, 15vw, 190px);
+      height: auto;
+      object-fit: contain;
+      object-position: center top;
+      margin: 0 auto;
+    }
+
+    /* Laptop/desktop only: smaller + left-aligned wordmark on the start
+       screen (see .map-brand above, which handles the left placement —
+       this just shrinks the image itself). */
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
+      .map-brand-img {
+        /* +10% over the original clamp(40px, 8vw, 110px). */
+        max-height: clamp(44px, 8.8vw, 121px);
+        margin: 0;
+      }
+    }
+
+    .map-brand-fallback {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: clamp(18px, 3.2vw, 30px);
+      color: #fff4d5;
+    }
+
+    .map-title {
+      display: none;
+      position: absolute;
+      left: 50%;
+      top: clamp(10px, 2.4vw, 22px);
+      transform: translateX(-50%);
+      z-index: 2;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--gold2);
+      background: rgba(16,9,27,.55);
+      border: 1px solid rgba(248,217,139,.30);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .island-btn {
+      position: absolute;
+      /* translateY(-50%) would center the button exactly ON the x/y
+         point from ISLAND_POSITIONS_*. Using a smaller upward shift
+         instead (-32% instead of -50%) leaves the x/y point nearer the
+         button's TOP edge, so the whole number badge renders a bit
+         below that point — i.e. a little below the island's center,
+         closer to the bottom of the island — instead of sitting dead
+         center on it. Every other .island-btn transform below
+         (hover/focus, locked, the unlock pulse) uses this same
+         translateY value so the badge doesn't jump position on
+         hover/unlock. */
+      transform: translate(-50%, -32%);
+      width: clamp(40px, 7.4vw, 60px);
+      height: clamp(40px, 7.4vw, 60px);
+      border-radius: 50%;
+
+      /* Unlocked (clickable) state — bright glowing gold ring + gold
+         number. Dark backing behind the number so it stays legible no
+         matter how busy the artwork underneath is. */
+      border: 3px solid #ffd85c;
+      background: radial-gradient(circle, rgba(18,10,28,.88), rgba(18,10,28,.94) 68%);
+      color: #ffe27a;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: clamp(16px, 2.8vw, 24px);
+      text-shadow: 0 0 6px rgba(0,0,0,.85), 0 1px 2px rgba(0,0,0,.9);
+      box-shadow:
+        0 0 0 1px rgba(255,216,92,.35),
+        0 0 12px 3px rgba(255,216,92,.85),
+        0 0 26px rgba(255,216,92,.55),
+        0 10px 22px rgba(0,0,0,.5);
+      cursor: pointer;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      transition: transform .15s ease;
+    }
+
+    .island-btn:hover, .island-btn:focus-visible { transform: translate(-50%, -32%) scale(1.12); }
+
+    /* Cleared keeps the same clickable gold treatment (it's still
+       tappable — replaying is fine) plus a small green check badge so
+       progress is visible at a glance without losing the always-on
+       gold "you can tap this" signal. */
+    .island-btn.cleared { border-color: #9dffc0; }
+    .island-btn.cleared::after {
+      content: "✓";
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #34c77a;
+      color: #0c2016;
+      font-size: 12px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 8px rgba(52,199,122,.85), 0 2px 6px rgba(0,0,0,.5);
+    }
+
+    /* Locked (not clickable) state — glowing red ring + dimmed grey
+       number, so it reads as "off-limits" at a glance but the number
+       itself stays fully legible (no heavy blur/grayscale hiding it). */
+    .island-btn.locked {
+      border-color: #ff6b6b;
+      background: radial-gradient(circle, rgba(18,10,28,.88), rgba(18,10,28,.94) 68%);
+      color: #9a95a3;
+      text-shadow: 0 0 6px rgba(0,0,0,.85), 0 1px 2px rgba(0,0,0,.9);
+      box-shadow:
+        0 0 0 1px rgba(255,107,107,.30),
+        0 0 12px 3px rgba(255,107,107,.65),
+        0 0 26px rgba(255,107,107,.40),
+        0 10px 22px rgba(0,0,0,.5);
+      cursor: not-allowed;
+    }
+
+    .island-btn.locked:hover, .island-btn.locked:focus-visible { transform: translate(-50%, -32%); }
+
+    @keyframes islandPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 1px rgba(255,216,92,.35),
+          0 0 12px 3px rgba(255,216,92,.85),
+          0 0 26px rgba(255,216,92,.55),
+          0 10px 22px rgba(0,0,0,.5);
+        transform: translate(-50%, -32%) scale(1);
+      }
+      50% {
+        box-shadow:
+          0 0 0 1px rgba(255,216,92,.5),
+          0 0 20px 6px rgba(255,216,92,1),
+          0 0 44px rgba(255,216,92,.85),
+          0 10px 22px rgba(0,0,0,.5);
+        transform: translate(-50%, -32%) scale(1.22);
+      }
+    }
+
+    .island-btn.just-unlocked { animation: islandPulse 1s ease-in-out infinite; }
+
+    /* Mobile in landscape ("horizontal") ONLY — smaller number badges.
+       Scoped tightly to that one case (orientation:landscape AND
+       max-height:600px AND max-width:1199px, the same "phone turned
+       sideways" combo used elsewhere) so this never touches real
+       desktop/laptop widths (excluded by max-width) or portrait mobile
+       (excluded by orientation) — just the one requested case. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      /* Same tighter cell-packing mobile portrait's map screen already
+         uses (bigger cell-fill %, smaller grid gap) — reclaims the
+         gap's wasted space for the circles themselves, so each item's
+         circle (and therefore the item art inside it, still capped at
+         96% of that circle — see .tile .item-icon) is as large as
+         this cramped short viewport can fit. Previously this viewport
+         fell through to the desktop/laptop board's more spacious base
+         values (97% cell / 1% gap), sized for a screen with far more
+         room to spare, making the items look tiny by comparison. */
+      .cell { width: 99.5%; }
+      .board { gap: 0.2%; }
+
+      /* Item art on the board is placed inside each planting circle at
+         the usual 96% box (see the shared ".tile .item-icon" rule), but
+         the source PNGs/WebPs carry a lot of transparent margin around
+         the actual artwork, so on this cramped landscape-phone view the
+         item still reads as a tiny dot floating in an otherwise-empty
+         circle. The circle itself stays exactly the size set above —
+         only the artwork inside it is blown up, via a transform (so it
+         doesn't change the layout box other rules measure against) and
+         cropped by .cell's own overflow:hidden + border-radius:50%, so
+         nothing spills outside the circle. --mobile-landscape-item-scale
+         is the one knob to turn if this needs to be bigger/smaller —
+         raise it further if the artwork is still visibly small, or back
+         it off if real edges of the art start getting clipped. */
+      :root { --mobile-landscape-item-scale: 3.4; }
+      .tile .item-icon {
+        transform: scale(var(--mobile-landscape-item-scale));
+        transform-origin: center;
+      }
+
+      /* Measured this instead of guessing: on a short viewport the
+         stage-frame's height is always the binding constraint (it's
+         min(92svh, stage-max-w / ratio), and 92svh alone comes out
+         smaller than stage-max-w/ratio here) — so --sp-width has ZERO
+         effect on the frame's size. Checked across six phone widths at
+         matching heights; the frame rendered pixel-identical every
+         time regardless of panel width. So the previous fix's theory
+         (widen the panel, starve the board) wasn't actually the cause
+         here. What WAS starving the circles: --board-width/--board-
+         height (the interactive grid's own share of the frame) were
+         left at the desktop default (58%/54%) in this query — the
+         same fraction portrait mobile used to have before it got
+         bumped to 72%/64% below. On a frame this much smaller than
+         desktop's, that small a fraction produces genuinely tiny
+         circles. Bumped to 78%/74% first (see below), which grew every
+         circle by roughly 45% on top of the cell/gap tightening above.
+
+         Bumped again, further per request, to 88%/84% — recentred on
+         the SAME mid-point as always (50% across, 51%+38px down: with
+         width/height W/H, left = 50% - W/2 and top's percentage part =
+         51% - H/2, the +38px carried over unchanged since it's a
+         fixed top-row offset, not part of the box's own size) so the
+         box still lines up with the illustrated soil patches in the
+         artwork — only its size changed, not its centre. 88%/84% is
+         about as far as this can go without the box's own edges
+         starting to clip the stage frame: left+width = 6%+88% = 94%,
+         top's worst case (+38px on a short phone's ~34px-per-percent
+         frame height) leaves roughly a percent of slack at the
+         bottom — any bigger and the bottom row of circles risks
+         crowding the frame edge on the shortest supported phones.
+         --sp-width is left as it was (harmless either way, and the
+         panel still needs the room). */
+      :root {
+        --board-left: 19%;
+        --board-top: calc(17% + 24px);
+        --board-width: 62%;
+        --board-height: 54%;
+        --sp-width: clamp(190px, 26vw, 300px);
+        --gl-gap: clamp(6px, 1.2vw, 14px);
+        --screen-pad: clamp(6px, 1vw, 12px);
+      }
+
+      /* Belt-and-suspenders on top of the base .side-panel rule's
+         overflow-y:auto + min-height:0 (which is what actually makes
+         the panel scrollable here, once .game-layout below gives it a
+         definite stretched height to scroll within): explicit
+         max-height as a second guarantee the browser never lets the
+         panel's box grow past its stretched size even in edge cases,
+         plus -webkit-overflow-scrolling:touch for smooth momentum
+         scrolling on older iOS Safari (same pairing already used on
+         .modal-card for the same short-landscape case), and
+         overscroll-behavior:contain so a scroll that hits the top/
+         bottom edge of the panel doesn't bubble up and rubber-band the
+         whole (non-scrolling) page behind it. */
+      .side-panel {
+        max-height: 100%;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+
+      /* Visual "there's more below" cue: fades only the last ~28px of
+         the panel toward transparent, using a mask so it's a soft
+         fade rather than a hard cut-off edge. Gated behind .can-scroll
+         (toggled by JS — see the ResizeObserver in game.js — only when
+         the panel's content is actually taller than the panel itself),
+         so a viewport where everything already fits never gets its
+         last visible item dimmed for no reason. Bottom-only on
+         purpose: this is a static mask with no scroll-POSITION
+         awareness (just scroll-ABILITY), so fading the top too would
+         incorrectly dim the top-row icons even while already scrolled
+         all the way up. Purely visual — the actual scrolling is the
+         overflow-y:auto on the base .side-panel rule. */
+      .side-panel.can-scroll {
+        mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
+      }
+
+      /* A touch more conservative than the base 96svh cap: with
+         --screen-pad shrunk above, the stage frame's own height
+         request wasn't accounting for that padding, so on some short
+         viewports it could end up requesting a hair more height than
+         .screen's actual padded content box has room for — the excess
+         then getting clipped by html/body's overflow:hidden instead
+         of just leaving a little empty margin. 92svh leaves enough
+         slack for that padding on every device this query matches. */
+      .stage-frame { height: min(92svh, calc(var(--stage-max-w) / var(--stage-ratio))); }
+
+      /* Root cause of the "next item" card landing below the visible
+         area: .game-layout (the flex row holding .stage-frame and
+         .side-panel) had no explicit height of its own — only
+         max-height:100%, which can't resolve to anything definite
+         here because .screen sizes itself as a CSS-grid cell with no
+         explicit row track, i.e. its height is itself content-based.
+         With no definite height on .game-layout, a flex container's
+         auto height is the tallest child's UNSTRETCHED (natural
+         content) size — not .stage-frame's fixed height — so if
+         .side-panel's stacked content (top row + score + collection
+         + next-box, all at their natural sizes) added up
+         to more than .stage-frame's height, .game-layout simply grew
+         to fit it. That growth pushed the whole layout past .screen's
+         100svh, which html/body's overflow:hidden then clipped with
+         no scrollbar anywhere — the card wasn't just scrolled out of
+         reach, it was being rendered fully outside the page.
+
+         Giving .game-layout the exact same explicit height formula
+         .stage-frame already uses fixes this: the row's cross size is
+         now definite, so align-items:stretch forces .side-panel to
+         that same height regardless of its content's natural size,
+         which finally makes .side-panel's own overflow-y:auto (plus
+         its min-height:0, already set) the thing that activates —
+         any content that still doesn't fit scrolls WITHIN the panel,
+         inside the visible frame, instead of pushing the layout (and
+         the next-item card specifically, since it's last in the
+         stack) off the bottom of the screen entirely. */
+      .game-layout { height: min(92svh, calc(var(--stage-max-w) / var(--stage-ratio))); }
+
+      .island-btn {
+        width: clamp(28px, 5vw, 42px);
+        height: clamp(28px, 5vw, 42px);
+        font-size: clamp(12px, 2vw, 17px);
+      }
+      .island-btn.cleared::after {
+        top: -4px;
+        right: -4px;
+        width: 13px;
+        height: 13px;
+        font-size: 9px;
+      }
+
+      /* "How to Use" + "Free Trial" only, on the start/map screen —
+         swaps out the full instructions card and full premium card
+         (both sized for a real desktop/laptop's taller side panel,
+         which is what this viewport otherwise reuses) for the same
+         compact icon+label / single-button pattern mobile portrait
+         already uses on its map screen, just inline in the side panel
+         instead of a separate icon bar + button below the image. */
+      .how-to-play { padding: 6px; gap: 6px; }
+      .how-to-play-compact-btn { display: flex; }
+      /* .side-panel prefix bumps specificity above the later, unscoped
+         base ".how-to-play h3"/".how-to-play ol" rules further down
+         the stylesheet — without it, those rules (equal specificity,
+         later source order) would win and the full instructions would
+         stay visible here despite this override. */
+      .side-panel .how-to-play h3, .side-panel .how-to-play ol { display: none; }
+
+      .remove-ads-card { padding: 6px; gap: 6px; }
+      .side-panel .remove-ads-card > *:not(.remove-ads-btn) { display: none; }
+      .side-panel .remove-ads-card .remove-ads-btn { margin-top: 0; }
+      .side-panel .holistic-member-line { display: none; }
+
+      /* "Next item" card, during gameplay — shrunk down from the full
+         desktop card (which stretches to fill leftover side-panel
+         height via flex:1 1 auto + a 140px-min-height icon box) to a
+         small fixed-size badge instead. On a short landscape-phone
+         viewport there usually isn't 140px+ of spare room left after
+         the top row/score/actions, so the full-size card was pushing
+         itself (and the rest of .next-box) below the visible area
+         instead of fitting on screen. */
+      /* Fills whatever vertical space is left after the top row/score/
+         actions, all the way down to the side panel's own bottom edge
+         (which lines up with the game board's bottom edge — see
+         .game-layout's align-items:stretch) — same flex-grow approach
+         .next-box already uses on real desktop/laptop, just WITHOUT
+         that version's fixed 140px-min-height icon box. That fixed
+         floor was taller than the space actually available on a short
+         landscape-phone viewport, pushing the whole card below the
+         visible area; min-height:0 here instead lets it grow to
+         exactly fill (never more, never less than) whatever room is
+         really left, so it's both fully on-screen AND as large as
+         this layout allows — not shrunk down to a tiny fixed badge. */
+      .next-box { flex: 0 0 auto; min-height: 0; padding: 6px; gap: 4px; margin-top: -4px; }
+      .next-box .next-item-group {
+        flex: 0 0 auto;
+        min-height: 0;
+        padding: 4px 8px 6px;
+        gap: 4px;
+      }
+      .next-box .next-item-label { font-size: 9px; flex: 0 0 auto; }
+      .next-box .next-seed {
+        flex: 0 0 auto;
+        width: 48px;
+        height: 48px;
+        min-height: 0;
+      }
+
+      /* The boxes ABOVE .next-box (score/collection/
+         actions) were still using their full desktop padding/icon
+         sizes here — sized for a real laptop's much taller side panel.
+         On this short viewport that ate most of the available height
+         before .next-box ever got a turn, so despite its own
+         flex:1 1 auto + min-height:0 above, there was nothing left to
+         grow into and it rendered as a sliver (or scrolled below the
+         visible area). Compacting these the same way the portrait
+         breakpoint already does frees that height back up, so
+         .next-box sits directly under .actions with the same gap as
+         every other pair of boxes, and is tall enough to actually see. */
+      .side-panel { gap: 8px; }
+
+      .score { padding: 8px 10px; gap: 6px; }
+      .stat { padding: 5px 6px; min-width: 0; }
+      .stat b { font-size: 13px; }
+      .stat span { font-size: 8px; }
+
+      /* Collection is now just a slim strip under the big next-item
+         card above (see .side-panel .next-item-group) — shrunk to
+         ~20px tall total per request: 3px top + 3px bottom padding
+         around a 14px icon = 20px. ".side-panel" prefix (not just the
+         bare class) is required: the later, unscoped base rules
+         further down this file (".collection { padding: 6px 10px;
+         ...}" and ".collection .item-icon { width: 50px; ...}")
+         share the exact same specificity as a plain ".collection" /
+         ".collection .item-icon" selector here, so — being later in
+         source order — they'd silently win over this regardless of
+         which one a browser evaluated first. */
+      .side-panel .collection { padding: 3px 8px; gap: 3px; }
+      .side-panel .collection .item-icon { width: 14px; height: 14px; }
+
+      .actions { padding: 5px; gap: 4px; }
+      .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
+      .difficulty { padding: 5px; gap: 4px; }
+      .difficulty button { padding: 7px 8px; font-size: 9px; min-width: 0; }
+      /* Illustrated legend (circles + dashed arrow + checkmark) no
+         longer sits permanently in the panel here — tapping Easy/Hard
+         now flashes it center-screen for 1.5s instead (see
+         showDifficultyRulesToast() in the JS), same "appear, hold,
+         fade" pattern .toast/.level-reveal already use elsewhere.
+         Taken out of document flow (position:fixed) so it also isn't
+         reserving permanent height in the panel any more. Same
+         specificity note as .side-panel .collection above applies
+         here too — ".side-panel" prefix is what makes this win over
+         the later, unscoped base ".difficulty-rules { display:flex;
+         ...}" rule regardless of source order. */
+      .side-panel .difficulty-rules {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        z-index: 30;
+        display: flex;
+        width: auto;
+        max-width: min(78vw, 260px);
+        padding: 10px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: rgba(16,9,27,.88);
+        box-shadow: 0 18px 60px rgba(0,0,0,.44), 0 0 28px rgba(248,217,139,.18);
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(.92);
+        transition: opacity .25s ease, transform .25s ease;
+      }
+      .side-panel .difficulty-rules.show {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .diff-rule-group { gap: 1px; }
+      .diff-rule-label { font-size: 8.5px; }
+      .diff-rule-svg { width: 60%; margin: 0 auto; }
+      .diff-mobile-hint { display: none; }
+
+      /* Account icon: the shared rule above (see the min-width:1200px /
+         landscape query further down) pins #authRoot fixed to the
+         page's own top-right corner — on this cramped landscape-phone
+         width that corner sits right on top of the brand/title card in
+         the side panel instead of clear of it. Pulling "right" in a
+         little closer to the true edge nudges the icon further right,
+         off the card, without touching the desktop/laptop position. */
+      #authRoot { right: 0px; }
+    }
+
+    /* While the map is showing, hide the gameplay-only side-panel chrome
+       (score, home thumbnail, world picker, collection, actions) — the
+       map screen has its own title and doesn't need any of it. Brand/
+       title + account icon stay visible. Targets #gameLayout now (not
+       .stage-frame), since that chrome lives in the side panel, not on
+       top of the image, anymore. */
+    #gameLayout.on-map .gameplay-only {
+      display: none;
+    }
+
+ /* .board-wrap keeps the ORIGINAL bounding box (left/top/width/height —
+    which is deliberately non-square, see the vars above) but no longer
+    lays out the grid itself. It's a container-query context, so the
+    actual grid (#board, below) can size itself to the largest area with
+    the CORRECT --board-cols : 5 (rows) ratio that fits inside that box
+    — using cqw/cqh — instead of stretching to fill a differently-shaped
+    area. That's what was causing rows and columns to come out unequal
+    sizes (and, since each .cell forces a true circle via aspect-ratio,
+    circles sized off the wider axis to overflow into the next row and
+    visually overlap it). Centered via flex so it sits in the middle of
+    the old box on whichever axis has slack. --board-cols is 5 by
+    default and set to 7 on desktop/laptop widths only (see COLS in the
+    JS below) — mobile always keeps the original 5x5 board. */
+ .board-wrap {
+  position: absolute;
+
+  left: var(--board-left);
+  top: var(--board-top);
+
+  width: var(--board-width);
+  height: var(--board-height);
+
+  container-type: size;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ .board {
+  width: min(100cqw, calc(100cqh * var(--board-cols) / var(--board-rows)));
+  height: min(100cqh, calc(100cqw * var(--board-rows) / var(--board-cols)));
+
+  display: grid;
+
+  grid-template-columns: repeat(var(--board-cols), 1fr);
+  grid-template-rows: repeat(var(--board-rows), 1fr);
+
+  /* Reduced from 4% (and further reduced from 2%) so circles sit
+     closer together on laptop/desktop — mobile tightens this further
+     still, see the max-width:1199px override below. */
+  gap: 1%;
+}
+
+  .cell {
+  width: 97%;
+  aspect-ratio: 1 / 1; /* forces a true circle even when the grid cell
+                           itself isn't square (see .board comment below) */
+  overflow: hidden; /* belt-and-suspenders: nothing (broken-image glyph,
+                        oversized alt text, anything) can spill outside
+                        the circle and disturb the rest of the board */
+
+  justify-self: center;
+  align-self: center;
+
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.07), rgba(255,255,255,.02) 55%, transparent 78%);
+  border: 1px solid rgba(255,242,189,.18);
+  box-shadow:
+    0 0 16px 2px rgba(248,217,139,.38),
+    0 0 32px rgba(248,217,139,.22),
+    inset 0 0 14px rgba(248,217,139,.14);
+
+  display: grid;
+  place-items: center;
+}
+
+    .cell:hover, .cell:focus-visible {
+      outline: none;
+      transform: scale(1.08);
+      border-color: rgba(255,242,189,.32);
+      background: radial-gradient(circle, rgba(248,217,139,.28), rgba(248,217,139,.06) 46%, transparent 72%);
+      box-shadow:
+        0 0 22px 3px rgba(248,217,139,.55),
+        0 0 44px rgba(248,217,139,.32),
+        inset 0 0 18px rgba(248,217,139,.22);
+    }
+
+    /* Keyboard-only ring on top of the shared hover look above, so
+       tabbing through the board is clearly visible, not just a subtle
+       glow that's easy to miss. */
+    .cell:focus-visible {
+      box-shadow: 0 0 0 2px rgba(255,242,189,.85), 0 0 22px rgba(248,217,139,.20);
+    }
+
+    .cell.empty::after {
+      content: "";
+      width: 52%;
+      height: 52%;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity .18s ease;
+      background: radial-gradient(circle, rgba(255,242,189,.18), transparent 70%);
+    }
+
+    .cell.empty:hover::after { opacity: 1; }
+.tile {
+  /* Without an explicit size here, this span has no definite width/height
+     for a browser to resolve against — so the percentage sizes on
+     .tile .item-icon below (78%/78%) had nothing reliable to measure
+     against and rendered at inconsistent sizes tile to tile. Filling
+     the (now guaranteed-square) .cell fixes that. */
+  width: 100%;
+  height: 100%;
+
+  font-size: clamp(20px, 5.5vw, 42px);
+
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  filter:
+    drop-shadow(0 0 13px rgba(248,217,139,.38))
+    drop-shadow(0 8px 10px rgba(0,0,0,.25));
+}
+
+    .tile.level-4, .tile.level-5, .tile.level-6, .tile.level-7 { filter: drop-shadow(0 0 18px rgba(248,217,139,.56)) drop-shadow(0 8px 12px rgba(0,0,0,.32)); }
+
+    /* ---------- Item icons (PNG/WebP) ----------
+       Base class as specced: fixed 80x80 "reference" size. Each usage
+       context below (board tile / next-up preview / collection strip /
+       merge burst) overrides width+height to fit its own box — the
+       object-fit:contain + pointer-events:none + drop-shadow from the
+       base class still apply everywhere. */
+    .item-icon {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      pointer-events: none;
+      filter: drop-shadow(0 0 12px rgba(255,255,255,.25));
+    }
+
+    /* Item art sized as large as possible while still fitting fully
+       inside the circular planting cell. .cell clips to a circle
+       (border-radius:50% + overflow:hidden), and the artwork sits in
+       a SQUARE bounding box (the .item-icon itself) — so the true
+       ceiling is however big that square can get before its own
+       corners start being cut off by the round mask. Testing that
+       against the actual artwork (which has a bit of transparent
+       margin baked into each PNG/WebP) landed on 96%: the largest
+       size where nothing visible gets clipped. Same value on every
+       breakpoint (mobile below, desktop/laptop override further
+       down) so item art is equally maximized in every version. */
+    .tile .item-icon { width: 96%; height: 96%; }
+    .next-seed .item-icon { width: 46px; height: 46px; }
+
+    /* Laptop/desktop: same 96% cap as mobile — see the comment on
+       ".tile .item-icon" above. Kept as its own rule (rather than
+       relying on the base one) in case a future desktop-only change
+       to the cell/board sizing means this ever needs to diverge. */
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
+      .tile .item-icon { width: 96%; height: 96%; }
+    }
+    .collection .item-icon { width: 50px; height: 50px; }
+    .merge-burst .item-icon { width: 106px; height: 106px; }
+
+    /* Small contained placeholder shown when an item-icon 404s, so a
+       missing file is visible (check the console for which one) without
+       ever overflowing its circle the way the raw broken-image + alt
+       text used to. */
+    .icon-fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40%;
+      height: 40%;
+      border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      border: 1px dashed rgba(255,255,255,.4);
+      color: var(--muted, rgba(255,255,255,.7));
+      font-size: 0.85em;
+      font-weight: 700;
+    }
+
+    .merge-burst {
+      position: absolute;
+      z-index: 8;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: burst .8s ease forwards;
+      filter: drop-shadow(0 0 20px rgba(248,217,139,.62));
+    }
+
+    @keyframes burst {
+      0% { transform: translate(-50%, -50%) scale(.7); opacity: 0; }
+      25% { opacity: 1; }
+      100% { transform: translate(-50%, -130%) scale(1.25); opacity: 0; }
+    }
+
+    /* .hud (added in the markup) gives it the same bordered glass-panel
+       look as the other side-panel readouts. */
+    .collection {
+      width: 100%;
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 10px 14px;
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    /* Map-screen-only info panel explaining how to play — same glass
+       HUD look as the gameplay readouts (.hud gives border/background/
+       blur/shadow), laid out as a small heading + short list instead
+       of stat numbers. */
+    .how-to-play {
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 14px 16px;
+      border-radius: 22px;
+    }
+
+    .how-to-play h3 {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      font-size: 13px;
+      color: var(--gold2);
+    }
+
+    .how-to-play ol {
+      margin: 0;
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .how-to-play li {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    /* ---------- Monetization: single "Remove Ads" offer ----------
+       This is the ONLY purchasable offer shown in-game (a one-time
+       $2.99 purchase — no subscriptions, no membership pricing; those
+       live exclusively on holisticloader.com). Sits right under the
+       How to Play panel (same map-only visibility window — see
+       .how-to-play above).
+       Visibility is driven by #gameLayout's "ads-removed" class,
+       toggled in refreshMonetizationUI() (JS below) whenever premium
+       status OR the ads_removed purchase flag changes:
+         - ads still showing  -> .remove-ads-card + .holistic-member-line
+         - ads already gone   -> .premium-active-badge only
+       Styled with the same gold eyebrow pill + gradient serif headline
+       used elsewhere (see the shared .premium-* / .gcm-* rules further
+       below, still used by #guestClearModal), plus a soft lavender
+       glow to match the game's gold+lavender palette. */
+    .remove-ads-card {
+      display: none;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      padding: 18px 16px 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(248,217,139,.36);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(248,217,139,.22), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(201,167,255,.16), transparent 60%),
+        linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.03)), var(--glass);
+      box-shadow: 0 16px 40px rgba(0,0,0,.28), 0 0 0 1px rgba(255,217,138,.06) inset;
+    }
+
+    #gameLayout.on-map:not(.ads-removed) .remove-ads-card {
+      display: flex;
+    }
+
+    .remove-ads-price {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700; font-style: italic;
+      font-size: 26px; line-height: 1;
+      margin: 2px 0 10px;
+      background: linear-gradient(100deg, #fff8ec 0%, #f0d19f 45%, #fff8ec 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    .remove-ads-note {
+      margin: 8px 0 0;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      width: 100%;
+    }
+
+    .remove-ads-card button {
+      align-self: stretch;
+      margin-top: 4px;
+    }
+
+    /* Subtle secondary line for existing Holistic Loader members —
+       deliberately far less prominent than the card above: no card
+       chrome, no gold border, just quiet helper text. Same map-only /
+       not-ads-removed visibility window as the card. */
+    .holistic-member-line {
+      display: none;
+      width: 100%;
+      margin: 10px 0 0;
+      padding: 0 2px;
+      font-family: Arial, sans-serif;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: var(--muted);
+      text-align: center;
+    }
+    #gameLayout.on-map:not(.ads-removed):not(.is-logged-in) .holistic-member-line {
+      display: block;
+    }
+    .holistic-member-line button {
+      font-family: Arial, sans-serif; font-size: 11.5px; font-weight: 700;
+      color: var(--lav); background: none; border: none; padding: 0;
+      cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+    }
+    .holistic-member-line button:hover { color: var(--gold); }
+
+    /* Quiet footer link to the Privacy Policy — shown only on the
+       start/map screen (relies on the shared .map-only visibility rule
+       above: .side-panel .map-only, #gameLayout.on-map .side-panel
+       .map-only). order:4 pins it to the very bottom of the side panel,
+       one step after the Remove Ads / member-login / premium-active
+       block's order:3. */
+    .privacy-policy-link {
+      order: 4;
+      width: 100%;
+      justify-content: center;
+      margin: 10px 0 0;
+      padding: 0 2px;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      text-align: center;
+    }
+    .privacy-policy-link a {
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .privacy-policy-link a:hover {
+      color: var(--gold);
+    }
+
+    /* Shown instead of the two blocks above once ads are actually gone
+       (Premium OR a completed ads_removed purchase) — calm, quiet
+       confirmation rather than another offer. */
+    .premium-active-badge {
+      display: none;
+      width: 100%;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(159,224,178,.4);
+      background: linear-gradient(145deg, rgba(159,224,178,.12), rgba(255,255,255,.03)), var(--glass);
+    }
+    #gameLayout.on-map.ads-removed .premium-active-badge {
+      display: flex;
+    }
+
+    /* Belt-and-suspenders: adsense.js's AdBanner()/canShowAds() is
+       *supposed* to hide these ad slots for anyone with ads removed,
+       but that lives in a separate file and wasn't reliably hiding the
+       placeholder "Advertisement" boxes after a purchase (see the
+       bug where Premium Active showed but ads stayed visible). This
+       CSS rule hides them unconditionally the moment #gameLayout has
+       .ads-removed — same source of truth refreshMonetizationUI()
+       already maintains — regardless of what adsense.js does or
+       doesn't do. !important beats any inline style AdBanner() sets
+       on the injected ad markup.
+       TODO: once adsense.js's own hiding is confirmed reliable, this
+       can be relaxed to a lower-priority fallback if desired — leaving
+       it as the primary guard for now is safer than trusting a file
+       that already caused this bug once. */
+    /* ---------- House ad creative ----------
+       Both #mapAdSlot and #sidebarAdSlot were, until now, completely
+       unstyled — just a bare .hud box (position:absolute, sized to
+       nothing but the "Advertisement" label's own text) waiting for
+       adsense.js to inject a real ad unit into it later. With real
+       ad-network approval still pending, these two rules give the
+       *temporary* self-promo images (.house-ad-creative, added in the
+       HTML above) a sensible size and position in the meantime — see
+       the TEMPORARY comments in the markup for what to remove once
+       real AdSense units are wired in; nothing here needs to change
+       when that happens, since it only targets .house-ad-creative. */
+    .ad-slot {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 0;
+      overflow: hidden;
+      border-radius: 20px;
+      /* overflow:hidden alone only clips normally-flowed content. A
+         real AdSense unit's iframe can (and on narrow/responsive
+         slots like this one, does) end up wider/taller than this box
+         and/or positioned in a way overflow:hidden doesn't catch —
+         that's what let the map ad balloon to fill the whole mobile
+         screen and cover the ✕ button. contain:paint forces this box
+         to ALSO act as the containing block for its contents and
+         hard-clips anything inside to its own edges, no matter what
+         size or position the ad content tries to use internally. */
+      contain: paint;
+      isolation: isolate;
+    }
+    .house-ad-link { display: block; width: 100%; height: 100%; }
+    .house-ad-creative { display: block; width: 100%; height: 100%; }
+    .house-ad-creative img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+
+    /* Small "Advertisement" disclosure badge, overlaid in the corner
+       of the creative rather than taking its own line — keeps the ad
+       clearly labeled without eating into the (small) space actually
+       available for the creative itself. */
+    .ad-label {
+      position: absolute;
+      top: 6px;
+      left: 9px;
+      z-index: 1;
+      font-family: Arial, sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .9);
+      background: rgba(0, 0, 0, .45);
+      padding: 2px 8px;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    /* Map ad slot — sits inside .map-screen's single-column grid
+       (.map-screen.show { display:grid; place-items:center; }),
+       stacked after .map-frame (the map artwork) in source order.
+       .hud's BASE rule sets position:absolute with no top/left ever
+       defined for this element specifically, which pulled it out of
+       that grid flow entirely and left the browser to fall back to
+       an approximate "static position" — the cause of the ad
+       floating oddly mid-map, overlapping the island artwork, before
+       there was any real content inside it to notice. Resetting to
+       position:static here puts it back in normal grid flow: its own
+       centered row directly below the map art, the same place any
+       other real AdSense "in-content" unit would normally expect to
+       render. Width is capped well below the map's own width so a
+       landscape (3:2) creative reads as a modest banner underneath
+       the map, not a second competing image the same size as the
+       game world itself. */
+    /* Centered overlay on ALL breakpoints (mobile portrait, mobile
+       landscape, and desktop) — floating in the middle of the map
+       screen no matter how tall/wide the map art is, instead of
+       sitting in normal grid flow below it. Grid flow was the root
+       cause of the "ad lands in the wrong place" bug: .map-screen.show
+       is display:grid with only ONE implicit column, so the ad's row
+       was whatever height the grid happened to give it, and on a
+       viewport too short to fit brand + title + map art + ad (mobile
+       portrait, and especially mobile landscape) it could get pushed
+       partly off-screen or rendered against the wrong edge. Absolute-
+       positioning + translate(-50%,-50%) sidesteps all of that: the ad
+       is simply centered on the box, always, in both orientations.
+
+       Sized with vmin (the SMALLER of viewport width/height) rather
+       than a plain % of width, specifically so it stays a clearly
+       modest banner — well under the map artwork's own footprint —
+       in BOTH phone orientations: vmin tracks width in portrait
+       (where height is the larger dimension) and tracks height in
+       landscape (where width is the larger dimension), so the ad
+       never balloons to dominate the screen in either case, and the
+       ✕ close button (in its top-right corner) always stays inside a
+       comfortably sized, tappable box. clamp()'s lower bound keeps it
+       from shrinking to an unreadable postage stamp on very short
+       landscape windows; the upper bound keeps it a "small" ad even
+       on a big phone or a tablet in portrait. */
+    .ad-slot--map {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: clamp(120px, 42vmin, 220px);
+      aspect-ratio: 3 / 2;
+      margin: 0;
+      z-index: 20;
+    }
+
+    /* Belt-and-suspenders: whatever ends up INSIDE the ad slot — the
+       placeholder <picture>/<img> today, or a real AdSense <ins>/
+       <iframe> later — is capped to the slot's own box no matter what
+       size it would otherwise want to render at. */
+    .ad-slot--map > * {
+      max-width: 100% !important;
+      max-height: 100% !important;
+    }
+
+    /* Desktop/laptop (min-width:1200px) only: same centered-overlay
+       approach as mobile above, just a bigger box (2x the mobile/
+       tablet dimensions, 320px -> 640px) since there's room for it.
+       Sits above the map artwork (z-index) but still safely below any
+       real modal (.modal is z-index:40). */
+    @media (min-width: 1200px) {
+      .ad-slot--map {
+        width: min(70%, 640px);
+      }
+    }
+
+    /* Dismiss (✕) button — dark circle + white icon so it reads clearly
+       against any bright ad creative (the lighter .modal-close style
+       used by the real popups blended into this image and was hard to
+       spot). Shared by both placeholder house ads: the map-screen
+       banner (#mapAdCloseBtn) and the "about to start playing"
+       interstitial (#playAdCloseBtn). */
+    .ad-slot-close {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 7;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(10,8,20,.55);
+      color: #fff;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .ad-slot-close:hover,
+    .ad-slot-close:focus-visible {
+      background: rgba(10,8,20,.8);
+      outline: none;
+    }
+
+    /* Interstitial "about to start playing" ad card (#playAdModal) —
+       reuses the .modal / .modal-card shell (see further down) but,
+       unlike the text-heavy modals that shell was built for, this one
+       is just the portrait creative edge-to-edge, so padding is
+       zeroed and the card is clipped to the image's own rounded
+       corners.
+
+       Sizing: width is the SMALLEST of three caps —
+         320px                              (desktop/laptop ceiling)
+         86vw                               (never crowd narrow phones)
+         (100svh - 36px) * 480/678          (never taller than the
+                                              viewport once .modal's own
+                                              18px top+bottom padding is
+                                              subtracted)
+       That third cap is what actually matters on phones: since height
+       is locked to width via aspect-ratio, deriving the max width FROM
+       the max available height guarantees the whole card — including
+       the ✕ pinned to its top-right corner — always fits on screen,
+       in both portrait AND landscape, with no cropping and nothing to
+       scroll to reach. max-height/overflow-y below are just a safety
+       net in case of rounding. */
+    .modal-card.play-ad-card {
+      width: min(320px, 86vw, calc((100svh - 36px) * 480 / 678));
+      aspect-ratio: 480 / 678;
+      max-height: calc(100svh - 36px);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Mobile PORTRAIT only: half the size of the default above. Position
+       stays top-left (inherited from #playAdModal's place-items:start,
+       unconditional above) — only the size changes here. */
+    @media (max-width: 1199px) and (orientation: portrait) {
+      .modal-card.play-ad-card {
+        width: min(160px, 43vw, calc((100svh - 36px) * 240 / 678));
+      }
+    }
+
+    /* LANDSCAPE, under desktop width (phone AND tablet): the base
+       rule's height-derived cap — (100svh - 36px) * 480/678 — was
+       written assuming a short viewport (a phone turned sideways,
+       ~380-430svh), where it naturally lands on a small card. A
+       tablet in landscape has much more svh (~700-900px) at a similar
+       width, so the same formula produces a noticeably bigger card
+       even though the device reads the same "landscape phone-ish"
+       layout to the user. Adding a flat pixel ceiling here — sized to
+       roughly what the formula already gives a typical phone in
+       landscape — makes tablets land on the same small card instead
+       of scaling up with the extra height. */
+    @media (max-width: 1199px) and (orientation: landscape) {
+      .modal-card.play-ad-card {
+        width: min(320px, 86vw, calc((100svh - 36px) * 480 / 678), 280px);
+      }
+    }
+
+    /* #playAdModal — per request, styled to match how #mapAdSlot reads
+       on the map screen: no opaque dark backdrop blocking the game
+       world behind it (unlike every other .modal, which is a true
+       "stop and read this" dialog), and pinned to the top-left corner
+       instead of centered, with a larger ✕ since it's now sitting on
+       its own rather than centered over dimmed content. */
+    #playAdModal {
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      place-items: start;
+    }
+
+    #playAdModal .play-ad-card {
+      margin: 0;
+    }
+
+    #playAdModal .ad-slot-close {
+      width: 34px;
+      height: 34px;
+      font-size: 16px;
+    }
+
+    /* Safety net matching the same "content taller than its box
+       shouldn't just vanish" fix already applied to .side-panel and
+       html/body: .map-screen's base rule is overflow:hidden (needed
+       for the map artwork's rounded corners), which would silently
+       clip the ad banner on a viewport too short to fit brand + title
+       + map art + ad all at once. Scoped to .show (not the base rule)
+       so it only ever affects the fallback edge case, never the
+       rounded-corner clipping the map artwork itself relies on day to
+       day. */
+    .map-screen.show {
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    #gameLayout.ads-removed #mapAdSlot {
+      display: none !important;
+    }
+    /* Same belt-and-suspenders guarantee as #mapAdSlot above, applied to
+       the interstitial "about to start playing" ad card. Previously this
+       one relied solely on the JS observer in game.html (showPlayAd()'s
+       !adsRemoved() check) with no CSS fallback — the exact gap that
+       already caused the "Premium Active showed but ads stayed visible"
+       bug for #mapAdSlot before that rule was added. */
+    #gameLayout.ads-removed #playAdModal {
+      display: none !important;
+    }
+    .premium-active-check {
+      font-family: Arial, sans-serif; font-weight: 900; font-size: 12.5px;
+      color: #9ed7a7; white-space: nowrap;
+    }
+    .premium-active-sub {
+      font-family: Arial, sans-serif; font-size: 11.5px; color: var(--muted);
+    }
+
+    /* ---------- Shared "premium card" building blocks ----------
+       Reused by the sidebar .remove-ads-card AND #guestClearModal so
+       everything reads as the same visual family (gold eyebrow pill,
+       gradient serif headline) — a smaller cousin of index.html's
+       #premiumCard. Neither of those two now pitches a subscription:
+       the card sells the one-time $2.99 ad removal, and the modal is
+       just a "create a free account to save your progress" nudge. */
+    .premium-eyebrow, .gcm-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: Arial, sans-serif; font-weight: 900; font-size: 9.5px;
+      letter-spacing: .16em; text-transform: uppercase; color: #2a1c05;
+      background: linear-gradient(135deg, #ffe8b0, #dcaa48);
+      padding: 6px 14px; border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(248,217,139,.4);
+      margin-bottom: 10px;
+    }
+
+    .premium-headline, .gcm-headline {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700; font-style: italic;
+      line-height: 1.16;
+      background: linear-gradient(100deg, #fff8ec 0%, #f0d19f 45%, #fff8ec 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .premium-headline { font-size: 18.5px; }
+    .gcm-headline { font-size: clamp(22px, 5vw, 27px); }
+
+    .premium-sub, .gcm-sub {
+      margin: 0 0 14px;
+      font-family: Arial, sans-serif;
+      font-size: 12px; line-height: 1.5; color: var(--muted);
+    }
+
+    .premium-checklist, .gcm-checklist {
+      list-style: none; display: flex; flex-direction: column; gap: 7px;
+      margin: 0 0 16px; padding: 0; text-align: left; width: 100%;
+    }
+    .premium-checklist li, .gcm-checklist li {
+      display: flex; align-items: center; gap: 8px;
+      font-family: Arial, sans-serif; font-weight: 600; font-size: 12px;
+      color: var(--text);
+    }
+    .premium-checklist .chk, .gcm-checklist .chk {
+      flex: 0 0 auto; width: 17px; height: 17px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%; background: rgba(248,217,139,.18);
+      border: 1px solid rgba(248,217,139,.45);
+      color: var(--gold); font-size: 9.5px; font-weight: 900;
+    }
+
+    /* Mobile map-screen floating CTA — see the max-width:1199px query
+       further down for its layout. Same gradient pill previously used
+       for the "Free Trial" button; now used for the single Remove Ads
+       offer instead. Hidden by default everywhere else so it never
+       affects desktop. */
+    .mobile-remove-ads-btn {
+      width: 100%; display: flex; flex-direction: column; align-items: center;
+      gap: 2px; padding: 12px 14px; border-radius: 999px; cursor: pointer;
+      border: none; background: linear-gradient(135deg, #5EA8FF, #7C6BFF);
+      color: #fff; box-shadow: 0 12px 30px rgba(124,107,255,.4);
+      margin-bottom: 8px; text-decoration: none;
+    }
+    .mobile-remove-ads-btn .ptCta {
+      font-family: Arial, sans-serif; font-weight: 900; font-size: 12px;
+      letter-spacing: .01em; text-transform: none;
+    }
+    .mobile-remove-ads-btn .ptNote {
+      font-family: Arial, sans-serif; font-weight: 700; font-size: 9.5px;
+      letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.88);
+    }
+
+    /* New standalone button (mobile map screen only — see the
+       max-width:1199px query further down for its actual layout).
+       Hidden by default everywhere else so it never affects desktop. */
+    .mobile-map-cta-btn { display: none; }
+
+    .remove-ads-btn, .premium-buy-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 11px 12px; border-radius: 999px;
+      font-family: Arial, sans-serif; font-weight: 900; font-size: 11px;
+      letter-spacing: .04em; text-transform: uppercase;
+      color: var(--gold); background: transparent; border: 1px solid var(--gold);
+      text-decoration: none; margin-bottom: 8px; cursor: pointer;
+      transition: background .2s ease, color .2s ease;
+    }
+    .remove-ads-btn:hover, .premium-buy-btn:hover { background: var(--gold); color: #24162c; }
+
+    .gcm-login-link {
+      display: block; width: 100%; text-align: center;
+      background: none; border: none; padding: 4px 0; cursor: pointer;
+      font-family: Arial, sans-serif; font-size: 11px; color: var(--muted);
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .gcm-login-link:hover { color: var(--text); }
+
+    /* ---------- #guestClearModal specifics ---------- */
+    .guest-clear-card { text-align: center; }
+    .gcm-kicker {
+      margin: 0 0 4px; font-family: Arial, sans-serif; font-weight: 900;
+      font-size: 15px; color: #fff4d5;
+    }
+    .gcm-warning {
+      margin: 0 0 18px; font-family: Arial, sans-serif; font-size: 12.5px;
+      line-height: 1.5; color: #f3c48f;
+    }
+    .gcm-block {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 18px 4px 4px; border-top: 1px solid rgba(248,217,139,.22);
+    }
+
+    /* ---------- First-time level-up celebration ----------
+       Full-screen dim overlay showing the newly-reached item big and
+       centered, held for ~2s (see LEVEL_REVEAL_HOLD_MS in the JS),
+       then the icon animates down into the collection strip while the
+       text fades out (see showLevelReveal()/flying handling in JS). */
+    .level-reveal {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 24px;
+      text-align: center;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 42%, rgba(60,30,90,.55), rgba(8,4,14,.72) 70%);
+    }
+    .level-reveal.show { display: flex; }
+
+    .level-reveal-icon {
+      width: clamp(130px, 34vw, 240px);
+      height: clamp(130px, 34vw, 240px);
+      opacity: 1;
+      transform-origin: center;
+    }
+    .level-reveal-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      /* Applied directly to the <img> (not the wrapping div above) so
+         the glow follows the actual artwork's alpha shape rather than
+         the icon's square bounding box — putting a drop-shadow on the
+         wrapper instead was rendering as a visible square frame around
+         the transparent item art in some browsers. */
+      filter: drop-shadow(0 0 34px rgba(248,217,139,.65));
+    }
+
+    .level-reveal-text {
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .03em;
+      font-size: clamp(24px, 6vw, 38px);
+      color: var(--gold2);
+      text-shadow: 0 6px 24px rgba(0,0,0,.6);
+      transition: opacity .35s ease;
+    }
+
+    .level-reveal-done {
+      display: none;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: .04em;
+      line-height: 1.35;
+      font-size: clamp(16px, 4vw, 24px);
+      color: var(--lav);
+      text-shadow: 0 4px 18px rgba(0,0,0,.6);
+      transition: opacity .35s ease;
+    }
+    .level-reveal.well-done .level-reveal-done { display: block; }
+
+    @keyframes levelRevealPop {
+      0% { transform: scale(.4); opacity: 0; }
+      60% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .level-reveal.show .level-reveal-icon.pop {
+      animation: levelRevealPop .45s cubic-bezier(.2,.9,.3,1.3);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      z-index: 30;
+      transform: translateX(-50%) translateY(26px);
+      opacity: 0;
+      padding: 13px 17px;
+      border-radius: 999px;
+      background: rgba(16,9,27,.88);
+      border: 1px solid rgba(248,217,139,.34);
+      color: var(--gold2);
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      pointer-events: none;
+      transition: .25s ease;
+      box-shadow: 0 18px 60px rgba(0,0,0,.44), 0 0 28px rgba(248,217,139,.18);
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Cookie / data-storage consent banner — deliberately NOT a
+       full-screen .modal: it sits pinned to the bottom edge so people
+       can keep looking at (and even playing on) the page behind it
+       while deciding. z-index sits below .modal (40) so an actual
+       modal — e.g. the "island cleared" upsell — still wins if both
+       are somehow open at once, but above ordinary page content. */
+    .cookie-consent {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 35;
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 16px clamp(14px, 4vw, 28px);
+      background: linear-gradient(0deg, rgba(16,9,27,.97), rgba(16,9,27,.90));
+      border-top: 1px solid rgba(248,217,139,.28);
+      box-shadow: 0 -18px 50px rgba(0,0,0,.45);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .cookie-consent.show { display: flex; }
+
+    .cookie-consent-text {
+      flex: 1 1 320px;
+      margin: 0;
+      max-width: 640px;
+      font-family: Arial, sans-serif;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .cookie-consent-text a {
+      color: var(--lav);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .cookie-consent-text a:hover { color: var(--gold); }
+
+    .cookie-consent-actions {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 10px;
+    }
+
+    .cookie-consent-actions button {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .cookie-consent-actions button#cookieAcceptBtn {
+      border: none;
+      color: #2a1a0a;
+      background: linear-gradient(135deg, var(--gold2), var(--gold));
+    }
+
+    .cookie-consent-actions button.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--border);
+    }
+
+    .cookie-consent-actions button.secondary:hover {
+      background: rgba(255,255,255,.14);
+    }
+
+    @media (max-width: 520px) {
+      .cookie-consent {
+        justify-content: stretch;
+      }
+      .cookie-consent-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+      .cookie-consent-actions button {
+        flex: 1 1 0;
+      }
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(5,3,10,.68);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .modal.show { display: grid; }
+
+    .modal-card {
+      position: relative;
+      width: min(520px, 100%);
+      border-radius: 34px;
+      border: 1px solid rgba(248,217,139,.32);
+      background:
+        radial-gradient(circle at 30% 8%, rgba(248,217,139,.24), transparent 32%),
+        radial-gradient(circle at 82% 18%, rgba(201,167,255,.19), transparent 30%),
+        linear-gradient(145deg, rgba(44,24,63,.98), rgba(16,9,27,.98));
+      box-shadow: 0 30px 110px rgba(0,0,0,.65);
+      padding: 30px;
+      text-align: center;
+    }
+
+    /* "X" close button pinned to the card's own top-right corner —
+       always above the card's content (z-index) and, via body's
+       .any-modal-open rule further down, above the fixed account
+       icon too, so it's never hidden behind it. */
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 5;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .modal-close:hover, .modal-close:focus-visible {
+      background: rgba(255,255,255,.16);
+      color: var(--text);
+      outline: none;
+    }
+
+    .modal-card .big {
+      width: 56px; height: 56px; margin: 0 auto 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(248,217,139,.55), rgba(248,217,139,.08) 70%, transparent 78%);
+      box-shadow: 0 0 30px rgba(248,217,139,.35);
+    }
+    .modal-card h2 { margin: 0; color: #fff2d3; font-size: 38px; letter-spacing: -.04em; }
+    .modal-card p { margin: 12px auto 22px; max-width: 390px; color: var(--muted); font-family: Arial, sans-serif; line-height: 1.6; font-size: 14px; }
+    .modal-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+    /* Mobile in landscape ("horizontal") ONLY — same tightly-scoped
+       "phone turned sideways" combo used elsewhere (orientation:landscape
+       AND max-height:600px AND max-width:1199px), so this never touches
+       real desktop/laptop (excluded by max-width) or portrait mobile
+       (excluded by orientation). Popup cards (e.g. the How to Play
+       modal) have enough content — heading, numbered steps, the merge
+       illustration — that on a short landscape viewport they can be
+       taller than the screen itself. .modal-card had no height cap or
+       scroll of its own, so any part past the viewport's edge was
+       simply cut off by html/body's own overflow:hidden with no way to
+       reach it. Capping the card's height to the available viewport and
+       letting IT scroll internally (instead of relying on the page)
+       means every popup stays fully reachable here, without changing
+       how modals look on laptop or on portrait mobile. */
+    @media (orientation: landscape) and (max-height: 600px) and (max-width: 1199px) {
+      .modal-card {
+        max-height: calc(100svh - 36px); /* 100svh minus .modal's own 18px top+bottom padding */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* How to Play specifically: shrink the heading/list/illustration
+         enough that the whole card normally fits within the popup at
+         once on a short landscape phone, instead of leaning on the
+         scroll fallback above (still there as a safety net for the
+         very shortest viewports). */
+      .modal-card.how-to-play-card {
+        padding: 18px 20px;
+      }
+      .how-to-play-card h2 { font-size: 22px; }
+      .how-to-play-card ol {
+        margin: 8px 0 14px;
+        gap: 6px;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+      .how-to-play-card .merge-demo {
+        max-width: 170px;
+        margin-top: 4px;
+      }
+    }
+
+    /* Desktop stage aspect-ratio is no longer a hardcoded guess — see the
+       applyStageAspectRatio() JS below, which measures each world image's
+       actual width/height once it loads and sets --stage-ratio on
+       .stage-frame to match exactly. With the frame's own proportions
+       equal to the image's, background-size: cover (the shared/mobile
+       rule further down) fills it perfectly with zero cropping and zero
+       letterboxing — no per-image guessing needed. */
+
+    /* Shared "compact" rules for both narrow-width and short-height
+       phones: .game-layout stacks vertically (image on top, the side
+       panel — still a vertical box, just a compact one — underneath),
+       and every readout/button inside the panel shrinks its padding
+       and type so the image can still claim most of the screen. */
+    /* Laptop/desktop only: bigger text in the start-screen side box
+       (the "How to play" panel + the Remove Ads card underneath it)
+       that sits to the right of the map. Scoped to .remove-ads-card
+       specifically (not the shared .premium-* / .gcm-* rules above,
+       which the #guestClearModal popup also uses) so the modal's own
+       type scale is untouched. */
+    @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
+      .how-to-play h3 { font-size: 15px; }
+      .how-to-play li { font-size: 14px; line-height: 1.5; }
+
+      .remove-ads-card .premium-eyebrow { font-size: 11px; }
+      .remove-ads-card .premium-headline { font-size: 21px; }
+      .remove-ads-card .premium-sub { font-size: 13.5px; }
+      .remove-ads-card .remove-ads-price { font-size: 30px; }
+      .remove-ads-card .remove-ads-btn { font-size: 12.5px; }
+      .remove-ads-card .remove-ads-note { font-size: 12px; }
+      .holistic-member-line { font-size: 12.5px; }
+    }
+
+    /* Mirrors DESKTOP_MEDIA_QUERY (JS) — matches whenever the desktop/
+       laptop layout ISN'T showing. Written as two OR'd conditions
+       instead of "and not (...)": that nested boolean form isn't
+       reliably supported on older mobile browsers (notably older iOS
+       Safari), and when a browser can't parse a media query it just
+       drops the whole rule block — silently breaking portrait mobile,
+       which is exactly what happened before this rewrite.
+         - (max-width:1199px) and (orientation:portrait): every
+           portrait phone, any height — always the stacked mobile
+           layout, regardless of how tall/short it is.
+         - (max-width:1199px) and (min-height:601px): landscape too,
+           but only once it's tall enough to not be a short landscape
+           phone (matches tablets/foldables, which should still look
+           like the phone view — untouched from before).
+       Together these are the exact inverse of DESKTOP_MEDIA_QUERY's
+       own OR condition above (De Morgan's law), so a short landscape
+       phone (under 1200px wide AND max-height:600px) matches NEITHER
+       line here and falls through to the desktop/laptop layout
+       instead, same as intended. */
+    @media (max-width: 1199px) and (orientation: portrait), (max-width: 1199px) and (min-height: 601px) {
+      .screen { padding: 5px; }
+
+      /* Board bounding box shrunk to ~86% of its previous size (and
+         re-centered — left/top adjusted to keep equal margins) so that,
+         combined with the smaller .cell fill % below, the planting
+         circles render about 20% smaller while the gap BETWEEN them
+         stays the same as before. Just shrinking .cell on its own would
+         make that gap grow (less circle, same grid square = more empty
+         margin) since the grid's own gap% and the board's overall pixel
+         size wouldn't change — shrinking the whole board's footprint by
+         the right amount compensates for that. */
+      :root {
+        /* Bounding box shrunk further (from 79%/78% down to 55%/54%,
+           re-centered on the same midpoint — see the math in the
+           comment this replaces) so the planting circles themselves
+           render noticeably smaller. Shrinking the whole box like
+           this (rather than just the cell fill-% below) scales the
+           circles AND the space between them down together, so the
+           circles end up both smaller and closer to each other in
+           absolute terms, not just smaller with the same-size gaps. */
+        /* Bounding box nudged in a touch (74%/66% -> 72%/64%) and moved
+           up (top reduced) per request — re-centered horizontally for
+           the narrower width. The cell fill-% and grid gap just below
+           (97% -> 99%, 0.7% -> 0.4%) are tightened to compensate, so
+           the planting circles themselves render at essentially the
+           same size as before; only the empty margin/gap shrinks. */
+        --board-left: 14%;
+        --board-top: calc(32% - 30px);
+        --board-width: 72%;
+        --board-height: 64%;
+      }
+
+      .game-layout {
+        flex-direction: column;
+        width: min(98vw, 620px);
+        height: calc(100svh - 10px);
+        gap: 6px;
+      }
+
+      /* The interactive grid only ever occupies --board-width x
+         --board-height of the stage image — that, not the cell
+         fill-percentage, is what caps how big each tile/icon can
+         render. Sized larger than the desktop box on purpose, since
+         the mobile stage is now a tall portrait rectangle rather than
+         a square, so there's more room to give it. */
+      .stage-frame {
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+
+      /* Side panel becomes a compact strip below the image instead of a
+         tall column beside it — still a vertical stack of rows, just
+         capped in height and scrollable if content overflows. */
+      .side-panel {
+        width: 100%;
+        flex: 0 0 auto;
+        max-height: 46svh;
+        gap: 6px;
+        padding: 2px;
+      }
+
+      /* Gameplay only (not the map screen, which already has its own
+         top-row-above-map handling further below): let .side-panel's
+         children flow as if they were direct children of .game-layout
+         itself, so the top-row (world logo + world name) can be
+         reordered to sit above .stage-frame while the rest of the
+         panel (score/home thumb, world picker, collection, actions)
+         stays below the image, right where it already was. */
+      #gameLayout:not(.on-map) .side-panel {
+        display: contents;
+      }
+
+      #gameLayout:not(.on-map) .side-panel .top-row {
+        order: -1;
+        position: relative;
+        justify-content: flex-end;
+      }
+
+      /* Title (wordmark image + world name) no longer sits in a glass
+         "pill" box on the gameplay screen — same idea as the map
+         screen's borderless logo, just scoped to gameplay instead.
+         Taken out of flex flow and centered on the row itself (not
+         centered within whatever space is left after the login icon),
+         so it stays visually centered regardless of that icon's width;
+         the login icon (#authRoot), still a normal flex item, is
+         pushed to the far right by .top-row's justify-content above. */
+      #gameLayout:not(.on-map) .side-panel .top-row .brand {
+        position: absolute;
+        left: 50%;
+        /* Was vertically centered on the row (top:50% + translateY
+           -50%) — with the row itself sitting right at the screen's
+           top edge, that let the top of the title image overflow
+           above the row and get clipped by the screen edge. Anchored
+           to a small fixed offset from the row's own top instead, so
+           there's always a few px of clear air above it. */
+        top: 6px;
+        transform: translateX(-50%);
+        flex: none;
+        max-width: calc(100% - 60px);
+        background: none;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        padding: 0;
+        /* .brand's base rule sets container-type: inline-size for the
+           cqw-based desktop sizing above — under that containment an
+           auto/shrink-to-fit width (this box is absolutely positioned
+           with no explicit width) can no longer size itself from its
+           own content, which was collapsing the box narrower than the
+           world-name text and forcing it to wrap onto a second line.
+           Mobile doesn't use cqw sizing anyway (font-size is a fixed
+           px below), so turning containment off here lets the box
+           size to fit its content again. */
+        container-type: normal;
+      }
+
+      /* Title image itself sized down a touch on mobile (was capped at
+         36px via the base clamp's floor) so it comfortably clears the
+         row without needing to hug the very top edge. */
+      .top-row .brand-logo-text {
+        max-height: 28px;
+      }
+
+      .top-row { gap: 6px; }
+      .brand { padding: 6px 9px; }
+      .brand small { font-size: 8px; }
+      .brand strong { font-size: 15px; white-space: nowrap; }
+      /* World name text hidden on mobile — only the title/wordmark
+         image (.brand-logo-text) shows at the top there. */
+      #worldName { display: none; }
+
+      /* 5 columns now: the next-item badge (sized to its own content,
+         not stretched), then the 3 stats, then "Back to start" — those
+         last 4 stretch to fill their own slice of the remaining width
+         just like before (see the .home-thumb width:100% override
+         below and layoutSideExtras() in the JS, which now inserts the
+         next-item badge as this row's first child, mobile only). Login
+         moved out of this row entirely — see .actions #authRoot below. */
+      /* Pull the score/next-item/back-to-start row out of its default
+         end-of-panel position (.score { order: 1 } near the top of this
+         stylesheet, meant for the start screen's how-to-play/premium
+         stacking order) so on mobile gameplay it renders immediately
+         after .stage-frame instead of after collection/
+         actions — i.e. directly under the game-world image, matching
+         the desktop/laptop behavior above. */
+      #gameLayout:not(.on-map) .side-panel .score.gameplay-only { order: 0; }
+
+      /* Enlarged per request: bigger padding + bigger stat/label text
+         (was 6px 8px / 13px / 8px) so the next-item + score row reads
+         as a noticeably bigger box on mobile. */
+      .score { padding: 12px 10px; gap: 8px; grid-template-columns: auto repeat(4, 1fr); align-items: stretch; }
+      .score .stat {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 9px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .stat b { font-size: 18px; }
+      .stat span { font-size: 10px; }
+
+      /* flex: 1 1 0 (matching .score .stat above) instead of
+         width: 100% — .score renders as a flex row here (not the grid
+         its grid-template-columns rule assumes; see the
+         higher-specificity ".side-panel .gameplay-only" display:flex
+         rule that wins the cascade), and width: 100% on a flex child
+         is read as its flex-basis, i.e. "start at 100% of the row and
+         shrink from there" — which made this button claim far more
+         space than the three stat pills beside it instead of matching
+         them. flex: 1 1 0 makes it share the row equally with them. */
+      .home-thumb { flex: 1 1 0; flex-direction: column; align-items: center; justify-content: center; padding: 9px 8px; gap: 4px; width: auto; height: auto; min-width: 0; }
+      .home-thumb-label { display: none; }
+      .home-thumb-icon { display: block; width: 22px; height: 22px; color: var(--gold2); }
+      .home-thumb-mobile-label {
+        display: block;
+        font-family: Arial, sans-serif;
+        font-weight: 800;
+        font-size: 9px;
+        letter-spacing: .10em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      /* Login/account icon — now lives at the far right of the Undo/New
+         row instead of the score row (see layoutSideExtras() in the
+         JS, which appends #authRoot into #actionsBox on mobile). Sized
+         to its own content (not stretched, unlike Undo/New which fill
+         the remaining space via .actions button { flex:1 1 0 }), and
+         styled as a small round tile matching the pill buttons beside
+         it. */
+      .actions #authRoot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        padding: 6px 10px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 999px;
+      }
+
+      /* Achievement/collection strip (box #3) — height halved per
+         request by shrinking its item icons (the icon size is what
+         drives this box's height) rather than clipping it, so nothing
+         gets visually cut off. */
+      .collection { padding: 3px 8px; gap: 4px; }
+      .collection .item-icon { width: 25px; height: 25px; }
+
+      /* Mobile no longer overlays the next-item badge on top of the
+         board image — it now sits in normal flow as the first cell of
+         the score row (see layoutSideExtras() in the JS, which moves
+         #nextItemGroup into #scoreBox instead of into the stage on
+         mobile), directly under the image and to the left of the
+         login icon / stats / home button. Shrunk a bit to fit that
+         row. Label is placed after the icon in markup, but reordered
+         (order:1) to render below it here, matching the icon-then-
+         label pattern the stat pills and home button use. */
+      /* Boxed the same way the Score/Moves/Best stat pills are (see
+         .stat above) — background, border, radius, padding — so the
+         next-item badge reads as one more pill in the row instead of
+         a bare floating icon+label. flex:1 1 0 matches .score .stat's
+         mobile override so it claims an even share of the row. */
+      .next-item-group {
+        position: static; left: auto; right: auto; bottom: auto; z-index: auto; justify-content: center;
+        flex: 1 1 0;
+        min-width: 0;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 16px;
+        padding: 9px 8px;
+      }
+      .next-item-label {
+        display: none;
+      }
+      /* Inner icon frame's own background/border/glow (see base
+         .next-seed above) is switched off here — with the badge now
+         boxed itself, keeping both would nest a small box inside a
+         bigger one instead of the single flat pill Score/Moves/Best
+         use. Sized to fill the pill (which stretches to match the
+         Score/Moves/Best row height via .score's align-items:stretch)
+         now that the "Next item" label is gone and isn't claiming any
+         of that space, so the icon can render as large as the box
+         allows. */
+      .next-seed {
+        width: 100%; height: 100%; border-radius: 13px; order: 0;
+        background: none;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+      .next-seed .item-icon { width: 90%; height: 90%; }
+
+      .actions { padding: 5px; gap: 4px; }
+      .difficulty { padding: 5px; gap: 4px; }
+      /* Mobile drops the illustrated circles/arrows/checkmark legend
+         entirely and instead shows a short text hint right on the
+         Easy/Hard buttons themselves (see .diff-mobile-hint). */
+      .side-panel .difficulty-rules { display: none; }
+      .diff-mobile-hint { display: inline; }
+      button { padding: 6px 8px; font-size: 8px; }
+
+      /* Planting circles sized up and pulled much closer together on
+         mobile so they nearly touch: a bigger cell-fill percentage
+         (was 80%, now 97%) plus a much tighter grid gap (see .board
+         override below) closes almost all the empty space between
+         neighboring circles. Combined with the smaller mobile
+         --board-width/--board-height bounding box above, the circles
+         themselves also render much smaller overall. */
+      .cell { width: 99%; }
+      .board { gap: 0.4%; }
+
+      /* ---------- Mobile map screen ----------
+         The side panel becomes a slim icon bar sitting ABOVE the map
+         image (not overlaid on top of it) — logo centered in the bar,
+         how-to-play + account icon pinned to its right edge. The map
+         image itself fills whatever height is left below that bar.
+         Every other side-panel box (score/collection/
+         actions, plus the old text how-to-play box) is hidden here
+         since none of it applies before a board is open. */
+      .screen:has(#gameLayout.on-map) { padding: 0; }
+
+      #gameLayout.on-map { width: 100vw; max-width: 100vw; height: 100svh; }
+
+      #gameLayout.on-map .stage-frame {
+        width: 100vw;
+      }
+
+      /* Corners rounded to match the same radius .stage/.map-screen
+         already use everywhere else (base clamp(20px,3vw,36px)) —
+         previously squared off (border-radius:0) here for the
+         full-bleed mobile map, per request now rounded instead. */
+
+      /* The map art must never be cropped. .map-frame (see the base
+         rule further up) always sizes itself to the artwork's real
+         aspect ratio now, so it can never need cropping on any window
+         shape — no override needed here any more. */
+
+      /* Frame border (thickness + gold tint) is on the shared .stage
+         rule now (see below) instead of scoped to on-map, so the
+         exact same frame surrounds the game world during gameplay
+         too — not just the map. */
+      .stage {
+        border-width: 3px;
+        border-color: rgba(248, 217, 139, .45);
+      }
+
+      /* Back in normal flow (not absolutely positioned over the stage),
+         placed first via order so it renders above the image instead
+         of below it — .stage-frame comes first in the markup, but
+         visually the bar needs to sit on top. */
+      /* Padding/gap trimmed down to the minimum this header actually
+         needs (icon row + title logo, nothing more) so the map image
+         below gets as much of the fixed 100svh height as possible. */
+      #gameLayout.on-map .side-panel {
+        order: -1;
+        position: static;
+        flex: 0 0 auto;
+        max-height: none;
+        padding: 0 16px;
+        gap: 0;
+      }
+
+      #gameLayout.on-map .side-panel .top-row {
+        position: relative;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 26px;
+      }
+
+      /* Explicitly center the "how to play" and login icons on the
+         cross-axis within the icon bar's own height, regardless of any
+         difference in their intrinsic sizes (auth.js's injected
+         #accountBtn vs. the fixed 34px howtoplay-btn). */
+      #gameLayout.on-map .side-panel .top-row > * {
+        align-self: center;
+      }
+
+      #gameLayout.on-map .side-panel > *:not(.top-row):not(.map-brand) {
+        display: none !important;
+      }
+
+      /* .brand (the small hidden logo pill) used to be the only other
+         thing in the row, so centering it via absolute position was
+         safe. It's not shown on mobile (see .top-row .brand-map-logo
+         rule further down), so this rule is inert there — kept only
+         so nothing changes if that ever flips. */
+      #gameLayout.on-map .top-row .brand {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        flex: none;
+        justify-content: center;
+      }
+
+      #gameLayout.on-map .brand-logo { max-height: 38px; }
+
+      /* Turns the icon on for the map screen only — its base rule
+         (display:none) keeps it off on desktop and during gameplay.
+         Now the leftmost item in the icon bar (see .top-row's
+         space-between above and #authRoot's position at the opposite
+         end, further down). */
+      #gameLayout.on-map .howtoplay-btn { display: inline-flex; order: -1; }
+
+      /* Title image (images/game-holisticgametiteltext.png) — moved by
+         JS (see the mobile branch of layoutSideExtras()) into the icon
+         bar itself, between the "how to play" and login icons, so all
+         three now sit on the same row instead of the logo getting its
+         own row below. */
+      #gameLayout.on-map .top-row .map-brand {
+        display: flex;
+        position: static;
+        left: auto;
+        top: auto;
+        transform: none;
+        z-index: auto;
+        align-items: center;
+        justify-content: center;
+        flex: 0 1 auto;
+        max-width: none;
+        width: auto;
+        margin: 0;
+        text-align: center;
+      }
+
+      /* Sized to fit inside the icon row's own height (howtoplay-btn is
+         34px) rather than the old full-width header block — width:auto
+         lets it keep its natural aspect ratio instead of the base
+         rule's width:100%, which would otherwise force it to stretch. */
+      #gameLayout.on-map .top-row .map-brand-img {
+        width: auto;
+        max-height: 30px;
+        margin: 0;
+      }
+
+      /* The small logo that used to be the icon bar's only title is now
+         redundant once the big title image sits on the map itself —
+         hide it so there's just the one title, not two stacked on top
+         of each other. The bar keeps only the "how to play" and login
+         icons. */
+      #gameLayout.on-map .top-row .brand-map-logo {
+        display: none;
+      }
+
+      /* Login/account icon — rightmost item in the icon bar now that
+         "how to play" moved to the far left (see .howtoplay-btn's
+         order:-1 above and .top-row's space-between). */
+      #gameLayout.on-map #authRoot { order: 1; }
+
+      /* "Remove Ads" floating button (see the markup right after
+         #gameLayout closes) — sits below the map image, in the space
+         freed up by shrinking the map (see .map-brand's comment
+         above). Only ever shown on mobile's map screen while ads
+         haven't already been removed; base rule
+         (.mobile-map-cta-btn { display:none }) keeps it off desktop
+         and off the gameplay board. */
+      #gameLayout.on-map:not(.ads-removed) .mobile-map-cta-btn {
+        display: flex;
+        width: auto;
+        flex: 0 0 auto;
+        margin: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
+      }
+
+      /* Guest "island cleared" upsell — pushed down from the very top
+         of the screen (instead of vertically centered) so it always
+         sits clear of the account icon in the corner, and shrunk a
+         bit so it comfortably fits as a smaller box. */
+      #guestClearModal {
+        align-items: flex-start;
+        padding-top: 56px;
+      }
+      #guestClearModal .guest-clear-card {
+        width: min(400px, 100%);
+        padding: 20px 18px 16px;
+        max-height: calc(100svh - 76px);
+        overflow-y: auto;
+      }
+      #guestClearModal .gcm-kicker { font-size: 13px; margin-bottom: 3px; }
+      #guestClearModal .gcm-warning { font-size: 11px; margin-bottom: 12px; }
+      #guestClearModal .gcm-block { padding-top: 12px; }
+      #guestClearModal .gcm-headline { font-size: clamp(18px, 5.2vw, 21px); margin-bottom: 6px; }
+      #guestClearModal .gcm-sub { font-size: 11px; margin-bottom: 10px; }
+      #guestClearModal .gcm-checklist { gap: 5px; margin-bottom: 10px; }
+      #guestClearModal .gcm-checklist li { font-size: 11px; }
+    }
+
+    /* .collection used to be force-hidden on any viewport shorter than
+       650px here (including mobile landscape gameplay), via
+       ".side-panel .collection { display:none }" — that hid the
+       collected-items strip from players in landscape mode entirely.
+       .side-panel already scrolls (overflow-y:auto, see the base
+       .side-panel rule above), so there's no need to hide it: it just
+       becomes one more scrollable row on short viewports instead. */
