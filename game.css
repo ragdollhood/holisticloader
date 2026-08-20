@@ -1433,43 +1433,20 @@ button {
         transform-origin: center;
       }
 
-      /* Measured this instead of guessing: on a short viewport the
-         stage-frame's height is always the binding constraint (it's
-         min(92svh, stage-max-w / ratio), and 92svh alone comes out
-         smaller than stage-max-w/ratio here) — so --sp-width has ZERO
-         effect on the frame's size. Checked across six phone widths at
-         matching heights; the frame rendered pixel-identical every
-         time regardless of panel width. So the previous fix's theory
-         (widen the panel, starve the board) wasn't actually the cause
-         here. What WAS starving the circles: --board-width/--board-
-         height (the interactive grid's own share of the frame) were
-         left at the desktop default (58%/54%) in this query — the
-         same fraction portrait mobile used to have before it got
-         bumped to 72%/64% below. On a frame this much smaller than
-         desktop's, that small a fraction produces genuinely tiny
-         circles. Bumped to 78%/74% first (see below), which grew every
-         circle by roughly 45% on top of the cell/gap tightening above.
-
-         Bumped again, further per request, to 88%/84% — recentred on
-         the SAME mid-point as always (50% across, 51%+38px down: with
-         width/height W/H, left = 50% - W/2 and top's percentage part =
-         51% - H/2, the +38px carried over unchanged since it's a
-         fixed top-row offset, not part of the box's own size) so the
-         box still lines up with the illustrated soil patches in the
-         artwork — only its size changed, not its centre. 88%/84% is
-         about as far as this can go without the box's own edges
-         starting to clip the stage frame: left+width = 6%+88% = 94%,
-         top's worst case (+38px on a short phone's ~34px-per-percent
-         frame height) leaves roughly a percent of slack at the
-         bottom — any bigger and the bottom row of circles risks
-         crowding the frame edge on the shortest supported phones.
-         --sp-width is left as it was (harmless either way, and the
-         panel still needs the room). */
+      /* Board's own bounding box on this short-landscape-phone view —
+         kept at its original 62%/54% (left 19% / top 17%+24px) so the
+         board's size/position/proportions here stay exactly as they've
+         always looked. (A prior pass tried bumping this to 88%/84% to
+         make the item art bigger; that ended up distorting the board's
+         shape instead, so it's been reverted back to these original
+         values — the item-art sizing on this viewport is handled
+         separately, via --mobile-landscape-item-scale below, without
+         touching the board's own box.) */
       :root {
-        --board-left: 6%;
-        --board-top: calc(9% + 38px);
-        --board-width: 88%;
-        --board-height: 84%;
+        --board-left: 19%;
+        --board-top: calc(17% + 24px);
+        --board-width: 62%;
+        --board-height: 54%;
         --sp-width: clamp(190px, 26vw, 300px);
         --gl-gap: clamp(6px, 1.2vw, 14px);
         --screen-pad: clamp(6px, 1vw, 12px);
@@ -1636,24 +1613,78 @@ button {
       .stat b { font-size: 13px; }
       .stat span { font-size: 8px; }
 
-      /* Collection is now just a slim strip under the big next-item
-         card above (see .side-panel .next-item-group) — shrunk to
-         ~20px tall total per request: 3px top + 3px bottom padding
-         around a 14px icon = 20px. ".side-panel" prefix (not just the
-         bare class) is required: the later, unscoped base rules
-         further down this file (".collection { padding: 6px 10px;
-         ...}" and ".collection .item-icon { width: 50px; ...}")
-         share the exact same specificity as a plain ".collection" /
-         ".collection .item-icon" selector here, so — being later in
-         source order — they'd silently win over this regardless of
-         which one a browser evaluated first. */
-      .side-panel .collection { padding: 3px 8px; gap: 3px; }
+      /* ---------- Layout reshuffle, mobile-landscape gameplay only ----------
+         Was a single flex column (score / next-item / collection / actions /
+         difficulty, each its own full-width row, tallest-first). Per
+         request, .side-panel becomes a small grid instead so collection can
+         sit beside the next-item card rather than under it: score keeps its
+         own full-width row, then next-item + collection share ONE row
+         (next-item left, collection right), then actions and difficulty
+         each keep their own full-width row below — one row shorter overall
+         than before, which is what actually "moves up" actions/difficulty:
+         removing collection's separate row closes the gap it used to take.
+         Scoped to #gameLayout:not(.on-map) (gameplay only, same pattern
+         every other JS-runtime rule in this file already uses) so the map/
+         start screen's side panel — a completely different set of children
+         — keeps its plain flex-column layout untouched. Named areas (not
+         source order) place every child, so this works regardless of where
+         layoutSideExtras() (JS) has actually inserted next-item-group in
+         the DOM. */
+      #gameLayout:not(.on-map) .side-panel {
+        display: grid;
+        grid-template-columns: minmax(90px, auto) 1fr;
+        grid-template-rows: auto 108px auto auto;
+        grid-template-areas:
+          "score      score"
+          "next-item  collection"
+          "actions    actions"
+          "difficulty difficulty";
+      }
+      .side-panel .score { grid-area: score; }
+      .side-panel .next-item-group { grid-area: next-item; align-self: stretch; justify-content: center; }
+
+      /* Collection: was a horizontal strip under the next-item card: now
+         sits in its own grid column to the RIGHT of it instead, one item
+         per row, filling top-to-bottom (flex-direction:column) and only
+         wrapping into a second column if it fills the whole 108px row
+         height first — same "shrunk to a slim strip" 14px icon size as
+         before, just stacked instead of side-by-side. align-self:stretch
+         locks its box to the row's 108px height (set on
+         #gameLayout:not(.on-map) .side-panel above) so that's the exact
+         height available before wrapping kicks in; overflow:hidden is a
+         safety net if a player has collected enough item types to fill
+         even two wrapped columns. ".side-panel" prefix kept for the same
+         specificity reason as before (see the comment this replaces) —
+         needed to beat the later, unscoped base ".collection { ... }" /
+         ".collection .item-icon { ... }" rules further down the file. */
+      .side-panel .collection {
+        grid-area: collection;
+        width: auto;
+        height: 100%;
+        align-self: stretch;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        justify-content: flex-start;
+        overflow: hidden;
+        padding: 4px 6px;
+        gap: 4px;
+      }
       .side-panel .collection .item-icon { width: 14px; height: 14px; }
 
-      .actions { padding: 5px; gap: 4px; }
-      .actions button { padding: 7px 8px; font-size: 9px; min-width: 0; }
-      .difficulty { padding: 5px; gap: 4px; }
-      .difficulty button { padding: 7px 8px; font-size: 9px; min-width: 0; }
+      /* Undo / New / Home (.actions) and Easy / Hard (.difficulty): were
+         two separate flex:1-per-button rows, so 3-button .actions and
+         2-button .difficulty ended up different widths per button despite
+         sharing the same padding/font. Fixed width + centered row (instead
+         of flex:1 stretching to fill the row) makes every one of the 5
+         buttons the same narrow size regardless of how many share its row,
+         and narrower/smaller-font than before so both rows plus the
+         next-item/collection row above all fit on screen without the panel
+         needing to scroll. */
+      .actions { grid-area: actions; padding: 5px; gap: 4px; justify-content: center; }
+      .actions button { flex: 0 0 auto; width: 58px; min-width: 0; padding: 6px 2px; font-size: 8px; }
+      .difficulty { grid-area: difficulty; padding: 5px; gap: 4px; justify-content: center; }
+      .difficulty button { flex: 0 0 auto; width: 58px; min-width: 0; padding: 6px 2px; font-size: 8px; }
       /* Illustrated legend (circles + dashed arrow + checkmark) no
          longer sits permanently in the panel here — tapping Easy/Hard
          now flashes it center-screen for 1.5s instead (see
