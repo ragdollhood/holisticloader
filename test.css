@@ -1029,12 +1029,30 @@ button {
         display: none;
       }
 
+      /* Gameplay only: .top-row's remaining visible content (the
+         brand box) is already hidden a few lines below, and #authRoot
+         is pulled out of flow via position:fixed (see the shared
+         min-width:1200px/landscape rule further up) — so by this
+         point .top-row has nothing left contributing height. display:
+         contents drops its own box (and the .side-panel flex gap that
+         would otherwise still apply above/below an empty row) while
+         leaving #authRoot itself untouched, so the fixed-position icon
+         keeps rendering exactly where it already did. Net effect:
+         .score becomes the first thing with any actual height in the
+         panel, flush under .side-panel's own small padding. */
+      #gameLayout:not(.on-map) .side-panel .top-row {
+        display: contents;
+      }
+
       /* Overrides the base .next-item-group's position:absolute/left/
          bottom overlay placement — as a direct .side-panel child now,
-         it needs to be a normal in-flow block instead, styled like
-         every other "hud" card in the panel (.score/.actions/etc): a
-         glass background/border/blur instead of the bare
-         floating-icon look it had as a stage overlay. */
+         it needs to be a normal in-flow block instead. Per request,
+         this stays a bare layout wrapper with no card look of its own
+         (no border/background/blur/shadow) — the icon's own box (see
+         .side-panel .next-seed below, which already has that glass
+         background/border/glow) is the only "box" here, so the icon
+         sits directly in it instead of a box nested inside another
+         box. */
       .side-panel .next-item-group {
         position: static;
         width: 100%;
@@ -1042,14 +1060,8 @@ button {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
-        padding: 10px 10px 12px;
-        border-radius: 18px;
-        border: 1px solid var(--border);
-        background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.06)), var(--glass);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-        box-shadow: 0 18px 50px rgba(0,0,0,.30);
+        gap: 4px;
+        padding: 0;
       }
 
       /* Shown now (unlike the old bare stage-overlay version, which
