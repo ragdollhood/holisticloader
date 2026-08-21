@@ -552,13 +552,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 /* ===== "also try our game" tile — same size as the premium card, sitting
    right beside it (stacked on narrow screens where there's no room for
    two side-by-side boxes). ===== */
-#premiumGameLink,.game-preview-link{position:relative;z-index:1;display:block;flex:0 0 auto;min-width:0;
+#premiumGameLink{position:relative;z-index:1;display:block;flex:0 0 auto;min-width:0;
   border-radius:28px;overflow:hidden;aspect-ratio:1/1;
   border:1.5px solid var(--gold);box-shadow:0 26px 58px rgba(0,0,0,.54),0 0 0 1px rgba(255,217,138,.08) inset;
   transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease}
-#premiumGameLink:hover,#premiumGameLink:focus-visible,.game-preview-link:hover,.game-preview-link:focus-visible{transform:translateY(-3px) scale(1.02);
+#premiumGameLink:hover,#premiumGameLink:focus-visible{transform:translateY(-3px) scale(1.02);
   box-shadow:0 30px 64px rgba(0,0,0,.58),0 0 0 1px rgba(255,217,138,.14) inset}
-#premiumGameLink img,.game-preview-link img{display:block;width:100%;height:100%;object-fit:cover}
+#premiumGameLink img{display:block;width:100%;height:100%;object-fit:cover}
 @media(min-width:660px){
   #premiumCard{flex:1 1 0}
   /* Match the premium card's WIDTH (equal flex share) but stay square —
@@ -571,13 +571,6 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 @media(max-width:560px){
   #premiumGameLink{border-radius:22px}
 }
-
-/* ===== bottom-of-page mahjong link — reuses .game-preview-link so the
-   image renders at the exact same size/style as the "also try our game"
-   preview above, just centered on its own row. ===== */
-#mahjongLinkSection{position:relative;z-index:1;max-width:960px;margin:34px auto 0;padding:0 20px;
-  display:flex;justify-content:center}
-#mahjongLinkSection .game-preview-link{width:100%;max-width:460px}
 
 /* ===== footer ===== */
 #siteFooter{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
@@ -757,12 +750,6 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     </div>
     <a id="premiumGameLink" href="game.html" aria-label="Play Holistic Game">
       <img src="images/holistic-game-preview-square.jpg" alt="Holistic Game" loading="lazy" decoding="async">
-    </a>
-  </section>
-
-  <section id="mahjongLinkSection" aria-label="Play Mahjong Loader">
-    <a class="game-preview-link" href="mahjong.html" aria-label="Play Mahjong Loader">
-      <img src="images/preview-mahjong.jpg" alt="Mahjong Loader" loading="lazy" decoding="async">
     </a>
   </section>
 
