@@ -497,8 +497,8 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
    Deliberately more contrast, more glow, more depth than everything above it,
    while staying inside the same black-and-gold luxury language. ===== */
 #premiumSection{position:relative;z-index:1;flex:0 0 auto;max-width:1170px;margin:44px auto 0;padding:0 20px;
-  display:flex;flex-direction:column;gap:18px;align-items:stretch}
-@media(min-width:660px){ #premiumSection{flex-direction:row;align-items:stretch;gap:22px} }
+  display:grid;grid-template-columns:1fr;gap:18px;align-items:stretch}
+@media(min-width:660px){ #premiumSection{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px} }
 #premiumSection::before{content:'';position:absolute;z-index:0;left:50%;top:-14%;width:150%;height:140%;
   transform:translateX(-50%);pointer-events:none;
   background:radial-gradient(50% 52% at 50% 30%, rgba(255,214,140,.23), transparent 70%);
@@ -560,13 +560,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 #premiumGameLink:hover,#premiumGameLink:focus-visible{transform:translateY(-3px) scale(1.02);
   box-shadow:0 30px 64px rgba(0,0,0,.58),0 0 0 1px rgba(255,217,138,.14) inset}
 #premiumGameLink img{display:block;width:100%;height:100%;object-fit:cover}
-@media(min-width:660px){
-  #premiumCard{flex:1 1 0}
-  /* Equal flex share = same width as the premium card, and the container's
-     align-items:stretch (set above) makes this tile stretch to the same
-     height as the premium card too — both same size as the entry tiles. */
-  #premiumGameLink{flex:1 1 0}
-}
+/* #premiumCard and #premiumGameLink are now sized by the grid's two
+   minmax(0,1fr) tracks on #premiumSection (defined above) — this forces
+   them to be exactly equal width regardless of their content, which plain
+   flexbox could not guarantee (long unbreakable text/eyebrow labels could
+   inflate one flex item's min-content size and skew the split). The
+   container's align-items:stretch still makes both stretch to match
+   height, same size as the entry tiles. */
 @media(max-width:560px){
   #premiumGameLink{border-radius:22px}
 }
