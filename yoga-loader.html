@@ -78,43 +78,42 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   background:radial-gradient(120% 90% at 50% 0%,transparent 26%,rgba(0,0,0,.2) 100%),
   linear-gradient(to bottom,rgba(0,0,0,.16) 0%,transparent 24%,transparent 55%,rgba(0,0,0,.26) 100%)}
 
-/* ===== shared tab navigation (same system as breathing.html / instruments.html) ===== */
+/* ===== Unified header: logo + navigation + title plaque (matches mahjong.html) ===== */
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
-  padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
+  padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));
+  pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
 #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px}
 #brandLink{display:inline-flex;pointer-events:auto;cursor:pointer}
 #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
-#topTabs{display:flex;pointer-events:auto}
+#topTabs{display:flex;flex-wrap:wrap;justify-content:center;pointer-events:auto}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
-  padding:9px 20px;color:var(--soft);text-decoration:none;white-space:nowrap;
+  padding:9px 18px;color:var(--soft);text-decoration:none;white-space:nowrap;
   background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
   border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
 #topTabs .tab:hover{color:var(--ink)}
 #topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
-.tab-mobile{display:inline}
-.tab-desktop{display:none}
-@media(min-width:900px){
-  .tab-mobile{display:none}
-  .tab-desktop{display:inline}
-}
+.h1-mobile{display:none}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);opacity:.55}
-@media(max-width:560px){
+@media(max-width:720px){
   #brandLogo{max-height:clamp(46px,12vw,84px)}
-  #topTabs .tab{padding:8px 13px;font-size:11px}
+  #topTabs .tab{padding:8px 9px;font-size:10px}
+  .h1-desktop{display:none}
+  .h1-mobile{display:inline}
 }
 
 /* ===== title plaque: the "dropped tab" hanging under the nav, gold→violet gradient text ===== */
 .h1-frame{
-  position:fixed;top:max(46px,calc(env(safe-area-inset-top) + 34px));left:50%;transform:translateX(-50%);
-  z-index:30;width:min(75vw,656px);padding:9px 24px 9px;
+  position:fixed;top:max(118px,calc(env(safe-area-inset-top) + 106px));left:50%;transform:translateX(-50%);
+  z-index:30;width:min(94vw,820px);padding:9px 24px 9px;
   border:1.5px solid var(--gold);border-top:none;border-radius:0 0 30px 30px;
   background:linear-gradient(180deg, rgba(20,14,28,.74) 0%, rgba(14,10,20,.62) 100%);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
+  text-align:center;
 }
 .h1-frame-title{
   font-family:Georgia,serif;font-size:clamp(15px,4.2vw,20px);font-weight:600;
@@ -122,8 +121,15 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   background:linear-gradient(90deg,var(--gold),var(--violet));
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-@media (max-width:560px){
-  .h1-frame{top:max(42px,calc(env(safe-area-inset-top) + 28px));width:74vw;padding:6px 14px 4px;border-radius:0 0 18px 18px}
+@media(max-width:720px){
+  .h1-frame{top:max(89px,calc(env(safe-area-inset-top) + 75px));width:92vw;padding:6px 14px 4px;border-radius:0 0 18px 18px}
+}
+@media(orientation:landscape) and (max-height:500px){
+  #topNav{padding-top:max(6px,env(safe-area-inset-top))}
+  #brandLogo{max-height:34px}
+  #topTabs .tab{padding:6px 10px;font-size:10px}
+  .h1-frame{top:max(64px,calc(env(safe-area-inset-top) + 54px));padding:5px 16px}
+  .h1-frame-title{font-size:clamp(12px,3.4vw,15px)}
 }
 
 /* ===== hamburger menu (top-left): Premium / How to use / Contact ===== */
@@ -204,11 +210,11 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 
 /* ===== page content ===== */
 #pageContent{position:relative;z-index:1;min-height:100vh;
-  padding:max(166px,calc(env(safe-area-inset-top) + 146px)) 20px 60px;
+  padding:max(164px,calc(env(safe-area-inset-top) + 148px)) 20px 60px;
   display:flex;flex-direction:column;align-items:center;text-align:center}
 #pageContent .placeholder{max-width:520px;color:var(--muted);font-size:14px;line-height:1.7;margin-top:12px}
-@media(max-width:560px){
-  #pageContent{padding-top:max(140px,calc(env(safe-area-inset-top) + 120px))}
+@media(max-width:720px){
+  #pageContent{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}
 }
 
 /* ===== yoga page content ===== */
@@ -481,10 +487,12 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 <header id="topNav">
   <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
   <nav id="topTabs" aria-label="Main sections">
-    <a href="breathing.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
-    <a href="instruments.html" class="tab">Soundscape Creator</a>
-    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
+    <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
+    <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition Tracker</span></a>
     <a href="yoga-loader.html" class="tab active" aria-current="page">Yoga</a>
+    <a href="mahjong.html" class="tab">MAHJONG</a>
+    <a href="store.html" class="tab">SHOP</a>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>

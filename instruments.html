@@ -195,6 +195,7 @@
     background:linear-gradient(180deg, rgba(20,14,28,.74) 0%, rgba(14,10,20,.62) 100%);
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
     box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
+    text-align:center;
     /* hidden from the very first paint (via CSS, not a script that runs
        later) so it can never flash at its default width before JS has
        measured and sized it — see .h1-frame.h1-ready below */
@@ -202,28 +203,35 @@
   }
   .h1-frame.h1-ready{visibility:visible}
   .h1-frame h1{max-width:none;margin:0;white-space:nowrap}
-  @media (max-width:560px){
+  @media (max-width:720px){
     .h1-frame{
       top:max(89px,calc(env(safe-area-inset-top) + 75px));
       width:92vw;
       padding:11px 14px 5px;
       border-radius:0 0 18px 18px;
     }
+    #topTabs .tab{padding:8px 9px;font-size:10px}
+  }
+  @media(orientation:landscape) and (max-height:500px){
+    #topNav{padding-top:max(6px,env(safe-area-inset-top))}
+    #brandLogo{max-height:34px}
+    #topTabs .tab{padding:6px 10px;font-size:10px}
+    .h1-frame{top:max(64px,calc(env(safe-area-inset-top) + 54px));padding:5px 16px}
   }
   /* ---- title logo: sits above the nav tabs, at the very top of the page ---- */
   #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px;pointer-events:none}
   #brand a{pointer-events:auto;display:inline-block;line-height:0}
   #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
     filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
-  @media (max-width:560px){
+  @media (max-width:720px){
     #brandLogo{max-height:clamp(46px,12vw,84px)}
   }
   .sub{font-size:12.5px;color:var(--soft);margin-top:6px;text-align:center;letter-spacing:.08em}
-  .h1-desktop{display:none}
-  .h1-mobile{display:inline}
-  @media (min-width:900px){
-    .h1-desktop{display:inline}
-    .h1-mobile{display:none}
+  .h1-desktop{display:inline}
+  .h1-mobile{display:none}
+  @media (max-width:720px){
+    .h1-desktop{display:none}
+    .h1-mobile{display:inline}
   }
 
   .stage{
@@ -529,9 +537,9 @@
   #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
     padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
     background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
-  #topTabs{display:flex;pointer-events:auto}
+  #topTabs{display:flex;flex-wrap:wrap;justify-content:center;pointer-events:auto}
   #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;
-    padding:9px 20px;color:var(--soft);text-decoration:none;white-space:nowrap;
+    padding:9px 18px;color:var(--soft);text-decoration:none;white-space:nowrap;
     background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
     border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
@@ -637,7 +645,6 @@
   .htu-list li i{color:var(--ink);font-style:normal;font-weight:500}
   .htu-foot{margin-top:16px;font-size:11.5px;line-height:1.6;letter-spacing:.01em;color:var(--faint);text-transform:none}
   @media(max-width:560px){
-    #topTabs .tab{padding:8px 13px;font-size:11px}
     #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
     @supports(padding:max(0px)){
       #donateWrap{left:max(4px,env(safe-area-inset-left))}
@@ -1018,9 +1025,11 @@
   <h1 id="brand"><a href="index.html" aria-label="Holistic Loader — home"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
   <nav id="topTabs" aria-label="Main sections">
     <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
-    <a href="instruments.html" class="tab active" aria-current="page">Soundscape Creator</a>
-    <a href="nutriloader.html" class="tab">Nutrition tracker</a>
+    <a href="instruments.html" class="tab active" aria-current="page"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
+    <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition Tracker</span></a>
     <a href="yoga-loader.html" class="tab">Yoga</a>
+    <a href="mahjong.html" class="tab">MAHJONG</a>
+    <a href="store.html" class="tab">SHOP</a>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
@@ -1074,8 +1083,9 @@
 <audio id="silentUnlock" loop playsinline preload="auto" style="display:none" src="data:audio/wav;base64,UklGRoQJAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YWAJAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA="></audio>
 
 <div class="h1-frame">
-  <h1><span class="h1-desktop">CLICK · DOUBLE CLICK & DRAG</span><span class="h1-mobile">TAP · DOUBLE TAP & SWEEP</span></h1>
+  <h1>SOUNDSCAPE CREATOR</h1>
 </div>
+<p class="sub"><span class="h1-desktop">CLICK · DOUBLE CLICK & DRAG</span><span class="h1-mobile">TAP · DOUBLE TAP & SWEEP</span></p>
 <div class="donate-row">
 </div>
 

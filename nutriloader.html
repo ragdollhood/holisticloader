@@ -295,27 +295,23 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
 .chip.flash{animation:chipflash 1.4s ease 2}
 
 /* ---------- header ---------- */
-/* ---- rubrikflik: samma stil som på instruments-sidan, en nedfälld flik under navigationen ---- */
+/* ===== Unified header: logo + navigation + title plaque (matches mahjong.html) ===== */
 .h1-frame{
-  position:sticky;
+  position:fixed;
   top:max(118px,calc(env(safe-area-inset-top) + 106px));
-  margin:-118px auto 0;
+  left:50%;transform:translateX(-50%);
   z-index:30;
   width:min(94vw,820px);
   padding:8px 24px;
-  border:1.5px solid #ffd98a;
+  border:1.5px solid var(--gold);
   border-top:none;
   border-radius:0 0 30px 30px;
   background:rgba(6,4,9,.82);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   box-shadow:0 16px 30px rgba(0,0,0,.4), inset 0 10px 18px rgba(255,217,138,.07);
   display:flex;align-items:center;justify-content:center;
-  /* hidden from the very first paint (via CSS, not a script that runs
-     later) so it can never flash at its default width before JS has
-     measured and sized it — see .h1-frame.h1-ready below */
-  visibility:hidden;
+  text-align:center;
 }
-.h1-frame.h1-ready{visibility:visible}
 .h1-frame h1{
   font-family:Georgia,serif;font-size:clamp(15px,4.2vw,20px);font-weight:700;
   letter-spacing:.14em;text-align:center;line-height:1.4;max-width:none;margin:0 auto;
@@ -329,18 +325,27 @@ g.organ[data-organ="heart"].hovsel .hoverimg{transform:scale(1.6)}
 #brandLink{display:inline-flex;pointer-events:auto;cursor:pointer}
 #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
-@media (max-width:560px){
+.h1-mobile{display:none}
+body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
+@media(max-width:720px){
   #brandLogo{max-height:clamp(46px,12vw,84px)}
-}
-@media (max-width:560px){
   .h1-frame{
-    top:max(112px,calc(env(safe-area-inset-top) + 96px));
-    margin-top:-112px;
+    top:max(89px,calc(env(safe-area-inset-top) + 75px));
     width:92vw;
     padding:7px 14px;
     border-radius:0 0 18px 18px;
   }
-  .body-col{top:calc(max(112px,calc(env(safe-area-inset-top) + 96px)) + 44px);}
+  .h1-desktop{display:none}
+  .h1-mobile{display:inline}
+  body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}
+  .body-col{top:calc(max(89px,calc(env(safe-area-inset-top) + 75px)) + 44px);}
+}
+@media(orientation:landscape) and (max-height:500px){
+  #topNav{padding-top:max(6px,env(safe-area-inset-top))}
+  #brandLogo{max-height:34px}
+  .h1-frame{top:max(64px,calc(env(safe-area-inset-top) + 54px));padding:5px 16px}
+  .h1-frame h1{font-size:clamp(12px,3.4vw,15px)}
+  body{padding-top:max(92px,calc(env(safe-area-inset-top) + 76px))}
 }
 header{position:relative;text-align:center;padding:84px 70px 8px}
 header h1{
@@ -980,24 +985,18 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
   --glass-strong:rgba(18,12,26,.78);
   --gold-soft:#e6c179;
 }
-body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
-  padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
+  padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));
+  pointer-events:none;
   background:#06040a}
-#topTabs{display:flex;pointer-events:auto}
+#topTabs{display:flex;flex-wrap:wrap;justify-content:center;pointer-events:auto}
 #topTabs .tab{font-family:'Outfit',system-ui,sans-serif;font-weight:500;font-size:12.5px;letter-spacing:.04em;line-height:normal;
-  padding:9px 20px;color:rgba(255,255,255,.7);text-decoration:none;white-space:nowrap;
+  padding:9px 18px;color:rgba(255,255,255,.7);text-decoration:none;white-space:nowrap;
   background:rgba(6,4,9,.55);border:1px solid var(--tn-line);border-bottom:none;
   border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
 #topTabs .tab:hover{color:#fff}
-#topTabs .tab.active{color:#fff;background:rgba(6,4,9,.82);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--tn-gold)}
-.tab-mobile{display:inline}
-.tab-desktop{display:none}
-@media(min-width:900px){
-  .tab-mobile{display:none}
-  .tab-desktop{display:inline}
-}
+#topTabs .tab.active{color:var(--tn-gold);background:rgba(6,4,9,.82);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--tn-gold)}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--tn-gold) 15%,var(--tn-violet) 50%,var(--tn-gold) 85%,transparent);
   opacity:.55}
@@ -1097,15 +1096,13 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
 .htu-ic{width:1em;height:1em;vertical-align:-0.15em;stroke:currentColor;fill:none;stroke-width:1.8;margin:0 2px}
 .htu-foot{margin-top:16px;font-size:11.5px;line-height:1.6;letter-spacing:.01em;color:var(--faint);text-transform:none}
 
-@media(max-width:560px){
-  #topTabs .tab{padding:8px 13px;font-size:11px}
+@media(max-width:720px){
+  #topTabs .tab{padding:8px 9px;font-size:10px}
   #donateWrap{left:4px;top:max(12px,calc(env(safe-area-inset-top)))}
   @supports(padding:max(0px)){
     #donateWrap{left:max(4px,env(safe-area-inset-left))}
   }
   #menuBtn{width:30px;height:30px}
-  /* pull page content up much closer to the gold line under the tabs */
-  body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}
   header{padding-top:108px}
   /* how to use: fills the whole screen and only scrolls vertically, never sideways */
   #howToBox{
@@ -1273,10 +1270,12 @@ body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
     <header id="topNav">
       <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
       <nav id="topTabs" aria-label="Main sections">
-        <a href="breathing.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
-        <a href="instruments.html" class="tab">Soundscape Creator</a>
-        <a href="nutriloader.html" class="tab active" aria-current="page">Nutrition tracker</a>
+        <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
+        <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
+        <a href="nutriloader.html" class="tab active" aria-current="page"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition Tracker</span></a>
         <a href="yoga-loader.html" class="tab">Yoga</a>
+        <a href="mahjong.html" class="tab">MAHJONG</a>
+        <a href="store.html" class="tab">SHOP</a>
       </nav>
       <div id="authRoot"></div>
       <div id="topNavLine"></div>
