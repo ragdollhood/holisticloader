@@ -78,6 +78,114 @@ for (let i = 0; i < COUNT; i++) {
   ));
 }
 
+// ---- Fasta objekt som flyger mot betraktaren ----
+let flyers = [];
+let lastSpawn = performance.now();
+let nextGap = 2500 + Math.random() * 3500;
+
+function spawnFlyer() {
+  flyers.push({
+    worldX: (Math.random() - 0.5) * W * 0.15,
+    worldY: (Math.random() - 0.5) * H * 0.15,
+    z: 13 + Math.random() * 6,
+    hue: randHue(),
+    baseR: 22 + Math.random() * 16,
+    speed: 0.05 + Math.random() * 0.035
+  });
+}
+
+let particles = [];
+
+function vibrate(pattern) {
+  if (navigator.vibrate) {
+    try { navigator.vibrate(pattern); } catch (e) {}
+  }
+}
+
+function spawnExplosion(x, y, hue) {
+  const count = 18 + Math.floor(Math.random() * 14);
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 2 + Math.random() * 7;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      r: 3 + Math.random() * 6,
+      hue: hue + (Math.random() * 40 - 20),
+      life: 1
+    });
+  }
+}
+
+function updateParticles() {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.99;
+    p.vy *= 0.99;
+    p.life -= 0.018;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+
+function drawParticles() {
+  for (const p of particles) {
+    const a = Math.max(p.life, 0);
+    ctx.fillStyle = `hsla(${p.hue}, 85%, 62%, ${a})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r * a, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function updateFlyers(now) {
+  if (now - lastSpawn > nextGap) {
+    spawnFlyer();
+    lastSpawn = now;
+    nextGap = 2500 + Math.random() * 3500;
+  }
+  for (let i = flyers.length - 1; i >= 0; i--) {
+    const f = flyers[i];
+    f.z *= (1 - f.speed);
+    const r = f.baseR / f.z;
+    const maxR = Math.min(W, H) * 0.5;
+
+    if (r > maxR || f.z <= 0.03) {
+      flyers.splice(i, 1);
+    }
+  }
+}
+
+function drawFlyers() {
+  for (const f of flyers) {
+    const scale = 1 / f.z;
+    const sx = W / 2 + f.worldX * scale;
+    const sy = H / 2 + f.worldY * scale;
+    const r = Math.min(f.baseR * scale, Math.min(W, H) * 0.5);
+    const a = f.alpha === undefined ? 1 : Math.max(f.alpha, 0);
+    if (a <= 0) continue;
+
+    const grad = ctx.createRadialGradient(
+      sx - r * 0.3, sy - r * 0.3, r * 0.1,
+      sx, sy, r
+    );
+    grad.addColorStop(0, `hsla(${f.hue}, 85%, 72%, ${a})`);
+    grad.addColorStop(0.6, `hsla(${f.hue}, 85%, 55%, ${a})`);
+    grad.addColorStop(1, `hsla(${f.hue}, 85%, 38%, ${a})`);
+
+    ctx.save();
+    ctx.shadowColor = `hsla(${f.hue}, 85%, 60%, ${0.5 * a})`;
+    ctx.shadowBlur = Math.min(r * 0.5, 30);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(sx, sy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
 function step() {
   for (const b of blobs) {
     b.wobble += 0.01 + Math.random() * 0.01;
@@ -113,14 +221,35 @@ function draw() {
     ctx.fill();
   }
   ctx.globalCompositeOperation = 'source-over';
+  drawFlyers();
+  drawParticles();
 }
 
-function loop() {
+function loop(now) {
   step();
+  updateFlyers(now || performance.now());
+  updateParticles();
   draw();
   requestAnimationFrame(loop);
 }
 loop();
+
+function flyerScreenPos(f) {
+  const scale = 1 / f.z;
+  return {
+    sx: W / 2 + f.worldX * scale,
+    sy: H / 2 + f.worldY * scale,
+    r: f.baseR * scale
+  };
+}
+
+function flyerAt(x, y) {
+  for (const f of flyers) {
+    const { sx, sy, r } = flyerScreenPos(f);
+    if (Math.hypot(sx - x, sy - y) <= r) return f;
+  }
+  return null;
+}
 
 function blobAt(x, y) {
   let best = null, bestD = Infinity;
@@ -141,6 +270,16 @@ function onTapEnd(x, y) {
   const moved = Math.hypot(x - tapStart.x, y - tapStart.y);
   const dt = Date.now() - tapStart.t;
   if (moved < 10 && dt < 400) {
+    const f = flyerAt(x, y);
+    if (f) {
+      const { sx, sy } = flyerScreenPos(f);
+      spawnExplosion(sx, sy, f.hue);
+      vibrate([40, 20, 20]);
+      const idx = flyers.indexOf(f);
+      if (idx !== -1) flyers.splice(idx, 1);
+      tapStart = null;
+      return;
+    }
     const b = blobAt(x, y);
     if (b) {
       let newHue = b.hue;
