@@ -131,7 +131,7 @@ body.ultra-low #stage .aurora{filter:blur(14px);animation:none;transform:none}
 .match-fly{position:fixed;pointer-events:none;z-index:65;border-radius:7px;overflow:hidden;background:linear-gradient(165deg,#fbf5e6 0%,#efe4c8 55%,#d9c9a0 100%);box-shadow:0 0 0 1px #2b1d10cc,0 3px 14px rgba(0,0,0,.5);transition:transform .46s cubic-bezier(.28,.85,.35,1.15);will-change:transform}
 .match-fly img{width:100%;height:100%;object-fit:contain;display:block}
 .match-fly.merged{box-shadow:0 0 0 1px #2b1d10cc,0 0 26px 8px rgba(255,217,138,.55);transition:transform .46s cubic-bezier(.28,.85,.35,1.15),box-shadow .12s ease,filter .12s ease;filter:brightness(1.55) saturate(1.35)}
-.match-fly.dissolve{transition:transform .52s cubic-bezier(.4,0,.2,1),opacity .52s ease,filter .52s ease;opacity:0;filter:brightness(2) blur(3px);transform:scale(1.9) rotate(var(--rot,14deg))!important}
+.match-fly.dissolve{transition:transform .52s cubic-bezier(.4,0,.2,1),opacity .52s ease,filter .52s ease;opacity:0;filter:brightness(2) blur(3px);transform:scale(3.6) rotate(var(--rot,14deg))!important}
 .combo-badge{position:fixed;left:50%;top:20%;z-index:57;pointer-events:none;font:800 clamp(22px,5.2vw,36px) Georgia,serif;background:linear-gradient(90deg,var(--gold),#ff8a5c,var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent;text-shadow:0 4px 24px #0009;opacity:0;animation:comboPop .9s cubic-bezier(.2,1.7,.4,1) forwards}
 @keyframes comboPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.4) rotate(-6deg)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.16) rotate(2deg)}70%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}100%{opacity:0;transform:translate(-50%,-80%) scale(.92)}}
 .confetti-piece{position:fixed;top:-24px;width:9px;height:15px;z-index:70;pointer-events:none;border-radius:2px;animation-name:confettiFall;animation-timing-function:cubic-bezier(.35,0,.65,1);animation-fill-mode:forwards}
@@ -198,7 +198,7 @@ function flyAndMerge(aRect,tRect,key,done){
  requestAnimationFrame(()=>requestAnimationFrame(()=>{
   [[elA,aRect,-10],[elB,tRect,10]].forEach(([el,r,rot])=>{
    const dx=midX-(r.left+r.width/2),dy=midY-(r.top+r.height/2);
-   el.style.transform=`translate(${dx}px,${dy}px) scale(1.2) rotate(${rot}deg)`});
+   el.style.transform=`translate(${dx}px,${dy}px) scale(2.6) rotate(${rot}deg)`});
  }));
  setTimeout(()=>{
   play(key);
