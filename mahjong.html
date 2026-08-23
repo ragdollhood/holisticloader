@@ -97,23 +97,23 @@
    on weak GPUs — and is further scaled back for mobile/low-power devices
    by the perf-detection script below (body.low-power / body.ultra-low). ===== */
 #stage{position:fixed;inset:0;z-index:-3;overflow:hidden;
-  background:linear-gradient(160deg,#120c1c 0%,#1a1226 40%,#150e1f 70%,#0c0812 100%)}
+  background:linear-gradient(160deg,#221a38 0%,#2c1c42 40%,#241a36 70%,#180f26 100%)}
 #stage .aurora{position:absolute;inset:-8%;will-change:transform;
   background:
-    radial-gradient(30% 26% at 18% 22%, rgba(255,214,150,.42), transparent 70%),
-    radial-gradient(26% 22% at 82% 14%, rgba(160,170,255,.34), transparent 70%),
-    radial-gradient(28% 24% at 80% 82%, rgba(210,140,240,.30), transparent 70%),
-    radial-gradient(24% 20% at 16% 84%, rgba(122,240,208,.28), transparent 70%),
-    radial-gradient(22% 20% at 50% 48%, rgba(255,138,110,.22), transparent 72%);
-  filter:blur(34px);animation:auroraDrift 40s ease-in-out infinite alternate}
+    radial-gradient(38% 32% at 18% 22%, rgba(255,214,150,.72), transparent 70%),
+    radial-gradient(34% 28% at 82% 14%, rgba(160,170,255,.62), transparent 70%),
+    radial-gradient(36% 30% at 80% 82%, rgba(210,140,240,.58), transparent 70%),
+    radial-gradient(32% 26% at 16% 84%, rgba(122,240,208,.55), transparent 70%),
+    radial-gradient(30% 26% at 50% 48%, rgba(255,138,110,.48), transparent 72%);
+  filter:blur(26px);animation:auroraDrift 40s ease-in-out infinite alternate}
 @keyframes auroraDrift{
   0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
   50%{transform:translate3d(1.6%,-2%,0) rotate(4deg) scale(1.06)}
   100%{transform:translate3d(-2%,1.6%,0) rotate(-3deg) scale(1.03)}
 }
 #stage::after{content:'';position:absolute;inset:0;
-  background:radial-gradient(135% 92% at 50% 42%, transparent 28%, rgba(0,0,0,.62) 100%),
-    linear-gradient(to bottom,rgba(0,0,0,.24) 0%,transparent 20%,transparent 55%,rgba(0,0,0,.4) 100%)}
+  background:radial-gradient(135% 92% at 50% 42%, transparent 40%, rgba(0,0,0,.4) 100%),
+    linear-gradient(to bottom,rgba(0,0,0,.14) 0%,transparent 20%,transparent 55%,rgba(0,0,0,.24) 100%)}
 /* low-power: shrink the blur radius (cheaper to composite) and slow the
    animation down; ultra-low (very old/low-core mobiles, or reduced-motion
    already handled below): freeze it as a static, still multi-color, blend */
