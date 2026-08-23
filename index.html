@@ -571,6 +571,24 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   #premiumGameLink{border-radius:22px}
 }
 
+/* ===== game showcase — two equal-size boxes (same box treatment as
+   #premiumGameLink: border, radius, shadow, hover lift) at the very
+   bottom of the page. Left links to Mergico (game.html), right to the
+   second game (game2.html). ===== */
+#gameShowcaseSection{position:relative;z-index:1;flex:0 0 auto;max-width:1170px;margin:22px auto 0;padding:0 20px;
+  display:grid;grid-template-columns:1fr;gap:18px;align-items:stretch}
+@media(min-width:660px){ #gameShowcaseSection{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px} }
+.game-showcase-link{position:relative;z-index:1;display:block;flex:0 0 auto;min-width:0;min-height:300px;
+  border-radius:28px;overflow:hidden;
+  border:1.5px solid var(--gold);box-shadow:0 26px 58px rgba(0,0,0,.54),0 0 0 1px rgba(255,217,138,.08) inset;
+  transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease}
+.game-showcase-link:hover,.game-showcase-link:focus-visible{transform:translateY(-3px) scale(1.02);
+  box-shadow:0 30px 64px rgba(0,0,0,.58),0 0 0 1px rgba(255,217,138,.14) inset}
+.game-showcase-link img{display:block;width:100%;height:100%;object-fit:cover}
+@media(max-width:560px){
+  .game-showcase-link{border-radius:22px}
+}
+
 /* ===== footer ===== */
 #siteFooter{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
   gap:22px;flex-wrap:wrap;padding:32px 20px max(26px,env(safe-area-inset-bottom));
@@ -749,6 +767,15 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     </div>
     <a id="premiumGameLink" href="mahjong.html" aria-label="Play Mahjong Loader">
       <img src="images/preview-mahjong.jpg" alt="Holistic Game" loading="lazy" decoding="async">
+    </a>
+  </section>
+
+  <section id="gameShowcaseSection" aria-label="Play our games">
+    <a class="game-showcase-link" href="game.html" aria-label="Play Mergico">
+      <img src="images/game-preview.jpg" alt="Mergico" loading="lazy" decoding="async">
+    </a>
+    <a class="game-showcase-link" href="game2.html" aria-label="Play our second game">
+      <img src="images/game2-preview.jpg" alt="Game 2" loading="lazy" decoding="async">
     </a>
   </section>
 
