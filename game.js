@@ -1610,6 +1610,17 @@ function getItem(level) {
       const idx = MAP_WORLD_KEYS.indexOf(currentWorldKey);
       const nextKey = MAP_WORLD_KEYS[idx + 1] || null;
 
+      // Island 10 (the last one) was just cleared and there's no next
+      // island to unlock — send the player on to the next game instead
+      // of dropping them back on this map. Runs for guests too, since
+      // there's no further upsell to show once the whole map is done.
+      if (!nextKey) {
+        showToast("Island cleared!");
+        syncToCloud(false, true);
+        setTimeout(() => { window.location.href = "game2.html"; }, 1100);
+        return true;
+      }
+
       if (!currentUser) {
         // Guests can clear island 1, but island 2 stays locked until
         // they have an account — surface the upsell instead of
