@@ -160,16 +160,19 @@ body.ultra-low #stage .aurora{filter:blur(14px);animation:none;transform:none}
 .difficulty.extreme{border:1px solid #ff6a6a70;background:linear-gradient(160deg,#ff4d4d22,#7a1fff1c);animation:extremePulse 2.2s ease-in-out infinite}.difficulty.extreme strong{background:linear-gradient(90deg,#ff8a5c,#ff4d6d,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}.difficulty.extreme:hover{border-color:#ff4d6d;box-shadow:0 0 30px -4px #ff4d6d80}.difficulty.extreme .count{color:#ff9a8a}@keyframes extremePulse{0%,100%{box-shadow:0 0 0 0 #ff4d6d30}50%{box-shadow:0 0 26px 2px #ff4d6d40}}
 @media(max-width:720px){body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}.difficulty-screen{padding:max(130px,calc(env(safe-area-inset-top) + 112px)) 10px 18px;align-items:start}.difficulty-card{padding:18px 12px}.difficulty-grid{grid-template-columns:1fr}.tile-style-grid{grid-template-columns:1fr;max-width:320px}.difficulty{min-height:0;padding:15px}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(46px,12vw,84px)}#topTabs .tab{padding:8px 9px;font-size:10px}#topTabs{flex-wrap:wrap;justify-content:center}.h1-desktop{display:none}.h1-mobile{display:inline}}
 @media(max-width:720px) and (orientation:portrait){
-  .difficulty-card{padding:14px 10px}
-  .difficulty-grid{grid-template-columns:repeat(2,1fr);gap:8px;align-items:start}
-  .difficulty{min-height:0;padding:8px;border-radius:14px}
+  #difficultyScreen{padding-top:max(126px,calc(env(safe-area-inset-top) + 110px));padding-bottom:10px;align-items:start}
+  #difficultyScreen .difficulty-card{max-height:calc(100dvh - max(126px,calc(env(safe-area-inset-top) + 110px)) - 14px);overflow:auto}
+  .difficulty-card{padding:10px 8px}
+  .difficulty-grid{grid-template-columns:repeat(2,1fr);gap:6px;align-items:start;margin-top:8px}
+  .difficulty{min-height:0;padding:6px;border-radius:12px}
   .difficulty .info-btn{width:18px;height:18px;font-size:10px;top:5px;right:5px}
   .count-display{gap:2px}
+  .count-display img{width:auto;max-width:100%;max-height:88px;margin:0 auto;object-fit:contain}
   .tile-style-grid{grid-template-columns:repeat(2,1fr);max-width:230px;gap:8px}
   .tile-style img{border-radius:8px;margin-bottom:3px}
   .tile-style strong{font-size:13px}
-  .difficulty-card h2.title-img img{width:min(180px,60%)}
-  #tileStyleScreen{padding-top:max(14px,env(safe-area-inset-top))}
+  .difficulty-card h2.title-img img{width:min(150px,55%)}
+  #tileStyleScreen{padding-top:max(14px,env(safe-area-inset-top));align-items:center}
 }
 @media(prefers-reduced-motion:reduce){#stage .aurora{animation:none!important;transform:none!important}.tile{transition:none!important}}body.low-power #cosmos{opacity:.5}body.ultra-low #cosmos{display:none}
 .match-burst{position:fixed;left:0;top:0;width:0;height:0;pointer-events:none;z-index:55}
