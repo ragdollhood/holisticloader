@@ -93,6 +93,10 @@
 #closeGame:active{transform:scale(.93)}
 body.in-game #closeGame{display:flex}
 @media(max-width:720px){#closeGame{width:38px;height:38px;font-size:21px;top:max(10px,env(safe-area-inset-top));right:10px}}
+@media(min-width:1025px){#closeGame{display:none!important}}
+#exitFullscreen{border:1.5px solid var(--gold);background:rgba(13,9,22,.78);color:var(--gold);font:700 21px/1 Georgia,serif;box-shadow:0 8px 22px #0007}
+#exitFullscreen:hover{background:var(--gold);color:#2f1b08}
+#exitFullscreen:active{transform:scale(.93)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .difficulty .count-display{padding:0}
 .difficulty .count-display picture,.difficulty .count-display img{width:100%;display:block}
