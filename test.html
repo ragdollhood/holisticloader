@@ -171,7 +171,9 @@ body.ultra-low #stage .aurora{filter:blur(14px);animation:none;transform:none}
   .app{display:flex;flex-direction:column;height:calc(100dvh - var(--navH,90px) - var(--titleH,46px));max-width:100%;padding:6px 10px;margin:0}
   body.nav-hidden .app{height:100dvh}
   .toolbar{flex:0 0 auto;margin:0 0 4px;padding:6px 12px}
-  .buttons{gap:5px}
+  .buttons{gap:4px;flex-wrap:nowrap;justify-content:center}
+  .img-btn img{height:26px}
+  .img-btn.gold img{height:30px}
   .note{display:none}
   .stage{flex:1;min-height:0;padding:2px;overflow:hidden;display:flex;align-items:center;justify-content:center}
   .board{flex:none}
