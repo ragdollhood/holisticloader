@@ -374,7 +374,20 @@ window.crazyGamesReady.then(sdk=>{
   }
 });
 function leaveSplash(){$('#splashScreen').classList.add('hidden');showModes()}
-const splashInner=$('#splashInner');if(splashInner){splashInner.addEventListener('click',leaveSplash);splashInner.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();leaveSplash()}})}
+let splashDemoPlaying=false;
+function splashDemoMatch(cb){
+  if(splashDemoPlaying){return}
+  splashDemoPlaying=true;
+  initAudio();
+  // Pick ONE random instrument and reuse it for both tiles, so the demo
+  // always illustrates an actual matching pair (not two different tiles).
+  const key=instruments[Math.floor(Math.random()*instruments.length)][0];
+  const w=Math.min(150,innerWidth*.22),h=w/.78,cy=innerHeight*.5,gap=w*.75;
+  const rectA={left:innerWidth/2-gap-w/2,top:cy-h/2,width:w,height:h};
+  const rectB={left:innerWidth/2+gap-w/2,top:cy-h/2,width:w,height:h};
+  flyAndMerge(rectA,rectB,key,()=>{splashDemoPlaying=false;cb()});
+}
+const splashInner=$('#splashInner');if(splashInner){splashInner.addEventListener('click',()=>splashDemoMatch(leaveSplash));splashInner.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();splashDemoMatch(leaveSplash)}})}
 </script><script>(function(){
 /* mobile landscape: reveal more of the board on scroll-down */
 const isLandscapeMobile=()=>matchMedia('(orientation:landscape) and (max-height:500px)').matches;
