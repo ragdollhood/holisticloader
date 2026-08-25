@@ -174,6 +174,33 @@ body.ultra-low #cosmos{display:none}
     <p class="progress-empty" id="progressEmpty">Log your progress after a few rounds to start your chart.</p>
     <p class="progress-sub">% correct guesses per day</p>
   </section>
+
+  <div class="game-wrap">
+    <section class="panel game-panel">
+      <p class="prompt-title">GUESS THE SIDE</p>
+      <div class="mall-box"><img id="sideMysteryImg" alt="Mystery tile"></div>
+      <p class="feedback" id="sideFeedback">&nbsp;</p>
+      <div class="options-row">
+        <button class="option-tile" id="optLeft" type="button" aria-label="Line is on the left"><img id="optLeftImg" alt="White tile with a line on the left"></button>
+        <button class="option-tile" id="optRight" type="button" aria-label="Line is on the right"><img id="optRightImg" alt="White tile with a line on the right"></button>
+      </div>
+      <p class="press-hint" id="sidePressHint">Choose one</p>
+    </section>
+    <aside class="panel score-panel">
+      <p class="score-label">SCORE</p>
+      <p class="score-value"><span id="sideScoreCorrect">0</span> / <span id="sideScoreTotal">0</span></p>
+      <p class="score-sub">correct / attempts</p>
+      <button class="score-reset" id="sideScoreReset" type="button">Reset</button>
+      <button class="score-log" id="sideLogProgressBtn" type="button" disabled>Log your progress</button>
+    </aside>
+  </div>
+
+  <section class="panel progress-panel">
+    <p class="progress-label">DAILY PROGRESS &mdash; GUESS THE SIDE</p>
+    <canvas id="sideProgressChart" width="880" height="180"></canvas>
+    <p class="progress-empty" id="sideProgressEmpty">Log your progress after a few rounds to start your chart.</p>
+    <p class="progress-sub">% correct guesses per day</p>
+  </section>
 </main>
 
 <a class="privacy-link" href="https://github.com/ragdollhood/holisticloader/blob/main/soundbath-privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
@@ -391,6 +418,226 @@ body.ultra-low #cosmos{display:none}
 
   optA.addEventListener('click',()=>choose('A'));
   optB.addEventListener('click',()=>choose('B'));
+
+  function fanfare(){
+    try{
+      if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+      if(AC.state!=='running')AC.resume();
+      const notes=[523.25,659.25,783.99,1046.5];
+      notes.forEach((f,i)=>{
+        const t=AC.currentTime+i*.09,o=AC.createOscillator(),g=AC.createGain();
+        o.type='triangle';o.frequency.setValueAtTime(f,t);
+        g.gain.setValueAtTime(.0001,t);
+        g.gain.exponentialRampToValueAtTime(.22,t+.02);
+        g.gain.exponentialRampToValueAtTime(.0001,t+.5);
+        o.connect(g).connect(AC.destination);
+        o.start(t);o.stop(t+.55);
+      });
+    }catch(e){}
+  }
+
+  function confettiBurst(){
+    const colors=['#ffd98a','#c9a8ff','#7af0d0','#ff8a5c','#fff8e2'];
+    for(let i=0;i<40;i++){
+      const el=document.createElement('div');
+      el.className='confetti-piece';
+      el.style.left=(Math.random()*100)+'vw';
+      el.style.background=colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDuration=(1.6+Math.random()*1.2)+'s';
+      el.style.animationDelay=(Math.random()*.25)+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),3200);
+    }
+  }
+
+  newRound();
+  drawProgressChart();
+})();
+</script>
+
+<script>
+/* ===== Guess the Side game (white tile, line left/right) ===== */
+(function(){
+  const $=s=>document.querySelector(s);
+  const mysteryImg=$('#sideMysteryImg'),feedback=$('#sideFeedback'),pressHint=$('#sidePressHint');
+  const optLeft=$('#optLeft'),optRight=$('#optRight'),optLeftImg=$('#optLeftImg'),optRightImg=$('#optRightImg');
+  const scoreCorrectEl=$('#sideScoreCorrect'),scoreTotalEl=$('#sideScoreTotal'),scoreReset=$('#sideScoreReset');
+  const logProgressBtn=$('#sideLogProgressBtn');
+  let correctSide=null,answered=false,AC,scoreCorrect=0,scoreTotal=0;
+
+  /* build a white tile with a vertical line on the left, right, or a blank mystery tile */
+  function tileSVG(side){
+    const x=side==='left'?62:side==='right'?138:null;
+    const line=x!==null?`<line x1="${x}" y1="32" x2="${x}" y2="228" stroke="#241733" stroke-width="15" stroke-linecap="round"/>`:'';
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><rect width="200" height="256" rx="14" fill="#ffffff"/>${line}</svg>`;
+    return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+  }
+  optLeftImg.src=tileSVG('left');
+  optRightImg.src=tileSVG('right');
+
+  function updateLogButtonState(){
+    logProgressBtn.disabled=scoreTotal<=0;
+  }
+
+  function resetScore(){
+    scoreCorrect=0;
+    scoreTotal=0;
+    scoreCorrectEl.textContent=scoreCorrect;
+    scoreTotalEl.textContent=scoreTotal;
+    updateLogButtonState();
+  }
+  scoreReset.addEventListener('click',resetScore);
+
+  /* ===== daily progress log (stored locally, one averaged value per day) ===== */
+  const PROGRESS_KEY='intuitionSideProgressLog';
+
+  function todayKey(){
+    const d=new Date();
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  function loadProgressLog(){
+    try{return JSON.parse(localStorage.getItem(PROGRESS_KEY))||{};}catch(e){return{};}
+  }
+  function saveProgressLog(log){
+    try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(log));}catch(e){}
+  }
+  function logProgress(){
+    if(scoreTotal<=0)return;
+    const percent=(scoreCorrect/scoreTotal)*100;
+    const log=loadProgressLog();
+    const key=todayKey();
+    const entry=log[key]||{sum:0,count:0};
+    entry.sum+=percent;
+    entry.count+=1;
+    log[key]=entry;
+    saveProgressLog(log);
+    drawProgressChart();
+  }
+  logProgressBtn.addEventListener('click',logProgress);
+
+  function drawProgressChart(){
+    const canvas=$('#sideProgressChart'),emptyEl=$('#sideProgressEmpty');
+    if(!canvas)return;
+    const log=loadProgressLog();
+    const days=Object.keys(log).sort();
+    if(days.length===0){
+      canvas.style.display='none';
+      if(emptyEl)emptyEl.style.display='block';
+      return;
+    }
+    canvas.style.display='block';
+    if(emptyEl)emptyEl.style.display='none';
+
+    const recentDays=days.slice(-14);
+    const values=recentDays.map(k=>{const e=log[k];return e.count?e.sum/e.count:0;});
+
+    const dpr=window.devicePixelRatio||1;
+    const cssW=canvas.clientWidth||canvas.parentElement.clientWidth||600;
+    const cssH=180;
+    canvas.width=cssW*dpr;
+    canvas.height=cssH*dpr;
+    const ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+
+    const padL=34,padR=14,padT=14,padB=26;
+    const plotW=cssW-padL-padR,plotH=cssH-padT-padB;
+
+    ctx.strokeStyle='rgba(255,255,255,.14)';
+    ctx.fillStyle='#cfc3db';
+    ctx.font='10px Georgia, serif';
+    ctx.lineWidth=1;
+    [0,50,100].forEach(v=>{
+      const y=padT+plotH-(v/100)*plotH;
+      ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+plotW,y);ctx.stroke();
+      ctx.textAlign='right';ctx.textBaseline='middle';
+      ctx.fillText(v+'%',padL-6,y);
+    });
+
+    const n=values.length;
+    const stepX=n>1?plotW/(n-1):0;
+    const pts=values.map((v,i)=>({
+      x:padL+(n>1?i*stepX:plotW/2),
+      y:padT+plotH-(Math.max(0,Math.min(100,v))/100)*plotH
+    }));
+
+    if(n>1){
+      const grad=ctx.createLinearGradient(0,padT,0,padT+plotH);
+      grad.addColorStop(0,'rgba(255,217,138,.35)');
+      grad.addColorStop(1,'rgba(255,217,138,0)');
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x,padT+plotH);
+      pts.forEach(p=>ctx.lineTo(p.x,p.y));
+      ctx.lineTo(pts[n-1].x,padT+plotH);
+      ctx.closePath();
+      ctx.fillStyle=grad;
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    const lineGrad=ctx.createLinearGradient(padL,0,padL+plotW,0);
+    lineGrad.addColorStop(0,'#ffd98a');
+    lineGrad.addColorStop(1,'#c9a8ff');
+    ctx.strokeStyle=lineGrad;
+    ctx.lineWidth=2.4;
+    ctx.lineJoin='round';
+    pts.forEach((p,i)=>{i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);});
+    ctx.stroke();
+
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+    const labelEvery=Math.max(1,Math.ceil(n/8));
+    pts.forEach((p,i)=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,3.2,0,7);
+      ctx.fillStyle=i===n-1?'#ffd98a':'#f3efe4';
+      ctx.fill();
+      if(n<=8||i%labelEvery===0||i===n-1){
+        ctx.fillStyle='#cfc3db';
+        ctx.font='9.5px Georgia, serif';
+        ctx.fillText(recentDays[i].slice(5).replace('-','/'),p.x,padT+plotH+6);
+      }
+    });
+  }
+
+  let _chartResizeT;
+  addEventListener('resize',()=>{clearTimeout(_chartResizeT);_chartResizeT=setTimeout(drawProgressChart,150)});
+
+  function newRound(){
+    answered=false;
+    feedback.textContent='\u00A0';
+    feedback.className='feedback';
+    pressHint.style.visibility='visible';
+    mysteryImg.src=tileSVG(null);
+    optLeft.disabled=optRight.disabled=false;
+    correctSide=Math.random()<.5?'left':'right';
+  }
+
+  function choose(side){
+    if(answered)return;
+    answered=true;
+    optLeft.disabled=optRight.disabled=true;
+    pressHint.style.visibility='hidden';
+    mysteryImg.src=tileSVG(correctSide);
+    scoreTotal++;
+    if(side===correctSide){
+      scoreCorrect++;
+      feedback.textContent='YES, YOU GOT IT RIGHT!';
+      feedback.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      feedback.textContent='TRY AGAIN!';
+      feedback.className='feedback wrong';
+    }
+    scoreCorrectEl.textContent=scoreCorrect;
+    scoreTotalEl.textContent=scoreTotal;
+    updateLogButtonState();
+    setTimeout(newRound,1500);
+  }
+
+  optLeft.addEventListener('click',()=>choose('left'));
+  optRight.addEventListener('click',()=>choose('right'));
 
   function fanfare(){
     try{
