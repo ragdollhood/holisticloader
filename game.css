@@ -230,14 +230,14 @@
       height: 34px;
       padding: 0;
       border-radius: 50%;
-      border: 1px solid var(--border);
-      background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.06)), var(--glass);
+      border: 1px solid rgba(248,217,139,.22);
+      background: linear-gradient(145deg, rgba(248,217,139,.14), rgba(255,255,255,.04)), var(--glass);
       color: var(--gold2);
       cursor: pointer;
     }
 
     .howtoplay-btn:hover, .howtoplay-btn:focus-visible {
-      background: linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.10)), var(--glass);
+      background: linear-gradient(145deg, rgba(248,217,139,.22), rgba(255,255,255,.08)), var(--glass);
       outline: none;
     }
 
@@ -254,8 +254,8 @@
       width: 100%;
       padding: 10px 14px;
       border-radius: 14px;
-      border: 1px solid var(--border);
-      background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.05)), var(--glass);
+      border: 1px solid rgba(248,217,139,.22);
+      background: linear-gradient(145deg, rgba(248,217,139,.12), rgba(255,255,255,.03)), var(--glass);
       color: var(--gold2);
       font-family: Arial, sans-serif;
       font-weight: 900;
@@ -389,11 +389,21 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      border: 1px solid var(--border);
-      background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.06)), var(--glass);
+      /* Same gold-tint pass used in Mergico's game.css — see that
+         file's .hud rule for the full rationale. Ties every panel
+         (score, actions, difficulty, how-to-play, remove-ads card,
+         etc.) back to the same gilded palette as the wordmark and the
+         island badges instead of a flat white-on-glass UI-kit look. */
+      border: 1px solid rgba(248,217,139,.22);
+      background:
+        linear-gradient(145deg, rgba(248,217,139,.10), rgba(255,255,255,.04)),
+        var(--glass);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-      box-shadow: 0 18px 50px rgba(0,0,0,.30);
+      box-shadow:
+        0 18px 50px rgba(0,0,0,.30),
+        0 0 0 1px rgba(248,217,139,.05) inset,
+        0 1px 0 rgba(255,242,189,.14) inset;
     }
 
     .brand {
@@ -669,8 +679,8 @@
       text-align: center;
       padding: 8px 8px;
       border-radius: 16px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(145deg, rgba(248,217,139,.09), rgba(255,255,255,.02));
+      border: 1px solid rgba(248,217,139,.18);
     }
 
     .stat b { display: block; color: var(--gold2); font-family: Arial, sans-serif; font-size: 15px; }
@@ -684,8 +694,8 @@
       align-items: center;
       justify-content: center;
       padding: 0;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(145deg, rgba(248,217,139,.09), rgba(255,255,255,.02));
+      border: 1px solid rgba(248,217,139,.18);
       border-radius: 16px;
       overflow: hidden;
       cursor: pointer;
@@ -736,7 +746,7 @@
       border-radius: 20px;
       display: grid;
       place-items: center;
-      background: rgba(255,255,255,.10);
+      background: linear-gradient(145deg, rgba(248,217,139,.10), rgba(255,255,255,.03));
       border: 1px solid rgba(248,217,139,.28);
       box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
       backdrop-filter: blur(10px);
@@ -869,8 +879,8 @@ button {
 
     button.secondary {
       color: var(--text);
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(145deg, rgba(248,217,139,.09), rgba(255,255,255,.03));
+      border: 1px solid rgba(248,217,139,.16);
       box-shadow: none;
     }
 
@@ -1128,7 +1138,7 @@ button {
         width: 62px;
         height: 62px;
         border-radius: 20px;
-        background: rgba(255,255,255,.10);
+        background: linear-gradient(145deg, rgba(248,217,139,.10), rgba(255,255,255,.03));
         border: 1px solid rgba(248,217,139,.28);
         box-shadow: inset 0 0 24px rgba(248,217,139,.10), 0 0 28px rgba(248,217,139,.14);
         backdrop-filter: blur(10px);
@@ -1310,21 +1320,28 @@ button {
       height: clamp(40px, 7.4vw, 60px);
       border-radius: 50%;
 
-      /* Unlocked (clickable) state — bright glowing gold ring + gold
-         number. Dark backing behind the number so it stays legible no
-         matter how busy the artwork underneath is. */
-      border: 3px solid #ffd85c;
-      background: radial-gradient(circle, rgba(18,10,28,.88), rgba(18,10,28,.94) 68%);
-      color: #ffe27a;
-      font-family: Arial, sans-serif;
-      font-weight: 900;
+      /* Unlocked (clickable) state — a small gilded medallion rather
+         than a flat "debug marker" circle. Same treatment as
+         Mergico's game.css: a layered background fakes a bit of
+         metal (warm highlight top-left, darker rim, inset ring for
+         an engraved edge) plus a fine double-ring border instead of
+         one flat stroke, so the badge reads as an object that
+         belongs in the painted world rather than a UI overlay. */
+      border: 2px solid #4a3312;
+      background:
+        radial-gradient(circle at 32% 26%, rgba(255,238,190,.9), rgba(255,216,92,.55) 34%, rgba(120,74,18,.9) 78%, rgba(58,32,10,.95) 100%);
+      color: #3a2308;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700;
       font-size: clamp(16px, 2.8vw, 24px);
-      text-shadow: 0 0 6px rgba(0,0,0,.85), 0 1px 2px rgba(0,0,0,.9);
+      text-shadow: 0 1px 0 rgba(255,242,210,.5), 0 -1px 1px rgba(0,0,0,.35);
       box-shadow:
         0 0 0 1px rgba(255,216,92,.35),
-        0 0 12px 3px rgba(255,216,92,.85),
-        0 0 26px rgba(255,216,92,.55),
-        0 10px 22px rgba(0,0,0,.5);
+        0 0 0 4px rgba(18,10,28,.55),
+        inset 0 2px 2px rgba(255,248,224,.55),
+        inset 0 -3px 5px rgba(58,32,10,.65),
+        0 0 16px 2px rgba(255,216,92,.55),
+        0 10px 22px rgba(0,0,0,.55);
       cursor: pointer;
       z-index: 1;
       display: grid;
@@ -1356,18 +1373,24 @@ button {
       box-shadow: 0 0 8px rgba(52,199,122,.85), 0 2px 6px rgba(0,0,0,.5);
     }
 
-    /* Locked (not clickable) state — glowing red ring + dimmed grey
-       number, so it reads as "off-limits" at a glance but the number
-       itself stays fully legible (no heavy blur/grayscale hiding it). */
+    /* Locked (not clickable) state — same medallion shape as unlocked,
+       but tarnished stone/pewter instead of gold, so it still reads
+       as "an object in this world" rather than a flat grey placeholder
+       — with a dim red ring to signal "off-limits". */
     .island-btn.locked {
-      border-color: #ff6b6b;
-      background: radial-gradient(circle, rgba(18,10,28,.88), rgba(18,10,28,.94) 68%);
-      color: #9a95a3;
-      text-shadow: 0 0 6px rgba(0,0,0,.85), 0 1px 2px rgba(0,0,0,.9);
+      border-color: #241a2c;
+      background:
+        radial-gradient(circle at 32% 26%, rgba(180,178,190,.55), rgba(120,118,132,.5) 34%, rgba(58,50,66,.85) 78%, rgba(30,24,38,.95) 100%);
+      color: #d8d3de;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700;
+      text-shadow: 0 1px 0 rgba(255,255,255,.12), 0 -1px 1px rgba(0,0,0,.4);
       box-shadow:
-        0 0 0 1px rgba(255,107,107,.30),
-        0 0 12px 3px rgba(255,107,107,.65),
-        0 0 26px rgba(255,107,107,.40),
+        0 0 0 1px rgba(255,107,107,.35),
+        0 0 0 4px rgba(18,10,28,.55),
+        inset 0 2px 2px rgba(220,214,230,.25),
+        inset 0 -3px 5px rgba(20,14,28,.6),
+        0 0 12px 2px rgba(255,107,107,.35),
         0 10px 22px rgba(0,0,0,.5);
       cursor: not-allowed;
     }
@@ -1378,17 +1401,21 @@ button {
       0%, 100% {
         box-shadow:
           0 0 0 1px rgba(255,216,92,.35),
-          0 0 12px 3px rgba(255,216,92,.85),
-          0 0 26px rgba(255,216,92,.55),
-          0 10px 22px rgba(0,0,0,.5);
+          0 0 0 4px rgba(18,10,28,.55),
+          inset 0 2px 2px rgba(255,248,224,.55),
+          inset 0 -3px 5px rgba(58,32,10,.65),
+          0 0 16px 2px rgba(255,216,92,.55),
+          0 10px 22px rgba(0,0,0,.55);
         transform: translate(-50%, -32%) scale(1);
       }
       50% {
         box-shadow:
-          0 0 0 1px rgba(255,216,92,.5),
-          0 0 20px 6px rgba(255,216,92,1),
-          0 0 44px rgba(255,216,92,.85),
-          0 10px 22px rgba(0,0,0,.5);
+          0 0 0 1px rgba(255,216,92,.55),
+          0 0 0 4px rgba(18,10,28,.55),
+          inset 0 2px 2px rgba(255,248,224,.65),
+          inset 0 -3px 5px rgba(58,32,10,.65),
+          0 0 30px 8px rgba(255,216,92,.95),
+          0 10px 22px rgba(0,0,0,.55);
         transform: translate(-50%, -32%) scale(1.22);
       }
     }
@@ -1800,12 +1827,17 @@ button {
   align-self: center;
 
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.07), rgba(255,255,255,.02) 55%, transparent 78%);
-  border: 1px solid rgba(255,242,189,.18);
+  /* Same "carved stone socket" pass as Mergico's game.css — the old
+     rgba(255,255,255,.07) tint was too faint to read as anything but
+     a flat dark circle once a whole board of them sits empty. */
+  background:
+    radial-gradient(circle at 38% 30%, rgba(248,217,139,.16), rgba(255,255,255,.03) 45%, rgba(0,0,0,.18) 100%);
+  border: 1px solid rgba(255,242,189,.30);
   box-shadow:
-    0 0 16px 2px rgba(248,217,139,.38),
-    0 0 32px rgba(248,217,139,.22),
-    inset 0 0 14px rgba(248,217,139,.14);
+    0 0 16px 2px rgba(248,217,139,.42),
+    0 0 32px rgba(248,217,139,.24),
+    inset 0 2px 6px rgba(0,0,0,.35),
+    inset 0 0 14px rgba(248,217,139,.16);
 
   display: grid;
   place-items: center;
@@ -3064,8 +3096,8 @@ button {
         justify-content: center;
         flex: 0 0 auto;
         padding: 6px 10px;
-        background: rgba(255,255,255,.08);
-        border: 1px solid rgba(255,255,255,.12);
+        background: linear-gradient(145deg, rgba(248,217,139,.09), rgba(255,255,255,.02));
+        border: 1px solid rgba(248,217,139,.18);
         border-radius: 999px;
       }
 
@@ -3094,8 +3126,8 @@ button {
         position: static; left: auto; right: auto; bottom: auto; z-index: auto; justify-content: center;
         flex: 1 1 0;
         min-width: 0;
-        background: rgba(255,255,255,.08);
-        border: 1px solid rgba(255,255,255,.12);
+        background: linear-gradient(145deg, rgba(248,217,139,.09), rgba(255,255,255,.02));
+        border: 1px solid rgba(248,217,139,.18);
         border-radius: 16px;
         padding: 9px 8px;
       }
