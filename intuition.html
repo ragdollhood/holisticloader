@@ -292,8 +292,17 @@ body.ultra-low #cosmos{display:none}
     const quote=scoreTotal
       ? `My intuition level today: ${meterLevel.textContent} \u2014 ${scoreCorrect}/${scoreTotal} correct (${percent}%) on Intuition Loader!`
       : 'Trust your gut and play Intuition Loader!';
-    const shareUrl='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(SHARE_URL)+'&quote='+encodeURIComponent(quote);
-    window.open(shareUrl,'shareOnFacebook','width=600,height=520,noopener,noreferrer');
+    const shareUrl='https://www.facebook.com/sharer/sharer.php?display=popup&u='+encodeURIComponent(SHARE_URL)+'&quote='+encodeURIComponent(quote);
+    const w=600,h=640;
+    const left=Math.max(0,(window.screen.width-w)/2);
+    const top=Math.max(0,(window.screen.height-h)/2);
+    const popup=window.open(shareUrl,'shareOnFacebook',`width=${w},height=${h},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes`);
+    if(!popup){
+      /* popup blocked by the browser: fall back to a normal navigation so sharing still works */
+      window.open(shareUrl,'_blank');
+    }else{
+      popup.focus();
+    }
   }
   shareFbBtn.addEventListener('click',shareResultOnFacebook);
 
