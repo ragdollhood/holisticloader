@@ -340,7 +340,7 @@ function splashDemoMatch(cb){
       el.style.transform=`translate(${dx}px,${dy}px) scale(2.6) rotate(${rot}deg)`
     });
     setTimeout(()=>{
-      play(key,false);elA.classList.add('merged');elB.classList.add('merged');
+      play(key,false);elA.style.transition='';elB.style.transition='';elA.classList.add('merged');elB.classList.add('merged');
       spawnBurst({left:midX,top:midY,width:0,height:0},'#fff8e2');
       setTimeout(()=>{elA.classList.remove('merged');elB.classList.remove('merged')},300);
       setTimeout(()=>{
