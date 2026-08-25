@@ -143,6 +143,12 @@ body.ultra-low #cosmos{display:none}
 .progress-sub{margin:10px 0 0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
 .meter-panel{max-width:900px;margin:20px auto 0;padding:24px 22px 22px;text-align:center}
 .meter-title{margin:0 0 16px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
+.intro-tagline{max-width:620px;margin:0 auto 20px;text-align:center;color:#e7dfcf;font-size:clamp(12.5px,2.4vw,14px);line-height:1.6;opacity:.85}
+.streak-line{margin:14px 0 0;font-size:12.5px;letter-spacing:.03em;color:#e7dfcf}
+.streak-line span{color:var(--gold);font-weight:700}
+.sound-toggle{position:fixed;right:14px;bottom:14px;z-index:45;width:38px;height:38px;line-height:1;font-size:16px;color:#cfc3db;opacity:.75;text-decoration:none;border-radius:50%;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.sound-toggle:hover{opacity:1;color:#ffd98a;border-color:#ffd98a55}
+@media(max-width:480px){.sound-toggle{width:34px;height:34px;font-size:14px;right:8px;bottom:8px}}
 .meter-track{position:relative;height:14px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.25);overflow:hidden;margin:0 auto 4px;max-width:520px}
 .meter-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#ff8a5c,var(--gold),var(--violet));transition:width .4s ease}
 .meter-marker{position:absolute;left:50%;top:-5px;bottom:-5px;width:2px;background:#f3efe4cc}
@@ -176,11 +182,12 @@ body.ultra-low #cosmos{display:none}
 <div class="h1-frame"><h1>INTUITION LOADER</h1></div>
 
 <main class="app">
+  <p class="intro-tagline">Four quick, calming games. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance.</p>
   <div class="triple-wrap">
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">GUESS THE TILE</p>
       <div class="mall-box"><img id="mallImg" alt="Mystery tile"></div>
-      <p class="feedback" id="feedback">&nbsp;</p>
+      <p class="feedback" id="feedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optA" type="button" aria-label="Option A"><img id="optAImg" alt="Tile option A"></button>
         <button class="option-tile" id="optB" type="button" aria-label="Option B"><img id="optBImg" alt="Tile option B"></button>
@@ -191,7 +198,7 @@ body.ultra-low #cosmos{display:none}
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">GUESS THE SIDE</p>
       <div class="mall-box"><img id="sideMysteryImg" alt="Mystery tile"></div>
-      <p class="feedback" id="sideFeedback">&nbsp;</p>
+      <p class="feedback" id="sideFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optLeft" type="button" aria-label="Line is on the left"><img id="optLeftImg" alt="White tile with a line on the left"></button>
         <button class="option-tile" id="optRight" type="button" aria-label="Line is on the right"><img id="optRightImg" alt="White tile with a line on the right"></button>
@@ -202,7 +209,7 @@ body.ultra-low #cosmos{display:none}
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">GUESS THE DOTS</p>
       <div class="mall-box"><img id="dotsMysteryImg" alt="Mystery tile"></div>
-      <p class="feedback" id="dotsFeedback">&nbsp;</p>
+      <p class="feedback" id="dotsFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optOne" type="button" aria-label="One dot"><img id="optOneImg" alt="White tile with a single dot"></button>
         <button class="option-tile" id="optMany" type="button" aria-label="Many dots"><img id="optManyImg" alt="White tile with many dots"></button>
@@ -218,7 +225,7 @@ body.ultra-low #cosmos{display:none}
       <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
       <div class="direction-circle" id="directionCircle"></div>
     </div>
-    <p class="feedback" id="directionFeedback">&nbsp;</p>
+    <p class="feedback" id="directionFeedback" aria-live="polite">&nbsp;</p>
     <div class="direction-actions">
       <button class="score-log direction-start" id="directionStart" type="button">Start</button>
       <button class="score-reset direction-stop" id="directionStop" type="button" disabled>Stop</button>
@@ -230,6 +237,7 @@ body.ultra-low #cosmos{display:none}
     <p class="meter-title">TODAY'S INTUITION LEVEL</p>
     <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
     <p class="score-sub">correct / attempts &mdash; Guess the Tile + Guess the Side + Guess the Dots + Guess the Direction</p>
+    <p class="streak-line">&#128293; Current streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
     <div class="meter-score-actions">
       <button class="score-reset" id="scoreReset" type="button">Reset</button>
       <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
@@ -252,6 +260,7 @@ body.ultra-low #cosmos{display:none}
 </main>
 
 <a class="privacy-link" href="https://github.com/ragdollhood/holisticloader/blob/main/soundbath-privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+<button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="Mute sound">&#128266;</button>
 
 <script>
 /* ===== gentle starfield backdrop (same technique as the rest of the site) ===== */
@@ -292,6 +301,49 @@ body.ultra-low #cosmos{display:none}
   const meterFill=$('#meterFill'),meterLevel=$('#meterLevel'),meterDesc=$('#meterDesc'),meterSub=$('#meterSub');
   let scoreCorrect=0,scoreTotal=0,AC;
 
+  /* ===== streak tracker (current session streak + all-time best, remembered locally) ===== */
+  const BEST_STREAK_KEY='intuitionBestStreak';
+  const streakCurrentEl=$('#streakCurrent'),streakBestEl=$('#streakBest');
+  let currentStreak=0;
+  let bestStreak=0;
+  try{bestStreak=parseInt(localStorage.getItem(BEST_STREAK_KEY),10)||0;}catch(e){bestStreak=0;}
+
+  function updateStreakDisplay(){
+    streakCurrentEl.textContent=currentStreak;
+    streakBestEl.textContent=bestStreak;
+  }
+
+  function registerStreak(correct){
+    if(correct){
+      currentStreak++;
+      if(currentStreak>bestStreak){
+        bestStreak=currentStreak;
+        try{localStorage.setItem(BEST_STREAK_KEY,String(bestStreak));}catch(e){}
+      }
+    }else{
+      currentStreak=0;
+    }
+    updateStreakDisplay();
+  }
+
+  /* ===== sound toggle (remembered locally) ===== */
+  const SOUND_KEY='intuitionSoundOn';
+  const soundToggle=$('#soundToggle');
+  let soundOn=true;
+  try{soundOn=localStorage.getItem(SOUND_KEY)!=='off';}catch(e){soundOn=true;}
+
+  function updateSoundToggleUI(){
+    soundToggle.innerHTML=soundOn?'&#128266;':'&#128263;';
+    soundToggle.setAttribute('aria-pressed',soundOn?'true':'false');
+    soundToggle.setAttribute('aria-label',soundOn?'Mute sound':'Unmute sound');
+  }
+  soundToggle.addEventListener('click',()=>{
+    soundOn=!soundOn;
+    try{localStorage.setItem(SOUND_KEY,soundOn?'on':'off');}catch(e){}
+    updateSoundToggleUI();
+  });
+  updateSoundToggleUI();
+
   function updateLogButtonState(){
     logProgressBtn.disabled=scoreTotal<=0;
   }
@@ -299,6 +351,8 @@ body.ultra-low #cosmos{display:none}
   function resetScore(){
     scoreCorrect=0;
     scoreTotal=0;
+    currentStreak=0;
+    updateStreakDisplay();
     scoreCorrectEl.textContent=scoreCorrect;
     scoreTotalEl.textContent=scoreTotal;
     updateLogButtonState();
@@ -466,12 +520,17 @@ body.ultra-low #cosmos{display:none}
     }
     saveDayStats(dayStats);
     updateMeter();
+    registerStreak(correct);
     scoreCorrectEl.textContent=scoreCorrect;
     scoreTotalEl.textContent=scoreTotal;
     updateLogButtonState();
+    if(navigator.vibrate){
+      try{navigator.vibrate(correct?45:[30,50,30]);}catch(e){}
+    }
   }
 
   function fanfare(){
+    if(!soundOn)return;
     try{
       if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
       if(AC.state!=='running')AC.resume();
@@ -787,6 +846,7 @@ body.ultra-low #cosmos{display:none}
   newRoundDots();
   drawProgressChart();
   updateMeter();
+  updateStreakDisplay();
 })();
 </script>
 
