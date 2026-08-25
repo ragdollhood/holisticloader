@@ -729,7 +729,7 @@ body.ultra-low #cosmos{display:none}
   function tileSVG(side){
     const x=side==='left'?24:side==='right'?176:null;
     const line=x!==null?`<line x1="${x}" y1="32" x2="${x}" y2="228" stroke="#241733" stroke-width="15" stroke-linecap="round"/>`:'';
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><rect width="200" height="256" rx="14" fill="#ffffff"/>${line}</svg>`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><rect width="200" height="256" rx="14" fill="#f3ead4"/>${line}</svg>`;
     return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
   }
   optLeftImg.src=tileSVG('left');
@@ -794,7 +794,7 @@ body.ultra-low #cosmos{display:none}
     }else if(kind==='many'){
       content=`<g clip-path="url(#dotsBoardClip)">${checkerboardSquares()}</g>`;
     }
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><defs><clipPath id="dotsBoardClip"><rect width="200" height="256" rx="14"/></clipPath></defs><rect width="200" height="256" rx="14" fill="#ffffff"/>${content}</svg>`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><defs><clipPath id="dotsBoardClip"><rect width="200" height="256" rx="14"/></clipPath></defs><rect width="200" height="256" rx="14" fill="#f3ead4"/>${content}</svg>`;
     return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
   }
   optOneImg.src=dotsSVG('one');
