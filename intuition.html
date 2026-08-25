@@ -100,6 +100,15 @@ body.ultra-low #cosmos{display:none}
 .option-tile:disabled{cursor:default;opacity:.9}
 .option-tile img{width:100%;height:100%;object-fit:contain;pointer-events:none}
 .press-hint{color:#cfc3db;font-size:14px;margin:0}
+.game-wrap{display:flex;gap:24px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:900px;margin:0 auto}
+.game-wrap .game-panel{margin:26px 0 0}
+.score-panel{width:min(220px,90vw);margin:26px 0 0;padding:34px 20px;text-align:center}
+.score-label{margin:0 0 10px;font:600 14px Georgia;letter-spacing:.14em;color:var(--gold)}
+.score-value{margin:0;font:700 clamp(34px,8vw,52px) Georgia;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
+.score-sub{margin:8px 0 0;font-size:12px;color:#cfc3db}
+.score-reset{margin-top:16px;padding:8px 20px;font:600 12px Georgia;letter-spacing:.08em;color:#cfc3db;background:rgba(255,255,255,.06);border:1.5px solid rgba(220,190,130,.35);border-radius:12px;cursor:pointer;transition:transform .15s,border-color .15s,color .15s}
+.score-reset:hover{transform:translateY(-2px);border-color:var(--gold);color:var(--gold)}
+@media(max-width:820px){.game-wrap{flex-direction:column;align-items:center}}
 .confetti-piece{position:fixed;top:-24px;width:9px;height:15px;z-index:70;pointer-events:none;border-radius:2px;animation-name:confettiFall;animation-timing-function:cubic-bezier(.35,0,.65,1);animation-fill-mode:forwards}
 @keyframes confettiFall{to{transform:translateY(112vh) rotate(760deg);opacity:.85}}
 .privacy-link{position:fixed;left:14px;bottom:14px;z-index:45;font-size:11px;color:#cfc3db;opacity:.7;text-decoration:none;padding:6px 11px;border-radius:10px;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;transition:.2s}
@@ -127,16 +136,27 @@ body.ultra-low #cosmos{display:none}
 <div class="h1-frame"><h1>INTUITION LOADER</h1></div>
 
 <main class="app">
-  <section class="panel game-panel">
-    <p class="prompt-title">WHICH IS THE RIGHT TILE?</p>
-    <div class="mall-box"><img id="mallImg" src="images/instruments/mall.png" alt="Mystery tile"></div>
-    <p class="feedback" id="feedback">&nbsp;</p>
-    <div class="options-row">
-      <button class="option-tile" id="optA" type="button" aria-label="Option A"><img id="optAImg" alt="Tile option A"></button>
-      <button class="option-tile" id="optB" type="button" aria-label="Option B"><img id="optBImg" alt="Tile option B"></button>
-    </div>
-    <p class="press-hint" id="pressHint">Press the right one.</p>
-  </section>
+  <div class="game-wrap">
+    <section class="panel game-panel">
+      <p class="prompt-title">GUESS THE TILE</p>
+      <div class="mall-box"><picture>
+        <source id="mallImgWebp" type="image/webp" srcset="images/instruments/mall.webp">
+        <img id="mallImg" src="images/instruments/mall.png" alt="Mystery tile">
+      </picture></div>
+      <p class="feedback" id="feedback">&nbsp;</p>
+      <div class="options-row">
+        <button class="option-tile" id="optA" type="button" aria-label="Option A"><img id="optAImg" alt="Tile option A"></button>
+        <button class="option-tile" id="optB" type="button" aria-label="Option B"><img id="optBImg" alt="Tile option B"></button>
+      </div>
+      <p class="press-hint" id="pressHint">Choose one</p>
+    </section>
+    <aside class="panel score-panel">
+      <p class="score-label">SCORE</p>
+      <p class="score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
+      <p class="score-sub">correct / attempts</p>
+      <button class="score-reset" id="scoreReset" type="button">Reset</button>
+    </aside>
+  </div>
 </main>
 
 <a class="privacy-link" href="https://github.com/ragdollhood/holisticloader/blob/main/soundbath-privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
@@ -175,7 +195,16 @@ body.ultra-low #cosmos{display:none}
   const $=s=>document.querySelector(s);
   const mallImg=$('#mallImg'),feedback=$('#feedback'),pressHint=$('#pressHint');
   const optA=$('#optA'),optB=$('#optB'),optAImg=$('#optAImg'),optBImg=$('#optBImg');
-  let correctSide=null,answered=false,AC;
+  const scoreCorrectEl=$('#scoreCorrect'),scoreTotalEl=$('#scoreTotal'),scoreReset=$('#scoreReset');
+  let correctSide=null,answered=false,AC,scoreCorrect=0,scoreTotal=0;
+
+  function resetScore(){
+    scoreCorrect=0;
+    scoreTotal=0;
+    scoreCorrectEl.textContent=scoreCorrect;
+    scoreTotalEl.textContent=scoreTotal;
+  }
+  scoreReset.addEventListener('click',resetScore);
 
   function tileSrc(key){return `images/instruments2/instruments-${key}.png`}
 
@@ -203,7 +232,9 @@ body.ultra-low #cosmos{display:none}
     pressHint.style.visibility='hidden';
     const correctKey=(correctSide==='A'?optA:optB).dataset.key;
     mallImg.src=tileSrc(correctKey);
+    scoreTotal++;
     if(side===correctSide){
+      scoreCorrect++;
       feedback.textContent='YES, YOU GOT IT RIGHT!';
       feedback.className='feedback correct';
       fanfare();
@@ -212,6 +243,8 @@ body.ultra-low #cosmos{display:none}
       feedback.textContent='TRY AGAIN!';
       feedback.className='feedback wrong';
     }
+    scoreCorrectEl.textContent=scoreCorrect;
+    scoreTotalEl.textContent=scoreTotal;
     setTimeout(newRound,1500);
   }
 
