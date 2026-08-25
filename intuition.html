@@ -119,7 +119,6 @@ body.ultra-low #cosmos{display:none}
 .meter-score-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0 22px}
 .meter-score-actions .score-reset{margin-top:0}
 .meter-score-actions .score-log{width:auto;margin-top:0;padding:8px 22px}
-.meter-score-actions .score-share{margin-top:0}
 @media(max-width:820px){.game-wrap{flex-direction:column;align-items:center}}
 .score-label{margin:0 0 10px;font:600 14px Georgia;letter-spacing:.14em;color:var(--gold)}
 .score-value{margin:0;font:700 clamp(34px,8vw,52px) Georgia;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
@@ -129,8 +128,6 @@ body.ultra-low #cosmos{display:none}
 .score-log{margin-top:10px;width:100%;padding:9px 14px;font:600 11.5px Georgia;letter-spacing:.05em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s,opacity .15s}
 .score-log:hover:not(:disabled){transform:translateY(-2px)}
 .score-log:disabled{opacity:.4;cursor:not-allowed}
-.score-share{margin-top:10px;width:auto;padding:9px 22px;font:600 11.5px Georgia;letter-spacing:.05em;color:#f3efe4;background:#1877f2;border:1.5px solid #1877f2;border-radius:12px;cursor:pointer;transition:transform .15s,opacity .15s,background .15s}
-.score-share:hover{transform:translateY(-2px);background:#1465d1}
 @media(max-width:900px){.triple-wrap{flex-direction:column;align-items:center}.triple-wrap .game-panel{max-width:340px;width:100%}}
 @media(min-width:901px){
   .app{max-width:1600px}
@@ -202,30 +199,40 @@ body.ultra-low #cosmos{display:none}
       <p class="press-hint" id="sidePressHint">Choose one</p>
     </section>
 
-    <section class="panel game-panel tri-panel direction-panel">
-      <p class="prompt-title">GUESS THE DIRECTION</p>
-      <div class="direction-stage" id="directionStage">
-        <span class="direction-arrow left" aria-hidden="true">&#8592;</span>
-        <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
-        <div class="direction-circle" id="directionCircle"></div>
+    <section class="panel game-panel tri-panel">
+      <p class="prompt-title">GUESS THE DOTS</p>
+      <div class="mall-box"><img id="dotsMysteryImg" alt="Mystery tile"></div>
+      <p class="feedback" id="dotsFeedback">&nbsp;</p>
+      <div class="options-row">
+        <button class="option-tile" id="optOne" type="button" aria-label="One dot"><img id="optOneImg" alt="White tile with a single dot"></button>
+        <button class="option-tile" id="optMany" type="button" aria-label="Many dots"><img id="optManyImg" alt="White tile with many dots"></button>
       </div>
-      <p class="feedback" id="directionFeedback">&nbsp;</p>
-      <div class="direction-actions">
-        <button class="score-log direction-start" id="directionStart" type="button">Start</button>
-        <button class="score-reset direction-stop" id="directionStop" type="button" disabled>Stop</button>
-      </div>
-      <p class="press-hint" id="directionHint">Press start — you can grab and swipe the ball as soon as it appears</p>
+      <p class="press-hint" id="dotsPressHint">Choose one</p>
     </section>
   </div>
+
+  <section class="panel game-panel direction-panel">
+    <p class="prompt-title">GUESS THE DIRECTION</p>
+    <div class="direction-stage" id="directionStage">
+      <span class="direction-arrow left" aria-hidden="true">&#8592;</span>
+      <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
+      <div class="direction-circle" id="directionCircle"></div>
+    </div>
+    <p class="feedback" id="directionFeedback">&nbsp;</p>
+    <div class="direction-actions">
+      <button class="score-log direction-start" id="directionStart" type="button">Start</button>
+      <button class="score-reset direction-stop" id="directionStop" type="button" disabled>Stop</button>
+    </div>
+    <p class="press-hint" id="directionHint">Press start — you can grab and swipe the ball as soon as it appears</p>
+  </section>
 
   <section class="panel meter-panel">
     <p class="meter-title">TODAY'S INTUITION LEVEL</p>
     <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
-    <p class="score-sub">correct / attempts &mdash; Guess the Tile + Guess the Side + Guess the Direction</p>
+    <p class="score-sub">correct / attempts &mdash; Guess the Tile + Guess the Side + Guess the Dots + Guess the Direction</p>
     <div class="meter-score-actions">
       <button class="score-reset" id="scoreReset" type="button">Reset</button>
       <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
-      <button class="score-share" id="shareFbBtn" type="button">Share on Facebook</button>
     </div>
     <div class="meter-track">
       <div class="meter-fill" id="meterFill"></div>
@@ -281,30 +288,9 @@ body.ultra-low #cosmos{display:none}
 
   /* ---------- shared score / meter / graph (Tile + Side) ---------- */
   const scoreCorrectEl=$('#scoreCorrect'),scoreTotalEl=$('#scoreTotal'),scoreReset=$('#scoreReset');
-  const logProgressBtn=$('#logProgressBtn'),shareFbBtn=$('#shareFbBtn');
+  const logProgressBtn=$('#logProgressBtn');
   const meterFill=$('#meterFill'),meterLevel=$('#meterLevel'),meterDesc=$('#meterDesc'),meterSub=$('#meterSub');
   let scoreCorrect=0,scoreTotal=0,AC;
-
-  const SHARE_URL='https://holisticloader.com/intuition';
-
-  function shareResultOnFacebook(){
-    const percent=scoreTotal?Math.round((scoreCorrect/scoreTotal)*100):0;
-    const quote=scoreTotal
-      ? `My intuition level today: ${meterLevel.textContent} \u2014 ${scoreCorrect}/${scoreTotal} correct (${percent}%) on Intuition Loader!`
-      : 'Trust your gut and play Intuition Loader!';
-    const shareUrl='https://www.facebook.com/sharer/sharer.php?display=popup&u='+encodeURIComponent(SHARE_URL)+'&quote='+encodeURIComponent(quote);
-    const w=600,h=640;
-    const left=Math.max(0,(window.screen.width-w)/2);
-    const top=Math.max(0,(window.screen.height-h)/2);
-    const popup=window.open(shareUrl,'shareOnFacebook',`width=${w},height=${h},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes`);
-    if(!popup){
-      /* popup blocked by the browser: fall back to a normal navigation so sharing still works */
-      window.open(shareUrl,'_blank');
-    }else{
-      popup.focus();
-    }
-  }
-  shareFbBtn.addEventListener('click',shareResultOnFacebook);
 
   function updateLogButtonState(){
     logProgressBtn.disabled=scoreTotal<=0;
@@ -613,6 +599,65 @@ body.ultra-low #cosmos{display:none}
   optLeft.addEventListener('click',()=>chooseSide('left'));
   optRight.addEventListener('click',()=>chooseSide('right'));
 
+  /* ---------- Guess the Dots ---------- */
+  const dotsMysteryImg=$('#dotsMysteryImg'),dotsFeedback=$('#dotsFeedback'),dotsPressHint=$('#dotsPressHint');
+  const optOne=$('#optOne'),optMany=$('#optMany'),optOneImg=$('#optOneImg'),optManyImg=$('#optManyImg');
+  let correctDotsKind=null,answeredDots=false;
+
+  /* build a white tile with a single dot, a scatter of many dots, or a blank mystery tile */
+  const MANY_DOT_POSITIONS=[
+    [40,46],[72,38],[104,44],[136,40],[164,52],
+    [32,84],[62,78],[94,88],[126,80],[156,90],
+    [44,124],[76,118],[108,128],[140,120],[162,132],
+    [36,164],[66,158],[98,168],[130,160],[158,170],
+    [48,204],[80,198],[112,206],[142,200]
+  ];
+  function dotsSVG(kind){
+    let dots='';
+    if(kind==='one'){
+      dots='<circle cx="100" cy="128" r="27" fill="#241733"/>';
+    }else if(kind==='many'){
+      dots=MANY_DOT_POSITIONS.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="#241733"/>`).join('');
+    }
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><rect width="200" height="256" rx="14" fill="#ffffff"/>${dots}</svg>`;
+    return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+  }
+  optOneImg.src=dotsSVG('one');
+  optManyImg.src=dotsSVG('many');
+
+  function newRoundDots(){
+    answeredDots=false;
+    dotsFeedback.textContent='\u00A0';
+    dotsFeedback.className='feedback';
+    dotsPressHint.style.visibility='visible';
+    dotsMysteryImg.src=dotsSVG(null);
+    optOne.disabled=optMany.disabled=false;
+    correctDotsKind=Math.random()<.5?'one':'many';
+  }
+
+  function chooseDots(kind){
+    if(answeredDots)return;
+    answeredDots=true;
+    optOne.disabled=optMany.disabled=true;
+    dotsPressHint.style.visibility='hidden';
+    dotsMysteryImg.src=dotsSVG(correctDotsKind);
+    const correct=kind===correctDotsKind;
+    if(correct){
+      dotsFeedback.textContent='YES, YOU GOT IT RIGHT!';
+      dotsFeedback.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      dotsFeedback.textContent='TRY AGAIN!';
+      dotsFeedback.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundDots,1500);
+  }
+
+  optOne.addEventListener('click',()=>chooseDots('one'));
+  optMany.addEventListener('click',()=>chooseDots('many'));
+
   /* ---------- Guess the Direction ---------- */
   const directionCircle=$('#directionCircle'),directionFeedback=$('#directionFeedback');
   const directionHint=$('#directionHint'),directionStart=$('#directionStart'),directionStop=$('#directionStop');
@@ -739,6 +784,7 @@ body.ultra-low #cosmos{display:none}
   /* ---------- init ---------- */
   newRoundTile();
   newRoundSide();
+  newRoundDots();
   drawProgressChart();
   updateMeter();
 })();
