@@ -1,0 +1,326 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ============ SEO ============ -->
+<title>Intuition Loader — A Mindful Tile Guessing Game</title>
+<meta name="description" content="Play Intuition Loader, a calming guessing game. Trust your gut, pick the right tile, and see if your intuition matches the mystery pick.">
+<meta name="keywords" content="intuition loader, intuition game, guessing game, mindfulness game, calm puzzle game, holistic loader">
+<meta name="author" content="Holistic Loader">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="theme-color" content="#090712">
+<meta name="application-name" content="Holistic Loader">
+<meta name="apple-mobile-web-app-title" content="Intuition Loader">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="canonical" id="canonicalLink" href="https://holisticloader.com/intuition-loader.html">
+<link rel="icon" type="image/png" href="images/icon-holistic.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/icon-holistic.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/icon-holistic.png">
+<link rel="apple-touch-icon" href="images/icon-holistic.png">
+<link rel="shortcut icon" href="images/icon-holistic.png">
+<meta name="msapplication-TileImage" content="images/icon-holistic.png">
+<meta name="msapplication-TileColor" content="#090712">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Holistic Loader">
+<meta property="og:title" content="Intuition Loader — A Mindful Tile Guessing Game">
+<meta property="og:description" content="Trust your gut. Pick the right tile and see if your intuition was correct.">
+<meta property="og:image" id="ogImage" content="https://holisticloader.com/images/preview-intuition-loader.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" id="ogUrl" content="https://holisticloader.com/intuition-loader.html">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Intuition Loader — A Mindful Tile Guessing Game">
+<meta name="twitter:description" content="Trust your gut. Pick the right tile and see if your intuition was correct.">
+<meta name="twitter:image" id="twImage" content="https://holisticloader.com/images/preview-intuition-loader.jpg">
+
+<script>
+(function(){try{
+  var loc=location.href.split('#')[0];
+  var base=loc.replace(/[^/]*$/,'');
+  var img=base+'images/preview-intuition-loader.jpg';
+  var set=function(id,prop,val){var el=document.getElementById(id);if(!el)return;if(prop==='href')el.href=val;else el.content=val;};
+  set('ogImage','content',img);
+  set('twImage','content',img);
+}catch(e){}})();
+</script>
+<!-- ========== /SEO ========== -->
+
+<style>
+:root{--gold:#ffd98a;--violet:#c9a8ff;--glass:rgba(13,9,22,.61)}*{box-sizing:border-box}html{background:#090712}html,body{margin:0;min-height:100%;font-family:-apple-system,system-ui,'Segoe UI',sans-serif;color:#f3efe4}body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px));overflow-x:hidden;user-select:none}.app{max-width:1140px;margin:auto;padding:16px}.panel{background:var(--glass);border:1px solid #ffffff26;backdrop-filter:blur(13px);box-shadow:0 18px 55px #0008;border-radius:24px}
+
+/* ===== aurora backdrop ===== */
+#stage{position:fixed;inset:0;z-index:-3;overflow:hidden;background:linear-gradient(160deg,#221a38 0%,#2c1c42 40%,#241a36 70%,#180f26 100%)}
+#stage .aurora{position:absolute;inset:-8%;will-change:transform;
+  background:
+    radial-gradient(38% 32% at 18% 22%, rgba(255,214,150,.72), transparent 70%),
+    radial-gradient(34% 28% at 82% 14%, rgba(160,170,255,.62), transparent 70%),
+    radial-gradient(36% 30% at 80% 82%, rgba(210,140,240,.58), transparent 70%),
+    radial-gradient(32% 26% at 16% 84%, rgba(122,240,208,.55), transparent 70%),
+    radial-gradient(30% 26% at 50% 48%, rgba(255,138,110,.48), transparent 72%);
+  filter:blur(26px);animation:auroraDrift 40s ease-in-out infinite alternate}
+@keyframes auroraDrift{0%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}50%{transform:translate3d(1.6%,-2%,0) rotate(4deg) scale(1.06)}100%{transform:translate3d(-2%,1.6%,0) rotate(-3deg) scale(1.03)}}
+#stage::after{content:'';position:absolute;inset:0;background:radial-gradient(135% 92% at 50% 42%, transparent 40%, rgba(0,0,0,.4) 100%),linear-gradient(to bottom,rgba(0,0,0,.14) 0%,transparent 20%,transparent 55%,rgba(0,0,0,.24) 100%)}
+body.low-power #stage .aurora{filter:blur(20px);animation-duration:56s}
+body.ultra-low #stage .aurora{filter:blur(14px);animation:none;transform:none}
+#cosmos{position:fixed;inset:0;z-index:-1;pointer-events:none}
+body.low-power #cosmos{opacity:.5}
+body.ultra-low #cosmos{display:none}
+@media(prefers-reduced-motion:reduce){#stage .aurora{animation:none!important;transform:none!important}}
+
+/* ===== top nav (kept from the shared site header) ===== */
+#topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
+#brand{display:flex;justify-content:center;margin:0 0 8px;pointer-events:none}#brand a{pointer-events:auto;line-height:0}
+#brandLogo{display:block;max-height:clamp(38px,7vw,64px);width:auto;max-width:80vw;filter:drop-shadow(0 2px 10px #0008)}
+#topTabs{display:flex;pointer-events:auto;flex-wrap:wrap;justify-content:center}
+#topTabs .tab{font-family:Outfit,system-ui;font-weight:500;font-size:12.5px;padding:9px 18px;color:#b3a98f;text-decoration:none;white-space:nowrap;background:#f3efe40a;border:1px solid rgba(220,190,130,.16);border-bottom:0;border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px}
+#topTabs .tab.active{color:#ffd98a;background:rgba(231,201,162,.14);top:0;border-color:#ffd98a}
+#topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#ffd98a 15%,#c9a8ff 50%,#ffd98a 85%,transparent)}
+.h1-frame{position:fixed;top:var(--navH,max(118px,calc(env(safe-area-inset-top) + 106px)));left:50%;transform:translateX(-50%);z-index:30;width:min(94vw,820px);padding:9px 24px;border:1.5px solid #ffd98a;border-top:0;border-radius:0 0 30px 30px;background:rgba(16,11,25,.72);backdrop-filter:blur(10px);text-align:center}
+.h1-frame h1{margin:0;font:600 clamp(15px,4.2vw,20px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,#ffd98a,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
+@media(max-width:720px){body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(46px,12vw,84px)}#topTabs .tab{padding:8px 9px;font-size:10px}}
+
+/* ===== game ===== */
+.game-panel{max-width:620px;margin:26px auto 0;padding:34px 24px 30px;text-align:center}
+.prompt-title{margin:0 0 22px;font:600 clamp(16px,3.6vw,23px) Georgia;letter-spacing:.1em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
+.mall-box{width:min(42vw,210px);aspect-ratio:.78;margin:0 auto 22px;padding:14px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 18px 45px #0008;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.mall-box img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 14px #0007)}
+.feedback{min-height:32px;font:700 clamp(16px,3.6vw,23px) Georgia;margin:2px 0 14px;transition:opacity .15s}
+.feedback.correct{color:var(--gold)}
+.feedback.wrong{color:#ff8a8a}
+.options-row{display:flex;justify-content:center;gap:24px;margin:6px 0 16px;flex-wrap:wrap}
+.option-tile{width:min(32vw,175px);aspect-ratio:.78;padding:10px;border:1.5px solid rgba(220,190,130,.35);border-radius:18px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
+.option-tile:hover:not(:disabled){transform:translateY(-5px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+.option-tile:disabled{cursor:default;opacity:.9}
+.option-tile img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+.press-hint{color:#cfc3db;font-size:14px;margin:0}
+.confetti-piece{position:fixed;top:-24px;width:9px;height:15px;z-index:70;pointer-events:none;border-radius:2px;animation-name:confettiFall;animation-timing-function:cubic-bezier(.35,0,.65,1);animation-fill-mode:forwards}
+@keyframes confettiFall{to{transform:translateY(112vh) rotate(760deg);opacity:.85}}
+.privacy-link{position:fixed;left:14px;bottom:14px;z-index:45;font-size:11px;color:#cfc3db;opacity:.7;text-decoration:none;padding:6px 11px;border-radius:10px;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;transition:.2s}
+.privacy-link:hover{opacity:1;color:#ffd98a;border-color:#ffd98a55}
+@media(max-width:480px){.privacy-link{font-size:10px;padding:5px 9px;left:8px;bottom:8px}}
+</style></head>
+<body>
+<div id="stage"><div class="aurora"></div></div>
+<canvas id="cosmos"></canvas>
+
+<header id="topNav">
+  <h1 id="brand"><a href="index.html"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
+  <nav id="topTabs">
+    <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
+    <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
+    <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition tracker</span></a>
+    <a href="yoga-loader.html" class="tab">Yoga</a>
+    <a href="mahjong.html" class="tab">Mahjong</a>
+    <a href="intuition-loader.html" class="tab active" aria-current="page">Intuition Loader</a>
+    <a href="store.html" class="tab">Shop</a>
+  </nav>
+  <div id="topNavLine"></div>
+</header>
+
+<div class="h1-frame"><h1>INTUITION LOADER</h1></div>
+
+<main class="app">
+  <section class="panel game-panel">
+    <p class="prompt-title">WHICH IS THE RIGHT TILE?</p>
+    <div class="mall-box"><img id="mallImg" src="images/instruments/mall.png" alt="Mystery tile"></div>
+    <p class="feedback" id="feedback">&nbsp;</p>
+    <div class="options-row">
+      <button class="option-tile" id="optA" type="button" aria-label="Option A"><img id="optAImg" alt="Tile option A"></button>
+      <button class="option-tile" id="optB" type="button" aria-label="Option B"><img id="optBImg" alt="Tile option B"></button>
+    </div>
+    <p class="press-hint" id="pressHint">Press the right one.</p>
+  </section>
+</main>
+
+<a class="privacy-link" href="https://github.com/ragdollhood/holisticloader/blob/main/soundbath-privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+
+<script>
+/* ===== gentle starfield backdrop (same technique as the rest of the site) ===== */
+(function(){
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,cores=navigator.hardwareConcurrency||4,mobile=/Android|iPhone|iPad|Mobi/i.test(navigator.userAgent),perf=(cores<=2?.45:cores<=4?.7:1)*(mobile?.65:1);
+  if(perf<.7)document.body.classList.add('low-power');
+  if(perf<.4||reduced)document.body.classList.add('ultra-low');
+  const c=document.getElementById('cosmos'),x=c.getContext('2d');
+  let stars=[],last=performance.now(),frame=0;
+  function debounce(fn,d){let t;return()=>{clearTimeout(t);t=setTimeout(fn,d)}}
+  function size(){c.width=innerWidth;c.height=innerHeight;stars=Array.from({length:Math.round(innerWidth*innerHeight/7000*perf)},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:.3+Math.random(),p:Math.random()*6.3}))}
+  size();addEventListener('resize',debounce(size,180));
+  let rafId=null;
+  function loop(now){rafId=requestAnimationFrame(loop);if(perf<.7&&now-frame<33)return;frame=now;let dt=Math.min(50,now-last);last=now;x.clearRect(0,0,c.width,c.height);x.fillStyle='#f3ead4';stars.forEach(s=>{s.p+=dt*.001;x.globalAlpha=.25+.45*Math.abs(Math.sin(s.p));x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});x.globalAlpha=1}
+  rafId=requestAnimationFrame(loop);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(rafId)}else{last=performance.now();rafId=requestAnimationFrame(loop)}});
+})();
+
+/* ===== keep the fixed header's height in sync so the title frame sits correctly ===== */
+(function(){
+  function syncNavH(){const nav=document.getElementById('topNav');const frame=document.querySelector('.h1-frame');if(nav)document.documentElement.style.setProperty('--navH',nav.getBoundingClientRect().height+'px');if(frame)document.documentElement.style.setProperty('--titleH',frame.getBoundingClientRect().height+'px')}
+  syncNavH();addEventListener('resize',syncNavH);addEventListener('orientationchange',()=>setTimeout(syncNavH,60));
+  const brandLogo=document.getElementById('brandLogo');
+  if(brandLogo){if(brandLogo.complete)syncNavH();else brandLogo.addEventListener('load',syncNavH)}
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncNavH);
+  new ResizeObserver(syncNavH).observe(document.getElementById('topNav'));
+  new ResizeObserver(syncNavH).observe(document.querySelector('.h1-frame'));
+})();
+
+/* ===== Intuition Loader game ===== */
+(function(){
+  const instruments=['chimes','crystal_bowl','djembe','gong','handpan','harpa','monochord','native_american_fluit','ocean_drum','panflute','quartz_bowl','rainstick','sansula','shaman_drum','tam-tam_drum','thunder_drum','tibetansk_gong','tibetan_bowl','tonguedrum','triangle'];
+  const $=s=>document.querySelector(s);
+  const mallImg=$('#mallImg'),feedback=$('#feedback'),pressHint=$('#pressHint');
+  const optA=$('#optA'),optB=$('#optB'),optAImg=$('#optAImg'),optBImg=$('#optBImg');
+  let correctSide=null,answered=false,AC;
+
+  function tileSrc(key){return `images/instruments2/instruments-${key}.png`}
+
+  function newRound(){
+    answered=false;
+    feedback.textContent='\u00A0';
+    feedback.className='feedback';
+    pressHint.style.visibility='visible';
+    mallImg.src='images/instruments/mall.png';
+    optA.disabled=optB.disabled=false;
+
+    const pool=[...instruments].sort(()=>Math.random()-.5);
+    const keyA=pool[0],keyB=pool[1];
+    optAImg.src=tileSrc(keyA);
+    optBImg.src=tileSrc(keyB);
+    optA.dataset.key=keyA;
+    optB.dataset.key=keyB;
+    correctSide=Math.random()<.5?'A':'B';
+  }
+
+  function choose(side){
+    if(answered)return;
+    answered=true;
+    optA.disabled=optB.disabled=true;
+    pressHint.style.visibility='hidden';
+    const correctKey=(correctSide==='A'?optA:optB).dataset.key;
+    mallImg.src=tileSrc(correctKey);
+    if(side===correctSide){
+      feedback.textContent='YES, YOU GOT IT RIGHT!';
+      feedback.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      feedback.textContent='TRY AGAIN!';
+      feedback.className='feedback wrong';
+    }
+    setTimeout(newRound,1500);
+  }
+
+  optA.addEventListener('click',()=>choose('A'));
+  optB.addEventListener('click',()=>choose('B'));
+
+  function fanfare(){
+    try{
+      if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+      if(AC.state!=='running')AC.resume();
+      const notes=[523.25,659.25,783.99,1046.5];
+      notes.forEach((f,i)=>{
+        const t=AC.currentTime+i*.09,o=AC.createOscillator(),g=AC.createGain();
+        o.type='triangle';o.frequency.setValueAtTime(f,t);
+        g.gain.setValueAtTime(.0001,t);
+        g.gain.exponentialRampToValueAtTime(.22,t+.02);
+        g.gain.exponentialRampToValueAtTime(.0001,t+.5);
+        o.connect(g).connect(AC.destination);
+        o.start(t);o.stop(t+.55);
+      });
+    }catch(e){}
+  }
+
+  function confettiBurst(){
+    const colors=['#ffd98a','#c9a8ff','#7af0d0','#ff8a5c','#fff8e2'];
+    for(let i=0;i<40;i++){
+      const el=document.createElement('div');
+      el.className='confetti-piece';
+      el.style.left=(Math.random()*100)+'vw';
+      el.style.background=colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDuration=(1.6+Math.random()*1.2)+'s';
+      el.style.animationDelay=(Math.random()*.25)+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),3200);
+    }
+  }
+
+  newRound();
+})();
+</script>
+
+<script>
+const VISIT_SUPABASE_URL = "https://ibytawdimgthoqwtbtgv.supabase.co";
+const VISIT_SUPABASE_KEY = "sb_publishable_X4l9e5OPXE9Cq4XVc1jm_A_Hb6tbJUO";
+
+/* owner's own visitor IDs — never counted as visits */
+const EXCLUDED_VISITOR_IDS = [
+  "183871a4-aa9b-4eaa-8668-2cd14de446c2",
+  "9fe82a0f-073b-43ac-b5ec-27e3637fc35e",
+  "bb5f4d85-4d84-448d-ad42-60480d8cbc1b",
+  "071e4c9d-2b06-41d2-9353-77d61f3a83c4"
+];
+
+function getVisitorId() {
+  let id = localStorage.getItem("visitor_id");
+
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("visitor_id", id);
+  }
+
+  return id;
+}
+
+async function getVisitorCountry() {
+  try {
+    const response = await fetch("https://ipapi.co/json/");
+    const data = await response.json();
+    return data.country_name || "Unknown";
+  } catch (error) {
+    return "Unknown";
+  }
+}
+
+async function registerVisit() {
+  if (localStorage.getItem("site_owner") === "true") {
+    return;
+  }
+
+  const visitorId = getVisitorId();
+  if (EXCLUDED_VISITOR_IDS.includes(visitorId)) {
+    return;
+  }
+
+  try {
+    const country = await getVisitorCountry();
+
+    await fetch(`${VISIT_SUPABASE_URL}/rest/v1/visits`, {
+      method: "POST",
+      headers: {
+        apikey: VISIT_SUPABASE_KEY,
+        Authorization: `Bearer ${VISIT_SUPABASE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify({
+        site: "holisticloader",
+        page: "intuition-loader",
+        page_url: window.location.pathname,
+        visitor_id: visitorId,
+        country: country
+      })
+    });
+
+  } catch (error) {
+    console.error("Visit registration failed:", error);
+  }
+}
+
+if(window.requestIdleCallback)requestIdleCallback(registerVisit,{timeout:2000});else setTimeout(registerVisit,1200);
+</script>
+</body></html>
