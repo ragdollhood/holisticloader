@@ -112,6 +112,9 @@ body.ultra-low #cosmos{display:none}
 .direction-arrow.left{left:10px}
 .direction-arrow.right{right:10px}
 .direction-start{width:auto;padding:9px 26px}
+.direction-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:0}
+.direction-stop{width:auto;margin-top:0;padding:9px 26px}
+.direction-stop:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .meter-score-value{font-size:clamp(28px,6vw,40px);margin:0}
 .meter-score-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0 22px}
 .meter-score-actions .score-reset{margin-top:0}
@@ -201,15 +204,18 @@ body.ultra-low #cosmos{display:none}
         <div class="direction-circle" id="directionCircle"></div>
       </div>
       <p class="feedback" id="directionFeedback">&nbsp;</p>
-      <button class="score-log direction-start" id="directionStart" type="button">Start</button>
-      <p class="press-hint" id="directionHint">Press start, then swipe the circle left or right</p>
+      <div class="direction-actions">
+        <button class="score-log direction-start" id="directionStart" type="button">Start</button>
+        <button class="score-reset direction-stop" id="directionStop" type="button" disabled>Stop</button>
+      </div>
+      <p class="press-hint" id="directionHint">Press start — you can grab and swipe the ball as soon as it appears</p>
     </section>
   </div>
 
   <section class="panel meter-panel">
     <p class="meter-title">TODAY'S INTUITION LEVEL</p>
     <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
-    <p class="score-sub">correct / attempts &mdash; Guess the Tile + Guess the Side</p>
+    <p class="score-sub">correct / attempts &mdash; Guess the Tile + Guess the Side + Guess the Direction</p>
     <div class="meter-score-actions">
       <button class="score-reset" id="scoreReset" type="button">Reset</button>
       <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
@@ -583,8 +589,9 @@ body.ultra-low #cosmos{display:none}
 
   /* ---------- Guess the Direction ---------- */
   const directionCircle=$('#directionCircle'),directionFeedback=$('#directionFeedback');
-  const directionHint=$('#directionHint'),directionStart=$('#directionStart');
+  const directionHint=$('#directionHint'),directionStart=$('#directionStart'),directionStop=$('#directionStop');
   let directionCorrect=null,directionState='idle',dragStartX=0,dragCurrentX=0,dragging=false,dragPointerId=null;
+  let directionRunning=false,directionFlyTimer=null,directionResultTimer=null;
 
   function resetDirectionCircle(){
     directionCircle.style.transition='none';
@@ -598,11 +605,14 @@ body.ultra-low #cosmos{display:none}
 
   function startDirectionRound(){
     if(directionState==='flying'||directionState==='waiting')return;
+    clearTimeout(directionFlyTimer);
+    clearTimeout(directionResultTimer);
     directionCorrect=Math.random()<.5?'left':'right';
     directionFeedback.textContent='\u00A0';
     directionFeedback.className='feedback';
-    directionHint.textContent='Decide which way you\u2019ll swipe\u2026';
+    directionHint.textContent='Swipe the circle left or right whenever you\u2019re ready';
     directionStart.disabled=true;
+    directionStop.disabled=false;
     resetDirectionCircle();
     directionState='flying';
     requestAnimationFrame(()=>{
@@ -611,16 +621,34 @@ body.ultra-low #cosmos{display:none}
       directionCircle.style.height='130px';
       directionCircle.style.opacity='1';
     });
-    setTimeout(()=>{
+    directionFlyTimer=setTimeout(()=>{
       if(directionState!=='flying')return;
       directionState='waiting';
       directionHint.textContent='Swipe the circle left or right now!';
     },3000);
   }
-  directionStart.addEventListener('click',startDirectionRound);
+  directionStart.addEventListener('click',()=>{
+    directionRunning=true;
+    startDirectionRound();
+  });
+
+  function stopDirectionRound(){
+    directionRunning=false;
+    clearTimeout(directionFlyTimer);
+    clearTimeout(directionResultTimer);
+    dragging=false;
+    directionState='idle';
+    directionFeedback.textContent='\u00A0';
+    directionFeedback.className='feedback';
+    directionHint.textContent='Press start to begin';
+    directionStart.disabled=false;
+    directionStop.disabled=true;
+    resetDirectionCircle();
+  }
+  directionStop.addEventListener('click',stopDirectionRound);
 
   function evaluateDirectionSwipe(dir){
-    if(directionState!=='waiting')return;
+    if(directionState!=='flying'&&directionState!=='waiting')return;
     directionState='result';
     const correct=dir===directionCorrect;
     directionCircle.style.transition='transform .35s ease, opacity .35s ease';
@@ -635,16 +663,22 @@ body.ultra-low #cosmos{display:none}
       directionFeedback.textContent='TRY AGAIN!';
       directionFeedback.className='feedback wrong';
     }
-    directionHint.textContent='Press start for another round';
-    setTimeout(()=>{
-      directionState='idle';
-      directionStart.disabled=false;
+    recordGuess(correct);
+    directionHint.textContent=directionRunning?'Next ball incoming\u2026':'Press start for another round';
+    directionResultTimer=setTimeout(()=>{
       resetDirectionCircle();
+      directionState='idle';
+      if(directionRunning){
+        startDirectionRound();
+      }else{
+        directionStart.disabled=false;
+        directionStop.disabled=true;
+      }
     },1200);
   }
 
   function onPointerDown(e){
-    if(directionState!=='waiting')return;
+    if(directionState!=='flying'&&directionState!=='waiting')return;
     dragging=true;
     dragPointerId=e.pointerId;
     dragStartX=e.clientX;
