@@ -129,6 +129,13 @@ body.ultra-low #cosmos{display:none}
 .score-log:hover:not(:disabled){transform:translateY(-2px)}
 .score-log:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:900px){.triple-wrap{flex-direction:column;align-items:center}.triple-wrap .game-panel{max-width:340px;width:100%}}
+@media(min-width:901px){
+  .app{max-width:1600px}
+  .triple-wrap{max-width:1560px;gap:32px}
+  .triple-wrap .game-panel{max-width:480px;min-width:452px;flex:1 1 452px}
+  .mall-box,.direction-stage{width:min(20vw,230px)}
+  .option-tile{width:min(16vw,190px)}
+}
 .progress-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center}
 .progress-label{margin:0 0 14px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
 #progressChart{width:100%;height:180px;display:block}
@@ -162,7 +169,6 @@ body.ultra-low #cosmos{display:none}
     <a href="yoga-loader.html" class="tab">Yoga</a>
     <a href="mahjong.html" class="tab">Mahjong</a>
     <a href="intuition-loader.html" class="tab active" aria-current="page">Intuition Loader</a>
-    <a href="store.html" class="tab">Shop</a>
   </nav>
   <div id="topNavLine"></div>
 </header>
@@ -173,10 +179,7 @@ body.ultra-low #cosmos{display:none}
   <div class="triple-wrap">
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">GUESS THE TILE</p>
-      <div class="mall-box"><picture>
-        <source id="mallImgWebp" type="image/webp" srcset="images/instruments/mall.webp">
-        <img id="mallImg" src="images/instruments/mall.png" alt="Mystery tile">
-      </picture></div>
+      <div class="mall-box"><img id="mallImg" alt="Mystery tile"></div>
       <p class="feedback" id="feedback">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optA" type="button" aria-label="Option A"><img id="optAImg" alt="Tile option A"></button>
@@ -490,7 +493,7 @@ body.ultra-low #cosmos{display:none}
 
   /* ---------- Guess the Tile ---------- */
   const instruments=['chimes','crystal_bowl','djembe','gong','handpan','harpa','monochord','native_american_fluit','ocean_drum','panflute','quartz_bowl','rainstick','sansula','shaman_drum','tam-tam_drum','thunder_drum','tibetansk_gong','tibetan_bowl','tonguedrum','triangle'];
-  const mallImg=$('#mallImg'),mallImgWebp=$('#mallImgWebp'),feedback=$('#feedback'),pressHint=$('#pressHint');
+  const mallImg=$('#mallImg'),feedback=$('#feedback'),pressHint=$('#pressHint');
   const optA=$('#optA'),optB=$('#optB'),optAImg=$('#optAImg'),optBImg=$('#optBImg');
   let correctTileSide=null,answeredTile=false;
 
@@ -501,8 +504,7 @@ body.ultra-low #cosmos{display:none}
     feedback.textContent='\u00A0';
     feedback.className='feedback';
     pressHint.style.visibility='visible';
-    mallImgWebp.srcset='images/instruments/mall.webp';
-    mallImg.src='images/instruments/mall.png';
+    mallImg.src=tileSVG(null);
     optA.disabled=optB.disabled=false;
 
     const pool=[...instruments].sort(()=>Math.random()-.5);
@@ -520,7 +522,6 @@ body.ultra-low #cosmos{display:none}
     optA.disabled=optB.disabled=true;
     pressHint.style.visibility='hidden';
     const correctKey=(correctTileSide==='A'?optA:optB).dataset.key;
-    mallImgWebp.removeAttribute('srcset');
     mallImg.src=tileSrc(correctKey);
     const correct=side===correctTileSide;
     if(correct){
