@@ -261,10 +261,10 @@ let cgAudioMuted=false,adAudioMuted=false;
 function applyMasterGain(){if(master)master.gain.value=(cgAudioMuted||adAudioMuted)?0:.2}
 const MODES={beginner:{name:'Beginner',total:40,pairScore:100,hintCost:0,shuffleCost:0,layers:'2 layers',specs:[[8,4,4,28,11.5,15,0],[4,2,27,19,11.5,15,1]]},normal:{name:'Normal',total:80,pairScore:125,hintCost:50,shuffleCost:100,layers:'3 layers',specs:[[10,5,3,20,9.6,13,0],[6,4,22,24,9.6,13,1],[4,2,31.5,30,9.6,13,2]]},expert:{name:'Expert',total:160,pairScore:150,hintCost:100,shuffleCost:200,layers:'4 layers',specs:[[12,7,1.5,15,8,11.2,0],[10,5,9.5,21,8,11.2,1],[6,3,25.5,27,8,11.2,2],[4,2,33.5,32.5,8,11.2,3]]},extreme:{name:'Extreme',total:240,pairScore:200,hintCost:200,shuffleCost:400,layers:'5 layers',specs:[[12,8,1.5,8,8,11.2,0],[10,7,9.5,12,8,11.2,1],[8,6,17.5,16,8,11.2,2],[6,3,25.5,22,8,11.2,3],[4,2,33.5,28,8,11.2,4]]}};let modeKey='',mode=null,layout=[];function buildLayout(m){layout=[];let raw=[];m.specs.forEach(([c,r,x0,y0,dx,dy,z])=>{const growth=1+z*.12,widthPct=7.8*growth,heightPct=widthPct*1.787,dxE=Math.max(dx*growth,widthPct+.6),dyE=Math.max(dy*growth,heightPct+1.2),cx=x0+(c-1)*dx/2,cy=y0+(r-1)*dy/2,nx0=cx-(c-1)*dxE/2,ny0=cy-(r-1)*dyE/2,stagger=z%2?dxE/2:0;for(let y=0;y<r;y++)for(let x=0;x<c;x++)raw.push({x:nx0+stagger+x*dxE,y:ny0+y*dyE,z,widthPct,heightPct})});let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;raw.forEach(t=>{const hw=t.widthPct/2,hh=t.heightPct/2;minX=Math.min(minX,t.x-hw);maxX=Math.max(maxX,t.x+hw);minY=Math.min(minY,t.y-hh);maxY=Math.max(maxY,t.y+hh)});const tXmin=2,tXmax=98,tYmin=4,tYmax=96,scale=Math.min((tXmax-tXmin)/(maxX-minX),(tYmax-tYmin)/(maxY-minY),1),cx0=(minX+maxX)/2,cy0=(minY+maxY)/2,tcx=(tXmin+tXmax)/2,tcy=(tYmin+tYmax)/2;layout=raw.map(t=>({x:tcx+(t.x-cx0)*scale,y:tcy+(t.y-cy0)*scale,z:t.z}));board.style.setProperty('--modeScale',scale);}
 let tileFolder=localStorage.imTileSet||'instruments2';board.dataset.tileStyle=tileFolder;function image(key){return `<picture><source srcset="images/${tileFolder}/instruments-${key}.webp" type="image/webp"><img src="images/${tileFolder}/instruments-${key}.png" alt=""></picture>`}
-function initAudio(){if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();applyMasterGain();let comp=AC.createDynamicsCompressor();comp.threshold.value=-18;comp.knee.value=24;comp.ratio.value=8;comp.attack.value=.003;comp.release.value=.25;master.connect(comp);comp.connect(AC.destination);noiseBuffer=AC.createBuffer(1,AC.sampleRate*3,AC.sampleRate);let d=noiseBuffer.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}if(AC.state!=='running')AC.resume()}
+function initAudio(){if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();applyMasterGain();let comp=AC.createDynamicsCompressor();comp.threshold.value=-18;comp.knee.value=24;comp.ratio.value=8;comp.attack.value=.003;comp.release.value=.25;master.connect(comp);comp.connect(AC.destination);noiseBuffer=AC.createBuffer(1,AC.sampleRate*3,AC.sampleRate);let d=noiseBuffer.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}return AC.state!=='running'?AC.resume():Promise.resolve()}
 function tone(freq,dur=.9,type='sine',gain=.2,when=0){let t=AC.currentTime+when,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(gain,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+dur);g.gain.linearRampToValueAtTime(0,t+dur+.03);o.connect(g).connect(master);o.start(t);o.stop(t+dur+.05)}
 function noise(dur=.5,freq=800,gain=.12,type='bandpass'){let t=AC.currentTime,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=noiseBuffer;f.type=type;f.frequency.value=freq;g.gain.setValueAtTime(gain,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(f).connect(g).connect(master);s.start(t);s.stop(t+dur)}
-function play(k,showLabel=true){if(muted)return;initAudio();const i=instruments.findIndex(x=>x[0]===k),base=[740,520,110,82,220,147,65,294,180,392,216,2600,330,88,72,48,64,196,294,2900][i];
+function play(k,showLabel=true){if(muted)return;const run=()=>{const i=instruments.findIndex(x=>x[0]===k),base=[740,520,110,82,220,147,65,294,180,392,216,2600,330,88,72,48,64,196,294,2900][i];
  if(k==='chimes'){[1,1.26,1.5,2].forEach((r,n)=>tone(base*r,3,'sine',.11,n*.08))}
  else if(k.includes('bowl')){[1,1.003,2.32,4.25].forEach((r,n)=>tone(base*r,5-n*.5,'sine',n<2?.12:.05))}
  else if(k.includes('gong')||k==='tam-tam_drum'){[.5,1,1.34,1.83,2.7,3.5].forEach((r,n)=>tone(base*r,5,'sine',.12/(1+n*.25)));noise(.45,base*2,.08)}
@@ -276,7 +276,7 @@ function play(k,showLabel=true){if(muted)return;initAudio();const i=instruments.
  else if(k==='triangle'){[1,1.34,1.71,2.12].forEach(r=>tone(base*r,3.5,'sine',.06))}
  else if(k==='djembe'||k==='shaman_drum'){tone(base,.55,'sine',.24);noise(.12,k==='djembe'?1200:500,.14)}
  else tone(base,1.4,'sine',.15);
- if(showLabel)showSound(instruments[i][1])}
+ if(showLabel)showSound(instruments[i][1])};initAudio().then(run).catch(()=>{})}
 function showSound(n){$('#sound').textContent='♪ '+n;$('#sound').classList.add('show');clearTimeout(showSound.t);showSound.t=setTimeout(()=>$('#sound').classList.remove('show'),1000)}
 function overlaps(a,b){return Math.abs(a.x-b.x)<7.7&&Math.abs(a.y-b.y)<10.8}
 function isFree(t,list=tiles){if(t.removed)return false;if(list.some(o=>!o.removed&&o.z>t.z&&overlaps(t,o)))return false;let l=list.some(o=>!o.removed&&o.z===t.z&&Math.abs(o.y-t.y)<6&&o.x<t.x&&t.x-o.x<8.4),r=list.some(o=>!o.removed&&o.z===t.z&&Math.abs(o.y-t.y)<6&&o.x>t.x&&o.x-t.x<8.4);return !l||!r}
@@ -319,12 +319,12 @@ function showCombo(n){
  const el=document.createElement('div');el.className='combo-badge';el.textContent=(n>=5?'🔥 ':'✨ ')+'Combo x'+n+'!';
  document.body.appendChild(el);setTimeout(()=>el.remove(),920)}
 function comboChime(n){
- if(muted)return;initAudio();
+ if(muted)return;
  const notes=[523.25,587.33,659.25,698.46,783.99,880,987.77,1046.5];
- tone(notes[Math.min(n-1,notes.length-1)],.35,'triangle',.13)}
+ initAudio().then(()=>tone(notes[Math.min(n-1,notes.length-1)],.35,'triangle',.13)).catch(()=>{})}
 function celebrateBoardClear(){
  const flash=document.createElement('div');flash.className='clear-flash';document.body.appendChild(flash);setTimeout(()=>flash.remove(),1150);
- if(!muted){initAudio();[523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>tone(f,1.15,'sine',.16,i*.09))}
+ if(!muted)initAudio().then(()=>[523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>tone(f,1.15,'sine',.16,i*.09))).catch(()=>{});
  const colors=['#ffd98a','#c9a8ff','#7af0d0','#ff8a5c'];
  for(let i=0;i<64;i++){const p=document.createElement('div');p.className='confetti-piece';
   p.style.left=Math.random()*100+'vw';p.style.background=colors[i%colors.length];
