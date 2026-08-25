@@ -118,6 +118,15 @@ body.ultra-low #cosmos{display:none}
 #progressChart{width:100%;height:180px;display:block}
 .progress-empty{margin:18px 0;color:#cfc3db;font-size:13px}
 .progress-sub{margin:10px 0 0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
+.meter-panel{max-width:900px;margin:20px auto 0;padding:24px 22px 22px;text-align:center}
+.meter-title{margin:0 0 16px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
+.meter-track{position:relative;height:14px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.25);overflow:hidden;margin:0 auto 4px;max-width:520px}
+.meter-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#ff8a5c,var(--gold),var(--violet));transition:width .4s ease}
+.meter-marker{position:absolute;left:50%;top:-5px;bottom:-5px;width:2px;background:#f3efe4cc}
+.meter-marker span{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:10px;color:#cfc3db;white-space:nowrap}
+.meter-level{margin:22px 0 6px;font:700 clamp(15px,3.4vw,19px) Georgia;letter-spacing:.06em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
+.meter-desc{margin:0 auto 8px;font-size:13px;color:#e7dfcf;max-width:480px}
+.meter-sub{margin:0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
 .confetti-piece{position:fixed;top:-24px;width:9px;height:15px;z-index:70;pointer-events:none;border-radius:2px;animation-name:confettiFall;animation-timing-function:cubic-bezier(.35,0,.65,1);animation-fill-mode:forwards}
 @keyframes confettiFall{to{transform:translateY(112vh) rotate(760deg);opacity:.85}}
 .privacy-link{position:fixed;left:14px;bottom:14px;z-index:45;font-size:11px;color:#cfc3db;opacity:.7;text-decoration:none;padding:6px 11px;border-radius:10px;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;transition:.2s}
@@ -194,6 +203,17 @@ body.ultra-low #cosmos{display:none}
       <button class="score-log" id="sideLogProgressBtn" type="button" disabled>Log your progress</button>
     </aside>
   </div>
+
+  <section class="panel meter-panel">
+    <p class="meter-title">TODAY'S INTUITION LEVEL</p>
+    <div class="meter-track">
+      <div class="meter-fill" id="sideMeterFill"></div>
+      <div class="meter-marker"><span>odds: 50%</span></div>
+    </div>
+    <p class="meter-level" id="sideMeterLevel">GATHERING SIGNAL</p>
+    <p class="meter-desc" id="sideMeterDesc">Answer a few more rounds today to reveal your intuition level.</p>
+    <p class="meter-sub" id="sideMeterSub">No guesses logged today yet</p>
+  </section>
 
   <section class="panel progress-panel">
     <p class="progress-label">DAILY PROGRESS &mdash; GUESS THE SIDE</p>
@@ -463,11 +483,12 @@ body.ultra-low #cosmos{display:none}
   const optLeft=$('#optLeft'),optRight=$('#optRight'),optLeftImg=$('#optLeftImg'),optRightImg=$('#optRightImg');
   const scoreCorrectEl=$('#sideScoreCorrect'),scoreTotalEl=$('#sideScoreTotal'),scoreReset=$('#sideScoreReset');
   const logProgressBtn=$('#sideLogProgressBtn');
+  const meterFill=$('#sideMeterFill'),meterLevel=$('#sideMeterLevel'),meterDesc=$('#sideMeterDesc'),meterSub=$('#sideMeterSub');
   let correctSide=null,answered=false,AC,scoreCorrect=0,scoreTotal=0;
 
   /* build a white tile with a vertical line on the left, right, or a blank mystery tile */
   function tileSVG(side){
-    const x=side==='left'?62:side==='right'?138:null;
+    const x=side==='left'?24:side==='right'?176:null;
     const line=x!==null?`<line x1="${x}" y1="32" x2="${x}" y2="228" stroke="#241733" stroke-width="15" stroke-linecap="round"/>`:'';
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><rect width="200" height="256" rx="14" fill="#ffffff"/>${line}</svg>`;
     return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
@@ -501,6 +522,43 @@ body.ultra-low #cosmos{display:none}
   function saveProgressLog(log){
     try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(log));}catch(e){}
   }
+
+  /* ===== today's live intuition meter (correct vs the 50% odds) ===== */
+  const DAY_STATS_KEY='intuitionSideDayStats';
+  const METER_MIN_ATTEMPTS=6;
+
+  function loadDayStats(){
+    try{
+      const raw=JSON.parse(localStorage.getItem(DAY_STATS_KEY));
+      if(raw&&raw.date===todayKey())return raw;
+    }catch(e){}
+    return {date:todayKey(),correct:0,total:0};
+  }
+  function saveDayStats(stats){
+    try{localStorage.setItem(DAY_STATS_KEY,JSON.stringify(stats));}catch(e){}
+  }
+  let dayStats=loadDayStats();
+
+  function levelForPercent(percent,total){
+    if(total<METER_MIN_ATTEMPTS)return{label:'GATHERING SIGNAL',desc:'Answer a few more rounds today to reveal your intuition level.'};
+    if(percent<30)return{label:'BELOW THE STATIC',desc:'Your picks are landing under chance today \u2014 maybe let logic lead instead of the gut.'};
+    if(percent<45)return{label:'SLIGHTLY OFF',desc:'A few misfires so far \u2014 the signal hasn\u2019t quite formed yet today.'};
+    if(percent<=55)return{label:'AT THE ODDS',desc:'Right where chance would put you \u2014 a coin-flip day, no edge either way.'};
+    if(percent<65)return{label:'TUNING IN',desc:'Your gut is starting to outpace chance today.'};
+    if(percent<80)return{label:'IN THE FLOW',desc:'Clearly reading beyond chance \u2014 trust what you\u2019re noticing.'};
+    return{label:'PEAK INTUITION',desc:'An exceptional day \u2014 your intuition is running well above the odds.'};
+  }
+
+  function updateMeter(){
+    if(dayStats.date!==todayKey())dayStats=loadDayStats();
+    const total=dayStats.total,percent=total?Math.round((dayStats.correct/total)*100):0;
+    const lvl=levelForPercent(percent,total);
+    meterFill.style.width=Math.max(0,Math.min(100,percent))+'%';
+    meterLevel.textContent=lvl.label;
+    meterDesc.textContent=lvl.desc;
+    meterSub.textContent=total?`${percent}% correct today over ${total} guess${total===1?'':'es'}`:'No guesses logged today yet';
+  }
+
   function logProgress(){
     if(scoreTotal<=0)return;
     const percent=(scoreCorrect/scoreTotal)*100;
@@ -620,8 +678,11 @@ body.ultra-low #cosmos{display:none}
     pressHint.style.visibility='hidden';
     mysteryImg.src=tileSVG(correctSide);
     scoreTotal++;
+    if(dayStats.date!==todayKey())dayStats=loadDayStats();
+    dayStats.total++;
     if(side===correctSide){
       scoreCorrect++;
+      dayStats.correct++;
       feedback.textContent='YES, YOU GOT IT RIGHT!';
       feedback.className='feedback correct';
       fanfare();
@@ -630,6 +691,8 @@ body.ultra-low #cosmos{display:none}
       feedback.textContent='TRY AGAIN!';
       feedback.className='feedback wrong';
     }
+    saveDayStats(dayStats);
+    updateMeter();
     scoreCorrectEl.textContent=scoreCorrect;
     scoreTotalEl.textContent=scoreTotal;
     updateLogButtonState();
@@ -672,6 +735,7 @@ body.ultra-low #cosmos{display:none}
 
   newRound();
   drawProgressChart();
+  updateMeter();
 })();
 </script>
 
