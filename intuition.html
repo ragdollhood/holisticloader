@@ -119,6 +119,7 @@ body.ultra-low #cosmos{display:none}
 .meter-score-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0 22px}
 .meter-score-actions .score-reset{margin-top:0}
 .meter-score-actions .score-log{width:auto;margin-top:0;padding:8px 22px}
+.meter-score-actions .score-share{margin-top:0}
 @media(max-width:820px){.game-wrap{flex-direction:column;align-items:center}}
 .score-label{margin:0 0 10px;font:600 14px Georgia;letter-spacing:.14em;color:var(--gold)}
 .score-value{margin:0;font:700 clamp(34px,8vw,52px) Georgia;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
@@ -128,6 +129,8 @@ body.ultra-low #cosmos{display:none}
 .score-log{margin-top:10px;width:100%;padding:9px 14px;font:600 11.5px Georgia;letter-spacing:.05em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s,opacity .15s}
 .score-log:hover:not(:disabled){transform:translateY(-2px)}
 .score-log:disabled{opacity:.4;cursor:not-allowed}
+.score-share{margin-top:10px;width:auto;padding:9px 22px;font:600 11.5px Georgia;letter-spacing:.05em;color:#f3efe4;background:#1877f2;border:1.5px solid #1877f2;border-radius:12px;cursor:pointer;transition:transform .15s,opacity .15s,background .15s}
+.score-share:hover{transform:translateY(-2px);background:#1465d1}
 @media(max-width:900px){.triple-wrap{flex-direction:column;align-items:center}.triple-wrap .game-panel{max-width:340px;width:100%}}
 @media(min-width:901px){
   .app{max-width:1600px}
@@ -222,6 +225,7 @@ body.ultra-low #cosmos{display:none}
     <div class="meter-score-actions">
       <button class="score-reset" id="scoreReset" type="button">Reset</button>
       <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
+      <button class="score-share" id="shareFbBtn" type="button">Share on Facebook</button>
     </div>
     <div class="meter-track">
       <div class="meter-fill" id="meterFill"></div>
@@ -277,9 +281,21 @@ body.ultra-low #cosmos{display:none}
 
   /* ---------- shared score / meter / graph (Tile + Side) ---------- */
   const scoreCorrectEl=$('#scoreCorrect'),scoreTotalEl=$('#scoreTotal'),scoreReset=$('#scoreReset');
-  const logProgressBtn=$('#logProgressBtn');
+  const logProgressBtn=$('#logProgressBtn'),shareFbBtn=$('#shareFbBtn');
   const meterFill=$('#meterFill'),meterLevel=$('#meterLevel'),meterDesc=$('#meterDesc'),meterSub=$('#meterSub');
   let scoreCorrect=0,scoreTotal=0,AC;
+
+  const SHARE_URL='https://holisticloader.com/intuition';
+
+  function shareResultOnFacebook(){
+    const percent=scoreTotal?Math.round((scoreCorrect/scoreTotal)*100):0;
+    const quote=scoreTotal
+      ? `My intuition level today: ${meterLevel.textContent} \u2014 ${scoreCorrect}/${scoreTotal} correct (${percent}%) on Intuition Loader!`
+      : 'Trust your gut and play Intuition Loader!';
+    const shareUrl='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(SHARE_URL)+'&quote='+encodeURIComponent(quote);
+    window.open(shareUrl,'shareOnFacebook','width=600,height=520,noopener,noreferrer');
+  }
+  shareFbBtn.addEventListener('click',shareResultOnFacebook);
 
   function updateLogButtonState(){
     logProgressBtn.disabled=scoreTotal<=0;
