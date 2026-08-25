@@ -30,7 +30,7 @@
 <meta property="og:site_name" content="Holistic Loader">
 <meta property="og:title" content="Intuition Loader — Train Your Intuition & Awaken Your Third Eye">
 <meta property="og:description" content="Practice trusting your gut, sharpen your intuitive predictions, and awaken your third eye with daily guessing exercises.">
-<meta property="og:image" id="ogImage" content="https://holisticloader.com/images/preview-intuition-loader.jpg">
+<meta property="og:image" id="ogImage" content="https://holisticloader.com/images/preview-intuition.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" id="ogUrl" content="https://holisticloader.com/intuition-loader.html">
@@ -40,7 +40,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Intuition Loader — Train Your Intuition & Awaken Your Third Eye">
 <meta name="twitter:description" content="Practice trusting your gut, sharpen your intuitive predictions, and awaken your third eye with daily guessing exercises.">
-<meta name="twitter:image" id="twImage" content="https://holisticloader.com/images/preview-intuition-loader.jpg">
+<meta name="twitter:image" id="twImage" content="https://holisticloader.com/images/preview-intuition.jpg">
 
 <script type="application/ld+json">
 {
@@ -78,7 +78,7 @@
 (function(){try{
   var loc=location.href.split('#')[0];
   var base=loc.replace(/[^/]*$/,'');
-  var img=base+'images/preview-intuition-loader.jpg';
+  var img=base+'images/preview-intuition.jpg';
   var set=function(id,prop,val){var el=document.getElementById(id);if(!el)return;if(prop==='href')el.href=val;else el.content=val;};
   set('ogImage','content',img);
   set('twImage','content',img);
@@ -157,6 +157,25 @@ body.ultra-low #cosmos{display:none}
 .next-option.correct-glow{border-color:#7af0d0;box-shadow:0 0 22px #7af0d0aa}
 .next-option.wrong-glow{border-color:#ff8a8a;box-shadow:0 0 22px #ff8a8a99}
 @media(max-width:480px){.next-option,.sense-btn{width:min(16vw,60px);padding:9px}}
+/* ===== tarot-card treatment for the game panels & mystery boxes ===== */
+.game-panel{position:relative;border:1px solid rgba(255,217,138,.38)}
+.game-panel::before{content:'';position:absolute;inset:6px;border:1px solid rgba(255,217,138,.16);border-radius:16px;pointer-events:none}
+.game-panel::after{content:'';position:absolute;inset:0;border-radius:24px;pointer-events:none;
+  background:
+    radial-gradient(circle 2.5px at 13px 13px, var(--gold) 55%, transparent 60%),
+    radial-gradient(circle 2.5px at calc(100% - 13px) 13px, var(--gold) 55%, transparent 60%),
+    radial-gradient(circle 2.5px at 13px calc(100% - 13px), var(--gold) 55%, transparent 60%),
+    radial-gradient(circle 2.5px at calc(100% - 13px) calc(100% - 13px), var(--gold) 55%, transparent 60%);
+  opacity:.55}
+.tarot-box{position:relative;margin-bottom:22px!important}
+.tarot-box::before{content:'';position:absolute;inset:7px;border:1px solid rgba(255,217,138,.5);border-radius:13px;pointer-events:none}
+.tarot-box::after{content:'';position:absolute;inset:0;border-radius:20px;pointer-events:none;
+  background:
+    radial-gradient(circle 2px at 11px 11px, var(--gold) 60%, transparent 65%),
+    radial-gradient(circle 2px at calc(100% - 11px) 11px, var(--gold) 60%, transparent 65%),
+    radial-gradient(circle 2px at 11px calc(100% - 11px), var(--gold) 60%, transparent 65%),
+    radial-gradient(circle 2px at calc(100% - 11px) calc(100% - 11px), var(--gold) 60%, transparent 65%);
+  opacity:.85}
 .intuition-seo{max-width:820px;margin:40px auto 10px;padding:28px clamp(18px,4vw,40px)}
 .intuition-seo h2{margin:0 0 14px;font:600 clamp(18px,3.4vw,24px) Georgia;letter-spacing:.04em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .intuition-seo h3{margin:22px 0 8px;font:600 16px Georgia;color:var(--gold)}
@@ -257,7 +276,7 @@ body.ultra-low #cosmos{display:none}
   <div class="triple-wrap">
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">SENSE THE TILE</p>
-      <div class="mall-box"><img id="mallImg" alt="Mystery tile"></div>
+      <div class="mall-box tarot-box"><img id="mallImg" alt="Mystery tile"></div>
       <p class="feedback" id="feedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optA" type="button" aria-label="Option A"><img id="optAImg" alt="Tile option A"></button>
@@ -268,7 +287,7 @@ body.ultra-low #cosmos{display:none}
 
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">SENSE THE SIDE</p>
-      <div class="mall-box"><img id="sideMysteryImg" alt="Mystery tile"></div>
+      <div class="mall-box tarot-box"><img id="sideMysteryImg" alt="Mystery tile"></div>
       <p class="feedback" id="sideFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optLeft" type="button" aria-label="Line is on the left"><img id="optLeftImg" alt="White tile with a line on the left"></button>
@@ -279,7 +298,7 @@ body.ultra-low #cosmos{display:none}
 
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">SENSE THE DOTS</p>
-      <div class="mall-box"><img id="dotsMysteryImg" alt="Mystery tile"></div>
+      <div class="mall-box tarot-box"><img id="dotsMysteryImg" alt="Mystery tile"></div>
       <p class="feedback" id="dotsFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optOne" type="button" aria-label="One dot"><img id="optOneImg" alt="White tile with a single dot"></button>
@@ -292,7 +311,7 @@ body.ultra-low #cosmos{display:none}
   <div class="duo-wrap">
     <section class="panel game-panel next-panel">
       <p class="prompt-title">WHAT COMES NEXT?</p>
-      <div class="next-mystery" id="nextMysteryBox">
+      <div class="next-mystery tarot-box" id="nextMysteryBox">
         <span id="nextMysteryQ">?</span>
         <img id="nextMysteryImg" alt="Mystery symbol" hidden>
       </div>
@@ -309,7 +328,7 @@ body.ultra-low #cosmos{display:none}
 
     <section class="panel game-panel direction-panel">
       <p class="prompt-title">SENSE THE DIRECTION</p>
-      <div class="direction-stage" id="directionStage">
+      <div class="direction-stage tarot-box" id="directionStage">
         <span class="direction-arrow left" aria-hidden="true">&#8592;</span>
         <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
         <div class="direction-circle" id="directionCircle"></div>
@@ -798,7 +817,35 @@ body.ultra-low #cosmos{display:none}
   const optOne=$('#optOne'),optMany=$('#optMany'),optOneImg=$('#optOneImg'),optManyImg=$('#optManyImg');
   let correctDotsKind=null,answeredDots=false;
 
-  /* build a white tile with a single dot, a full-tile checkerboard pattern, or a blank mystery tile */
+  /* build a white tile with a single glossy 3D dot, a full-tile 3D checkerboard, or a blank mystery tile */
+  const DOTS_DEFS=`
+    <radialGradient id="dotGrad" cx="34%" cy="28%" r="80%">
+      <stop offset="0" stop-color="#ffe9ae"/>
+      <stop offset="30%" stop-color="#c99a2e"/>
+      <stop offset="62%" stop-color="#4a3410"/>
+      <stop offset="100%" stop-color="#120c04"/>
+    </radialGradient>
+    <linearGradient id="sqTeal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2d68f"/>
+      <stop offset="45%" stop-color="#a67a1e"/>
+      <stop offset="100%" stop-color="#2b1c04"/>
+    </linearGradient>
+    <linearGradient id="sqViolet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ecd08a"/>
+      <stop offset="45%" stop-color="#8a6115"/>
+      <stop offset="100%" stop-color="#1f1403"/>
+    </linearGradient>
+    <linearGradient id="sqBevel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe9ae" stop-opacity=".45"/>
+      <stop offset="35%" stop-color="#ffe9ae" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="dotsShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="3.5" stdDeviation="3.5" flood-color="#000" flood-opacity=".55"/>
+    </filter>
+    <radialGradient id="tileBG" cx="50%" cy="38%" r="75%">
+      <stop offset="0" stop-color="#fbf3e2"/>
+      <stop offset="100%" stop-color="#e7dcc2"/>
+    </radialGradient>`;
   function checkerboardSquares(){
     const cols=6,rows=8,cellW=200/cols,cellH=256/rows;
     let squares='';
@@ -806,7 +853,8 @@ body.ultra-low #cosmos{display:none}
       for(let c=0;c<cols;c++){
         if((r+c)%2===0){
           const x=(c*cellW).toFixed(2),y=(r*cellH).toFixed(2);
-          squares+=`<rect x="${x}" y="${y}" width="${cellW.toFixed(2)}" height="${cellH.toFixed(2)}" fill="#241733"/>`;
+          const fill=(r+c)%4===0?'url(#sqTeal)':'url(#sqViolet)';
+          squares+=`<rect x="${x}" y="${y}" width="${cellW.toFixed(2)}" height="${cellH.toFixed(2)}" fill="${fill}" stroke="#ffd98a" stroke-width="1.4" stroke-opacity=".85"/><rect x="${x}" y="${y}" width="${cellW.toFixed(2)}" height="${cellH.toFixed(2)}" fill="url(#sqBevel)"/>`;
         }
       }
     }
@@ -815,11 +863,11 @@ body.ultra-low #cosmos{display:none}
   function dotsSVG(kind){
     let content='';
     if(kind==='one'){
-      content='<circle cx="100" cy="128" r="27" fill="#241733"/>';
+      content='<circle cx="100" cy="128" r="30" fill="url(#dotGrad)" stroke="#ffd98a" stroke-width="4" filter="url(#dotsShadow)"/><ellipse cx="89" cy="115" rx="9" ry="6" fill="#ffe9ae" opacity=".55"/>';
     }else if(kind==='many'){
-      content=`<g clip-path="url(#dotsBoardClip)">${checkerboardSquares()}</g>`;
+      content=`<g clip-path="url(#dotsBoardClip)" filter="url(#dotsShadow)">${checkerboardSquares()}</g>`;
     }
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><defs><clipPath id="dotsBoardClip"><rect width="200" height="256" rx="14"/></clipPath></defs><rect width="200" height="256" rx="14" fill="#f3ead4"/>${content}</svg>`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><defs><clipPath id="dotsBoardClip"><rect width="200" height="256" rx="14"/></clipPath>${DOTS_DEFS}</defs><rect width="200" height="256" rx="14" fill="url(#tileBG)"/>${content}</svg>`;
     return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
   }
   optOneImg.src=dotsSVG('one');
