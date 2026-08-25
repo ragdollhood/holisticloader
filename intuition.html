@@ -133,6 +133,18 @@ body.ultra-low #cosmos{display:none}
 .option-tile:disabled{cursor:default;opacity:.9}
 .option-tile img{width:100%;height:100%;object-fit:contain;pointer-events:none}
 .press-hint{color:#cfc3db;font-size:14px;margin:0}
+.next-panel{text-align:center}
+.next-mystery{width:min(30vw,140px);aspect-ratio:1;margin:0 auto 22px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 0 40px #8fb8ff33,0 18px 45px #0008;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.next-mystery #nextMysteryQ{font:700 clamp(30px,8vw,46px) Georgia;background:linear-gradient(180deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
+.next-mystery img{width:64%;height:64%;object-fit:contain;filter:drop-shadow(0 0 12px #c9a8ffaa)}
+.next-options-row{display:flex;justify-content:center;gap:14px;margin:6px 0 16px;flex-wrap:wrap}
+.next-option{width:min(15vw,74px);aspect-ratio:1;padding:12px;border:1.5px solid rgba(220,190,130,.35);border-radius:16px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
+.next-option:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+.next-option:disabled{cursor:default;opacity:.9}
+.next-option img{width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 6px #c9a8ff88)}
+.next-option.correct-glow{border-color:#7af0d0;box-shadow:0 0 22px #7af0d0aa}
+.next-option.wrong-glow{border-color:#ff8a8a;box-shadow:0 0 22px #ff8a8a99}
+@media(max-width:480px){.next-option{width:min(16vw,60px);padding:9px}}
 .intuition-seo{max-width:820px;margin:40px auto 10px;padding:28px clamp(18px,4vw,40px)}
 .intuition-seo h2{margin:0 0 14px;font:600 clamp(18px,3.4vw,24px) Georgia;letter-spacing:.04em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .intuition-seo h3{margin:22px 0 8px;font:600 16px Georgia;color:var(--gold)}
@@ -141,16 +153,20 @@ body.ultra-low #cosmos{display:none}
 .game-wrap .game-panel{margin:26px 0 0}
 .triple-wrap{display:flex;gap:20px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:1040px;margin:26px auto 0}
 .triple-wrap .game-panel{margin:0;max-width:300px;flex:1 1 260px}
+.duo-wrap{display:flex;gap:20px;justify-content:center;align-items:stretch;flex-wrap:wrap;max-width:900px;margin:26px auto 0}
+.duo-wrap .game-panel{margin:0;max-width:420px;flex:1 1 340px}
+@media(max-width:820px){.duo-wrap{flex-direction:column;align-items:center}.duo-wrap .game-panel{max-width:420px;width:100%}}
 .direction-stage{width:min(42vw,210px);aspect-ratio:.78;margin:0 auto 22px;padding:14px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 18px 45px #0008;position:relative;overflow:hidden;touch-action:none}
 .direction-circle{position:absolute;top:50%;left:50%;width:18px;height:18px;opacity:.55;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 35% 30%,#c3ffca,#22c55e 55%,#0e6b2e 100%);box-shadow:0 0 26px #22c55eaa;cursor:grab}
 .direction-circle:active{cursor:grabbing}
 .direction-arrow{position:absolute;top:50%;transform:translateY(-50%);font-size:22px;color:#ffffff30;pointer-events:none;line-height:1}
 .direction-arrow.left{left:10px}
 .direction-arrow.right{right:10px}
-.direction-start{width:auto;padding:9px 26px}
-.direction-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:0}
-.direction-stop{width:auto;margin-top:0;padding:9px 26px}
-.direction-stop:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.direction-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:0}
+.sense-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:min(28vw,110px);aspect-ratio:1;padding:14px 10px;border:1.5px solid rgba(220,190,130,.35);border-radius:16px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;font:600 12px Georgia;letter-spacing:.06em;color:#f3efe4}
+.sense-btn:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+.sense-btn:disabled{cursor:not-allowed;opacity:.4;transform:none}
+.sense-btn svg{width:30%;height:30%;filter:drop-shadow(0 0 6px #c9a8ff88)}
 .meter-score-value{font-size:clamp(28px,6vw,40px);margin:0}
 .meter-score-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0 22px}
 .meter-score-actions .score-reset{margin-top:0}
@@ -169,6 +185,8 @@ body.ultra-low #cosmos{display:none}
   .app{max-width:1600px}
   .triple-wrap{max-width:1560px;gap:32px}
   .triple-wrap .game-panel{max-width:480px;min-width:452px;flex:1 1 452px}
+  .duo-wrap{max-width:1200px;gap:32px}
+  .duo-wrap .game-panel{max-width:560px;min-width:400px;flex:1 1 500px}
   .mall-box,.direction-stage{width:min(20vw,230px)}
   .option-tile{width:min(16vw,190px)}
 }
@@ -223,10 +241,10 @@ body.ultra-low #cosmos{display:none}
 <div class="h1-frame"><h1>INTUITION LOADER</h1></div>
 
 <main class="app">
-  <p class="intro-tagline">Four quick, calming games. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance.</p>
+  <p class="intro-tagline">Five quick, calming games. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance.</p>
   <div class="triple-wrap">
     <section class="panel game-panel tri-panel">
-      <p class="prompt-title">GUESS THE TILE</p>
+      <p class="prompt-title">SENSE THE TILE</p>
       <div class="mall-box"><img id="mallImg" alt="Mystery tile"></div>
       <p class="feedback" id="feedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
@@ -237,7 +255,7 @@ body.ultra-low #cosmos{display:none}
     </section>
 
     <section class="panel game-panel tri-panel">
-      <p class="prompt-title">GUESS THE SIDE</p>
+      <p class="prompt-title">SENSE THE SIDE</p>
       <div class="mall-box"><img id="sideMysteryImg" alt="Mystery tile"></div>
       <p class="feedback" id="sideFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
@@ -248,7 +266,7 @@ body.ultra-low #cosmos{display:none}
     </section>
 
     <section class="panel game-panel tri-panel">
-      <p class="prompt-title">GUESS THE DOTS</p>
+      <p class="prompt-title">SENSE THE DOTS</p>
       <div class="mall-box"><img id="dotsMysteryImg" alt="Mystery tile"></div>
       <p class="feedback" id="dotsFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
@@ -259,25 +277,50 @@ body.ultra-low #cosmos{display:none}
     </section>
   </div>
 
-  <section class="panel game-panel direction-panel">
-    <p class="prompt-title">GUESS THE DIRECTION</p>
-    <div class="direction-stage" id="directionStage">
-      <span class="direction-arrow left" aria-hidden="true">&#8592;</span>
-      <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
-      <div class="direction-circle" id="directionCircle"></div>
-    </div>
-    <p class="feedback" id="directionFeedback" aria-live="polite">&nbsp;</p>
-    <div class="direction-actions">
-      <button class="score-log direction-start" id="directionStart" type="button">Start</button>
-      <button class="score-reset direction-stop" id="directionStop" type="button" disabled>Stop</button>
-    </div>
-    <p class="press-hint" id="directionHint">Press start — you can grab and swipe the ball as soon as it appears</p>
-  </section>
+  <div class="duo-wrap">
+    <section class="panel game-panel next-panel">
+      <p class="prompt-title">WHAT COMES NEXT?</p>
+      <div class="next-mystery" id="nextMysteryBox">
+        <span id="nextMysteryQ">?</span>
+        <img id="nextMysteryImg" alt="Mystery symbol" hidden>
+      </div>
+      <p class="feedback" id="nextFeedback" aria-live="polite">&nbsp;</p>
+      <div class="next-options-row">
+        <button class="next-option" id="nextOptStar" type="button" data-symbol="star" aria-label="Star"><img alt="Star symbol"></button>
+        <button class="next-option" id="nextOptCircle" type="button" data-symbol="circle" aria-label="Circle"><img alt="Circle symbol"></button>
+        <button class="next-option" id="nextOptWave" type="button" data-symbol="wave" aria-label="Waves"><img alt="Wave symbol"></button>
+        <button class="next-option" id="nextOptSquare" type="button" data-symbol="square" aria-label="Square"><img alt="Square symbol"></button>
+        <button class="next-option" id="nextOptPlus" type="button" data-symbol="plus" aria-label="Cross"><img alt="Cross symbol"></button>
+      </div>
+      <p class="press-hint" id="nextPressHint">Sense it, then choose one</p>
+    </section>
+
+    <section class="panel game-panel direction-panel">
+      <p class="prompt-title">SENSE THE DIRECTION</p>
+      <div class="direction-stage" id="directionStage">
+        <span class="direction-arrow left" aria-hidden="true">&#8592;</span>
+        <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
+        <div class="direction-circle" id="directionCircle"></div>
+      </div>
+      <p class="feedback" id="directionFeedback" aria-live="polite">&nbsp;</p>
+      <div class="direction-actions">
+        <button class="sense-btn direction-start" id="directionStart" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="playGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><path d="M7 4L20 12L7 20Z" fill="url(#playGrad)"/></svg>
+          <span>Start</span>
+        </button>
+        <button class="sense-btn direction-stop" id="directionStop" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="stopGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><rect x="5" y="5" width="14" height="14" rx="2" fill="url(#stopGrad)"/></svg>
+          <span>Stop</span>
+        </button>
+      </div>
+      <p class="press-hint" id="directionHint">Press start — you can grab and swipe the ball as soon as it appears</p>
+    </section>
+  </div>
 
   <section class="panel meter-panel">
     <p class="meter-title">TODAY'S INTUITION LEVEL</p>
     <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
-    <p class="score-sub">correct / attempts &mdash; Guess the Tile + Guess the Side + Guess the Dots + Guess the Direction</p>
+    <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Sense the Direction + What Comes Next</p>
     <p class="streak-line">&#128293; Current streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
     <div class="meter-score-actions">
       <button class="score-reset" id="scoreReset" type="button">Reset</button>
@@ -901,10 +944,69 @@ body.ultra-low #cosmos{display:none}
 
   resetDirectionCircle();
 
+  /* ---------- What Comes Next ---------- */
+  const symbolList=['star','circle','wave','square','plus'];
+  function symbolSVG(name){
+    const grad=`<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient>`;
+    let shape='';
+    if(name==='star')shape=`<path d="M100 22 L121 76 L179 78 L133 113 L150 170 L100 137 L50 170 L67 113 L21 78 L79 76 Z" fill="none" stroke="url(#g)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>`;
+    else if(name==='circle')shape=`<circle cx="100" cy="100" r="68" fill="none" stroke="url(#g)" stroke-width="11"/>`;
+    else if(name==='wave')shape=`<path d="M25 75 Q50 55 75 75 T125 75 T175 75" fill="none" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/><path d="M25 105 Q50 85 75 105 T125 105 T175 105" fill="none" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/><path d="M25 135 Q50 115 75 135 T125 135 T175 135" fill="none" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/>`;
+    else if(name==='square')shape=`<rect x="38" y="38" width="124" height="124" rx="12" fill="none" stroke="url(#g)" stroke-width="11"/>`;
+    else if(name==='plus')shape=`<path d="M100 28 V172 M28 100 H172" stroke="url(#g)" stroke-width="19" stroke-linecap="round"/>`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs>${grad}</defs>${shape}</svg>`;
+    return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+  }
+
+  const nextMysteryQ=$('#nextMysteryQ'),nextMysteryImg=$('#nextMysteryImg'),nextFeedback=$('#nextFeedback'),nextPressHint=$('#nextPressHint');
+  const nextButtons=[...document.querySelectorAll('.next-option')];
+  nextButtons.forEach(btn=>{btn.querySelector('img').src=symbolSVG(btn.dataset.symbol);});
+  let correctSymbol=null,answeredNext=false;
+
+  function newRoundNext(){
+    answeredNext=false;
+    nextFeedback.textContent='\u00A0';
+    nextFeedback.className='feedback';
+    nextPressHint.style.visibility='visible';
+    nextMysteryQ.style.display='block';
+    nextMysteryImg.hidden=true;
+    nextButtons.forEach(b=>{b.disabled=false;b.classList.remove('correct-glow','wrong-glow');});
+    correctSymbol=symbolList[Math.floor(Math.random()*symbolList.length)];
+  }
+
+  function chooseNext(btn){
+    if(answeredNext)return;
+    answeredNext=true;
+    const symbol=btn.dataset.symbol;
+    nextButtons.forEach(b=>b.disabled=true);
+    nextPressHint.style.visibility='hidden';
+    nextMysteryQ.style.display='none';
+    nextMysteryImg.src=symbolSVG(correctSymbol);
+    nextMysteryImg.hidden=false;
+    const correct=symbol===correctSymbol;
+    const correctBtn=nextButtons.find(b=>b.dataset.symbol===correctSymbol);
+    if(correctBtn)correctBtn.classList.add('correct-glow');
+    if(!correct)btn.classList.add('wrong-glow');
+    if(correct){
+      nextFeedback.textContent='YES, YOU GOT IT RIGHT!';
+      nextFeedback.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      nextFeedback.textContent='TRY AGAIN!';
+      nextFeedback.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundNext,1500);
+  }
+
+  nextButtons.forEach(btn=>btn.addEventListener('click',()=>chooseNext(btn)));
+
   /* ---------- init ---------- */
   newRoundTile();
   newRoundSide();
   newRoundDots();
+  newRoundNext();
   drawProgressChart();
   updateMeter();
   updateStreakDisplay();
