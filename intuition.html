@@ -340,7 +340,7 @@ body.ultra-low #cosmos{display:none}
     </div>
     <div class="meter-track">
       <div class="meter-fill" id="meterFill"></div>
-      <div class="meter-marker"><span>odds: 50%</span></div>
+      <div class="meter-marker" id="meterMarker"><span id="meterMarkerLabel">odds: 50%</span></div>
     </div>
     <p class="meter-level" id="meterLevel">GATHERING SIGNAL</p>
     <p class="meter-desc" id="meterDesc">Answer a few more rounds today to reveal your intuition level.</p>
@@ -351,7 +351,7 @@ body.ultra-low #cosmos{display:none}
     <p class="progress-label">DAILY PROGRESS</p>
     <canvas id="progressChart" width="880" height="180"></canvas>
     <p class="progress-empty" id="progressEmpty">Log your progress after a few rounds to start your chart.</p>
-    <p class="progress-sub">% correct guesses per day</p>
+    <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (lower on days with more What Comes Next rounds)</p>
   </section>
 </main>
 
@@ -409,6 +409,7 @@ body.ultra-low #cosmos{display:none}
   const scoreCorrectEl=$('#scoreCorrect'),scoreTotalEl=$('#scoreTotal'),scoreReset=$('#scoreReset');
   const logProgressBtn=$('#logProgressBtn');
   const meterFill=$('#meterFill'),meterLevel=$('#meterLevel'),meterDesc=$('#meterDesc'),meterSub=$('#meterSub');
+  const meterMarker=$('#meterMarker'),meterMarkerLabel=$('#meterMarkerLabel');
   let scoreCorrect=0,scoreTotal=0,AC;
 
   /* ===== streak tracker (current session streak + all-time best, remembered locally) ===== */
@@ -485,11 +486,13 @@ body.ultra-low #cosmos{display:none}
   function logProgress(){
     if(scoreTotal<=0)return;
     const percent=(scoreCorrect/scoreTotal)*100;
+    const baseline=dayStats.total?(dayStats.chanceSum/dayStats.total)*100:50;
     const log=loadProgressLog();
     const key=todayKey();
-    const entry=log[key]||{sum:0,count:0};
+    const entry=log[key]||{sum:0,count:0,baseSum:0};
     entry.sum+=percent;
     entry.count+=1;
+    entry.baseSum=(entry.baseSum||0)+baseline;
     log[key]=entry;
     saveProgressLog(log);
     drawProgressChart();
@@ -511,6 +514,7 @@ body.ultra-low #cosmos{display:none}
 
     const recentDays=days.slice(-14);
     const values=recentDays.map(k=>{const e=log[k];return e.count?e.sum/e.count:0;});
+    const baselineValues=recentDays.map(k=>{const e=log[k];return e.count?('baseSum' in e?e.baseSum/e.count:50):50;});
 
     const dpr=window.devicePixelRatio||1;
     const cssW=canvas.clientWidth||canvas.parentElement.clientWidth||600;
@@ -541,6 +545,10 @@ body.ultra-low #cosmos{display:none}
       x:padL+(n>1?i*stepX:plotW/2),
       y:padT+plotH-(Math.max(0,Math.min(100,v))/100)*plotH
     }));
+    const basePts=baselineValues.map((v,i)=>({
+      x:padL+(n>1?i*stepX:plotW/2),
+      y:padT+plotH-(Math.max(0,Math.min(100,v))/100)*plotH
+    }));
 
     if(n>1){
       const grad=ctx.createLinearGradient(0,padT,0,padT+plotH);
@@ -554,6 +562,15 @@ body.ultra-low #cosmos{display:none}
       ctx.fillStyle=grad;
       ctx.fill();
     }
+
+    ctx.beginPath();
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle='rgba(207,195,219,.55)';
+    ctx.lineWidth=1.6;
+    ctx.lineJoin='round';
+    basePts.forEach((p,i)=>{i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);});
+    ctx.stroke();
+    ctx.setLineDash([]);
 
     ctx.beginPath();
     const lineGrad=ctx.createLinearGradient(padL,0,padL+plotW,0);
@@ -591,39 +608,47 @@ body.ultra-low #cosmos{display:none}
   function loadDayStats(){
     try{
       const raw=JSON.parse(localStorage.getItem(DAY_STATS_KEY));
-      if(raw&&raw.date===todayKey())return raw;
+      if(raw&&raw.date===todayKey())return {chanceSum:0,...raw};
     }catch(e){}
-    return {date:todayKey(),correct:0,total:0};
+    return {date:todayKey(),correct:0,total:0,chanceSum:0};
   }
   function saveDayStats(stats){
     try{localStorage.setItem(DAY_STATS_KEY,JSON.stringify(stats));}catch(e){}
   }
   let dayStats=loadDayStats();
 
-  function levelForPercent(percent,total){
+  function levelForPercent(percent,total,baseline){
     if(total<METER_MIN_ATTEMPTS)return{label:'GATHERING SIGNAL',desc:'Answer a few more rounds today to reveal your intuition level.'};
-    if(percent<30)return{label:'BELOW THE STATIC',desc:'Your picks are landing under chance today \u2014 maybe let logic lead instead of the gut.'};
-    if(percent<45)return{label:'SLIGHTLY OFF',desc:'A few misfires so far \u2014 the signal hasn\u2019t quite formed yet today.'};
-    if(percent<=55)return{label:'AT THE ODDS',desc:'Right where chance would put you \u2014 a coin-flip day, no edge either way.'};
-    if(percent<65)return{label:'TUNING IN',desc:'Your gut is starting to outpace chance today.'};
-    if(percent<80)return{label:'IN THE FLOW',desc:'Clearly reading beyond chance \u2014 trust what you\u2019re noticing.'};
+    const d=percent-baseline;
+    if(d<-20)return{label:'BELOW THE STATIC',desc:'Your picks are landing under chance today \u2014 maybe let logic lead instead of the gut.'};
+    if(d<-5)return{label:'SLIGHTLY OFF',desc:'A few misfires so far \u2014 the signal hasn\u2019t quite formed yet today.'};
+    if(d<=5)return{label:'AT THE ODDS',desc:'Right where chance would put you \u2014 a coin-flip day, no edge either way.'};
+    if(d<15)return{label:'TUNING IN',desc:'Your gut is starting to outpace chance today.'};
+    if(d<30)return{label:'IN THE FLOW',desc:'Clearly reading beyond chance \u2014 trust what you\u2019re noticing.'};
     return{label:'PEAK INTUITION',desc:'An exceptional day \u2014 your intuition is running well above the odds.'};
   }
 
   function updateMeter(){
     if(dayStats.date!==todayKey())dayStats=loadDayStats();
     const total=dayStats.total,percent=total?Math.round((dayStats.correct/total)*100):0;
-    const lvl=levelForPercent(percent,total);
+    const baseline=total?Math.round((dayStats.chanceSum/total)*100):50;
+    const lvl=levelForPercent(percent,total,baseline);
     meterFill.style.width=Math.max(0,Math.min(100,percent))+'%';
+    if(meterMarker){
+      meterMarker.style.left=Math.max(0,Math.min(100,baseline))+'%';
+      meterMarkerLabel.textContent=`odds: ${baseline}%`;
+    }
     meterLevel.textContent=lvl.label;
     meterDesc.textContent=lvl.desc;
-    meterSub.textContent=total?`${percent}% correct today over ${total} guess${total===1?'':'es'}`:'No guesses logged today yet';
+    meterSub.textContent=total?`${percent}% correct today over ${total} guess${total===1?'':'es'} \u2014 pure chance would be about ${baseline}%`:'No guesses logged today yet';
   }
 
-  function recordGuess(correct){
+  function recordGuess(correct,chance){
+    if(typeof chance!=='number')chance=.5;
     scoreTotal++;
     if(dayStats.date!==todayKey())dayStats=loadDayStats();
     dayStats.total++;
+    dayStats.chanceSum=(dayStats.chanceSum||0)+chance;
     if(correct){
       scoreCorrect++;
       dayStats.correct++;
@@ -1008,7 +1033,7 @@ body.ultra-low #cosmos{display:none}
       nextFeedback.textContent='TRY AGAIN!';
       nextFeedback.className='feedback wrong';
     }
-    recordGuess(correct);
+    recordGuess(correct,1/5);
     setTimeout(newRoundNext,1500);
   }
 
