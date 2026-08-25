@@ -103,7 +103,20 @@ body.ultra-low #cosmos{display:none}
 .press-hint{color:#cfc3db;font-size:14px;margin:0}
 .game-wrap{display:flex;gap:24px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:900px;margin:0 auto}
 .game-wrap .game-panel{margin:26px 0 0}
-.score-panel{width:min(220px,90vw);margin:26px 0 0;padding:34px 20px;text-align:center}
+.triple-wrap{display:flex;gap:20px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:1040px;margin:26px auto 0}
+.triple-wrap .game-panel{margin:0;max-width:300px;flex:1 1 260px}
+.direction-stage{width:min(42vw,210px);aspect-ratio:.78;margin:0 auto 22px;padding:14px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 18px 45px #0008;position:relative;overflow:hidden;touch-action:none}
+.direction-circle{position:absolute;top:50%;left:50%;width:18px;height:18px;opacity:.55;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 35% 30%,#c3ffca,#22c55e 55%,#0e6b2e 100%);box-shadow:0 0 26px #22c55eaa;cursor:grab}
+.direction-circle:active{cursor:grabbing}
+.direction-arrow{position:absolute;top:50%;transform:translateY(-50%);font-size:22px;color:#ffffff30;pointer-events:none;line-height:1}
+.direction-arrow.left{left:10px}
+.direction-arrow.right{right:10px}
+.direction-start{width:auto;padding:9px 26px}
+.meter-score-value{font-size:clamp(28px,6vw,40px);margin:0}
+.meter-score-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0 22px}
+.meter-score-actions .score-reset{margin-top:0}
+.meter-score-actions .score-log{width:auto;margin-top:0;padding:8px 22px}
+@media(max-width:820px){.game-wrap{flex-direction:column;align-items:center}}
 .score-label{margin:0 0 10px;font:600 14px Georgia;letter-spacing:.14em;color:var(--gold)}
 .score-value{margin:0;font:700 clamp(34px,8vw,52px) Georgia;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .score-sub{margin:8px 0 0;font-size:12px;color:#cfc3db}
@@ -112,7 +125,7 @@ body.ultra-low #cosmos{display:none}
 .score-log{margin-top:10px;width:100%;padding:9px 14px;font:600 11.5px Georgia;letter-spacing:.05em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s,opacity .15s}
 .score-log:hover:not(:disabled){transform:translateY(-2px)}
 .score-log:disabled{opacity:.4;cursor:not-allowed}
-@media(max-width:820px){.game-wrap{flex-direction:column;align-items:center}}
+@media(max-width:900px){.triple-wrap{flex-direction:column;align-items:center}.triple-wrap .game-panel{max-width:340px;width:100%}}
 .progress-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center}
 .progress-label{margin:0 0 14px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
 #progressChart{width:100%;height:180px;display:block}
@@ -154,8 +167,8 @@ body.ultra-low #cosmos{display:none}
 <div class="h1-frame"><h1>INTUITION LOADER</h1></div>
 
 <main class="app">
-  <div class="game-wrap">
-    <section class="panel game-panel">
+  <div class="triple-wrap">
+    <section class="panel game-panel tri-panel">
       <p class="prompt-title">GUESS THE TILE</p>
       <div class="mall-box"><picture>
         <source id="mallImgWebp" type="image/webp" srcset="images/instruments/mall.webp">
@@ -168,24 +181,8 @@ body.ultra-low #cosmos{display:none}
       </div>
       <p class="press-hint" id="pressHint">Choose one</p>
     </section>
-    <aside class="panel score-panel">
-      <p class="score-label">SCORE</p>
-      <p class="score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
-      <p class="score-sub">correct / attempts</p>
-      <button class="score-reset" id="scoreReset" type="button">Reset</button>
-      <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
-    </aside>
-  </div>
 
-  <section class="panel progress-panel">
-    <p class="progress-label">DAILY PROGRESS</p>
-    <canvas id="progressChart" width="880" height="180"></canvas>
-    <p class="progress-empty" id="progressEmpty">Log your progress after a few rounds to start your chart.</p>
-    <p class="progress-sub">% correct guesses per day</p>
-  </section>
-
-  <div class="game-wrap">
-    <section class="panel game-panel">
+    <section class="panel game-panel tri-panel">
       <p class="prompt-title">GUESS THE SIDE</p>
       <div class="mall-box"><img id="sideMysteryImg" alt="Mystery tile"></div>
       <p class="feedback" id="sideFeedback">&nbsp;</p>
@@ -195,30 +192,41 @@ body.ultra-low #cosmos{display:none}
       </div>
       <p class="press-hint" id="sidePressHint">Choose one</p>
     </section>
-    <aside class="panel score-panel">
-      <p class="score-label">SCORE</p>
-      <p class="score-value"><span id="sideScoreCorrect">0</span> / <span id="sideScoreTotal">0</span></p>
-      <p class="score-sub">correct / attempts</p>
-      <button class="score-reset" id="sideScoreReset" type="button">Reset</button>
-      <button class="score-log" id="sideLogProgressBtn" type="button" disabled>Log your progress</button>
-    </aside>
+
+    <section class="panel game-panel tri-panel direction-panel">
+      <p class="prompt-title">GUESS THE DIRECTION</p>
+      <div class="direction-stage" id="directionStage">
+        <span class="direction-arrow left" aria-hidden="true">&#8592;</span>
+        <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
+        <div class="direction-circle" id="directionCircle"></div>
+      </div>
+      <p class="feedback" id="directionFeedback">&nbsp;</p>
+      <button class="score-log direction-start" id="directionStart" type="button">Start</button>
+      <p class="press-hint" id="directionHint">Press start, then swipe the circle left or right</p>
+    </section>
   </div>
 
   <section class="panel meter-panel">
     <p class="meter-title">TODAY'S INTUITION LEVEL</p>
+    <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
+    <p class="score-sub">correct / attempts &mdash; Guess the Tile + Guess the Side</p>
+    <div class="meter-score-actions">
+      <button class="score-reset" id="scoreReset" type="button">Reset</button>
+      <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
+    </div>
     <div class="meter-track">
-      <div class="meter-fill" id="sideMeterFill"></div>
+      <div class="meter-fill" id="meterFill"></div>
       <div class="meter-marker"><span>odds: 50%</span></div>
     </div>
-    <p class="meter-level" id="sideMeterLevel">GATHERING SIGNAL</p>
-    <p class="meter-desc" id="sideMeterDesc">Answer a few more rounds today to reveal your intuition level.</p>
-    <p class="meter-sub" id="sideMeterSub">No guesses logged today yet</p>
+    <p class="meter-level" id="meterLevel">GATHERING SIGNAL</p>
+    <p class="meter-desc" id="meterDesc">Answer a few more rounds today to reveal your intuition level.</p>
+    <p class="meter-sub" id="meterSub">No guesses logged today yet</p>
   </section>
 
   <section class="panel progress-panel">
-    <p class="progress-label">DAILY PROGRESS &mdash; GUESS THE SIDE</p>
-    <canvas id="sideProgressChart" width="880" height="180"></canvas>
-    <p class="progress-empty" id="sideProgressEmpty">Log your progress after a few rounds to start your chart.</p>
+    <p class="progress-label">DAILY PROGRESS</p>
+    <canvas id="progressChart" width="880" height="180"></canvas>
+    <p class="progress-empty" id="progressEmpty">Log your progress after a few rounds to start your chart.</p>
     <p class="progress-sub">% correct guesses per day</p>
   </section>
 </main>
@@ -253,15 +261,16 @@ body.ultra-low #cosmos{display:none}
   new ResizeObserver(syncNavH).observe(document.querySelector('.h1-frame'));
 })();
 
-/* ===== Intuition Loader game ===== */
+/* ===== Intuition games: Guess the Tile, Guess the Side, Guess the Direction ===== */
+/* Guess the Tile and Guess the Side share one SCORE, one daily intuition meter, and one daily progress graph. */
 (function(){
-  const instruments=['chimes','crystal_bowl','djembe','gong','handpan','harpa','monochord','native_american_fluit','ocean_drum','panflute','quartz_bowl','rainstick','sansula','shaman_drum','tam-tam_drum','thunder_drum','tibetansk_gong','tibetan_bowl','tonguedrum','triangle'];
   const $=s=>document.querySelector(s);
-  const mallImg=$('#mallImg'),mallImgWebp=$('#mallImgWebp'),feedback=$('#feedback'),pressHint=$('#pressHint');
-  const optA=$('#optA'),optB=$('#optB'),optAImg=$('#optAImg'),optBImg=$('#optBImg');
+
+  /* ---------- shared score / meter / graph (Tile + Side) ---------- */
   const scoreCorrectEl=$('#scoreCorrect'),scoreTotalEl=$('#scoreTotal'),scoreReset=$('#scoreReset');
   const logProgressBtn=$('#logProgressBtn');
-  let correctSide=null,answered=false,AC,scoreCorrect=0,scoreTotal=0;
+  const meterFill=$('#meterFill'),meterLevel=$('#meterLevel'),meterDesc=$('#meterDesc'),meterSub=$('#meterSub');
+  let scoreCorrect=0,scoreTotal=0,AC;
 
   function updateLogButtonState(){
     logProgressBtn.disabled=scoreTotal<=0;
@@ -277,7 +286,7 @@ body.ultra-low #cosmos{display:none}
   scoreReset.addEventListener('click',resetScore);
 
   /* ===== daily progress log (stored locally, one averaged value per day) ===== */
-  const PROGRESS_KEY='intuitionProgressLog';
+  const PROGRESS_KEY='intuitionCombinedProgressLog';
 
   function todayKey(){
     const d=new Date();
@@ -391,140 +400,8 @@ body.ultra-low #cosmos{display:none}
   let _chartResizeT;
   addEventListener('resize',()=>{clearTimeout(_chartResizeT);_chartResizeT=setTimeout(drawProgressChart,150)});
 
-  function tileSrc(key){return `images/instruments2/instruments-${key}.png`}
-
-  function newRound(){
-    answered=false;
-    feedback.textContent='\u00A0';
-    feedback.className='feedback';
-    pressHint.style.visibility='visible';
-    mallImgWebp.srcset='images/instruments/mall.webp';
-    mallImg.src='images/instruments/mall.png';
-    optA.disabled=optB.disabled=false;
-
-    const pool=[...instruments].sort(()=>Math.random()-.5);
-    const keyA=pool[0],keyB=pool[1];
-    optAImg.src=tileSrc(keyA);
-    optBImg.src=tileSrc(keyB);
-    optA.dataset.key=keyA;
-    optB.dataset.key=keyB;
-    correctSide=Math.random()<.5?'A':'B';
-  }
-
-  function choose(side){
-    if(answered)return;
-    answered=true;
-    optA.disabled=optB.disabled=true;
-    pressHint.style.visibility='hidden';
-    const correctKey=(correctSide==='A'?optA:optB).dataset.key;
-    mallImgWebp.removeAttribute('srcset');
-    mallImg.src=tileSrc(correctKey);
-    scoreTotal++;
-    if(side===correctSide){
-      scoreCorrect++;
-      feedback.textContent='YES, YOU GOT IT RIGHT!';
-      feedback.className='feedback correct';
-      fanfare();
-      confettiBurst();
-    }else{
-      feedback.textContent='TRY AGAIN!';
-      feedback.className='feedback wrong';
-    }
-    scoreCorrectEl.textContent=scoreCorrect;
-    scoreTotalEl.textContent=scoreTotal;
-    updateLogButtonState();
-    setTimeout(newRound,1500);
-  }
-
-  optA.addEventListener('click',()=>choose('A'));
-  optB.addEventListener('click',()=>choose('B'));
-
-  function fanfare(){
-    try{
-      if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
-      if(AC.state!=='running')AC.resume();
-      const notes=[523.25,659.25,783.99,1046.5];
-      notes.forEach((f,i)=>{
-        const t=AC.currentTime+i*.09,o=AC.createOscillator(),g=AC.createGain();
-        o.type='triangle';o.frequency.setValueAtTime(f,t);
-        g.gain.setValueAtTime(.0001,t);
-        g.gain.exponentialRampToValueAtTime(.22,t+.02);
-        g.gain.exponentialRampToValueAtTime(.0001,t+.5);
-        o.connect(g).connect(AC.destination);
-        o.start(t);o.stop(t+.55);
-      });
-    }catch(e){}
-  }
-
-  function confettiBurst(){
-    const colors=['#ffd98a','#c9a8ff','#7af0d0','#ff8a5c','#fff8e2'];
-    for(let i=0;i<40;i++){
-      const el=document.createElement('div');
-      el.className='confetti-piece';
-      el.style.left=(Math.random()*100)+'vw';
-      el.style.background=colors[Math.floor(Math.random()*colors.length)];
-      el.style.animationDuration=(1.6+Math.random()*1.2)+'s';
-      el.style.animationDelay=(Math.random()*.25)+'s';
-      document.body.appendChild(el);
-      setTimeout(()=>el.remove(),3200);
-    }
-  }
-
-  newRound();
-  drawProgressChart();
-})();
-</script>
-
-<script>
-/* ===== Guess the Side game (white tile, line left/right) ===== */
-(function(){
-  const $=s=>document.querySelector(s);
-  const mysteryImg=$('#sideMysteryImg'),feedback=$('#sideFeedback'),pressHint=$('#sidePressHint');
-  const optLeft=$('#optLeft'),optRight=$('#optRight'),optLeftImg=$('#optLeftImg'),optRightImg=$('#optRightImg');
-  const scoreCorrectEl=$('#sideScoreCorrect'),scoreTotalEl=$('#sideScoreTotal'),scoreReset=$('#sideScoreReset');
-  const logProgressBtn=$('#sideLogProgressBtn');
-  const meterFill=$('#sideMeterFill'),meterLevel=$('#sideMeterLevel'),meterDesc=$('#sideMeterDesc'),meterSub=$('#sideMeterSub');
-  let correctSide=null,answered=false,AC,scoreCorrect=0,scoreTotal=0;
-
-  /* build a white tile with a vertical line on the left, right, or a blank mystery tile */
-  function tileSVG(side){
-    const x=side==='left'?24:side==='right'?176:null;
-    const line=x!==null?`<line x1="${x}" y1="32" x2="${x}" y2="228" stroke="#241733" stroke-width="15" stroke-linecap="round"/>`:'';
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><rect width="200" height="256" rx="14" fill="#ffffff"/>${line}</svg>`;
-    return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
-  }
-  optLeftImg.src=tileSVG('left');
-  optRightImg.src=tileSVG('right');
-
-  function updateLogButtonState(){
-    logProgressBtn.disabled=scoreTotal<=0;
-  }
-
-  function resetScore(){
-    scoreCorrect=0;
-    scoreTotal=0;
-    scoreCorrectEl.textContent=scoreCorrect;
-    scoreTotalEl.textContent=scoreTotal;
-    updateLogButtonState();
-  }
-  scoreReset.addEventListener('click',resetScore);
-
-  /* ===== daily progress log (stored locally, one averaged value per day) ===== */
-  const PROGRESS_KEY='intuitionSideProgressLog';
-
-  function todayKey(){
-    const d=new Date();
-    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-  }
-  function loadProgressLog(){
-    try{return JSON.parse(localStorage.getItem(PROGRESS_KEY))||{};}catch(e){return{};}
-  }
-  function saveProgressLog(log){
-    try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(log));}catch(e){}
-  }
-
   /* ===== today's live intuition meter (correct vs the 50% odds) ===== */
-  const DAY_STATS_KEY='intuitionSideDayStats';
+  const DAY_STATS_KEY='intuitionCombinedDayStats';
   const METER_MIN_ATTEMPTS=6;
 
   function loadDayStats(){
@@ -559,148 +436,20 @@ body.ultra-low #cosmos{display:none}
     meterSub.textContent=total?`${percent}% correct today over ${total} guess${total===1?'':'es'}`:'No guesses logged today yet';
   }
 
-  function logProgress(){
-    if(scoreTotal<=0)return;
-    const percent=(scoreCorrect/scoreTotal)*100;
-    const log=loadProgressLog();
-    const key=todayKey();
-    const entry=log[key]||{sum:0,count:0};
-    entry.sum+=percent;
-    entry.count+=1;
-    log[key]=entry;
-    saveProgressLog(log);
-    drawProgressChart();
-  }
-  logProgressBtn.addEventListener('click',logProgress);
-
-  function drawProgressChart(){
-    const canvas=$('#sideProgressChart'),emptyEl=$('#sideProgressEmpty');
-    if(!canvas)return;
-    const log=loadProgressLog();
-    const days=Object.keys(log).sort();
-    if(days.length===0){
-      canvas.style.display='none';
-      if(emptyEl)emptyEl.style.display='block';
-      return;
-    }
-    canvas.style.display='block';
-    if(emptyEl)emptyEl.style.display='none';
-
-    const recentDays=days.slice(-14);
-    const values=recentDays.map(k=>{const e=log[k];return e.count?e.sum/e.count:0;});
-
-    const dpr=window.devicePixelRatio||1;
-    const cssW=canvas.clientWidth||canvas.parentElement.clientWidth||600;
-    const cssH=180;
-    canvas.width=cssW*dpr;
-    canvas.height=cssH*dpr;
-    const ctx=canvas.getContext('2d');
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.clearRect(0,0,cssW,cssH);
-
-    const padL=34,padR=14,padT=14,padB=26;
-    const plotW=cssW-padL-padR,plotH=cssH-padT-padB;
-
-    ctx.strokeStyle='rgba(255,255,255,.14)';
-    ctx.fillStyle='#cfc3db';
-    ctx.font='10px Georgia, serif';
-    ctx.lineWidth=1;
-    [0,50,100].forEach(v=>{
-      const y=padT+plotH-(v/100)*plotH;
-      ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+plotW,y);ctx.stroke();
-      ctx.textAlign='right';ctx.textBaseline='middle';
-      ctx.fillText(v+'%',padL-6,y);
-    });
-
-    const n=values.length;
-    const stepX=n>1?plotW/(n-1):0;
-    const pts=values.map((v,i)=>({
-      x:padL+(n>1?i*stepX:plotW/2),
-      y:padT+plotH-(Math.max(0,Math.min(100,v))/100)*plotH
-    }));
-
-    if(n>1){
-      const grad=ctx.createLinearGradient(0,padT,0,padT+plotH);
-      grad.addColorStop(0,'rgba(255,217,138,.35)');
-      grad.addColorStop(1,'rgba(255,217,138,0)');
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x,padT+plotH);
-      pts.forEach(p=>ctx.lineTo(p.x,p.y));
-      ctx.lineTo(pts[n-1].x,padT+plotH);
-      ctx.closePath();
-      ctx.fillStyle=grad;
-      ctx.fill();
-    }
-
-    ctx.beginPath();
-    const lineGrad=ctx.createLinearGradient(padL,0,padL+plotW,0);
-    lineGrad.addColorStop(0,'#ffd98a');
-    lineGrad.addColorStop(1,'#c9a8ff');
-    ctx.strokeStyle=lineGrad;
-    ctx.lineWidth=2.4;
-    ctx.lineJoin='round';
-    pts.forEach((p,i)=>{i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);});
-    ctx.stroke();
-
-    ctx.textAlign='center';
-    ctx.textBaseline='top';
-    const labelEvery=Math.max(1,Math.ceil(n/8));
-    pts.forEach((p,i)=>{
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,3.2,0,7);
-      ctx.fillStyle=i===n-1?'#ffd98a':'#f3efe4';
-      ctx.fill();
-      if(n<=8||i%labelEvery===0||i===n-1){
-        ctx.fillStyle='#cfc3db';
-        ctx.font='9.5px Georgia, serif';
-        ctx.fillText(recentDays[i].slice(5).replace('-','/'),p.x,padT+plotH+6);
-      }
-    });
-  }
-
-  let _chartResizeT;
-  addEventListener('resize',()=>{clearTimeout(_chartResizeT);_chartResizeT=setTimeout(drawProgressChart,150)});
-
-  function newRound(){
-    answered=false;
-    feedback.textContent='\u00A0';
-    feedback.className='feedback';
-    pressHint.style.visibility='visible';
-    mysteryImg.src=tileSVG(null);
-    optLeft.disabled=optRight.disabled=false;
-    correctSide=Math.random()<.5?'left':'right';
-  }
-
-  function choose(side){
-    if(answered)return;
-    answered=true;
-    optLeft.disabled=optRight.disabled=true;
-    pressHint.style.visibility='hidden';
-    mysteryImg.src=tileSVG(correctSide);
+  function recordGuess(correct){
     scoreTotal++;
     if(dayStats.date!==todayKey())dayStats=loadDayStats();
     dayStats.total++;
-    if(side===correctSide){
+    if(correct){
       scoreCorrect++;
       dayStats.correct++;
-      feedback.textContent='YES, YOU GOT IT RIGHT!';
-      feedback.className='feedback correct';
-      fanfare();
-      confettiBurst();
-    }else{
-      feedback.textContent='TRY AGAIN!';
-      feedback.className='feedback wrong';
     }
     saveDayStats(dayStats);
     updateMeter();
     scoreCorrectEl.textContent=scoreCorrect;
     scoreTotalEl.textContent=scoreTotal;
     updateLogButtonState();
-    setTimeout(newRound,1500);
   }
-
-  optLeft.addEventListener('click',()=>choose('left'));
-  optRight.addEventListener('click',()=>choose('right'));
 
   function fanfare(){
     try{
@@ -733,7 +482,203 @@ body.ultra-low #cosmos{display:none}
     }
   }
 
-  newRound();
+  /* ---------- Guess the Tile ---------- */
+  const instruments=['chimes','crystal_bowl','djembe','gong','handpan','harpa','monochord','native_american_fluit','ocean_drum','panflute','quartz_bowl','rainstick','sansula','shaman_drum','tam-tam_drum','thunder_drum','tibetansk_gong','tibetan_bowl','tonguedrum','triangle'];
+  const mallImg=$('#mallImg'),mallImgWebp=$('#mallImgWebp'),feedback=$('#feedback'),pressHint=$('#pressHint');
+  const optA=$('#optA'),optB=$('#optB'),optAImg=$('#optAImg'),optBImg=$('#optBImg');
+  let correctTileSide=null,answeredTile=false;
+
+  function tileSrc(key){return `images/instruments2/instruments-${key}.png`}
+
+  function newRoundTile(){
+    answeredTile=false;
+    feedback.textContent='\u00A0';
+    feedback.className='feedback';
+    pressHint.style.visibility='visible';
+    mallImgWebp.srcset='images/instruments/mall.webp';
+    mallImg.src='images/instruments/mall.png';
+    optA.disabled=optB.disabled=false;
+
+    const pool=[...instruments].sort(()=>Math.random()-.5);
+    const keyA=pool[0],keyB=pool[1];
+    optAImg.src=tileSrc(keyA);
+    optBImg.src=tileSrc(keyB);
+    optA.dataset.key=keyA;
+    optB.dataset.key=keyB;
+    correctTileSide=Math.random()<.5?'A':'B';
+  }
+
+  function chooseTile(side){
+    if(answeredTile)return;
+    answeredTile=true;
+    optA.disabled=optB.disabled=true;
+    pressHint.style.visibility='hidden';
+    const correctKey=(correctTileSide==='A'?optA:optB).dataset.key;
+    mallImgWebp.removeAttribute('srcset');
+    mallImg.src=tileSrc(correctKey);
+    const correct=side===correctTileSide;
+    if(correct){
+      feedback.textContent='YES, YOU GOT IT RIGHT!';
+      feedback.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      feedback.textContent='TRY AGAIN!';
+      feedback.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundTile,1500);
+  }
+
+  optA.addEventListener('click',()=>chooseTile('A'));
+  optB.addEventListener('click',()=>chooseTile('B'));
+
+  /* ---------- Guess the Side ---------- */
+  const sideMysteryImg=$('#sideMysteryImg'),sideFeedback=$('#sideFeedback'),sidePressHint=$('#sidePressHint');
+  const optLeft=$('#optLeft'),optRight=$('#optRight'),optLeftImg=$('#optLeftImg'),optRightImg=$('#optRightImg');
+  let correctLineSide=null,answeredSide=false;
+
+  /* build a white tile with a vertical line on the left, right, or a blank mystery tile */
+  function tileSVG(side){
+    const x=side==='left'?24:side==='right'?176:null;
+    const line=x!==null?`<line x1="${x}" y1="32" x2="${x}" y2="228" stroke="#241733" stroke-width="15" stroke-linecap="round"/>`:'';
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><rect width="200" height="256" rx="14" fill="#ffffff"/>${line}</svg>`;
+    return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+  }
+  optLeftImg.src=tileSVG('left');
+  optRightImg.src=tileSVG('right');
+
+  function newRoundSide(){
+    answeredSide=false;
+    sideFeedback.textContent='\u00A0';
+    sideFeedback.className='feedback';
+    sidePressHint.style.visibility='visible';
+    sideMysteryImg.src=tileSVG(null);
+    optLeft.disabled=optRight.disabled=false;
+    correctLineSide=Math.random()<.5?'left':'right';
+  }
+
+  function chooseSide(side){
+    if(answeredSide)return;
+    answeredSide=true;
+    optLeft.disabled=optRight.disabled=true;
+    sidePressHint.style.visibility='hidden';
+    sideMysteryImg.src=tileSVG(correctLineSide);
+    const correct=side===correctLineSide;
+    if(correct){
+      sideFeedback.textContent='YES, YOU GOT IT RIGHT!';
+      sideFeedback.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      sideFeedback.textContent='TRY AGAIN!';
+      sideFeedback.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundSide,1500);
+  }
+
+  optLeft.addEventListener('click',()=>chooseSide('left'));
+  optRight.addEventListener('click',()=>chooseSide('right'));
+
+  /* ---------- Guess the Direction ---------- */
+  const directionCircle=$('#directionCircle'),directionFeedback=$('#directionFeedback');
+  const directionHint=$('#directionHint'),directionStart=$('#directionStart');
+  let directionCorrect=null,directionState='idle',dragStartX=0,dragCurrentX=0,dragging=false,dragPointerId=null;
+
+  function resetDirectionCircle(){
+    directionCircle.style.transition='none';
+    directionCircle.style.width='18px';
+    directionCircle.style.height='18px';
+    directionCircle.style.opacity='.55';
+    directionCircle.style.transform='translate(-50%,-50%)';
+    void directionCircle.offsetWidth; /* force reflow so the next transition is picked up */
+    directionCircle.style.transition='';
+  }
+
+  function startDirectionRound(){
+    if(directionState==='flying'||directionState==='waiting')return;
+    directionCorrect=Math.random()<.5?'left':'right';
+    directionFeedback.textContent='\u00A0';
+    directionFeedback.className='feedback';
+    directionHint.textContent='Decide which way you\u2019ll swipe\u2026';
+    directionStart.disabled=true;
+    resetDirectionCircle();
+    directionState='flying';
+    requestAnimationFrame(()=>{
+      directionCircle.style.transition='width 3s ease-in, height 3s ease-in, opacity 3s ease-in';
+      directionCircle.style.width='130px';
+      directionCircle.style.height='130px';
+      directionCircle.style.opacity='1';
+    });
+    setTimeout(()=>{
+      if(directionState!=='flying')return;
+      directionState='waiting';
+      directionHint.textContent='Swipe the circle left or right now!';
+    },3000);
+  }
+  directionStart.addEventListener('click',startDirectionRound);
+
+  function evaluateDirectionSwipe(dir){
+    if(directionState!=='waiting')return;
+    directionState='result';
+    const correct=dir===directionCorrect;
+    directionCircle.style.transition='transform .35s ease, opacity .35s ease';
+    directionCircle.style.transform=`translate(calc(-50% + ${dir==='left'?'-160px':'160px'}),-50%)`;
+    directionCircle.style.opacity='0';
+    if(correct){
+      directionFeedback.textContent='YES, YOU GOT IT RIGHT!';
+      directionFeedback.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      directionFeedback.textContent='TRY AGAIN!';
+      directionFeedback.className='feedback wrong';
+    }
+    directionHint.textContent='Press start for another round';
+    setTimeout(()=>{
+      directionState='idle';
+      directionStart.disabled=false;
+      resetDirectionCircle();
+    },1200);
+  }
+
+  function onPointerDown(e){
+    if(directionState!=='waiting')return;
+    dragging=true;
+    dragPointerId=e.pointerId;
+    dragStartX=e.clientX;
+    dragCurrentX=e.clientX;
+    if(directionCircle.setPointerCapture)directionCircle.setPointerCapture(e.pointerId);
+  }
+  function onPointerMove(e){
+    if(!dragging||e.pointerId!==dragPointerId)return;
+    dragCurrentX=e.clientX;
+    const dx=dragCurrentX-dragStartX;
+    directionCircle.style.transition='none';
+    directionCircle.style.transform=`translate(calc(-50% + ${dx}px),-50%)`;
+  }
+  function onPointerUp(e){
+    if(!dragging||e.pointerId!==dragPointerId)return;
+    dragging=false;
+    const dx=dragCurrentX-dragStartX;
+    if(Math.abs(dx)>36){
+      evaluateDirectionSwipe(dx<0?'left':'right');
+    }else{
+      directionCircle.style.transition='transform .25s ease';
+      directionCircle.style.transform='translate(-50%,-50%)';
+    }
+  }
+  directionCircle.addEventListener('pointerdown',onPointerDown);
+  directionCircle.addEventListener('pointermove',onPointerMove);
+  directionCircle.addEventListener('pointerup',onPointerUp);
+  directionCircle.addEventListener('pointercancel',onPointerUp);
+
+  resetDirectionCircle();
+
+  /* ---------- init ---------- */
+  newRoundTile();
+  newRoundSide();
   drawProgressChart();
   updateMeter();
 })();
