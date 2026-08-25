@@ -90,7 +90,8 @@ body.ultra-low #cosmos{display:none}
 .game-panel{max-width:620px;margin:26px auto 0;padding:34px 24px 30px;text-align:center}
 .prompt-title{margin:0 0 22px;font:600 clamp(16px,3.6vw,23px) Georgia;letter-spacing:.1em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .mall-box{width:min(42vw,210px);aspect-ratio:.78;margin:0 auto 22px;padding:14px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 18px 45px #0008;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.mall-box img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 14px #0007)}
+.mall-box picture{display:block;width:100%;height:100%}
+.mall-box img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 14px #0007)}
 .feedback{min-height:32px;font:700 clamp(16px,3.6vw,23px) Georgia;margin:2px 0 14px;transition:opacity .15s}
 .feedback.correct{color:var(--gold)}
 .feedback.wrong{color:#ff8a8a}
@@ -193,7 +194,7 @@ body.ultra-low #cosmos{display:none}
 (function(){
   const instruments=['chimes','crystal_bowl','djembe','gong','handpan','harpa','monochord','native_american_fluit','ocean_drum','panflute','quartz_bowl','rainstick','sansula','shaman_drum','tam-tam_drum','thunder_drum','tibetansk_gong','tibetan_bowl','tonguedrum','triangle'];
   const $=s=>document.querySelector(s);
-  const mallImg=$('#mallImg'),feedback=$('#feedback'),pressHint=$('#pressHint');
+  const mallImg=$('#mallImg'),mallImgWebp=$('#mallImgWebp'),feedback=$('#feedback'),pressHint=$('#pressHint');
   const optA=$('#optA'),optB=$('#optB'),optAImg=$('#optAImg'),optBImg=$('#optBImg');
   const scoreCorrectEl=$('#scoreCorrect'),scoreTotalEl=$('#scoreTotal'),scoreReset=$('#scoreReset');
   let correctSide=null,answered=false,AC,scoreCorrect=0,scoreTotal=0;
@@ -213,6 +214,7 @@ body.ultra-low #cosmos{display:none}
     feedback.textContent='\u00A0';
     feedback.className='feedback';
     pressHint.style.visibility='visible';
+    mallImgWebp.srcset='images/instruments/mall.webp';
     mallImg.src='images/instruments/mall.png';
     optA.disabled=optB.disabled=false;
 
@@ -231,6 +233,7 @@ body.ultra-low #cosmos{display:none}
     optA.disabled=optB.disabled=true;
     pressHint.style.visibility='hidden';
     const correctKey=(correctSide==='A'?optA:optB).dataset.key;
+    mallImgWebp.removeAttribute('srcset');
     mallImg.src=tileSrc(correctKey);
     scoreTotal++;
     if(side===correctSide){
