@@ -61,18 +61,6 @@
       "name": "Free 14-day trial",
       "price": "0",
       "priceCurrency": "USD"
-    },
-    {
-      "@type": "Offer",
-      "name": "Premium membership",
-      "price": "4.99",
-      "priceCurrency": "USD",
-      "priceSpecification": {
-        "@type": "UnitPriceSpecification",
-        "price": "4.99",
-        "priceCurrency": "USD",
-        "unitCode": "MON"
-      }
     }
   ]
 }
@@ -83,7 +71,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="auth-ui.css">
-<link rel="stylesheet" href="premium-ui.css">
 <style>
 :root{
   --bg:#0b0806; --ink:#f8f6f1; --muted:rgba(248,246,241,.82); --faint:rgba(248,246,241,.5);
@@ -152,15 +139,13 @@ a{color:inherit}
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
 #menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
-#getPremiumMenuBtn,#howToBtn,#shopMenuBtn{
+#howToBtn,#shopMenuBtn{
   display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;width:100%;box-sizing:border-box;
   font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);text-decoration:none;
   background:transparent;border:none;border-radius:8px;padding:9px 10px;cursor:pointer;transition:background .15s ease}
-#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#getPremiumMenuBtn{color:var(--gold);font-weight:600}
-#getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
-#getPremiumMenuBtn:hover,#howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
-#getPremiumMenuBtn:active,#howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
+#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
+#howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
 #contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
   border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--ink);cursor:pointer;transition:background .15s ease}
 #contactBtn:hover{background:rgba(244,241,234,.1)}
@@ -493,86 +478,24 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 #trustStrip .rating{color:var(--ink);font-weight:600;margin-left:6px;font-size:13px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 #trustStrip .quote{font-family:var(--display);font-style:italic;color:var(--muted);font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
 
-/* ===== premium section — the single strongest conversion element on the page.
-   Deliberately more contrast, more glow, more depth than everything above it,
-   while staying inside the same black-and-gold luxury language. ===== */
-#premiumSection{position:relative;z-index:1;flex:0 0 auto;max-width:1170px;margin:44px auto 0;padding:0 20px;
+/* ===== featured section — two equal-size promo tiles (intuition + game),
+   same box treatment as the entry tiles above (min-height:300px). ===== */
+#featuredSection{position:relative;z-index:1;flex:0 0 auto;max-width:1170px;margin:44px auto 0;padding:0 20px;
   display:grid;grid-template-columns:1fr;gap:18px;align-items:stretch}
-@media(min-width:660px){ #premiumSection{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px} }
-#premiumSection::before{content:'';position:absolute;z-index:0;left:50%;top:-14%;width:150%;height:140%;
-  transform:translateX(-50%);pointer-events:none;
-  background:radial-gradient(50% 52% at 50% 30%, rgba(255,214,140,.23), transparent 70%);
-  filter:blur(24px)}
-#premiumCard{position:relative;overflow:hidden;border-radius:28px;padding:40px 34px 34px;text-align:center;flex:0 0 auto;min-width:0;min-height:300px;
-  background:linear-gradient(165deg,rgba(60,44,22,.94) 0%,rgba(34,24,15,.96) 55%,rgba(16,11,8,.97) 100%);
-  box-shadow:0 26px 58px rgba(0,0,0,.54),0 0 0 1px rgba(255,217,138,.08) inset,inset 0 1px 1px rgba(255,255,255,.1);
-  animation:premiumCardGlow 3.6s ease-in-out infinite}
-@keyframes premiumCardGlow{
-  0%,100%{box-shadow:0 28px 62px rgba(0,0,0,.56),0 0 64px -8px rgba(240,209,159,.42),0 0 0 1px rgba(255,217,138,.1) inset,inset 0 1px 1px rgba(255,255,255,.12)}
-  50%{box-shadow:0 28px 62px rgba(0,0,0,.56),0 0 104px -3px rgba(240,209,159,.7),0 0 0 1px rgba(255,217,138,.18) inset,inset 0 1px 1px rgba(255,255,255,.19)}
-}
-#premiumCard::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:2.25px;pointer-events:none;
-  background:linear-gradient(135deg,rgba(240,209,159,1) 0%,rgba(247,231,197,.8) 30%,rgba(211,182,255,.6) 65%,rgba(240,209,159,.95) 100%);
-  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
-#premiumCard::after{content:'';position:absolute;z-index:0;left:50%;top:-35%;width:140%;height:200%;transform:translateX(-50%);
-  background:radial-gradient(46% 42% at 50% 0%,rgba(255,214,140,.2),transparent 70%);pointer-events:none}
-
-#premiumEyebrow{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-weight:700;
-  font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#2a1c05;
-  background:linear-gradient(135deg,#ffe8b0,#dcaa48);padding:7px 16px;border-radius:999px;
-  box-shadow:0 10px 26px rgba(240,209,159,.48);margin-bottom:16px;animation:premGlow 2.4s ease-in-out infinite}
-#premiumHeadline{position:relative;z-index:1;margin:0 0 10px;font-family:var(--display);font-weight:700;
-  font-size:clamp(29px,5vw,40px);line-height:1.14;
-  background:linear-gradient(100deg,#fff8ec 0%,#f0d19f 45%,#fff8ec 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  text-shadow:0 0 34px rgba(240,209,159,.26)}
-#premiumSub{position:relative;z-index:1;margin:0 auto 22px;max-width:440px;font-family:var(--ui);
-  font-size:13.5px;line-height:1.5;color:var(--muted)}
-#premiumChecklist{position:relative;z-index:1;list-style:none;display:grid;grid-template-columns:1fr 1fr;
-  gap:11px 18px;text-align:left;max-width:460px;margin:0 auto 26px;padding:0}
-#premiumChecklist li{display:flex;align-items:center;gap:9px;font-family:var(--ui);font-weight:500;
-  font-size:13px;color:rgba(248,246,241,.94)}
-#premiumChecklist .chk{flex:0 0 auto;width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;
-  border-radius:50%;background:rgba(255,217,138,.16);border:1px solid rgba(255,217,138,.42);
-  color:var(--gold);font-size:10.5px;font-weight:700}
-#pageFreeTrialBtn{position:relative;z-index:1;display:inline-flex;flex-direction:column;align-items:center;
-  gap:4px;width:100%;max-width:380px;padding:20px 28px;border-radius:999px;cursor:pointer;
-  font-family:var(--ui);color:#fff;background:linear-gradient(135deg,#5EA8FF,#7C6BFF);
-  box-shadow:0 18px 46px rgba(124,107,255,.54),0 0 0 1px rgba(255,255,255,.12) inset;
-  animation:premGlowBlue 2.6s ease-in-out infinite;
-  transition:transform .3s cubic-bezier(.22,1,.36,1),filter .3s ease,box-shadow .3s ease}
-#pageFreeTrialBtn:hover{transform:translateY(-3px) scale(1.02);filter:brightness(1.12)}
-#pageFreeTrialBtn .ptCta{font-weight:700;font-size:17.5px;letter-spacing:.01em}
-#pageFreeTrialBtn .ptNote{font-weight:500;font-size:11.5px;letter-spacing:.03em;color:rgba(255,255,255,.88)}
-@media(max-width:560px){
-  #premiumCard{padding:32px 22px 28px;border-radius:22px}
-  #premiumChecklist{grid-template-columns:1fr;gap:9px}
-}
-
-/* ===== "also try our game" tile — same size (width AND height) as the
-   premium card, and both match the entry tiles above (min-height:300px),
-   sitting right beside it (stacked on narrow screens where there's no
-   room for two side-by-side boxes). ===== */
-#premiumGameLink{position:relative;z-index:1;display:block;flex:0 0 auto;min-width:0;min-height:300px;
+@media(min-width:660px){ #featuredSection{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px} }
+#gameLink,#intuitionLink{position:relative;z-index:1;display:block;flex:0 0 auto;min-width:0;min-height:300px;
   border-radius:28px;overflow:hidden;
   border:1.5px solid var(--gold);box-shadow:0 26px 58px rgba(0,0,0,.54),0 0 0 1px rgba(255,217,138,.08) inset;
   transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease}
-#premiumGameLink:hover,#premiumGameLink:focus-visible{transform:translateY(-3px) scale(1.02);
+#gameLink:hover,#gameLink:focus-visible,#intuitionLink:hover,#intuitionLink:focus-visible{transform:translateY(-3px) scale(1.02);
   box-shadow:0 30px 64px rgba(0,0,0,.58),0 0 0 1px rgba(255,217,138,.14) inset}
-#premiumGameLink img{display:block;width:100%;height:100%;object-fit:cover}
-/* #premiumCard and #premiumGameLink are now sized by the grid's two
-   minmax(0,1fr) tracks on #premiumSection (defined above) — this forces
-   them to be exactly equal width regardless of their content, which plain
-   flexbox could not guarantee (long unbreakable text/eyebrow labels could
-   inflate one flex item's min-content size and skew the split). The
-   container's align-items:stretch still makes both stretch to match
-   height, same size as the entry tiles. */
+#gameLink img,#intuitionLink img{display:block;width:100%;height:100%;object-fit:cover}
 @media(max-width:560px){
-  #premiumGameLink{border-radius:22px}
+  #gameLink,#intuitionLink{border-radius:22px}
 }
 
 /* ===== game showcase — two equal-size boxes (same box treatment as
-   #premiumGameLink: border, radius, shadow, hover lift) at the very
+   #gameLink: border, radius, shadow, hover lift) at the very
    bottom of the page. Left links to Mergico (game.html), right to the
    second game (game2.html). ===== */
 #gameShowcaseSection{position:relative;z-index:1;flex:0 0 auto;max-width:1170px;margin:22px auto 0;padding:0 20px;
@@ -616,15 +539,12 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 
 <div id="stage"><div class="aurora"></div></div>
 
-<!-- hamburger menu: Premium / How to use / Shop / Contact -->
+<!-- hamburger menu: How to use / Shop / Contact -->
 <div id="donateWrap">
   <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
     <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
   </button>
   <div id="menuPanel" role="menu">
-    <button id="getPremiumMenuBtn" type="button">
-      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Unlock Premium
-    </button>
     <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
       <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
     </button>
@@ -659,35 +579,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
   </button>
   <h3>How to use</h3>
-  <p>This is home base. Tap any of the four options below to jump straight into Breathing, Sound, Yoga or Nutrition. Everyone gets a free taste of each area; Premium unlocks every scene, instrument, program and pose across all four, plus cross-device sync — try it free for 14 days, no card required.</p>
-</div>
-
-<!-- premium modal -->
-<div id="premiumModal" role="dialog" aria-modal="true" aria-labelledby="premiumModalTitle">
-  <div id="premiumModalCard">
-    <button id="premiumModalClose" type="button" aria-label="Close">
-      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-    </button>
-    <div id="premiumModalScroll">
-      <h2 id="premiumModalTitle">All-in-One Wellness Platform</h2>
-      <div id="premiumModalSections"></div>
-      <p class="premTagline">Everything unlocked. One membership. Unlimited access. ✨</p>
-      <div id="premiumScrollHint" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </div>
-    </div>
-    <div id="premiumModalFooter">
-      <button class="premCtaPrimary" id="premiumModalFreeTrial" type="button">
-        <span>Start Free 14-Day Trial</span>
-        <span class="premCtaSubnote">No card needed</span>
-      </button>
-      <a class="premCta premCtaSecondary" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
-        <span>Get Premium for $4.99/month</span>
-        <span class="premCancelNote">Cancel anytime!</span>
-      </a>
-      <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
-    </div>
-  </div>
+  <p>This is home base. Tap any of the four options below to jump straight into Breathing, Sound, Yoga or Nutrition.</p>
 </div>
 
 <!-- ===== page content ===== -->
@@ -747,25 +639,11 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
     <div class="quote">"My baby daughter slept so much better while listening to the white noise! Thank you! /Johanna, Sweden"</div>
   </div>
 
-  <section id="premiumSection" aria-label="Premium free trial">
-    <div id="premiumCard">
-      <span id="premiumEyebrow">14 Days Free</span>
-      <h2 id="premiumHeadline">Unlock the Full Experience</h2>
-      <p id="premiumSub">Go deeper with every scene, program and pose across Breathing, Sound, Yoga and Nutrition.</p>
-      <ul id="premiumChecklist">
-        <li><span class="chk">✓</span>Unlimited Soundscapes</li>
-        <li><span class="chk">✓</span>Advanced Breathing Programs</li>
-        <li><span class="chk">✓</span>Full Yoga Library</li>
-        <li><span class="chk">✓</span>Nutrition Tracking</li>
-        <li><span class="chk">✓</span>Habit Building Tools</li>
-        <li><span class="chk">✓</span>Cross-Device Sync</li>
-      </ul>
-      <button id="pageFreeTrialBtn" type="button">
-        <span class="ptCta">Start Free 14-Day Trial</span>
-        <span class="ptNote">No card required</span>
-      </button>
-    </div>
-    <a id="premiumGameLink" href="mahjong.html" aria-label="Play Mahjong Loader">
+  <section id="featuredSection" aria-label="Featured">
+    <a id="intuitionLink" href="intuition-loader.html" aria-label="Open Intuition Loader">
+      <img src="images/preview-intuition.jpg" alt="Intuition Loader" loading="lazy" decoding="async">
+    </a>
+    <a id="gameLink" href="mahjong.html" aria-label="Play Mahjong Loader">
       <img src="images/preview-mahjong.jpg" alt="Holistic Game" loading="lazy" decoding="async">
     </a>
   </section>
@@ -807,13 +685,6 @@ const $=id=>document.getElementById(id);
       if(!open){ const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
     document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
-  }
-  const getPremiumMenuBtn=$('getPremiumMenuBtn');
-  if(getPremiumMenuBtn){
-    getPremiumMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
-      closeMenu();
-      const headerRegisterBtn=$('registerBtn'); if(headerRegisterBtn){ headerRegisterBtn.click(); } else { openPremiumModal(); }
-    });
   }
 }
 
@@ -860,64 +731,6 @@ const $=id=>document.getElementById(id);
   }
 }
 
-/* premium modal — same feature list + layout as the rest of the site */
-const PREMIUM_SECTIONS=[
-  {id:'yoga',label:'🧘 Yoga',items:['8 Programs','6 Categories','8 Benefit Filters']},
-  {id:'breathing',label:'🌬️ Breathing',items:['26 Scenes','Personal Backgrounds','19 Instruments','8 Guided Journeys']},
-  {id:'sound',label:'🎵 Sound Healing',items:['16 Instruments','Signal Generator','Record & Save']},
-  {id:'nutrition',label:'🥗 Nutrition',items:['Daily Tracking','Cross-Device Sync']}
-];
-const premScrollBox=$('premiumModalScroll'), premScrollHint=$('premiumScrollHint');
-function updatePremiumScrollHint(){
-  if(!premScrollBox||!premScrollHint) return;
-  const overflows=premScrollBox.scrollHeight>premScrollBox.clientHeight+4;
-  const atBottom=premScrollBox.scrollTop+premScrollBox.clientHeight>=premScrollBox.scrollHeight-4;
-  premScrollHint.classList.toggle('hide',!overflows||atBottom);
-}
-function openPremiumModal(){
-  const modal=$('premiumModal'), wrap=$('premiumModalSections');
-  if(!modal) return;
-  if(wrap){
-    wrap.innerHTML=PREMIUM_SECTIONS.map(sec=>`
-      <div class="premSection" data-sec="${sec.id}">
-        <div class="premSectionTitle">${sec.label}</div>
-        <ul class="premList">
-          ${sec.items.map(it=>`<li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">${it}</span></li>`).join('')}
-        </ul>
-      </div>`).join('');
-  }
-  modal.classList.add('show');
-  if(premScrollBox) premScrollBox.scrollTop=0;
-  setTimeout(updatePremiumScrollHint,50);
-}
-if(premScrollBox) premScrollBox.addEventListener('scroll',updatePremiumScrollHint);
-window.addEventListener('resize',updatePremiumScrollHint);
-function closePremiumModal(){ const m=$('premiumModal'); if(m)m.classList.remove('show'); }
-{
-  const pm=$('premiumModal'), pClose=$('premiumModalClose'), pCta=$('premiumModalCta'), pTrial=$('premiumModalFreeTrial');
-  if(pClose)pClose.onclick=closePremiumModal;
-  if(pCta)pCta.onclick=closePremiumModal;
-  if(pTrial)pTrial.onclick=function(){ closePremiumModal(); if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); };
-  if(pm)pm.addEventListener('click',e=>{ if(e.target===pm)closePremiumModal(); });
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape')closePremiumModal(); });
-}
-const detailsLink=$('premiumDetailsLink');
-if(detailsLink)detailsLink.addEventListener('click',e=>{ e.preventDefault(); openPremiumModal(); });
-
-/* on-page premium CTAs mirror the modal's actions directly */
-const pageFreeTrialBtn=$('pageFreeTrialBtn');
-if(pageFreeTrialBtn)pageFreeTrialBtn.addEventListener('click',()=>{
-  if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); else openPremiumModal();
-});
-
-const bannerFreeTrialBtn=$('premiumBannerFreeTrial');
-if(bannerFreeTrialBtn)bannerFreeTrialBtn.addEventListener('click',()=>{
-  if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); else openPremiumModal();
-});
-const bannerMaybeLaterBtn=$('premiumBannerMaybeLater');
-if(bannerMaybeLaterBtn)bannerMaybeLaterBtn.addEventListener('click',()=>{
-  const banner=$('premiumBanner'); if(banner) banner.style.display='none';
-});
 </script>
 
 <script>
