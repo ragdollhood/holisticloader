@@ -134,7 +134,7 @@ body.ultra-low #cosmos{display:none}
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:45}
   body.menu-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
   #menuBrand{display:block;pointer-events:auto;text-align:center;text-decoration:none;padding:8px 6px 14px;margin:0 0 6px;border-bottom:1px solid rgba(220,190,130,.28)}
-  #menuBrand img{display:block;margin:0 auto;max-width:74%;height:auto;max-height:52px;filter:drop-shadow(0 2px 8px #0008)}
+  #menuBrand img{display:block;margin:0 auto;width:100%;max-width:220px;height:auto;filter:drop-shadow(0 2px 8px #0008)}
   #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px}
   #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
   #topNavLine{display:none}
@@ -248,7 +248,7 @@ body.ultra-low #cosmos{display:none}
 .progress-sub{margin:10px 0 0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
 .meter-panel{max-width:900px;margin:20px auto 0;padding:24px 22px 22px;text-align:center}
 .meter-title{margin:0 0 16px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
-.intro-tagline{max-width:620px;margin:0 auto 20px;text-align:center;color:#e7dfcf;font-size:clamp(12.5px,2.4vw,14px);line-height:1.6;opacity:.85}
+.intro-tagline{max-width:620px;margin:0 auto 20px;text-align:center;color:#f3efe4;font-size:clamp(13px,2.5vw,15px);line-height:1.65;opacity:1;text-shadow:0 1px 4px rgba(0,0,0,.65)}
 .streak-line{margin:14px 0 0;font-size:12.5px;letter-spacing:.03em;color:#e7dfcf}
 .streak-line span{color:var(--gold);font-weight:700}
 .sound-toggle{position:fixed;right:14px;bottom:14px;z-index:45;width:38px;height:38px;line-height:1;font-size:16px;color:#cfc3db;opacity:.75;text-decoration:none;border-radius:50%;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
@@ -300,14 +300,16 @@ body.ultra-low #cosmos{display:none}
   </button>
   <h1 id="brand">
     <a href="index.html">
-      <picture>
-        <source srcset="images/title-intuition-loader.webp" type="image/webp">
-        <img src="images/title-intuition-loader.png" alt="Intuition Loader" id="brandLogo">
-      </picture>
+      <img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo">
     </a>
   </h1>
   <nav id="topTabs">
-    <a href="index.html" id="menuBrand"><img src="images/logga-holistictitel.png" alt="Holistic Loader"></a>
+    <a href="intuition-loader.html" id="menuBrand" aria-current="page">
+      <picture>
+        <source srcset="images/title-intuition-loader.webp" type="image/webp">
+        <img src="images/title-intuition-loader.png" alt="Intuition Loader">
+      </picture>
+    </a>
     <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
     <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
     <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition tracker</span></a>
