@@ -457,6 +457,8 @@ body.preset-active #menuToggle{display:none}
   #menuToggleDesktopPanel .nav-contact-email a{color:var(--gold);text-decoration:none}
   #menuToggleDesktopPanel .nav-contact-email a:hover{text-decoration:underline}
 }
+#menuBrand{display:block;margin:2px 2px 10px;pointer-events:auto}
+#menuBrand img{display:block;width:100%;height:auto;max-width:100%;object-fit:contain}
 @media(max-width:720px){
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:52}
   body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
