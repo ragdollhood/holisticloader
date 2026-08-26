@@ -999,6 +999,17 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
 #topTabs .tab:hover{color:#fff}
 #topTabs .tab.active{color:var(--tn-gold);background:rgba(6,4,9,.82);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--tn-gold)}
+.mobile-extra{display:none}
+#topTabs .contact-tab{cursor:pointer;display:block;width:100%;background:none;border:0;margin:0}
+.nav-contact-email{margin:2px 0 4px;text-align:center;font-size:12px}
+.nav-contact-email a{color:var(--tn-gold);text-decoration:none}
+.nav-contact-email a:hover{text-decoration:underline}
+@media(max-width:720px){
+  .mobile-extra{display:block!important}
+  #topTabs a[href="terms.html"].mobile-extra{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  .nav-contact-email{padding:0 12px}
+  #donateWrap{display:none!important}
+}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--tn-gold) 15%,var(--tn-violet) 50%,var(--tn-gold) 85%,transparent);
   opacity:.55}
@@ -1206,7 +1217,34 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
       </div>
     </div>
 
-    <div id="donateWrap">
+    <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs" aria-label="Meny">
+    <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
+  </button>
+
+<style>
+/* ===== mobile page-nav dropdown (mirrors intuition.html's mobile menu) ===== */
+#menuToggle{display:none;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
+#menuToggle svg{width:17px;height:17px;flex:none}
+#menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
+body.immersive #menuToggle{opacity:0;pointer-events:none}
+body.preset-active #menuToggle{display:none}
+.tab-howto{display:none}
+.tab-row{display:contents}
+.h1-frame .title-img{display:block;margin:0 auto;height:clamp(26px,6.4vw,42px);width:auto;max-width:100%}
+@media(max-width:720px){
+  #menuToggle{display:flex}
+  #donateWrap{left:58px}
+  #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:52}
+  body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px;display:block;flex:1 1 auto;width:100%;box-sizing:border-box}
+  #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
+  #topNavLine{display:none}
+  #brandLogo{max-height:clamp(37px,9.6vw,67px)!important}
+  .tab-row{display:flex;align-items:center;gap:4px}
+  .tab-howto{display:inline-block;color:#ffd98a;font-size:11px;font-weight:700;letter-spacing:.03em;text-decoration:underline;white-space:nowrap;background:none;border:0;padding:0 4px 0 0;cursor:pointer;font-family:inherit}
+}
+</style>
+<div id="donateWrap">
       <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
         <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
       </button>
@@ -1272,12 +1310,17 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
     <header id="topNav">
       <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
       <nav id="topTabs" aria-label="Main sections">
-        <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
-        <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
-        <a href="nutriloader.html" class="tab active" aria-current="page"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition Tracker</span></a>
-        <a href="yoga-loader.html" class="tab">Yoga</a>
-        <a href="mahjong.html" class="tab">Mahjong</a>
+        <a href="breathing.html" class="tab">Guided Breathing</a>
+        <a href="instruments.html" class="tab">Soundscape Creator</a>
+        <div class="tab-row"><a href="nutriloader.html" class="tab active" aria-current="page">Nutrition Tracker</a><button type="button" class="tab-howto" id="tabHowToBtn">- how to use</button></div>
+        <a href="yoga-loader.html" class="tab">Yoga Loader</a>
+        <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
+        <a href="intuition-loader.html" class="tab">Intuition Loader</a>
         <a href="store.html" class="tab">Shop</a>
+        <a href="terms.html" class="tab mobile-extra">Terms &amp; Conditions</a>
+        <a href="about.html" class="tab mobile-extra">About</a>
+        <button type="button" id="navContactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
+        <p id="navContactEmail" class="nav-contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
       </nav>
       <div id="authRoot"></div>
       <div id="topNavLine"></div>
@@ -1285,7 +1328,11 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
   </div>
 
 <div class="h1-frame">
-  <h1>NUTRITION TRACKER<span class="sr-only"> – Holistic Loader Nutrition Tracker &amp; Meal Planner</span></h1>
+  <h1 class="sr-only">Nutrition Tracker – Holistic Loader Nutrition Tracker &amp; Meal Planner</h1>
+  <picture>
+    <source srcset="images/title-nutrition-tracker.webp" type="image/webp">
+    <img src="images/title-nutrition-tracker.png" alt="Nutrition Tracker" class="title-img" loading="eager" decoding="async">
+  </picture>
 </div>
 <header>
   <div class="tagline" data-i18n="tagline">With focus on nourishment - not calories</div>
@@ -3736,6 +3783,18 @@ buildBody(); buildOrganBars(); buildMicrowave(); buildSugarBox(); buildAlcoholBo
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
+<script>
+/* Premium lock removed on this page: everyone gets full, unlocked access.
+   hasPremiumAccess() is redefined here (after auth.js) so every future
+   isPremiumUser()/refreshPremiumStatus() check on THIS page resolves to
+   true, and isPremium is also set immediately so nothing renders locked
+   before that first check completes. auth.js itself is untouched, so
+   every other page on the site keeps the normal premium logic. Cross-
+   device log sync still requires being logged in (see isSyncActive()) —
+   that's a separate "needs an account" requirement, not a premium lock. */
+function hasPremiumAccess(){ return true; }
+isPremium = true;
+</script>
 
 <script>
 /* Visit tracking — must run after auth.js, since SUPABASE_URL and
@@ -3811,6 +3870,52 @@ async function registerVisit() {
 }
 
 registerVisit();
+</script>
+
+<script>
+(function(){
+  var mt=document.getElementById('menuToggle'), tabs=document.getElementById('topTabs');
+  function closeTabs(){document.body.classList.remove('tabs-open'); if(mt)mt.setAttribute('aria-expanded','false');}
+  function openTabs(){document.body.classList.add('tabs-open'); if(mt)mt.setAttribute('aria-expanded','true');}
+  if(mt&&tabs){
+    mt.addEventListener('click',function(e){e.stopPropagation(); document.body.classList.contains('tabs-open')?closeTabs():openTabs();});
+    tabs.addEventListener('click',function(e){ var a=e.target.closest('a'); if(a && !e.target.closest('.tab-howto'))closeTabs(); });
+    document.addEventListener('click',function(e){ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target))closeTabs(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeTabs(); });
+  }
+  (function(){
+    var btn=document.getElementById('navContactTab'), email=document.getElementById('navContactEmail');
+    if(!btn||!email)return;
+    btn.addEventListener('click',function(){
+      var showing=!email.hidden;
+      email.hidden=showing;
+      btn.setAttribute('aria-expanded',String(!showing));
+    });
+  })();
+  var tHow=document.getElementById('tabHowToBtn'), hBox=document.getElementById('howToBox');
+  if(tHow&&hBox){
+    tHow.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation();
+      closeTabs();
+      var open=hBox.classList.toggle('show'); tHow.setAttribute('aria-expanded',open?'true':'false'); });
+  }
+  function syncMobileNavH(){
+    var nav=document.getElementById('topNav');
+    var frame=document.querySelector('.h1-frame');
+    if(nav)document.documentElement.style.setProperty('--navH',nav.getBoundingClientRect().height+'px');
+    if(frame)document.documentElement.style.setProperty('--titleH',frame.getBoundingClientRect().height+'px');
+  }
+  syncMobileNavH();
+  addEventListener('resize',syncMobileNavH);
+  addEventListener('orientationchange',function(){setTimeout(syncMobileNavH,60)});
+  document.addEventListener('DOMContentLoaded',syncMobileNavH);
+  var bl=document.getElementById('brandLogo');
+  if(bl){ if(bl.complete)syncMobileNavH(); else bl.addEventListener('load',syncMobileNavH); }
+  if(window.ResizeObserver){
+    var nav=document.getElementById('topNav'), frame=document.querySelector('.h1-frame');
+    if(nav)new ResizeObserver(syncMobileNavH).observe(nav);
+    if(frame)new ResizeObserver(syncMobileNavH).observe(frame);
+  }
+})();
 </script>
 </body>
 </html>

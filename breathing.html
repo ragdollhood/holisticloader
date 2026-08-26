@@ -195,6 +195,17 @@ body.preset-active .h1-frame{display:none}
 #topTabs .tab:hover{color:var(--ink)}
 #topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
 .h1-mobile{display:none}
+.mobile-extra{display:none}
+#topTabs .contact-tab{cursor:pointer;display:block;width:100%;background:none;border:0;margin:0}
+.nav-contact-email{margin:2px 0 4px;text-align:center;font-size:12px}
+.nav-contact-email a{color:var(--gold);text-decoration:none}
+.nav-contact-email a:hover{text-decoration:underline}
+@media(max-width:720px){
+  .mobile-extra{display:block!important}
+  #topTabs a[href="terms.html"].mobile-extra{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  .nav-contact-email{padding:0 12px}
+  #donateWrap{display:none!important}
+}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
   opacity:.55}
@@ -674,8 +685,36 @@ body.immersive #howToBox{display:none}
 #authRoot{transform:translateY(-6px)}
 @media(max-width:560px){ #authRoot{transform:none} }
 </style>
+
+<style>
+/* ===== mobile page-nav dropdown (mirrors intuition.html's mobile menu) ===== */
+#menuToggle{display:none;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
+#menuToggle svg{width:17px;height:17px;flex:none}
+#menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
+body.immersive #menuToggle{opacity:0;pointer-events:none}
+body.preset-active #menuToggle{display:none}
+.tab-howto{display:none}
+.tab-row{display:contents}
+.h1-frame .title-img{display:block;margin:0 auto;height:clamp(26px,6.4vw,42px);width:auto;max-width:100%}
+@media(max-width:720px){
+  #menuToggle{display:flex}
+  #donateWrap{left:58px}
+  #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:52}
+  body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px;display:block;flex:1 1 auto;width:100%;box-sizing:border-box}
+  #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
+  #topNavLine{display:none}
+  #brandLogo{max-height:clamp(37px,9.6vw,67px)!important}
+  .tab-row{display:flex;align-items:center;gap:4px}
+  .tab-howto{display:inline-block;color:#ffd98a;font-size:11px;font-weight:700;letter-spacing:.03em;text-decoration:underline;white-space:nowrap;background:none;border:0;padding:0 4px 0 0;cursor:pointer;font-family:inherit}
+}
+</style>
 </head>
 <body>
+  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs" aria-label="Meny">
+    <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
+  </button>
+
 <noscript><div id="noscriptMsg"><div><strong>Holistic Loader</strong><br>An online space to breathe, meditate and relax to healing sound frequencies and calming nature scenes.<br>Please enable JavaScript to use the breathing circle and sounds.</div></div></noscript>
 <div class="sr-only">
   <h2>An online place to breathe, relax and heal</h2>
@@ -706,19 +745,28 @@ body.immersive #howToBox{display:none}
 <header id="topNav">
   <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
   <nav id="topTabs" aria-label="Main sections">
-    <a href="breathing.html" class="tab active" aria-current="page"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
-    <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
-    <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition Tracker</span></a>
-    <a href="yoga-loader.html" class="tab">Yoga</a>
-    <a href="mahjong.html" class="tab">Mahjong</a>
+    <div class="tab-row"><a href="breathing.html" class="tab active" aria-current="page">Guided Breathing</a><button type="button" class="tab-howto" id="tabHowToBtn">- how to use</button></div>
+    <a href="instruments.html" class="tab">Soundscape Creator</a>
+    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="yoga-loader.html" class="tab">Yoga Loader</a>
+    <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
+    <a href="intuition-loader.html" class="tab">Intuition Loader</a>
     <a href="store.html" class="tab">Shop</a>
+    <a href="terms.html" class="tab mobile-extra">Terms &amp; Conditions</a>
+    <a href="about.html" class="tab mobile-extra">About</a>
+    <button type="button" id="navContactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
+    <p id="navContactEmail" class="nav-contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
 </header>
 
 <div class="h1-frame">
-  <p class="h1-frame-title">GUIDED BREATHING</p>
+  <h1 class="sr-only">Guided Breathing</h1>
+  <picture>
+    <source srcset="images/title-guided-breathing.webp" type="image/webp">
+    <img src="images/title-guided-breathing.png" alt="Guided Breathing" class="title-img" loading="eager" decoding="async">
+  </picture>
 </div>
 
 <div id="howToBox">
@@ -972,6 +1020,16 @@ body.immersive #howToBox{display:none}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
+<script>
+/* Premium lock removed on this page: everyone gets full, unlocked access.
+   hasPremiumAccess() is redefined here (after auth.js) so every future
+   isPremiumUser()/refreshPremiumStatus() check on THIS page resolves to
+   true, and isPremium is also set immediately so nothing renders locked
+   before that first check completes. auth.js itself is untouched, so
+   every other page on the site keeps the normal premium logic. */
+function hasPremiumAccess(){ return true; }
+isPremium = true;
+</script>
 
 <script>
 const IMAGES = [{"thumb": "images/thumbs/breathe-place-universe2.jpg", "id": "rymd2", "label": "Milky Way", "data": "images/breathe-place-universe2.jpg"}, {"thumb": "images/thumbs/breathe-place-universe1.jpg", "id": "universum", "label": "Cosmos", "data": "images/breathe-place-universe1.jpg"}, {"thumb": "images/thumbs/breathe-place-forest2.jpg", "id": "skog2", "label": "Sunlit forest", "data": "images/breathe-place-forest2.jpg"}, {"thumb": "images/thumbs/breathe-place-mountain2.jpg", "id": "breathe-place-mountain2", "label": "Mountain peak", "data": "images/breathe-place-mountain2.jpg"}, {"thumb": "images/thumbs/breathe-place-mountain3.jpg", "id": "breathe-place-mountain3", "label": "Tundra lake", "data": "images/breathe-place-mountain3.jpg"}, {"thumb": "images/thumbs/breathe-place-meadow2.jpg", "id": "meadow2", "label": "Golden meadow", "data": "images/breathe-place-meadow2.jpg"}, {"thumb": "images/thumbs/breathe-place-beach2.jpg", "id": "beach2", "label": "Misty shore", "data": "images/breathe-place-beach2.jpg"}, {"thumb": "images/thumbs/breathe-place-fantasy2.jpg", "id": "fantasy2", "label": "Fairy lake", "data": "images/breathe-place-fantasy2.jpg"}, {"thumb": "images/thumbs/breathe-place-fantasy3.jpg", "id": "fantasy3", "label": "Fairy village", "data": "images/breathe-place-fantasy3.jpg"}, {"thumb": "images/thumbs/breathe-place-pasture2.jpg", "id": "pasture2", "label": "Red barn", "data": "images/breathe-place-pasture2.jpg"}, {"thumb": "images/thumbs/breathe-place-pasture3.jpg", "id": "pasture3", "label": "Country road", "data": "images/breathe-place-pasture3.jpg"}, {"thumb": "images/thumbs/breathe-place-coral2.jpg", "id": "coral2", "label": "Reef garden", "data": "images/breathe-place-coral2.jpg"}, {"thumb": "images/thumbs/breathe-place-coral3.jpg", "id": "coral3", "label": "Sunlit shallows", "data": "images/breathe-place-coral3.jpg"}, {"thumb": "images/thumbs/breathe-place-mountain1.jpg", "id": "mountain1", "label": "Mountain lake", "data": "images/breathe-place-mountain1.jpg"}, {"thumb": "images/thumbs/breathe-place-meadow1.jpg", "id": "ang", "label": "Wildflower meadow", "data": "images/breathe-place-meadow1.jpg"}, {"thumb": "images/thumbs/breathe-place-pasture1.jpg", "id": "hage", "label": "Misty pasture", "data": "images/breathe-place-pasture1.jpg"}, {"thumb": "images/thumbs/breathe-place-beach1.jpg", "id": "strand", "label": "Tropical beach", "data": "images/breathe-place-beach1.jpg"}, {"thumb": "images/thumbs/breathe-place-fantasy1.jpg", "id": "sagoskog", "label": "Enchanted forest", "data": "images/breathe-place-fantasy1.jpg"}, {"thumb": "images/thumbs/breathe-place-forest1.jpg", "id": "skog3", "label": "Birch forest", "data": "images/breathe-place-forest1.jpg"}, {"thumb": "images/thumbs/breathe-place-coral1.jpg", "id": "korallrev", "label": "Coral reef", "data": "images/breathe-place-coral1.jpg"}, {"thumb": "images/thumbs/breathe-place-clouds1.jpg", "id": "moln", "label": "Above the clouds", "data": "images/breathe-place-clouds1.jpg"}, {"thumb": "images/thumbs/breathe-place-northenlights1.jpg", "id": "norrsken", "label": "Northern lights", "data": "images/breathe-place-northenlights1.jpg"}, {"thumb": "images/thumbs/breathe-place-universe3.jpg", "id": "rymden", "label": "Galaxy", "data": "images/breathe-place-universe3.jpg"}, {"thumb": "images/thumbs/breathe-place-grow1.jpg", "id": "fro", "label": "Sprouting seed", "data": "images/breathe-place-grow1.jpg"}, {"thumb": "images/thumbs/breathe-place-therapy1.jpg", "id": "ljusterapi", "label": "Light therapy room", "data": "images/breathe-place-therapy1.jpg"}, {"thumb": "images/thumbs/breathe-place-fur1.jpg", "id": "pals", "label": "Soft fur", "data": "images/breathe-place-fur1.jpg"}];
@@ -2551,6 +2609,52 @@ async function registerVisit() {
 }
 
 registerVisit();
+</script>
+
+<script>
+(function(){
+  var mt=document.getElementById('menuToggle'), tabs=document.getElementById('topTabs');
+  function closeTabs(){document.body.classList.remove('tabs-open'); if(mt)mt.setAttribute('aria-expanded','false');}
+  function openTabs(){document.body.classList.add('tabs-open'); if(mt)mt.setAttribute('aria-expanded','true');}
+  if(mt&&tabs){
+    mt.addEventListener('click',function(e){e.stopPropagation(); document.body.classList.contains('tabs-open')?closeTabs():openTabs();});
+    tabs.addEventListener('click',function(e){ var a=e.target.closest('a'); if(a && !e.target.closest('.tab-howto'))closeTabs(); });
+    document.addEventListener('click',function(e){ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target))closeTabs(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeTabs(); });
+  }
+  (function(){
+    var btn=document.getElementById('navContactTab'), email=document.getElementById('navContactEmail');
+    if(!btn||!email)return;
+    btn.addEventListener('click',function(){
+      var showing=!email.hidden;
+      email.hidden=showing;
+      btn.setAttribute('aria-expanded',String(!showing));
+    });
+  })();
+  var tHow=document.getElementById('tabHowToBtn'), hBox=document.getElementById('howToBox');
+  if(tHow&&hBox){
+    tHow.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation();
+      closeTabs();
+      var open=hBox.classList.toggle('show'); tHow.setAttribute('aria-expanded',open?'true':'false'); });
+  }
+  function syncMobileNavH(){
+    var nav=document.getElementById('topNav');
+    var frame=document.querySelector('.h1-frame');
+    if(nav)document.documentElement.style.setProperty('--navH',nav.getBoundingClientRect().height+'px');
+    if(frame)document.documentElement.style.setProperty('--titleH',frame.getBoundingClientRect().height+'px');
+  }
+  syncMobileNavH();
+  addEventListener('resize',syncMobileNavH);
+  addEventListener('orientationchange',function(){setTimeout(syncMobileNavH,60)});
+  document.addEventListener('DOMContentLoaded',syncMobileNavH);
+  var bl=document.getElementById('brandLogo');
+  if(bl){ if(bl.complete)syncMobileNavH(); else bl.addEventListener('load',syncMobileNavH); }
+  if(window.ResizeObserver){
+    var nav=document.getElementById('topNav'), frame=document.querySelector('.h1-frame');
+    if(nav)new ResizeObserver(syncMobileNavH).observe(nav);
+    if(frame)new ResizeObserver(syncMobileNavH).observe(frame);
+  }
+})();
 </script>
 </body>
 </html>

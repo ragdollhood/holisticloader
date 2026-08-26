@@ -1101,6 +1101,16 @@ body.preset-active #menuToggle{display:none}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
 <script>
+/* Premium lock removed on this page: everyone gets full, unlocked access.
+   hasPremiumAccess() is redefined here (after auth.js) so every future
+   isPremiumUser()/refreshPremiumStatus() check on THIS page resolves to
+   true, and isPremium is also set immediately so nothing renders locked
+   before that first check completes. auth.js itself is untouched, so
+   every other page on the site keeps the normal premium logic. */
+function hasPremiumAccess(){ return true; }
+isPremium = true;
+</script>
+<script>
 const $=id=>document.getElementById(id);
 
 /* hamburger menu */
