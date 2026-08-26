@@ -120,6 +120,21 @@ body.ultra-low #cosmos{display:none}
 .h1-frame h1{margin:0;font:600 clamp(15px,4.2vw,20px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,#ffd98a,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
 @media(max-width:720px){body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(46px,12vw,84px)}#topTabs .tab{padding:8px 9px;font-size:10px}}
 
+/* ===== hamburger menu (mobile) ===== */
+#menuToggle{display:none;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;gap:7px;padding:8px 13px;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;font:600 12px Outfit,system-ui,sans-serif;letter-spacing:.05em;cursor:pointer;pointer-events:auto}
+#menuToggle svg{width:17px;height:17px;flex:none}
+#menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
+#menuToggle span{white-space:nowrap}
+@media(max-width:720px){
+  #menuToggle{display:flex}
+  #brand{margin-top:2px}
+  #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:45}
+  body.menu-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px}
+  #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
+  #topNavLine{display:none}
+}
+
 /* ===== game ===== */
 .game-panel{max-width:620px;margin:26px auto 0;padding:34px 24px 30px;text-align:center}
 .prompt-title{margin:0 0 22px;font:600 clamp(16px,3.6vw,23px) Georgia;letter-spacing:.1em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
@@ -257,6 +272,10 @@ body.ultra-low #cosmos{display:none}
 <canvas id="cosmos"></canvas>
 
 <header id="topNav">
+  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs">
+    <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
+    <span>Meny</span>
+  </button>
   <h1 id="brand"><a href="index.html"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
   <nav id="topTabs">
     <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
@@ -406,6 +425,20 @@ body.ultra-low #cosmos{display:none}
   function loop(now){rafId=requestAnimationFrame(loop);if(perf<.7&&now-frame<33)return;frame=now;let dt=Math.min(50,now-last);last=now;x.clearRect(0,0,c.width,c.height);x.fillStyle='#f3ead4';stars.forEach(s=>{s.p+=dt*.001;x.globalAlpha=.25+.45*Math.abs(Math.sin(s.p));x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});x.globalAlpha=1}
   rafId=requestAnimationFrame(loop);
   document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(rafId)}else{last=performance.now();rafId=requestAnimationFrame(loop)}});
+})();
+
+/* ===== hamburger menu toggle (mobile) ===== */
+(function(){
+  const btn=document.getElementById('menuToggle');
+  const nav=document.getElementById('topTabs');
+  if(!btn||!nav)return;
+  function closeMenu(){document.body.classList.remove('menu-open');btn.setAttribute('aria-expanded','false')}
+  function openMenu(){document.body.classList.add('menu-open');btn.setAttribute('aria-expanded','true')}
+  btn.addEventListener('click',e=>{e.stopPropagation();document.body.classList.contains('menu-open')?closeMenu():openMenu()});
+  nav.addEventListener('click',e=>{if(e.target.closest('a'))closeMenu()});
+  document.addEventListener('click',e=>{if(document.body.classList.contains('menu-open')&&!nav.contains(e.target)&&!btn.contains(e.target))closeMenu()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+  addEventListener('resize',()=>{if(innerWidth>720)closeMenu()});
 })();
 
 /* ===== keep the fixed header's height in sync so the title frame sits correctly ===== */
