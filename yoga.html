@@ -105,7 +105,8 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
 .nav-contact-email a:hover{text-decoration:underline}
 @media(max-width:720px){
   .mobile-extra{display:block!important}
-  #topTabs a[href="terms.html"].mobile-extra{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  .mobile-extra[hidden]{display:none!important}
+  #topTabs .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
   .nav-contact-email{padding:0 12px}
 }
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
@@ -453,6 +454,7 @@ body.preset-active #menuToggle{display:none}
     font-weight:500;font-size:13px;letter-spacing:.04em;display:block;box-sizing:border-box;cursor:pointer}
   #menuToggleDesktopPanel .tab:hover{color:var(--ink);background:rgba(244,241,234,.06)}
   #menuToggleDesktopPanel .tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold)}
+  #menuToggleDesktopPanel .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
   #menuToggleDesktopPanel .nav-contact-email{margin:2px 0 4px;padding:0 12px;text-align:left;font-size:12px}
   #menuToggleDesktopPanel .nav-contact-email a{color:var(--gold);text-decoration:none}
   #menuToggleDesktopPanel .nav-contact-email a:hover{text-decoration:underline}
@@ -484,7 +486,7 @@ body.preset-active #menuToggle{display:none}
     <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
     <a href="intuition.html" class="tab">Intuition Loader</a>
     <a href="shop.html" class="tab">Shop</a>
-    <a href="terms.html" class="tab">Terms &amp; Conditions</a>
+    <a href="terms.html" class="tab nav-sep">Terms &amp; Conditions</a>
     <a href="about.html" class="tab">About</a>
     <button type="button" id="menuDesktopContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="menuDesktopContactEmail">Contact</button>
     <p id="menuDesktopContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
@@ -507,7 +509,7 @@ body.preset-active #menuToggle{display:none}
     <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
     <a href="intuition.html" class="tab">Intuition Loader</a>
     <a href="shop.html" class="tab">Shop</a>
-    <a href="terms.html" class="tab mobile-extra">Terms &amp; Conditions</a>
+    <a href="terms.html" class="tab mobile-extra nav-sep">Terms &amp; Conditions</a>
     <a href="about.html" class="tab mobile-extra">About</a>
     <button type="button" id="navContactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
     <p id="navContactEmail" class="nav-contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
