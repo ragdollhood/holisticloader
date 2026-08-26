@@ -120,44 +120,25 @@ a{color:inherit}
     linear-gradient(to bottom,rgba(0,0,0,.28) 0%,transparent 18%,transparent 56%,rgba(0,0,0,.42) 100%)}
 
 
-/* ===== top corners: hamburger menu (left) + auth icon (right), same placement as the rest of the site ===== */
-#donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
-@supports(padding:max(0px)){ #donateWrap{left:max(4px,env(safe-area-inset-left))} }
-#menuBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:34px;height:34px;padding:0;
-  border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
-#menuBtn:hover{background:rgba(244,241,234,.12)}
-#menuBtn:active{transform:scale(.95)}
-#menuBtn .menu-bar{width:16px;height:2px;border-radius:2px;background:currentColor;transition:transform .22s ease,opacity .18s ease}
-#menuBtn.open .menu-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
-#menuBtn.open .menu-bar:nth-child(2){opacity:0}
-#menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-#menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;min-width:190px;
-  display:flex;flex-direction:column;
-  background:var(--glass-strong);border:1px solid var(--line);border-radius:14px;
-  padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.4);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
-#menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
-#howToBtn,#shopMenuBtn{
-  display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;width:100%;box-sizing:border-box;
-  font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);text-decoration:none;
-  background:transparent;border:none;border-radius:8px;padding:9px 10px;cursor:pointer;transition:background .15s ease}
-#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
-#howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
-#contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
-  border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--ink);cursor:pointer;transition:background .15s ease}
-#contactBtn:hover{background:rgba(244,241,234,.1)}
-#contactBtn .env{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#contactBtn .clabel{font-size:12px;letter-spacing:.04em;margin-left:8px;white-space:nowrap}
-#contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
-#contactBtn .ctext:hover{text-decoration:underline}
-#contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
+/* ===== dropdown menu (same menu as breathing.html's mobile version,
+   shown here on every screen size — mobile and desktop alike) ===== */
+#menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;
+  align-items:center;justify-content:center;width:36px;height:36px;padding:0;
+  background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;
+  color:#f3efe4;cursor:pointer;pointer-events:auto}
+#menuToggle svg{width:17px;height:17px;flex:none}
+#menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
+.tab-row{display:flex;align-items:center;gap:4px}
+.tab-howto{display:inline-block;color:#ffd98a;font-size:11px;font-weight:700;letter-spacing:.03em;
+  text-decoration:underline;white-space:nowrap;background:none;border:0;padding:0 4px 0 0;cursor:pointer;font-family:inherit}
+.nav-contact-email{margin:2px 0 4px;text-align:center;font-size:12px;padding:0 12px}
+.nav-contact-email a{color:var(--gold);text-decoration:none}
+.nav-contact-email a:hover{text-decoration:underline}
+#topTabs .contact-tab{cursor:pointer;display:block;width:100%;background:none;border:0;margin:0}
 
 #authRoot{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));z-index:45}
 
-/* ===== top header: logo + section tabs (same shared header as breathing.html / instruments.html / etc.) ===== */
+/* ===== top header: logo + dropdown nav (same shared header as breathing.html / instruments.html / etc.) ===== */
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
@@ -167,22 +148,22 @@ a{color:inherit}
 #brand{display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 8px;pointer-events:none}
 #brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
-#topTabs{display:flex;pointer-events:auto}
-#topTabs .tab{font-family:var(--ui);font-weight:500;font-size:12.5px;letter-spacing:.04em;
-  padding:9px 20px;color:var(--soft);text-decoration:none;white-space:nowrap;
-  background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
-  border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:color .25s ease,background .25s ease}
+#topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;
+  flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);
+  border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);
+  max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;
+  opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;
+  pointer-events:none;z-index:52}
+body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+#topTabs .tab{font-family:var(--ui);font-weight:500;font-size:13px;letter-spacing:.03em;
+  color:var(--soft);text-decoration:none;white-space:nowrap;
+  border:1px solid transparent;border-radius:10px;background:transparent;
+  text-align:left;margin:0;padding:11px 12px;display:block;width:100%;box-sizing:border-box;
+  transition:color .2s ease,background .2s ease}
 #topTabs .tab:hover{color:var(--ink)}
-#topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
-.tab-mobile{display:inline}
-.tab-desktop{display:none}
-@media(min-width:900px){ .tab-mobile{display:none} .tab-desktop{display:inline} }
-#topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
-  background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);opacity:.55}
+#topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold)}
 @media(max-width:560px){
   #brandLogo{max-height:clamp(46px,12vw,84px)}
-  #topTabs .tab{padding:8px 13px;font-size:11px}
 }
 
 /* ---- hanging flap under the nav — same look as instruments.html's .h1-frame ---- */
@@ -527,8 +508,6 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   #footerBowlImg{width:32px;height:32px;left:14px;bottom:12px}
 }
 
-/* ===== homepage-only: hide the tab bar so the tiles are the only choice UI ===== */
-#topTabs{display:none !important}
 #topNav{padding-bottom:2px}
 </style>
 </head>
@@ -537,40 +516,31 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   <div><strong>Holistic Loader</strong><br>Please enable JavaScript to use this page.</div>
 </div></noscript>
 
-<div id="stage"><div class="aurora"></div></div>
+<button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs" aria-label="Meny">
+  <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
+</button>
 
-<!-- hamburger menu: How to use / Shop / Contact -->
-<div id="donateWrap">
-  <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
-    <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
-  </button>
-  <div id="menuPanel" role="menu">
-    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
-      <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
-    </button>
-    <a id="shopMenuBtn" href="store.html">
-      <svg class="shop-ic" viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shop
-    </a>
-    <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
-      <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
-      <span class="clabel">Contact</span>
-      <a class="ctext" id="contactEmail" href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a>
-    </div>
-  </div>
-</div>
+<div id="stage"><div class="aurora"></div></div>
 
 <div id="authRoot"></div>
 
-<!-- shared header: logo + section tabs (same as breathing.html / instruments.html / etc.) -->
+<!-- shared header: logo + dropdown nav (same menu as breathing.html / instruments.html / etc.) -->
 <header id="topNav">
   <div id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></div>
   <nav id="topTabs" aria-label="Main sections">
-    <a href="breathing.html" class="tab"><span class="tab-mobile">Breathing</span><span class="tab-desktop">Guided Breathing</span></a>
+    <div class="tab-row"><a href="index.html" class="tab active" aria-current="page">Home</a><button type="button" class="tab-howto" id="tabHowToBtn">- how to use</button></div>
+    <a href="breathing.html" class="tab">Guided Breathing</a>
     <a href="instruments.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
-    <a href="yoga-loader.html" class="tab">Yoga</a>
+    <a href="yoga-loader.html" class="tab">Yoga Loader</a>
+    <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
+    <a href="intuition-loader.html" class="tab">Intuition Loader</a>
+    <a href="store.html" class="tab">Shop</a>
+    <a href="terms.html" class="tab">Terms &amp; Conditions</a>
+    <a href="about.html" class="tab">About</a>
+    <button type="button" id="navContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
+    <p id="navContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
   </nav>
-  <div id="topNavLine"></div>
 </header>
 
 <!-- "how to use" info box -->
@@ -673,63 +643,41 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 <script>
 const $=id=>document.getElementById(id);
 
-/* hamburger menu */
-{
-  const mBtn=$('menuBtn'), mPanel=$('menuPanel');
-  const closeMenu=()=>{ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
-  window.closeHamburgerMenu=closeMenu;
-  if(mBtn&&mPanel){
-    mBtn.addEventListener('click',e=>{ e.stopPropagation();
-      if(typeof window.closeAccountMenu==='function') window.closeAccountMenu();
-      const open=mPanel.classList.toggle('show'); mBtn.classList.toggle('open',open); mBtn.setAttribute('aria-expanded',open?'true':'false');
-      if(!open){ const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
-    document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
+/* dropdown menu (same behavior as breathing.html's mobile menu) */
+(function(){
+  const mt=$('menuToggle'), tabs=$('topTabs');
+  function closeTabs(){ document.body.classList.remove('tabs-open'); if(mt)mt.setAttribute('aria-expanded','false'); }
+  function openTabs(){ document.body.classList.add('tabs-open'); if(mt)mt.setAttribute('aria-expanded','true'); }
+  if(mt&&tabs){
+    mt.addEventListener('click',e=>{ e.stopPropagation(); document.body.classList.contains('tabs-open')?closeTabs():openTabs(); });
+    tabs.addEventListener('click',e=>{ const a=e.target.closest('a'); if(a && !e.target.closest('.tab-howto'))closeTabs(); });
+    document.addEventListener('click',e=>{ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target))closeTabs(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeTabs(); });
   }
-}
 
-/* contact envelope */
-{
-  const cBtn=$('contactBtn');
-  const hide=()=>{ if(cBtn){cBtn.classList.remove('open');cBtn.setAttribute('aria-expanded','false');} };
-  function updateContactMaxWidth(){
-    if(!cBtn||innerWidth<=560)return;
-    const rect=cBtn.getBoundingClientRect();
-    const avail=Math.max(120,innerWidth-rect.left-16);
-    cBtn.style.maxWidth=avail+'px';
+  /* contact tab (expand/collapse email) */
+  const cBtn=$('navContactTab'), cEmail=$('navContactEmail');
+  if(cBtn&&cEmail){
+    cBtn.addEventListener('click',()=>{
+      const showing=!cEmail.hidden;
+      cEmail.hidden=showing;
+      cBtn.setAttribute('aria-expanded',String(!showing));
+    });
   }
-  if(cBtn)cBtn.addEventListener('click',e=>{ e.stopPropagation();
-    updateContactMaxWidth();
-    const open=cBtn.classList.toggle('open'); cBtn.setAttribute('aria-expanded',open?'true':'false'); });
-  if(cBtn)cBtn.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cBtn.click(); } });
-  {const cEmail=$('contactEmail'); if(cEmail)cEmail.addEventListener('click',e=>e.stopPropagation());}
-  document.addEventListener('click',e=>{ if(cBtn&&cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hide(); });
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
-  addEventListener('resize',()=>{ if(cBtn&&cBtn.classList.contains('open'))updateContactMaxWidth(); });
-}
 
-/* how to use box */
-{
-  const hBtn=$('howToBtn'), hBox=$('howToBox');
-  const hide=()=>{ if(hBox){hBox.classList.remove('show');} if(hBtn)hBtn.setAttribute('aria-expanded','false'); };
-  function positionHowToBox(){
-    if(!hBtn||!hBox||innerWidth<=560)return;
-    const r=hBtn.getBoundingClientRect();
-    const maxLeft=innerWidth-hBox.offsetWidth-12;
-    hBox.style.left=Math.max(12,Math.min(r.left,maxLeft))+'px';
-    hBox.style.top=(r.bottom+7)+'px';
-  }
-  if(hBtn&&hBox){
-    hBtn.addEventListener('click',e=>{ e.stopPropagation();
-      positionHowToBox();
-      const open=hBox.classList.toggle('show'); hBtn.setAttribute('aria-expanded',open?'true':'false'); });
-    document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
-    addEventListener('resize',()=>{ if(hBox.classList.contains('show'))positionHowToBox(); });
+  /* how to use box */
+  const tHow=$('tabHowToBtn'), hBox=$('howToBox');
+  const hideHowTo=()=>{ if(hBox)hBox.classList.remove('show'); if(tHow)tHow.setAttribute('aria-expanded','false'); };
+  if(tHow&&hBox){
+    tHow.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
+      closeTabs();
+      const open=hBox.classList.toggle('show'); tHow.setAttribute('aria-expanded',open?'true':'false'); });
+    document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==tHow) hideHowTo(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape')hideHowTo(); });
     const hClose=$('howToClose');
-    if(hClose)hClose.addEventListener('click',e=>{ e.stopPropagation(); hide(); if(typeof window.closeHamburgerMenu==='function')window.closeHamburgerMenu(); });
+    if(hClose)hClose.addEventListener('click',e=>{ e.stopPropagation(); hideHowTo(); });
   }
-}
+})();
 
 </script>
 
