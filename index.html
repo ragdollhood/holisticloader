@@ -129,8 +129,6 @@ a{color:inherit}
 #menuToggle svg{width:17px;height:17px;flex:none}
 #menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
 .tab-row{display:flex;align-items:center;gap:4px}
-.tab-howto{display:inline-block;color:#ffd98a;font-size:11px;font-weight:700;letter-spacing:.03em;
-  text-decoration:underline;white-space:nowrap;background:none;border:0;padding:0 4px 0 0;cursor:pointer;font-family:inherit}
 .nav-contact-email{margin:2px 0 4px;text-align:center;font-size:12px;padding:0 12px}
 .nav-contact-email a{color:var(--gold);text-decoration:none}
 .nav-contact-email a:hover{text-decoration:underline}
@@ -162,6 +160,7 @@ body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);poi
   transition:color .2s ease,background .2s ease}
 #topTabs .tab:hover{color:var(--ink)}
 #topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold)}
+#topTabs .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
 @media(max-width:560px){
   #brandLogo{max-height:clamp(46px,12vw,84px)}
 }
@@ -200,28 +199,6 @@ body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);poi
   }
 }
 
-/* ===== "how to use" info box ===== */
-#howToBox{
-  position:fixed;top:0;left:0;transform:translateY(-6px) scale(.97);
-  z-index:46;width:min(680px,90vw);box-sizing:border-box;
-  max-height:min(80vh,720px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
-  background:var(--glass-strong);border:1px solid var(--line);border-radius:16px;
-  padding:22px 26px 26px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;
-}
-#howToBox.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
-#howToClose{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
-  display:inline-flex;align-items:center;justify-content:center;color:var(--muted);z-index:2;
-  background:rgba(20,14,26,.7);transition:background .2s ease,color .2s ease}
-#howToClose:hover{background:rgba(244,241,234,.14);color:var(--ink)}
-#howToClose svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
-#howToBox h3{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px}
-#howToBox p{font-size:12.5px;line-height:1.6;color:var(--muted)}
-@media(max-width:560px){
-  #howToBox{position:fixed;inset:0;top:0;left:0;right:0;bottom:0;width:100%;height:100%;max-width:none;max-height:none;border-radius:0;
-    padding:max(28px,calc(env(safe-area-inset-top) + 16px)) 18px max(28px,env(safe-area-inset-bottom))}
-  #howToClose{top:max(14px,env(safe-area-inset-top));right:14px}
-}
 
 /* ===================================================================
    HERO — headline + subhead only. The entry tiles below ARE the CTA.
@@ -528,29 +505,20 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 <header id="topNav">
   <div id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></div>
   <nav id="topTabs" aria-label="Main sections">
-    <div class="tab-row"><a href="index.html" class="tab active" aria-current="page">Home</a><button type="button" class="tab-howto" id="tabHowToBtn">- how to use</button></div>
+    <a href="index.html" class="tab active" aria-current="page">Home</a>
     <a href="breathing.html" class="tab">Guided Breathing</a>
     <a href="instruments.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="yoga-loader.html" class="tab">Yoga Loader</a>
     <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
-    <a href="intuition.html" class="tab">Intuition Loader</a>
+    <a href="intuition-loader.html" class="tab">Intuition Loader</a>
     <a href="store.html" class="tab">Shop</a>
-    <a href="terms.html" class="tab">Terms &amp; Conditions</a>
+    <a href="terms.html" class="tab nav-sep">Terms &amp; Conditions</a>
     <a href="about.html" class="tab">About</a>
     <button type="button" id="navContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
     <p id="navContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
   </nav>
 </header>
-
-<!-- "how to use" info box -->
-<div id="howToBox">
-  <button id="howToClose" type="button" aria-label="Close">
-    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-  </button>
-  <h3>How to use</h3>
-  <p>This is home base. Tap any of the four options below to jump straight into Breathing, Sound, Yoga or Nutrition.</p>
-</div>
 
 <!-- ===== page content ===== -->
 <main>
@@ -610,7 +578,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
   </div>
 
   <section id="featuredSection" aria-label="Featured">
-    <a id="intuitionLink" href="intuition.html" aria-label="Open Intuition Loader">
+    <a id="intuitionLink" href="intuition.html" aria-label="Open Intuition">
       <img src="images/preview-intuition.jpg" alt="Intuition Loader" loading="lazy" decoding="async">
     </a>
     <a id="gameLink" href="mahjong.html" aria-label="Play Mahjong Loader">
@@ -650,7 +618,7 @@ const $=id=>document.getElementById(id);
   function openTabs(){ document.body.classList.add('tabs-open'); if(mt)mt.setAttribute('aria-expanded','true'); }
   if(mt&&tabs){
     mt.addEventListener('click',e=>{ e.stopPropagation(); document.body.classList.contains('tabs-open')?closeTabs():openTabs(); });
-    tabs.addEventListener('click',e=>{ const a=e.target.closest('a'); if(a && !e.target.closest('.tab-howto'))closeTabs(); });
+    tabs.addEventListener('click',e=>{ const a=e.target.closest('a'); if(a)closeTabs(); });
     document.addEventListener('click',e=>{ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target))closeTabs(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeTabs(); });
   }
@@ -663,19 +631,6 @@ const $=id=>document.getElementById(id);
       cEmail.hidden=showing;
       cBtn.setAttribute('aria-expanded',String(!showing));
     });
-  }
-
-  /* how to use box */
-  const tHow=$('tabHowToBtn'), hBox=$('howToBox');
-  const hideHowTo=()=>{ if(hBox)hBox.classList.remove('show'); if(tHow)tHow.setAttribute('aria-expanded','false'); };
-  if(tHow&&hBox){
-    tHow.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
-      closeTabs();
-      const open=hBox.classList.toggle('show'); tHow.setAttribute('aria-expanded',open?'true':'false'); });
-    document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==tHow) hideHowTo(); });
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape')hideHowTo(); });
-    const hClose=$('howToClose');
-    if(hClose)hClose.addEventListener('click',e=>{ e.stopPropagation(); hideHowTo(); });
   }
 })();
 
