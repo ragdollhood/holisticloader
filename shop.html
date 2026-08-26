@@ -32,16 +32,16 @@
     --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
 
     /* ---- ljust & glatt tema för själva butiken ---- */
-    --store-ink:#4a3414;
-    --store-soft:#9c7d4a;
-    --store-gold:#d9a441;
-    --store-card:#fffdf6;
-    --store-line:rgba(217,164,65,.4);
+    ---ink:#4a3414;
+    ---soft:#9c7d4a;
+    ---gold:#d9a441;
+    ---card:#fffdf6;
+    ---line:rgba(217,164,65,.4);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{min-height:100%}
   body{
-    color:var(--store-ink);
+    color:var(---ink);
     font-family:'Outfit',-apple-system,system-ui,'Segoe UI',sans-serif;
     display:flex;flex-direction:column;align-items:center;
     padding:max(164px,calc(env(safe-area-inset-top) + 148px)) 16px 48px;
@@ -101,7 +101,7 @@
   body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px))}
   .affiliate-note{
     max-width:640px;margin:84px auto 0;padding:0 16px;
-    text-align:center;font-size:11px;color:var(--store-soft);
+    text-align:center;font-size:11px;color:var(---soft);
     letter-spacing:.03em;line-height:1.5;
   }
   @media(max-width:720px){
@@ -175,8 +175,8 @@
   }
 
   /* ===================== BUTIKEN: ljus & glad produktgrid ===================== */
-  .store-wrap{width:100%;max-width:1360px;margin:30px auto 0}
-  .store-intro{max-width:640px;margin:0 auto 22px;text-align:center;font-size:12.5px;color:var(--store-soft);line-height:1.6}
+  .-wrap{width:100%;max-width:1360px;margin:30px auto 0}
+  .-intro{max-width:640px;margin:0 auto 22px;text-align:center;font-size:12.5px;color:var(---soft);line-height:1.6}
   .product-grid{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(148px,1fr));
@@ -184,7 +184,7 @@
   }
   .product-card{
     display:flex;flex-direction:column;align-items:center;text-align:center;
-    background:var(--store-card);
+    background:var(---card);
     border:1.5px solid var(--store-gold);
     border-radius:20px;
     padding:12px;
@@ -306,10 +306,10 @@ body.preset-active #menuToggle{display:none}
     <a href="breathing.html" class="tab">Guided Breathing</a>
     <a href="instruments.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
-    <a href="yoga-loader.html" class="tab">Yoga Loader</a>
+    <a href="yoga.html" class="tab">Yoga Loader</a>
     <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
-    <a href="intuition-loader.html" class="tab">Intuition Loader</a>
-    <a href="store.html" class="tab active" aria-current="page">Shop</a>
+    <a href="intuition.html" class="tab">Intuition Loader</a>
+    <a href="shop.html" class="tab active" aria-current="page">Shop</a>
     <a href="terms.html" class="tab mobile-extra">Terms &amp; Conditions</a>
     <a href="about.html" class="tab mobile-extra">About</a>
     <button type="button" id="navContactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
