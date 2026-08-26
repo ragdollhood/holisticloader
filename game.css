@@ -2241,6 +2241,8 @@ button {
       aspect-ratio: 3 / 2;
       margin: 0;
       z-index: 20;
+      border: 5px solid #f8d98b;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.4);
     }
 
     /* Belt-and-suspenders: whatever ends up INSIDE the ad slot — the
@@ -2271,28 +2273,28 @@ button {
        interstitial (#playAdCloseBtn). */
     .ad-slot-close {
       position: absolute;
-      top: 6px;
-      right: 6px;
+      top: 5px;
+      right: 5px;
       z-index: 7;
-      width: 24px;
-      height: 24px;
+      width: 34px;
+      height: 34px;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.28);
-      background: rgba(10,8,20,.55);
-      color: #fff;
-      font-size: 12px;
+      border: 2px solid rgba(0,0,0,.25);
+      background: #f8d98b;
+      color: #24162c;
+      font-size: 18px;
+      font-weight: 900;
       line-height: 1;
       cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 2px 8px rgba(0,0,0,.35);
     }
     .ad-slot-close:hover,
     .ad-slot-close:focus-visible {
-      background: rgba(10,8,20,.8);
+      background: #fff2cf;
       outline: none;
     }
 
