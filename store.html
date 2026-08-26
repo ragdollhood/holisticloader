@@ -79,6 +79,17 @@
   #topTabs .tab:hover{color:var(--ink)}
   #topTabs .tab.active{color:var(--gold);background:var(--panel);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
   .h1-mobile{display:none}
+  .mobile-extra{display:none}
+  #topTabs .contact-tab{cursor:pointer;display:block;width:100%;background:none;border:0;margin:0}
+  .nav-contact-email{margin:2px 0 4px;text-align:center;font-size:12px}
+  .nav-contact-email a{color:var(--gold);text-decoration:none}
+  .nav-contact-email a:hover{text-decoration:underline}
+  @media(max-width:720px){
+    .mobile-extra{display:block!important}
+    #topTabs a[href="terms.html"].mobile-extra{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+    .nav-contact-email{padding:0 12px}
+    #donateWrap{display:none!important}
+  }
   #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
     background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
     opacity:.55}
@@ -292,12 +303,17 @@ body.preset-active #menuToggle{display:none}
 <header id="topNav">
   <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
   <nav id="topTabs" aria-label="Main sections">
-    <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
-    <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
-    <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition Tracker</span></a>
-    <a href="yoga-loader.html" class="tab">Yoga</a>
-    <a href="mahjong.html" class="tab">MAHJONG</a>
-    <a href="store.html" class="tab active" aria-current="page">SHOP</a>
+    <a href="breathing.html" class="tab">Guided Breathing</a>
+    <a href="instruments.html" class="tab">Soundscape Creator</a>
+    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="yoga-loader.html" class="tab">Yoga Loader</a>
+    <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
+    <a href="intuition-loader.html" class="tab">Intuition Loader</a>
+    <a href="store.html" class="tab active" aria-current="page">Shop</a>
+    <a href="terms.html" class="tab mobile-extra">Terms &amp; Conditions</a>
+    <a href="about.html" class="tab mobile-extra">About</a>
+    <button type="button" id="navContactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
+    <p id="navContactEmail" class="nav-contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
@@ -614,6 +630,16 @@ registerVisit();
 </script>
 
 <script>
+(function(){
+  var btn=document.getElementById('navContactTab'), email=document.getElementById('navContactEmail');
+  if(btn&&email){
+    btn.addEventListener('click',function(){
+      var showing=!email.hidden;
+      email.hidden=showing;
+      btn.setAttribute('aria-expanded',String(!showing));
+    });
+  }
+})();
 (function(){
   var mt=document.getElementById('menuToggle'), tabs=document.getElementById('topTabs');
   function closeTabs(){document.body.classList.remove('tabs-open'); if(mt)mt.setAttribute('aria-expanded','false');}
