@@ -379,7 +379,6 @@ function _buildAuthDom() {
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.06 6.6.87-4.85 4.6 1.2 6.6L12 17.4l-5.85 3.23 1.2-6.6L2.5 9.43l6.6-.87L12 2.5z"/></svg>
           <span>Free Trial (14 Days)</span>
         </button>
-        <button id="readMorePremiumBtn" type="button">Read more about Premium</button>
       </div>
     `;
     document.body.appendChild(modal);
@@ -443,7 +442,7 @@ function _wireAuthDom() {
     passwordInput.required = true;
 
     if (mode === "register") {
-      title.textContent = window.HL_HIDE_TRIAL_UI ? "Create your account" : "Start your free trial";
+      title.textContent = window.HL_HIDE_TRIAL_UI ? "Create your account" : "Free Registration";
       submitBtn.textContent = window.HL_HIDE_TRIAL_UI ? "Create Account" : "Start Free Trial";
       if (trialLabel) trialLabel.textContent = "Back to Login";
       if (forgotRow) forgotRow.style.display = "none";
