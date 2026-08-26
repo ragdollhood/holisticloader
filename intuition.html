@@ -118,6 +118,8 @@ body.ultra-low #cosmos{display:none}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#ffd98a 15%,#c9a8ff 50%,#ffd98a 85%,transparent)}
 .h1-frame{position:fixed;top:var(--navH,max(118px,calc(env(safe-area-inset-top) + 106px)));left:50%;transform:translateX(-50%);z-index:30;width:min(94vw,820px);padding:9px 24px;border:1.5px solid #ffd98a;border-top:0;border-radius:0 0 30px 30px;background:rgba(16,11,25,.72);backdrop-filter:blur(10px);text-align:center}
 .h1-frame h1{margin:0;font:600 clamp(15px,4.2vw,20px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,#ffd98a,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
+.h1-frame .title-img{display:block;margin:0 auto;height:clamp(26px,6.4vw,42px);width:auto;max-width:100%}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:720px){body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(46px,12vw,84px)}#topTabs .tab{padding:8px 9px;font-size:10px}}
 
 /* ===== hamburger menu (mobile) ===== */
@@ -288,7 +290,13 @@ body.ultra-low #cosmos{display:none}
   <div id="topNavLine"></div>
 </header>
 
-<div class="h1-frame"><h1>INTUITION LOADER</h1></div>
+<div class="h1-frame">
+  <h1 class="sr-only">Intuition Loader</h1>
+  <picture>
+    <source srcset="images/title-intuition-loader.webp" type="image/webp">
+    <img src="images/title-intuition-loader.png" alt="Intuition Loader" class="title-img" width="2171" height="186" loading="eager" decoding="async">
+  </picture>
+</div>
 
 <main class="app">
   <p class="intro-tagline">Five quick, calming games. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance.</p>
