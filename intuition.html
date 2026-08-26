@@ -120,7 +120,7 @@ body.ultra-low #cosmos{display:none}
 .h1-frame h1{margin:0;font:600 clamp(15px,4.2vw,20px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,#ffd98a,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
 .h1-frame .title-img{display:block;margin:0 auto;height:clamp(26px,6.4vw,42px);width:auto;max-width:100%}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-@media(max-width:720px){body{padding-top:max(124px,calc(env(safe-area-inset-top) + 108px))}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.intro-tagline{margin:8px auto 12px;padding-right:54px;line-height:1.5}}
+@media(max-width:720px){body{padding-top:calc(var(--navH,108px) + var(--titleH,50px) + 10px)}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.intro-tagline{margin:0 auto 12px;padding-right:54px;line-height:1.5}}
 
 /* ===== hamburger menu (mobile) ===== */
 #menuToggle{display:none;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
@@ -272,12 +272,7 @@ body.ultra-low #cosmos{display:none}
 #floatMeterMarker::after{right:-6px;border-left:6px solid #fff;transform:translateY(-50%)}
 #meterInfoBtn{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 14px Georgia;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:0}
 #meterInfoBtn:hover{background:rgba(255,217,138,.18)}
-@media(max-width:720px){#floatMeter{left:auto;right:10px;gap:8px}#floatMeterScore{font-size:clamp(14px,4vw,18px)}#floatMeterTrack{width:16px;height:min(40vh,290px);border-radius:9px}#meterInfoBtn{width:25px;height:25px;font-size:12px}
-/* docked mode: meter is moved inside the first exercise box's panel so its height always matches that panel exactly */
-#floatMeter.docked{position:absolute;top:0;bottom:0;right:-28px;left:auto;transform:none;justify-content:center;gap:4px}
-#floatMeter.docked #floatMeterScore{font-size:11px}
-#floatMeter.docked #floatMeterTrack{height:100%;max-height:none;width:12px}
-.tri-panel.meter-host{position:relative}
+@media(max-width:720px){#floatMeter{left:auto;right:10px;gap:8px}#floatMeterScore{font-size:clamp(14px,4vw,18px)}#floatMeterTrack{width:16px;height:min(38vh,270px);border-radius:9px}#meterInfoBtn{width:25px;height:25px;font-size:12px}
 .triple-wrap{padding-right:28px}
 }
 
@@ -297,6 +292,15 @@ body.ultra-low #cosmos{display:none}
 @media (min-width:721px){
   .h1-mobile{display:none}
   .h1-desktop{display:inline}
+  .mobile-extra{display:none}
+}
+#topTabs .contact-tab{font:inherit;cursor:pointer;color:inherit;display:block;width:100%;background:none;text-align:inherit}
+.contact-email{margin:2px 0 4px;text-align:center;font-size:12px}
+.contact-email a{color:var(--gold);text-decoration:none}
+.contact-email a:hover{text-decoration:underline}
+@media(max-width:720px){
+  #topTabs a[href="terms.html"].mobile-extra{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  .contact-email{padding:0 12px}
 }
 </style></head>
 <body>
@@ -314,13 +318,17 @@ body.ultra-low #cosmos{display:none}
   </h1>
   <nav id="topTabs">
     <a href="index.html" id="menuBrand"><img src="images/logga-holistictitel.png" alt="Holistic Loader"></a>
-    <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
-    <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
-    <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition tracker</span></a>
-    <a href="yoga-loader.html" class="tab">Yoga</a>
-    <a href="mahjong.html" class="tab">Mahjong</a>
+    <a href="breathing.html" class="tab">Guided Breathing</a>
+    <a href="instruments.html" class="tab">Soundscape Creator</a>
+    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="yoga-loader.html" class="tab">Yoga Loader</a>
+    <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
     <a href="intuition-loader.html" class="tab active" aria-current="page">Intuition Loader</a>
     <a href="store.html" class="tab">Shop</a>
+    <a href="terms.html" class="tab mobile-extra">Terms &amp; Conditions</a>
+    <a href="about.html" class="tab mobile-extra">About</a>
+    <button type="button" id="contactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="contactEmail">Contact</button>
+    <p id="contactEmail" class="contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
   </nav>
   <div id="topNavLine"></div>
 </header>
@@ -441,7 +449,6 @@ body.ultra-low #cosmos{display:none}
   </section>
 </main>
 
-<span id="floatMeterAnchor" style="display:none" aria-hidden="true"></span>
 <div id="floatMeter">
   <p id="floatMeterScore" aria-hidden="true"><span id="floatScoreCorrect">0</span>/<span id="floatScoreTotal">0</span></p>
   <div id="floatMeterTrack" aria-hidden="true">
@@ -501,6 +508,18 @@ body.ultra-low #cosmos{display:none}
   addEventListener('resize',()=>{if(innerWidth>720)closeMenu()});
 })();
 
+/* ===== "Contact" tab in the menu — reveals the email address on click ===== */
+(function(){
+  const btn=document.getElementById('contactTab');
+  const email=document.getElementById('contactEmail');
+  if(!btn||!email)return;
+  btn.addEventListener('click',()=>{
+    const showing=!email.hidden;
+    email.hidden=showing;
+    btn.setAttribute('aria-expanded',String(!showing));
+  });
+})();
+
 /* ===== "i" info button — opens the today's-intuition-level info box ===== */
 (function(){
   const btn=document.getElementById('meterInfoBtn');
@@ -513,29 +532,6 @@ body.ultra-low #cosmos{display:none}
   closeBtn.addEventListener('click',closeInfo);
   overlay.addEventListener('click',e=>{if(e.target===overlay)closeInfo()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)closeInfo()});
-})();
-
-/* ===== on mobile, dock the floating meter inside the first exercise box so its height always matches that box exactly ===== */
-(function(){
-  const meter=document.getElementById('floatMeter');
-  const anchor=document.getElementById('floatMeterAnchor');
-  const host=document.querySelector('.tri-panel');
-  if(!meter||!anchor||!host)return;
-  const mq=window.matchMedia('(max-width:720px)');
-  function apply(){
-    if(mq.matches){
-      if(meter.parentElement!==host){host.appendChild(meter)}
-      host.classList.add('meter-host');
-      meter.classList.add('docked');
-    }else{
-      if(meter.parentElement!==anchor.parentElement||meter.previousElementSibling!==anchor){anchor.parentElement.insertBefore(meter,anchor.nextSibling)}
-      host.classList.remove('meter-host');
-      meter.classList.remove('docked');
-    }
-  }
-  apply();
-  mq.addEventListener?mq.addEventListener('change',apply):mq.addListener(apply);
-  addEventListener('orientationchange',()=>setTimeout(apply,60));
 })();
 
 /* ===== keep the fixed header's height in sync so the title frame sits correctly ===== */
