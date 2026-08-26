@@ -264,12 +264,13 @@ body.ultra-low #cosmos{display:none}
 
 /* ===== floating vertical "today's meter" widget (fixed, no text) ===== */
 #floatMeter{position:fixed;top:50%;right:14px;transform:translateY(-50%);z-index:48;display:flex;flex-direction:column;align-items:center;gap:12px}
-#floatMeterTrack{position:relative;width:14px;height:min(28vh,180px);border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:hidden;box-shadow:0 12px 30px #0008}
+#floatMeterScore{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap}
+#floatMeterTrack{position:relative;width:14px;height:min(46vh,340px);border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:hidden;box-shadow:0 12px 30px #0008}
 #floatMeterFill{position:absolute;left:0;right:0;bottom:0;height:0%;background:linear-gradient(0deg,#ff8a5c,var(--gold),var(--violet));transition:height .4s ease}
 #floatMeterMarker{position:absolute;left:-4px;right:-4px;height:2px;background:#f3efe4cc;bottom:50%}
 #meterInfoBtn{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 14px Georgia;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:0}
 #meterInfoBtn:hover{background:rgba(255,217,138,.18)}
-@media(max-width:720px){#floatMeter{right:8px;gap:9px}#floatMeterTrack{width:11px;height:min(22vh,130px)}#meterInfoBtn{width:25px;height:25px;font-size:12px}}
+@media(max-width:720px){#floatMeter{right:8px;gap:8px}#floatMeterScore{font-size:clamp(14px,4vw,18px)}#floatMeterTrack{width:11px;height:min(36vh,240px)}#meterInfoBtn{width:25px;height:25px;font-size:12px}}
 
 /* ===== info box (opened via the "i" button) showing the full meter panel ===== */
 .meter-info-overlay{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,4,9,.72);backdrop-filter:blur(4px)}
@@ -433,6 +434,7 @@ body.ultra-low #cosmos{display:none}
 </main>
 
 <div id="floatMeter">
+  <p id="floatMeterScore" aria-hidden="true"><span id="floatScoreCorrect">0</span>/<span id="floatScoreTotal">0</span></p>
   <div id="floatMeterTrack" aria-hidden="true">
     <div id="floatMeterFill"></div>
     <div id="floatMeterMarker"></div>
@@ -526,7 +528,15 @@ body.ultra-low #cosmos{display:none}
   const meterFill=$('#meterFill'),meterLevel=$('#meterLevel'),meterDesc=$('#meterDesc'),meterSub=$('#meterSub');
   const meterMarker=$('#meterMarker'),meterMarkerLabel=$('#meterMarkerLabel');
   const floatMeterFill=$('#floatMeterFill'),floatMeterMarker=$('#floatMeterMarker');
+  const floatScoreCorrectEl=$('#floatScoreCorrect'),floatScoreTotalEl=$('#floatScoreTotal');
   let scoreCorrect=0,scoreTotal=0,AC;
+
+  function syncScoreDisplay(){
+    scoreCorrectEl.textContent=scoreCorrect;
+    scoreTotalEl.textContent=scoreTotal;
+    if(floatScoreCorrectEl)floatScoreCorrectEl.textContent=scoreCorrect;
+    if(floatScoreTotalEl)floatScoreTotalEl.textContent=scoreTotal;
+  }
 
   /* ===== streak tracker (current session streak + all-time best, remembered locally) ===== */
   const BEST_STREAK_KEY='intuitionBestStreak';
@@ -580,8 +590,7 @@ body.ultra-low #cosmos{display:none}
     scoreTotal=0;
     currentStreak=0;
     updateStreakDisplay();
-    scoreCorrectEl.textContent=scoreCorrect;
-    scoreTotalEl.textContent=scoreTotal;
+    syncScoreDisplay();
     updateLogButtonState();
   }
   scoreReset.addEventListener('click',resetScore);
@@ -774,8 +783,7 @@ body.ultra-low #cosmos{display:none}
     saveDayStats(dayStats);
     updateMeter();
     registerStreak(correct);
-    scoreCorrectEl.textContent=scoreCorrect;
-    scoreTotalEl.textContent=scoreTotal;
+    syncScoreDisplay();
     updateLogButtonState();
     if(navigator.vibrate){
       try{navigator.vibrate(correct?45:[30,50,30]);}catch(e){}
