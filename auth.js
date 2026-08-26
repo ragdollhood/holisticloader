@@ -52,8 +52,8 @@
         link to reset-password.html (which must exist at your site root
         and use the SAME Supabase project's URL/anon key).
 
-     FREE TRIAL FLOW (Free Trial button -> non-paying trial user):
-       Click "Free Trial (14 Days)" (login modal or premium popup)
+      FLOW ( button -> non-paying trial user):
+       Click " (14 Days)" (login modal or premium popup)
          -> the same email/password form switches to register mode
          -> submit -> registerUser() creates the auth user (Postgres
             trigger creates their profiles row with premium=false)
@@ -119,7 +119,7 @@ function _firePremiumChangeListeners() {
    3. PREMIUM DETECTION (source of truth = Supabase, not localStorage)
 ----------------------------------------------------------------------- */
 /* Central access rule: paying customers always have access. Everyone
-   else gets a 14-day free trial starting from their account's
+   else gets a 14-day  starting from their account's
    created_at (Supabase Auth user.created_at). */
 function hasPremiumAccess(user, profileData) {
   if (profileData && profileData.premium) return true;
@@ -377,7 +377,7 @@ function _buildAuthDom() {
         </form>
         <button id="startTrialBtn" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.06 6.6.87-4.85 4.6 1.2 6.6L12 17.4l-5.85 3.23 1.2-6.6L2.5 9.43l6.6-.87L12 2.5z"/></svg>
-          <span>Free Trial (14 Days)</span>
+          <span>Free Registration</span>
         </button>
       </div>
     `;
@@ -454,7 +454,7 @@ function _wireAuthDom() {
       // "Log in" points at removing ads instead of a Premium trial —
       // it still just switches the form to register mode underneath,
       // since an account is required either way.
-      if (trialLabel) trialLabel.textContent = window.HL_HIDE_TRIAL_UI ? "Remove Ads for $2.99" : "Free Trial (14 Days)";
+      if (trialLabel) trialLabel.textContent = window.HL_HIDE_TRIAL_UI ? "Remove Ads for $2.99" : "Free Registration";
       if (forgotRow) forgotRow.style.display = "";
       passwordInput.setAttribute("autocomplete", "current-password");
     }
