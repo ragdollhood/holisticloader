@@ -270,28 +270,17 @@
           </ol>
         </div>
 
-        <!-- Monetization — the ONE purchasable offer in the game (see
-             refreshMonetizationUI()). Islands and cloud save are free
-             for everyone with an account; the only thing for sale here
-             is removing ads. Same map-only visibility window as the
-             How to Play box just above it. -->
-        <div class="hud remove-ads-card" id="removeAdsCard" aria-label="Remove Ads">
-          <span class="premium-eyebrow">Remove Ads</span>
-          <h3 class="premium-headline">Play Without Interruptions</h3>
-          <p class="premium-sub">Enjoy an ad-free gameplay experience with a one-time purchase.</p>
-          <div class="remove-ads-price">$2.99</div>
-          <button type="button" class="remove-ads-btn" id="removeAdsBuyBtn">Remove Ads</button>
-          <p class="remove-ads-note">No recurring fees.</p>
+        <!-- Donation button (replaces the old "Remove Ads" purchase
+             card). Links straight to the Stripe payment link — no
+             checkout-session Edge Function, no account requirement.
+             Reuses the .remove-ads-card wrapper so it keeps the same
+             map-only / not-ads-removed visibility window and position
+             as before. -->
+        <div class="hud remove-ads-card" id="removeAdsCard" aria-label="Support the game">
+          <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="donation-link" id="donationLink">
+            <img src="images/donation.jpg" alt="Donate" class="donation-image">
+          </a>
         </div>
-
-        <!-- Quiet nudge for existing Holistic Loader members — not a
-             second offer, just a helpful link into the same login
-             modal the account icon opens. Same visibility window as
-             the card above (hidden once ads are already gone). -->
-        <p class="holistic-member-line" id="holisticMemberLine">
-          Already a Holistic Loader member?
-          <button type="button" id="holisticMemberSignInBtn">Sign in here</button>
-        </p>
 
         <!-- Shown instead of the two blocks above once ads are already
              gone (Premium sign-in OR a completed ads_removed purchase)

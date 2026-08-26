@@ -851,13 +851,11 @@ function getItem(level) {
       }
     }
 
-    // Sidebar Remove Ads card (map-only, hidden once ads are already
-    // gone — see .remove-ads-card CSS / refreshMonetizationUI()). Buy
-    // starts the Stripe purchase; the member line opens the login
-    // modal for existing Holistic Loader accounts. Neither shows any
-    // subscription pricing — that lives only on holisticloader.com.
-    document.getElementById("removeAdsBuyBtn").addEventListener("click", startRemoveAdsPurchase);
-    document.getElementById("holisticMemberSignInBtn").addEventListener("click", openLoginModal);
+    // Sidebar donation button (map-only, hidden once ads are already
+    // gone — see .remove-ads-card CSS / refreshMonetizationUI()). It's
+    // a plain link to a Stripe payment link in the HTML now, so it
+    // needs no click handler here. The old #removeAdsBuyBtn /
+    // #holisticMemberSignInBtn elements no longer exist in the markup.
 
     // "Level cleared" / "island locked" / "need an account to buy"
     // nudge for guests — see openGuestUpsellModal() /

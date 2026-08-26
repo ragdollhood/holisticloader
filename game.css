@@ -1583,9 +1583,7 @@ button {
       .side-panel .how-to-play h3, .side-panel .how-to-play ol { display: none; }
 
       .remove-ads-card { padding: 6px; gap: 6px; }
-      .side-panel .remove-ads-card > *:not(.remove-ads-btn) { display: none; }
-      .side-panel .remove-ads-card .remove-ads-btn { margin-top: 0; }
-      .side-panel .holistic-member-line { display: none; }
+      .side-panel .remove-ads-card .donation-link { margin-top: 0; }
 
       /* "Next item" card, during gameplay — shrunk down from the full
          desktop card (which stretches to fill leftover side-panel
@@ -2057,53 +2055,25 @@ button {
       display: flex;
     }
 
-    .remove-ads-price {
-      font-family: Georgia, "Times New Roman", serif;
-      font-weight: 700; font-style: italic;
-      font-size: 26px; line-height: 1;
-      margin: 2px 0 10px;
-      background: linear-gradient(100deg, #fff8ec 0%, #f0d19f 45%, #fff8ec 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
-
-    .remove-ads-note {
-      margin: 8px 0 0;
-      font-family: Arial, sans-serif;
-      font-size: 11px;
-      color: var(--muted);
-      text-align: center;
-      width: 100%;
-    }
-
-    .remove-ads-card button {
-      align-self: stretch;
-      margin-top: 4px;
-    }
-
-    /* Subtle secondary line for existing Holistic Loader members —
-       deliberately far less prominent than the card above: no card
-       chrome, no gold border, just quiet helper text. Same map-only /
-       not-ads-removed visibility window as the card. */
-    .holistic-member-line {
-      display: none;
-      width: 100%;
-      margin: 10px 0 0;
-      padding: 0 2px;
-      font-family: Arial, sans-serif;
-      font-size: 11.5px;
-      line-height: 1.5;
-      color: var(--muted);
-      text-align: center;
-    }
-    #gameLayout.on-map:not(.ads-removed):not(.is-logged-in) .holistic-member-line {
+    /* Donation button — an <a> wrapping images/donation.jpg, linking
+       straight to the Stripe payment link. Sits alone inside the
+       .remove-ads-card wrapper, so it inherits that card's position,
+       glow, and map-only/not-ads-removed visibility. */
+    .donation-link {
       display: block;
+      width: 100%;
+      line-height: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform .15s ease, opacity .15s ease;
     }
-    .holistic-member-line button {
-      font-family: Arial, sans-serif; font-size: 11.5px; font-weight: 700;
-      color: var(--lav); background: none; border: none; padding: 0;
-      cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+    .donation-link:hover { transform: translateY(-2px); opacity: .92; }
+    .donation-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
     }
-    .holistic-member-line button:hover { color: var(--gold); }
 
     /* Quiet footer link to the Privacy Policy — shown only on the
        start/map screen (relies on the shared .map-only visibility rule
@@ -2856,22 +2826,10 @@ button {
        and every readout/button inside the panel shrinks its padding
        and type so the image can still claim most of the screen. */
     /* Laptop/desktop only: bigger text in the start-screen side box
-       (the "How to play" panel + the Remove Ads card underneath it)
-       that sits to the right of the map. Scoped to .remove-ads-card
-       specifically (not the shared .premium-* / .gcm-* rules above,
-       which the #guestClearModal popup also uses) so the modal's own
-       type scale is untouched. */
+       (the "How to play" panel that sits to the right of the map). */
     @media (min-width: 1200px), (orientation: landscape) and (max-height: 600px) {
       .how-to-play h3 { font-size: 15px; }
       .how-to-play li { font-size: 14px; line-height: 1.5; }
-
-      .remove-ads-card .premium-eyebrow { font-size: 11px; }
-      .remove-ads-card .premium-headline { font-size: 21px; }
-      .remove-ads-card .premium-sub { font-size: 13.5px; }
-      .remove-ads-card .remove-ads-price { font-size: 30px; }
-      .remove-ads-card .remove-ads-btn { font-size: 12.5px; }
-      .remove-ads-card .remove-ads-note { font-size: 12px; }
-      .holistic-member-line { font-size: 12.5px; }
     }
 
     /* Mirrors DESKTOP_MEDIA_QUERY (JS) — matches whenever the desktop/
