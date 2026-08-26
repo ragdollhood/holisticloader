@@ -120,13 +120,12 @@ body.ultra-low #cosmos{display:none}
 .h1-frame h1{margin:0;font:600 clamp(15px,4.2vw,20px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,#ffd98a,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
 .h1-frame .title-img{display:block;margin:0 auto;height:clamp(26px,6.4vw,42px);width:auto;max-width:100%}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-@media(max-width:720px){body{padding-top:max(137px,calc(env(safe-area-inset-top) + 121px))}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}}
+@media(max-width:720px){body{padding-top:max(124px,calc(env(safe-area-inset-top) + 108px))}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.intro-tagline{margin-top:10px}}
 
 /* ===== hamburger menu (mobile) ===== */
-#menuToggle{display:none;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;gap:6px;padding:8px 9px 8px 13px;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;font:600 12px Outfit,system-ui,sans-serif;letter-spacing:.05em;cursor:pointer;pointer-events:auto}
+#menuToggle{display:none;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
 #menuToggle svg{width:17px;height:17px;flex:none}
 #menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
-#menuToggle span{white-space:nowrap}
 #menuBrand{display:none}
 @media(max-width:720px){
   #menuToggle{display:flex}
@@ -263,17 +262,17 @@ body.ultra-low #cosmos{display:none}
 .meter-sub{margin:0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
 
 /* ===== floating vertical "today's meter" widget (fixed, no text) ===== */
-#floatMeter{position:fixed;top:50%;left:14px;transform:translateY(-50%);z-index:48;display:flex;flex-direction:column;align-items:center;gap:12px}
+#floatMeter{position:fixed;top:50%;left:32px;transform:translateY(-50%);z-index:48;display:flex;flex-direction:column;align-items:center;gap:12px}
 #floatMeterScore{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap}
-#floatMeterTrack{position:relative;width:14px;height:min(46vh,340px);border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:visible;box-shadow:0 12px 30px #0008}
-#floatMeterFill{position:absolute;left:0;right:0;bottom:0;height:0%;background:linear-gradient(0deg,#ff8a5c,var(--gold),var(--violet));border-radius:9px;transition:height .4s ease}
+#floatMeterTrack{position:relative;width:22px;height:min(56vh,430px);border-radius:11px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:visible;box-shadow:0 12px 30px #0008}
+#floatMeterFill{position:absolute;left:0;right:0;bottom:0;height:0%;background:linear-gradient(0deg,#ff8a5c,var(--gold),var(--violet));border-radius:11px;transition:height .4s ease}
 #floatMeterMarker{position:absolute;left:-7px;right:-7px;height:3px;background:#fff;border-radius:2px;box-shadow:0 0 8px #fff,0 0 14px rgba(255,255,255,.75);bottom:50%;z-index:2}
 #floatMeterMarker::before,#floatMeterMarker::after{content:'';position:absolute;top:50%;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent}
 #floatMeterMarker::before{left:-6px;border-right:6px solid #fff;transform:translateY(-50%)}
 #floatMeterMarker::after{right:-6px;border-left:6px solid #fff;transform:translateY(-50%)}
 #meterInfoBtn{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 14px Georgia;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:0}
 #meterInfoBtn:hover{background:rgba(255,217,138,.18)}
-@media(max-width:720px){#floatMeter{left:auto;right:8px;gap:8px}#floatMeterScore{font-size:clamp(14px,4vw,18px)}#floatMeterTrack{width:11px;height:min(36vh,240px)}#meterInfoBtn{width:25px;height:25px;font-size:12px}}
+@media(max-width:720px){#floatMeter{left:auto;right:10px;gap:8px}#floatMeterScore{font-size:clamp(14px,4vw,18px)}#floatMeterTrack{width:16px;height:min(40vh,290px);border-radius:9px}#meterInfoBtn{width:25px;height:25px;font-size:12px}}
 
 /* ===== info box (opened via the "i" button) showing the full meter panel ===== */
 .meter-info-overlay{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,4,9,.72);backdrop-filter:blur(4px)}
@@ -298,9 +297,8 @@ body.ultra-low #cosmos{display:none}
 <canvas id="cosmos"></canvas>
 
 <header id="topNav">
-  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs">
+  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs" aria-label="Meny">
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
-    <span>Meny</span>
   </button>
   <h1 id="brand">
     <a href="index.html">
