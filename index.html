@@ -136,7 +136,7 @@ a{color:inherit}
 
 #authRoot{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));z-index:45}
 
-/* ===== top header: logo + dropdown nav (same shared header as breathing.html / instruments.html / etc.) ===== */
+/* ===== top header: logo + dropdown nav (same shared header as breathing.html / soundscape.html / etc.) ===== */
 #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
   padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
@@ -165,7 +165,7 @@ body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);poi
   #brandLogo{max-height:clamp(46px,12vw,84px)}
 }
 
-/* ---- hanging flap under the nav — same look as instruments.html's .h1-frame ---- */
+/* ---- hanging flap under the nav — same look as soundscape.html's .h1-frame ---- */
 .h1-frame{
   position:fixed;
   top:max(118px,calc(env(safe-area-inset-top) + 106px));
@@ -501,13 +501,13 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
 
 <div id="authRoot"></div>
 
-<!-- shared header: logo + dropdown nav (same menu as breathing.html / instruments.html / etc.) -->
+<!-- shared header: logo + dropdown nav (same menu as breathing.html / soundscape.html / etc.) -->
 <header id="topNav">
   <div id="brand"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></div>
   <nav id="topTabs" aria-label="Main sections">
     <a href="index.html" class="tab active" aria-current="page">Home</a>
     <a href="breathing.html" class="tab">Guided Breathing</a>
-    <a href="instruments.html" class="tab">Soundscape Creator</a>
+    <a href="soundscape.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="yoga-loader.html" class="tab">Yoga Loader</a>
     <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
@@ -541,7 +541,7 @@ main{flex:1 1 auto;display:flex;flex-direction:column}
       <svg class="tile-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
     <div class="tile-ambient tile-ambient--stress" aria-hidden="true"></div>
-    <a class="entry-tile" data-tint="stress" href="instruments.html" style="background-image:url('images/start-stress.jpg')">
+    <a class="entry-tile" data-tint="stress" href="soundscape.html" style="background-image:url('images/start-stress.jpg')">
       <span class="tile-ic" aria-hidden="true">🎵</span>
       <span class="tile-text">
         <span class="tile-name">Reduce Stress</span>
@@ -702,7 +702,7 @@ registerVisit();
 <script>
 /* keep the .h1-frame flap flush under #topNav's bottom edge at every window
    size — the logo scales continuously with vw, so #topNav's height isn't
-   fixed; measure it live instead (same technique as instruments.html). */
+   fixed; measure it live instead (same technique as soundscape.html). */
 (function(){
   var h1FrameEl=document.querySelector('.h1-frame');
   if(!h1FrameEl) return;
