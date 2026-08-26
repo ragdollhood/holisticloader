@@ -443,7 +443,7 @@ function _wireAuthDom() {
 
     if (mode === "register") {
       title.textContent = window.HL_HIDE_TRIAL_UI ? "Create your account" : "Free Registration";
-      submitBtn.textContent = window.HL_HIDE_TRIAL_UI ? "Create Account" : "Start Free Trial";
+      submitBtn.textContent = window.HL_HIDE_TRIAL_UI ? "Create Account" : "Free Registration";
       if (trialLabel) trialLabel.textContent = "Back to Login";
       if (forgotRow) forgotRow.style.display = "none";
       passwordInput.setAttribute("autocomplete", "new-password");
