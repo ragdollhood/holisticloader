@@ -228,12 +228,13 @@
   @media (max-width:720px){
     #brandLogo{max-height:clamp(46px,12vw,84px)}
   }
-  .sub{font-size:12.5px;color:var(--soft);margin-top:6px;text-align:center;letter-spacing:.08em}
+  .sub{font-size:12.5px;color:var(--soft);margin-top:calc(var(--titleH,62px) - 36px);text-align:center;letter-spacing:.08em}
   .h1-desktop{display:inline}
   .h1-mobile{display:none}
   @media (max-width:720px){
     .h1-desktop{display:none}
     .h1-mobile{display:inline}
+    .sub{margin-top:calc(var(--titleH,50px) - 22px)}
   }
 
   .stage{
