@@ -164,13 +164,15 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:n
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
 #menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
-#howToBtn,#shopMenuBtn{
+#getPremiumMenuBtn,#howToBtn,#shopMenuBtn{
   display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;width:100%;box-sizing:border-box;
   font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);text-decoration:none;
   background:transparent;border:none;border-radius:8px;padding:9px 10px;cursor:pointer;transition:background .15s ease}
-#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
-#howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
+#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#getPremiumMenuBtn{color:var(--gold);font-weight:600}
+#getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
+#getPremiumMenuBtn:hover,#howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
+#getPremiumMenuBtn:active,#howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
 #contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
   border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--ink);cursor:pointer;transition:background .15s ease}
 #contactBtn:hover{background:rgba(244,241,234,.1)}
@@ -505,6 +507,9 @@ body.preset-active #menuToggle{display:none}
     <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
   </button>
   <div id="menuPanel" role="menu">
+    <button id="getPremiumMenuBtn" type="button">
+      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Unlock Premium
+    </button>
     <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
       <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
     </button>
@@ -1097,12 +1102,18 @@ body.preset-active #menuToggle{display:none}
 <script src="auth.js"></script>
 <script>
 /* Premium lock removed on this page: everyone gets full, unlocked access.
-   hasPremiumAccess() is redefined here (after auth.js) so every future
-   isPremiumUser()/refreshPremiumStatus() check on THIS page resolves to
-   true, and isPremium is also set immediately so nothing renders locked
-   before that first check completes. auth.js itself is untouched, so
+   Both hasPremiumAccess() AND isPremiumUser() are redefined here (after
+   auth.js) so every future check on THIS page resolves to true — this
+   has to cover isPremiumUser() too because auth.js's own isPremiumUser()
+   short-circuits to `false` for guests (no currentUser) WITHOUT ever
+   calling hasPremiumAccess(), so overriding hasPremiumAccess() alone
+   still let refreshPremiumStatus() reset isPremium back to false on
+   every page load / auth-state check for anyone not logged in.
+   isPremium is also set immediately so nothing renders locked before
+   that first async check completes. auth.js itself is untouched, so
    every other page on the site keeps the normal premium logic. */
 function hasPremiumAccess(){ return true; }
+async function isPremiumUser(){ return true; }
 isPremium = true;
 </script>
 <script>
@@ -1120,6 +1131,13 @@ const $=id=>document.getElementById(id);
       if(!open){ const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
     document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
+  }
+  const getPremiumMenuBtn=$('getPremiumMenuBtn');
+  if(getPremiumMenuBtn){
+    getPremiumMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
+      closeMenu();
+      const headerRegisterBtn=$('registerBtn'); if(headerRegisterBtn){ headerRegisterBtn.click(); } else { openPremiumModal(); }
+    });
   }
 }
 
