@@ -58,7 +58,7 @@
   "operatingSystem": "Any (web browser)",
   "browserRequirements": "Requires JavaScript",
   "inLanguage": "en",
-  "isAccessibleForFree": false,
+  "isAccessibleForFree": true,
   "image": "https://holisticloader.com/images/icon-holistic.png",
   "featureList": [
     "Guided breathing circle (Calm, Box, 4-7-8, Deep)",
@@ -449,16 +449,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .pcard .ptxt{min-width:0}
 .pcard .pn{font-size:14px;font-weight:500;letter-spacing:.01em}
 .pcard .pt{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.3}
-.pcard.pcard-locked{position:relative;cursor:pointer}
-.pcard.pcard-locked .picon{filter:grayscale(.7) brightness(.6)}
-.pcard.pcard-locked .pn,.pcard.pcard-locked .pt{opacity:.55}
-.itile.itile-locked,.reel-item.reel-locked{position:relative}
-.itile.itile-locked .iimg,.reel-item.reel-locked .pic{filter:grayscale(.72) brightness(.55)}
-.itile.itile-locked .ilbl,.reel-item.reel-locked .cap{opacity:.55}
-.pcard .lockBadge{position:absolute;top:8px;right:8px;font-size:8.5px;padding:4px 9px}
-.pcard .lockBadge svg{width:10px;height:10px}
-.itile .lockBadge,.reel-item .lockBadge{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:7.5px;padding:3px 8px}
-.itile .lockBadge svg,.reel-item .lockBadge svg{width:9px;height:9px}
 /* ===== laptop: "spin" coverflow presentation for the place & sound reels =====
    Below 900px the reels stay exactly as before (plain horizontal scroll strip) —
    this block only changes anything once the media query matches. */
@@ -598,22 +588,20 @@ body.immersive #brand{opacity:0}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
 #contactBtn.hidden{display:none}
 
-/* "Get Premium" and "How to use" are plain rows inside the shared
+/* "How to use" is a plain row inside the shared
    #menuPanel background (no individual pill/border per item). */
-#getPremiumMenuBtn,#howToBtn,#shopMenuBtn{
+#howToBtn,#shopMenuBtn{
   display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
   width:100%;box-sizing:border-box;
   font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);text-decoration:none;
   background:transparent;border:none;border-radius:8px;
   padding:9px 10px;cursor:pointer;transition:background .15s ease;
 }
-#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#getPremiumMenuBtn{color:var(--gold);font-weight:600}
-#getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
-#getPremiumMenuBtn:hover,#howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
-#getPremiumMenuBtn:active,#howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
-#getPremiumMenuBtn.hidden,#howToBtn.hidden,#shopMenuBtn.hidden{display:none}
-body.immersive #getPremiumMenuBtn,body.immersive #howToBtn,body.immersive #shopMenuBtn{opacity:0;pointer-events:none}
+#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
+#howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
+#howToBtn.hidden,#shopMenuBtn.hidden{display:none}
+body.immersive #howToBtn,body.immersive #shopMenuBtn{opacity:0;pointer-events:none}
 
 /* info box, hidden until "How to use" is tapped — position set by JS (positionHowToBox) to track the button.
    Desktop: wide enough that everything fits without a scrollbar. Mobile: fills the screen and scrolls (see media query below, which is placed AFTER this rule on purpose — same-specificity CSS rules are resolved by source order, and the mobile override must win). */
@@ -675,7 +663,6 @@ body.immersive #howToBox{display:none}
 
 </style>
 <link rel="stylesheet" href="auth-ui.css">
-<link rel="stylesheet" href="premium-ui.css">
 <style>
 /* Nudge the login/account icon that auth.js renders into #authRoot up a
    few pixels so it clears the gold #topNavLine under the header tabs.
@@ -725,9 +712,6 @@ body.preset-active #menuToggle{display:none}
     <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
   </button>
   <div id="menuPanel" role="menu">
-    <button id="getPremiumMenuBtn" type="button">
-      <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Unlock Premium
-    </button>
     <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
       <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
     </button>
@@ -803,33 +787,6 @@ body.preset-active #menuToggle{display:none}
       <li>(<svg class="htu-ic" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"/></svg>) hides the guiding texts inside the breathing circle.</li>
       <li>(<svg class="htu-ic" viewBox="0 0 24 24"><path d="M10 19l-7-7 7-7"/><path d="M3 12h17"/></svg>) Stop the session and go back. You can also abort the session by pressing the breathing circle.</li>
     </ul>
-  </div>
-</div>
-
-<div id="premiumModal" role="dialog" aria-modal="true" aria-labelledby="premiumModalTitle">
-  <div id="premiumModalCard">
-    <button id="premiumModalClose" type="button" aria-label="Close">
-      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-    </button>
-    <div id="premiumModalScroll">
-      <h2 id="premiumModalTitle">All-in-One Wellness Platform</h2>
-      <div id="premiumModalSections"></div>
-      <p class="premTagline">Everything unlocked. One membership. Unlimited access. ✨</p>
-      <div id="premiumScrollHint" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </div>
-    </div>
-    <div id="premiumModalFooter">
-      <button class="premCtaPrimary" id="premiumModalFreeTrial" type="button">
-        <span>Start Free 14-Day Trial</span>
-        <span class="premCtaSubnote">No card needed</span>
-      </button>
-      <a class="premCta premCtaSecondary" id="premiumModalBuy" href="https://buy.stripe.com/8x2cMX2Ru7B21os6tA0kE00">
-        <span>Get Premium for $4.99/month</span>
-        <span class="premCancelNote">Cancel anytime!</span>
-      </a>
-      <button class="premCtaGhost" id="premiumModalCta" type="button">Maybe later</button>
-    </div>
   </div>
 </div>
 
@@ -1021,17 +978,6 @@ body.preset-active #menuToggle{display:none}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
 <script>
-/* Premium lock removed on this page: everyone gets full, unlocked access.
-   hasPremiumAccess() is redefined here (after auth.js) so every future
-   isPremiumUser()/refreshPremiumStatus() check on THIS page resolves to
-   true, and isPremium is also set immediately so nothing renders locked
-   before that first check completes. auth.js itself is untouched, so
-   every other page on the site keeps the normal premium logic. */
-function hasPremiumAccess(){ return true; }
-isPremium = true;
-</script>
-
-<script>
 const IMAGES = [{"thumb": "images/thumbs/breathe-place-universe2.jpg", "id": "rymd2", "label": "Milky Way", "data": "images/breathe-place-universe2.jpg"}, {"thumb": "images/thumbs/breathe-place-universe1.jpg", "id": "universum", "label": "Cosmos", "data": "images/breathe-place-universe1.jpg"}, {"thumb": "images/thumbs/breathe-place-forest2.jpg", "id": "skog2", "label": "Sunlit forest", "data": "images/breathe-place-forest2.jpg"}, {"thumb": "images/thumbs/breathe-place-mountain2.jpg", "id": "breathe-place-mountain2", "label": "Mountain peak", "data": "images/breathe-place-mountain2.jpg"}, {"thumb": "images/thumbs/breathe-place-mountain3.jpg", "id": "breathe-place-mountain3", "label": "Tundra lake", "data": "images/breathe-place-mountain3.jpg"}, {"thumb": "images/thumbs/breathe-place-meadow2.jpg", "id": "meadow2", "label": "Golden meadow", "data": "images/breathe-place-meadow2.jpg"}, {"thumb": "images/thumbs/breathe-place-beach2.jpg", "id": "beach2", "label": "Misty shore", "data": "images/breathe-place-beach2.jpg"}, {"thumb": "images/thumbs/breathe-place-fantasy2.jpg", "id": "fantasy2", "label": "Fairy lake", "data": "images/breathe-place-fantasy2.jpg"}, {"thumb": "images/thumbs/breathe-place-fantasy3.jpg", "id": "fantasy3", "label": "Fairy village", "data": "images/breathe-place-fantasy3.jpg"}, {"thumb": "images/thumbs/breathe-place-pasture2.jpg", "id": "pasture2", "label": "Red barn", "data": "images/breathe-place-pasture2.jpg"}, {"thumb": "images/thumbs/breathe-place-pasture3.jpg", "id": "pasture3", "label": "Country road", "data": "images/breathe-place-pasture3.jpg"}, {"thumb": "images/thumbs/breathe-place-coral2.jpg", "id": "coral2", "label": "Reef garden", "data": "images/breathe-place-coral2.jpg"}, {"thumb": "images/thumbs/breathe-place-coral3.jpg", "id": "coral3", "label": "Sunlit shallows", "data": "images/breathe-place-coral3.jpg"}, {"thumb": "images/thumbs/breathe-place-mountain1.jpg", "id": "mountain1", "label": "Mountain lake", "data": "images/breathe-place-mountain1.jpg"}, {"thumb": "images/thumbs/breathe-place-meadow1.jpg", "id": "ang", "label": "Wildflower meadow", "data": "images/breathe-place-meadow1.jpg"}, {"thumb": "images/thumbs/breathe-place-pasture1.jpg", "id": "hage", "label": "Misty pasture", "data": "images/breathe-place-pasture1.jpg"}, {"thumb": "images/thumbs/breathe-place-beach1.jpg", "id": "strand", "label": "Tropical beach", "data": "images/breathe-place-beach1.jpg"}, {"thumb": "images/thumbs/breathe-place-fantasy1.jpg", "id": "sagoskog", "label": "Enchanted forest", "data": "images/breathe-place-fantasy1.jpg"}, {"thumb": "images/thumbs/breathe-place-forest1.jpg", "id": "skog3", "label": "Birch forest", "data": "images/breathe-place-forest1.jpg"}, {"thumb": "images/thumbs/breathe-place-coral1.jpg", "id": "korallrev", "label": "Coral reef", "data": "images/breathe-place-coral1.jpg"}, {"thumb": "images/thumbs/breathe-place-clouds1.jpg", "id": "moln", "label": "Above the clouds", "data": "images/breathe-place-clouds1.jpg"}, {"thumb": "images/thumbs/breathe-place-northenlights1.jpg", "id": "norrsken", "label": "Northern lights", "data": "images/breathe-place-northenlights1.jpg"}, {"thumb": "images/thumbs/breathe-place-universe3.jpg", "id": "rymden", "label": "Galaxy", "data": "images/breathe-place-universe3.jpg"}, {"thumb": "images/thumbs/breathe-place-grow1.jpg", "id": "fro", "label": "Sprouting seed", "data": "images/breathe-place-grow1.jpg"}, {"thumb": "images/thumbs/breathe-place-therapy1.jpg", "id": "ljusterapi", "label": "Light therapy room", "data": "images/breathe-place-therapy1.jpg"}, {"thumb": "images/thumbs/breathe-place-fur1.jpg", "id": "pals", "label": "Soft fur", "data": "images/breathe-place-fur1.jpg"}];
 const PRESET_ICONS = {"gongbath": "images/gongbath.jpg", "earthom": "images/earthom.jpg", "moonsleep": "images/moonsleep.jpg", "sunrise": "images/sunrise.jpg", "heart": "images/heart.jpg", "crystal": "images/crystal.jpg", "saturn": "images/saturn.jpg", "forest": "images/forest.jpg"};
 // Enkel engångskoll om webbläsaren klarar WebP (nästan alla gör det idag).
@@ -1071,9 +1017,6 @@ const GROUPS=[
 const MEMBER2GROUP={}; GROUPS.forEach(g=>g.members.forEach(id=>MEMBER2GROUP[id]=g));
 function groupOf(id){return MEMBER2GROUP[id]||null;}
 let openGroup=null;
-const FREE_BG_GROUPS=['mountain','meadow'];
-const FREE_BG_IDS=new Set(GROUPS.filter(g=>FREE_BG_GROUPS.includes(g.id)).flatMap(g=>g.members));
-function isBgLocked(id){return !isPremium && !FREE_BG_IDS.has(id);}
 
 function setBackground(id,instant){
   const img=imgById(id); if(!img) return; S.bg=id;
@@ -1124,9 +1067,7 @@ function onGroupTap(g){
 }
 function repositionOpen(){ if(openGroup){const g=GROUPS.find(x=>x.id===openGroup); if(g) positionSub(g);} }
 /* All images sit directly in the reel now (no group covers / sub-menus).
-   The 5 images nearest the centre (the centre one + 2 left + 2 right) are open;
-   the rest are locked behind premium. The centre is fixed at 'mountain1' so the
-   free window doesn't shift around as the person picks a different image. */
+   The centre is fixed at 'mountain1'. */
 const REEL_CENTER_ID='mountain1';
 /* scrollIntoView can be unreliable inside a scroll-snap-type:mandatory
    container (some browsers fight the snap and land off-centre), so we
@@ -1139,19 +1080,16 @@ function centerTileInScroller(scroller,el){
 function renderReel(){
   const r=$('reel'); r.innerHTML='';
   const list=allImages();
-  const centerIdx=list.findIndex(i=>i.id===REEL_CENTER_ID);
-  list.forEach((img,i)=>{
-    const isUser=userImages.some(u=>u.id===img.id);
-    const locked=!isPremium && !isUser && Math.abs(i-centerIdx)>2;
+  list.forEach((img)=>{
     const it=document.createElement('button');
-    it.className='reel-item'+(img.id===S.bg?' active':'')+(locked?' reel-locked':''); it.dataset.bgid=img.id;
-    it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`+(locked?lockBadgeHTML:'');
-    it.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{setBackground(img.id);centerTileInScroller(r,it);});
+    it.className='reel-item'+(img.id===S.bg?' active':''); it.dataset.bgid=img.id;
+    it.innerHTML=`<div class="pic" style="background-image:url(${img.thumb||img.data})"></div><div class="cap">${img.label}</div>`;
+    it.onclick=()=>{setBackground(img.id);centerTileInScroller(r,it);};
     r.appendChild(it);
   });
-  const add=document.createElement('button'); add.className='reel-item add'+(isPremium?'':' reel-locked');
-  add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>'+(isPremium?'':lockBadgeHTML);
-  add.onclick=isPremium?(()=>$('fileInput').click()):(()=>openPremiumModal('breathing'));
+  const add=document.createElement('button'); add.className='reel-item add';
+  add.innerHTML='<div class="pic">+</div><div class="cap">Add image</div>';
+  add.onclick=()=>$('fileInput').click();
   r.appendChild(add);
 }
 /* centre the reel on the currently selected image once, after first render */
@@ -1198,15 +1136,14 @@ const AMB_SOUNDS=[
   {id:'amb_whitenoise',label:'White noise',img:'images/noisewhite.jpg',amb:'whitenoise'},
   {id:'amb_pinknoise', label:'Pink noise', img:'images/noisepink.jpg', amb:'pinknoise'},
   {id:'amb_brownnoise',label:'Brown noise',img:'images/noisebrown.jpg',amb:'brownnoise'},
-  {id:'amb_bluenoise', label:'Blue noise', img:'images/noiseblue.jpg', amb:'blue', locked:true},
-  {id:'amb_violetnoise',label:'Violet noise',img:'images/noiseviolet.jpg',amb:'violet', locked:true},
-  {id:'amb_graynoise', label:'Gray noise', img:'images/noisegray.jpg', amb:'gray', locked:true},
-  {id:'amb_blacknoise',label:'Black noise',img:'images/noiseblack.jpg',amb:'black', locked:true},
-  {id:'amb_wave',  label:'Wave',   img:'images/breathe-embient-wave.jpg',   amb:'wave', locked:true},
+  {id:'amb_bluenoise', label:'Blue noise', img:'images/noiseblue.jpg', amb:'blue'},
+  {id:'amb_violetnoise',label:'Violet noise',img:'images/noiseviolet.jpg',amb:'violet'},
+  {id:'amb_graynoise', label:'Gray noise', img:'images/noisegray.jpg', amb:'gray'},
+  {id:'amb_blacknoise',label:'Black noise',img:'images/noiseblack.jpg',amb:'black'},
+  {id:'amb_wave',  label:'Wave',   img:'images/breathe-embient-wave.jpg',   amb:'wave'},
 ];
 function isAmbSound(id){return AMB_SOUNDS.some(a=>a.id===id);}
 function ambSoundOf(id){return AMB_SOUNDS.find(a=>a.id===id);}
-function isAmbLocked(id){const a=ambSoundOf(id);return !!a&&!!a.locked&&!isPremium;}
 /* short, plain-language line shown in #ambInfo under the sound row while that ambience is selected */
 const AMB_INFO={
   greennoise:'Noise balanced around the middle of the hearing range — a calm, natural-sounding backdrop for easy focus.',
@@ -1277,29 +1214,21 @@ function switchAmbSound(item){
 }
 const sndLabel=id=>{const s=SOUNDS.find(x=>x.id===id);return s?s.label:id;};
 let openSGroup=null;
-const FREE_SOUND_GROUPS=['bowl','gong'];
-const FREE_SOUND_IDS=new Set(SGROUPS.filter(g=>FREE_SOUND_GROUPS.includes(g.id)).flatMap(g=>g.members));
-function isSoundLocked(id){return !isPremium && !FREE_SOUND_IDS.has(id);}
-const lockBadgeHTML='<span class="lockBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
 
 function renderSounds(center){['soundScroll','soundScrollFront'].forEach(id=>renderSoundInto(id,center));requestAnimationFrame(updateSoundCue);updateAmbInfo();}
-/* All instruments sit directly in the row now (no group covers / sub-menus).
-   Every gong and every bowl is open; everything else is locked behind premium. */
-const OPEN_SOUND_IDS=new Set(['quartz_bowl','crystal_bowl','tibetan_bowl','gong','tibetansk_gong','tam-tam_drum']);
+/* All instruments sit directly in the row now (no group covers / sub-menus). */
 function renderSoundInto(wid,center){const w=$(wid);if(!w)return;const sx=w.scrollLeft;w.innerHTML='';let activeEl=null;
   SOUNDS.forEach(s=>{
-    const locked=!isPremium && !OPEN_SOUND_IDS.has(s.id);
-    const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.sndid=s.id;
-    b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`+(locked?lockBadgeHTML:'');
-    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{switchSound(s.id);renderSounds(true);preview();});
+    const b=document.createElement('button');b.className='itile'+(s.id===S.sound?' active':'');b.dataset.sndid=s.id;
+    b.innerHTML=`<span class="iimg" style="background-image:url(${INSTRUMENT_ICONS[s.id]||''})"></span><span class="ilbl">${s.label}</span>`;
+    b.onclick=()=>{switchSound(s.id);renderSounds(true);preview();};
     if(s.id===S.sound)activeEl=b;w.appendChild(b);
   });
   /* ambience "instruments" continue the same row, after the tuned instruments */
   AMB_SOUNDS.forEach(a=>{
-    const locked=isAmbLocked(a.id);
-    const b=document.createElement('button');b.className='itile'+(a.id===S.sound?' active':'')+(locked?' itile-locked':'');b.dataset.ambid=a.id;
-    b.innerHTML=`<span class="iimg" style="background-image:url(${a.img})"></span><span class="ilbl">${a.label}</span>`+(locked?lockBadgeHTML:'');
-    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>{switchAmbSound(a);renderSounds(true);});
+    const b=document.createElement('button');b.className='itile'+(a.id===S.sound?' active':'');b.dataset.ambid=a.id;
+    b.innerHTML=`<span class="iimg" style="background-image:url(${a.img})"></span><span class="ilbl">${a.label}</span>`;
+    b.onclick=()=>{switchAmbSound(a);renderSounds(true);};
     if(a.id===S.sound)activeEl=b;w.appendChild(b);
   });
   if(center&&activeEl){requestAnimationFrame(()=>{w.scrollTo({left:activeEl.offsetLeft-w.clientWidth/2+activeEl.offsetWidth/2,behavior:'smooth'});});}
@@ -1637,15 +1566,6 @@ function setSound(on){S.soundOn=on;
     document.addEventListener('click',e=>{ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeMenu(); });
   }
-  /* "Get Premium" in the menu just triggers the same header button
-     (built by auth.js) and closes this menu. */
-  const getPremiumMenuBtn=$('getPremiumMenuBtn');
-  if(getPremiumMenuBtn){
-    getPremiumMenuBtn.addEventListener('click',e=>{ e.stopPropagation();
-      closeMenu();
-      const headerRegisterBtn=$('registerBtn'); if(headerRegisterBtn)headerRegisterBtn.click();
-    });
-  }
 }
 
 /* contact: tap the envelope to expand it and reveal the email */
@@ -1720,56 +1640,18 @@ function fmt(sec){sec=Math.max(0,Math.ceil(sec));const m=Math.floor(sec/60),s=se
 const PRESETS=[
   {id:'gongbath', name:'Gong Bath', theme:'Deep gong waves, slow & immersive', sound:'gong', freq:80, tempo:7, br:[4,0,8], anim:'sound', len:15, bg:'rymden'},
   {id:'earthom',  name:'Earth · OM', theme:'Grounding 136 Hz hum', sound:'crystal_bowl', freq:136.10, tempo:9, br:[4,2,6], anim:'breath', len:10, bg:'hage'},
-  {id:'moonsleep',name:'Moon · Sleep', theme:'Soft 210 Hz, long exhales', sound:'tibetan_bowl', freq:210.42, tempo:11, br:[4,7,8], anim:'breath', len:20, bg:'norrsken', locked:true},
-  {id:'sunrise',  name:'Sun · Vitality', theme:'Warm 126 Hz to awaken', sound:'harpa', freq:126.22, tempo:6, br:[4,0,6], anim:'breath', len:10, bg:'mountain1', locked:true},
-  {id:'heart',    name:'Venus · Heart', theme:'639 Hz heart opening', sound:'harpa', freq:639, tempo:7, br:[5,2,7], anim:'breath', len:10, bg:'ang', locked:true},
-  {id:'crystal',  name:'Crystal Healing', theme:'528 Hz crystal bowls', sound:'crystal_bowl', freq:528, tempo:8, br:[4,2,6], anim:'breath', len:15, bg:'korallrev', locked:true},
-  {id:'saturn',   name:'Singing Bowl Journey', theme:'148 Hz Saturn bowls', sound:'tibetan_bowl', freq:147.85, tempo:9, br:[4,0,7], anim:'breath', len:15, bg:'sagoskog', locked:true},
-  {id:'forest',   name:'Forest Calm', theme:'Gentle 432 Hz soft tones', sound:'handpan', freq:432, tempo:8, br:[4,0,6], anim:'breath', len:10, bg:'skog3', locked:true},
+  {id:'moonsleep',name:'Moon · Sleep', theme:'Soft 210 Hz, long exhales', sound:'tibetan_bowl', freq:210.42, tempo:11, br:[4,7,8], anim:'breath', len:20, bg:'norrsken'},
+  {id:'sunrise',  name:'Sun · Vitality', theme:'Warm 126 Hz to awaken', sound:'harpa', freq:126.22, tempo:6, br:[4,0,6], anim:'breath', len:10, bg:'mountain1'},
+  {id:'heart',    name:'Venus · Heart', theme:'639 Hz heart opening', sound:'harpa', freq:639, tempo:7, br:[5,2,7], anim:'breath', len:10, bg:'ang'},
+  {id:'crystal',  name:'Crystal Healing', theme:'528 Hz crystal bowls', sound:'crystal_bowl', freq:528, tempo:8, br:[4,2,6], anim:'breath', len:15, bg:'korallrev'},
+  {id:'saturn',   name:'Singing Bowl Journey', theme:'148 Hz Saturn bowls', sound:'tibetan_bowl', freq:147.85, tempo:9, br:[4,0,7], anim:'breath', len:15, bg:'sagoskog'},
+  {id:'forest',   name:'Forest Calm', theme:'Gentle 432 Hz soft tones', sound:'handpan', freq:432, tempo:8, br:[4,0,6], anim:'breath', len:10, bg:'skog3'},
 ];
-const PREMIUM_SECTIONS=[
-  {id:'yoga',label:'🧘 Yoga',items:['8 Programs','6 Categories','8 Benefit Filters']},
-  {id:'breathing',label:'🌬️ Breathing',items:['26 Scenes','Personal Backgrounds','19 Instruments','8 Guided Journeys']},
-  {id:'sound',label:'🎵 Sound Healing',items:['16 Instruments','Signal Generator','Record & Save']},
-  {id:'nutrition',label:'🥗 Nutrition',items:['Daily Tracking','Cross-Device Sync']}
-];
-const premScrollBox=$('premiumModalScroll'), premScrollHint=$('premiumScrollHint');
-function updatePremiumScrollHint(){
-  if(!premScrollBox||!premScrollHint) return;
-  const overflows=premScrollBox.scrollHeight>premScrollBox.clientHeight+4;
-  const atBottom=premScrollBox.scrollTop+premScrollBox.clientHeight>=premScrollBox.scrollHeight-4;
-  premScrollHint.classList.toggle('hide',!overflows||atBottom);
-}
-function openPremiumModal(context){
-  const modal=$('premiumModal'), wrap=$('premiumModalSections');
-  if(!modal||!wrap) return;
-  wrap.innerHTML=PREMIUM_SECTIONS.map(sec=>`
-    <div class="premSection" data-sec="${sec.id}">
-      <div class="premSectionTitle">${sec.label}</div>
-      <ul class="premList">
-        ${sec.items.map(it=>`<li><span class="premCheck"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"/></svg></span><span class="premHead">${it}</span></li>`).join('')}
-      </ul>
-    </div>`).join('');
-  modal.classList.add('show');
-  if(premScrollBox) premScrollBox.scrollTop=0;
-  setTimeout(updatePremiumScrollHint,50);
-}
-if(premScrollBox) premScrollBox.addEventListener('scroll',updatePremiumScrollHint);
-window.addEventListener('resize',updatePremiumScrollHint);
-function closePremiumModal(){ const m=$('premiumModal'); if(m)m.classList.remove('show'); }
-{
-  const pm=$('premiumModal'), pClose=$('premiumModalClose'), pCta=$('premiumModalCta'), pTrial=$('premiumModalFreeTrial');
-  if(pClose)pClose.onclick=closePremiumModal;
-  if(pCta)pCta.onclick=closePremiumModal;
-  if(pTrial)pTrial.onclick=function(){ closePremiumModal(); if(typeof window.openFreeTrialSignup==='function') window.openFreeTrialSignup(); };
-  if(pm)pm.addEventListener('click',e=>{ if(e.target===pm)closePremiumModal(); });
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape')closePremiumModal(); });
-}
 function renderPresets(){const w=$('presetGrid');if(!w)return;w.innerHTML='';
-  PRESETS.forEach(p=>{const locked=p.locked&&!isPremium;
-    const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'')+(locked?' pcard-locked':'');
-    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`+(locked?lockBadgeHTML:'');
-    b.onclick=locked?(()=>openPremiumModal('breathing')):(()=>applyPreset(p));w.appendChild(b);});}
+  PRESETS.forEach(p=>{
+    const b=document.createElement('button');b.className='pcard'+(S.preset===p.id?' active':'');
+    b.innerHTML=`<div class="picon" style="background-image:url(${INSTRUMENT_ICONS[p.sound]||PRESET_ICONS[p.id]||''})"></div><div class="ptxt"><div class="pn">${p.name}</div><div class="pt">${p.theme}</div></div>`;
+    b.onclick=()=>applyPreset(p);w.appendChild(b);});}
 function applyPreset(p){
   S.sound=p.sound;S.freq=p.freq;S.tempo=p.tempo;S.tempoFollow=false;
   S.inhale=p.br[0];S.hold=p.br[1];S.exhale=p.br[2];
@@ -2431,21 +2313,13 @@ positionOrb();
 requestAnimationFrame(()=>{positionBrand();positionOrb();updateCues();syncH1FrameWidth();});
 setTimeout(()=>{positionBrand();positionOrb();syncH1FrameWidth();},400);
 setTimeout(positionOrb,1200);
-
-/* Re-render locked content live the instant premium status changes
-   (login, logout, or a fresh isPremium check on page load) */
-onPremiumStatusChange(()=>{
-  renderReel();centerReelOnce();
-  renderSounds(true);
-  renderPresets();
-});
 </script>
 
 <script>
 /* ===== laptop-only "spin" coverflow for the place & sound reels =====
    Purely a presentation layer on top of the existing #reel / #soundScrollFront
    elements: it reads what renderReel()/renderSoundInto() already put there
-   (including groups, locked tiles, the add-tile) and just scales/fades/tilts
+   (including groups, the add-tile) and just scales/fades/tilts
    each tile by its distance from the row's centre as you scroll, plus adds
    prev/next arrows that step one tile at a time. Below 900px it does nothing —
    mobile keeps the original plain scroll strip. */
