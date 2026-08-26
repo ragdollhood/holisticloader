@@ -212,8 +212,34 @@ text-decoration:none;
 #authRoot{transform:translateY(-6px)}
 @media(max-width:560px){ #authRoot{transform:none} }
 </style>
+
+<style>
+/* ===== mobile page-nav dropdown (mirrors intuition.html's mobile menu) ===== */
+#menuToggle{display:none;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
+#menuToggle svg{width:17px;height:17px;flex:none}
+#menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
+body.immersive #menuToggle{opacity:0;pointer-events:none}
+body.preset-active #menuToggle{display:none}
+.tab-howto{display:none}
+.tab-row{display:contents}
+.h1-frame .title-img{display:block;margin:0 auto;height:clamp(26px,6.4vw,42px);width:auto;max-width:100%}
+@media(max-width:720px){
+  #menuToggle{display:flex}
+  #donateWrap{left:58px}
+  #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:52}
+  body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px;display:block;flex:1 1 auto;width:100%;box-sizing:border-box}
+  #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
+  #topNavLine{display:none}
+  #brandLogo{max-height:clamp(37px,9.6vw,67px)!important}
+}
+</style>
 </head>
 <body>
+  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs" aria-label="Meny">
+    <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
+  </button>
+
 
 <div class="sr-only">
   <h2>Holistic Store — recommended products</h2>
@@ -278,7 +304,11 @@ text-decoration:none;
 </header>
 
 <div class="h1-frame">
-  <h1>HOLISTIC SHOP</h1>
+  <h1 class="sr-only">Holistic Shop</h1>
+  <picture>
+    <source srcset="images/title-holistic-shop.webp" type="image/webp">
+    <img src="images/title-holistic-shop.png" alt="Holistic Shop" class="title-img" loading="eager" decoding="async">
+  </picture>
 </div>
 <div class="affiliate-note">Affiliate Disclosure: As an Amazon Associate, I earn from qualifying purchases.</div>
 
@@ -581,6 +611,37 @@ async function registerVisit() {
 }
 
 registerVisit();
+</script>
+
+<script>
+(function(){
+  var mt=document.getElementById('menuToggle'), tabs=document.getElementById('topTabs');
+  function closeTabs(){document.body.classList.remove('tabs-open'); if(mt)mt.setAttribute('aria-expanded','false');}
+  function openTabs(){document.body.classList.add('tabs-open'); if(mt)mt.setAttribute('aria-expanded','true');}
+  if(mt&&tabs){
+    mt.addEventListener('click',function(e){e.stopPropagation(); document.body.classList.contains('tabs-open')?closeTabs():openTabs();});
+    tabs.addEventListener('click',function(e){ var a=e.target.closest('a'); if(a && !e.target.closest('.tab-howto'))closeTabs(); });
+    document.addEventListener('click',function(e){ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target))closeTabs(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeTabs(); });
+  }
+  function syncMobileNavH(){
+    var nav=document.getElementById('topNav');
+    var frame=document.querySelector('.h1-frame');
+    if(nav)document.documentElement.style.setProperty('--navH',nav.getBoundingClientRect().height+'px');
+    if(frame)document.documentElement.style.setProperty('--titleH',frame.getBoundingClientRect().height+'px');
+  }
+  syncMobileNavH();
+  addEventListener('resize',syncMobileNavH);
+  addEventListener('orientationchange',function(){setTimeout(syncMobileNavH,60)});
+  document.addEventListener('DOMContentLoaded',syncMobileNavH);
+  var bl=document.getElementById('brandLogo');
+  if(bl){ if(bl.complete)syncMobileNavH(); else bl.addEventListener('load',syncMobileNavH); }
+  if(window.ResizeObserver){
+    var nav=document.getElementById('topNav'), frame=document.querySelector('.h1-frame');
+    if(nav)new ResizeObserver(syncMobileNavH).observe(nav);
+    if(frame)new ResizeObserver(syncMobileNavH).observe(frame);
+  }
+})();
 </script>
 </body>
 </html>
