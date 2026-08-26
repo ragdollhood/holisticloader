@@ -1046,18 +1046,16 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
 #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--tn-gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
 #contactBtn .ctext:hover{text-decoration:underline}
 #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
-#loginMenuBtn,#getPremiumMenuBtn,#howToBtn,#shopMenuBtn,#langMenuBtn{
+#loginMenuBtn,#howToBtn,#shopMenuBtn,#langMenuBtn{
   display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
   width:100%;box-sizing:border-box;
   font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--tn-ink);text-decoration:none;
   background:transparent;border:none;border-radius:8px;
   padding:9px 10px;cursor:pointer;transition:background .15s ease;
 }
-#loginMenuBtn .lgn-ic,#getPremiumMenuBtn .prem-ic,#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-#getPremiumMenuBtn{color:var(--tn-gold);font-weight:600}
-#getPremiumMenuBtn .prem-ic{fill:currentColor;stroke:none}
-#loginMenuBtn:hover,#getPremiumMenuBtn:hover,#howToBtn:hover,#shopMenuBtn:hover,#langMenuBtn:hover{background:rgba(243,239,228,.1)}
-#loginMenuBtn:active,#getPremiumMenuBtn:active,#howToBtn:active,#shopMenuBtn:active,#langMenuBtn:active{background:rgba(243,239,228,.16)}
+#loginMenuBtn .lgn-ic,#howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
+#loginMenuBtn:hover,#howToBtn:hover,#shopMenuBtn:hover,#langMenuBtn:hover{background:rgba(243,239,228,.1)}
+#loginMenuBtn:active,#howToBtn:active,#shopMenuBtn:active,#langMenuBtn:active{background:rgba(243,239,228,.16)}
 /* language row inside the hamburger menu — mobile only; desktop keeps the
    standalone flag-only #langBtn next to the hamburger icon */
 #langMenuBtn .flag{flex:0 0 auto;width:20px;height:14px;border-radius:2px;overflow:hidden;display:block;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
@@ -1252,9 +1250,6 @@ body.preset-active #menuToggle{display:none}
         <span id="langLbl">Svenska</span>
       </button>
       <div id="menuPanel" role="menu">
-        <button id="getPremiumMenuBtn" type="button">
-          <svg class="prem-ic" viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6-4.6-2.9-4.6 2.9 1.2-5.6-4.2-3.8 5.6-.6L12 3Z"/></svg>Unlock Premium
-        </button>
         <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
           <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
         </button>
@@ -3643,13 +3638,6 @@ buildBody(); buildOrganBars(); buildMicrowave(); buildSugarBox(); buildAlcoholBo
       loginMenuBtn.addEventListener('click',function(e){ e.stopPropagation();
         closeMenu();
         const headerLoginBtn=$('loginBtn'); if(headerLoginBtn)headerLoginBtn.click();
-      });
-    }
-    const getPremiumMenuBtn=$('getPremiumMenuBtn');
-    if(getPremiumMenuBtn){
-      getPremiumMenuBtn.addEventListener('click',function(e){ e.stopPropagation();
-        closeMenu();
-        const headerRegisterBtn=$('registerBtn'); if(headerRegisterBtn)headerRegisterBtn.click();
       });
     }
     const langMenuBtn=$('langMenuBtn');
