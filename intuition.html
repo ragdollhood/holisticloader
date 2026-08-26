@@ -134,7 +134,7 @@ body.ultra-low #cosmos{display:none}
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:45}
   body.menu-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
   #menuBrand{display:block;pointer-events:auto;text-align:center;text-decoration:none;padding:8px 6px 14px;margin:0 0 6px;border-bottom:1px solid rgba(220,190,130,.28)}
-  #menuBrand img{display:block;margin:0 auto;width:100%;max-width:220px;height:auto;filter:drop-shadow(0 2px 8px #0008)}
+  #menuBrand img{display:block;margin:0 auto;max-width:74%;height:auto;max-height:52px;filter:drop-shadow(0 2px 8px #0008)}
   #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px}
   #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
   #topNavLine{display:none}
@@ -304,17 +304,13 @@ body.ultra-low #cosmos{display:none}
     </a>
   </h1>
   <nav id="topTabs">
-    <a href="intuition-loader.html" id="menuBrand" aria-current="page">
-      <picture>
-        <source srcset="images/title-intuition-loader.webp" type="image/webp">
-        <img src="images/title-intuition-loader.png" alt="Intuition Loader">
-      </picture>
-    </a>
+    <a href="index.html" id="menuBrand"><img src="images/logga-holistictitel.png" alt="Holistic Loader"></a>
     <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
     <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
     <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition tracker</span></a>
     <a href="yoga-loader.html" class="tab">Yoga</a>
     <a href="mahjong.html" class="tab">Mahjong</a>
+    <a href="intuition-loader.html" class="tab active" aria-current="page">Intuition Loader</a>
   </nav>
   <div id="topNavLine"></div>
 </header>
