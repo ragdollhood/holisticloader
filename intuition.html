@@ -127,11 +127,14 @@ body.ultra-low #cosmos{display:none}
 #menuToggle svg{width:17px;height:17px;flex:none}
 #menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
 #menuToggle span{white-space:nowrap}
+#menuBrand{display:none}
 @media(max-width:720px){
   #menuToggle{display:flex}
   #brand{margin-top:2px}
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:45}
   body.menu-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #menuBrand{display:block;pointer-events:auto;text-align:center;text-decoration:none;padding:8px 6px 14px;margin:0 0 6px;border-bottom:1px solid rgba(220,190,130,.28)}
+  #menuBrand img{display:block;margin:0 auto;max-width:74%;height:auto;max-height:52px;filter:drop-shadow(0 2px 8px #0008)}
   #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px}
   #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
   #topNavLine{display:none}
@@ -258,6 +261,23 @@ body.ultra-low #cosmos{display:none}
 .meter-level{margin:22px 0 6px;font:700 clamp(15px,3.4vw,19px) Georgia;letter-spacing:.06em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .meter-desc{margin:0 auto 8px;font-size:13px;color:#e7dfcf;max-width:480px}
 .meter-sub{margin:0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
+
+/* ===== floating vertical "today's meter" widget (fixed, no text) ===== */
+#floatMeter{position:fixed;top:50%;right:14px;transform:translateY(-50%);z-index:48;display:flex;flex-direction:column;align-items:center;gap:12px}
+#floatMeterTrack{position:relative;width:14px;height:min(28vh,180px);border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:hidden;box-shadow:0 12px 30px #0008}
+#floatMeterFill{position:absolute;left:0;right:0;bottom:0;height:0%;background:linear-gradient(0deg,#ff8a5c,var(--gold),var(--violet));transition:height .4s ease}
+#floatMeterMarker{position:absolute;left:-4px;right:-4px;height:2px;background:#f3efe4cc;bottom:50%}
+#meterInfoBtn{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 14px Georgia;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:0}
+#meterInfoBtn:hover{background:rgba(255,217,138,.18)}
+@media(max-width:720px){#floatMeter{right:8px;gap:9px}#floatMeterTrack{width:11px;height:min(22vh,130px)}#meterInfoBtn{width:25px;height:25px;font-size:12px}}
+
+/* ===== info box (opened via the "i" button) showing the full meter panel ===== */
+.meter-info-overlay{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,4,9,.72);backdrop-filter:blur(4px)}
+.meter-info-overlay[hidden]{display:none}
+.meter-info-box{position:relative;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:rgba(16,11,25,.97);border:1.5px solid var(--gold);border-radius:22px;box-shadow:0 25px 70px #000c;padding:6px}
+.meter-info-box .meter-panel{margin:0;max-width:100%}
+.meter-info-close{position:absolute;top:10px;right:12px;width:30px;height:30px;border-radius:50%;border:1px solid rgba(220,190,130,.4);background:rgba(255,255,255,.06);color:#f3efe4;font-size:18px;line-height:1;cursor:pointer;z-index:2}
+.meter-info-close:hover{border-color:var(--gold);color:var(--gold)}
 .confetti-piece{position:fixed;top:-24px;width:9px;height:15px;z-index:70;pointer-events:none;border-radius:2px;animation-name:confettiFall;animation-timing-function:cubic-bezier(.35,0,.65,1);animation-fill-mode:forwards}
 @keyframes confettiFall{to{transform:translateY(112vh) rotate(760deg);opacity:.85}}
 .privacy-link{position:fixed;left:14px;bottom:14px;z-index:45;font-size:11px;color:#cfc3db;opacity:.7;text-decoration:none;padding:6px 11px;border-radius:10px;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;transition:.2s}
@@ -278,14 +298,21 @@ body.ultra-low #cosmos{display:none}
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
     <span>Meny</span>
   </button>
-  <h1 id="brand"><a href="index.html"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
+  <h1 id="brand">
+    <a href="index.html">
+      <picture>
+        <source srcset="images/title-intuition-loader.webp" type="image/webp">
+        <img src="images/title-intuition-loader.png" alt="Intuition Loader" id="brandLogo">
+      </picture>
+    </a>
+  </h1>
   <nav id="topTabs">
+    <a href="index.html" id="menuBrand"><img src="images/logga-holistictitel.png" alt="Holistic Loader"></a>
     <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
     <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
     <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition tracker</span></a>
     <a href="yoga-loader.html" class="tab">Yoga</a>
     <a href="mahjong.html" class="tab">Mahjong</a>
-    <a href="intuition-loader.html" class="tab active" aria-current="page">Intuition Loader</a>
   </nav>
   <div id="topNavLine"></div>
 </header>
@@ -375,23 +402,28 @@ body.ultra-low #cosmos{display:none}
     </section>
   </div>
 
-  <section class="panel meter-panel">
-    <p class="meter-title">TODAY'S INTUITION LEVEL</p>
-    <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
-    <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Sense the Direction + What Comes Next</p>
-    <p class="streak-line">&#128293; Current streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
-    <div class="meter-score-actions">
-      <button class="score-reset" id="scoreReset" type="button">Reset</button>
-      <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
+  <div id="meterInfoOverlay" class="meter-info-overlay" hidden>
+    <div class="meter-info-box" role="dialog" aria-modal="true" aria-labelledby="meterInfoHeading">
+      <button type="button" id="meterInfoClose" class="meter-info-close" aria-label="Stäng">&times;</button>
+      <section class="panel meter-panel">
+        <p class="meter-title" id="meterInfoHeading">TODAY'S INTUITION LEVEL</p>
+        <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
+        <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Sense the Direction + What Comes Next</p>
+        <p class="streak-line">&#128293; Current streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
+        <div class="meter-score-actions">
+          <button class="score-reset" id="scoreReset" type="button">Reset</button>
+          <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill" id="meterFill"></div>
+          <div class="meter-marker" id="meterMarker"><span id="meterMarkerLabel">odds: 50%</span></div>
+        </div>
+        <p class="meter-level" id="meterLevel">GATHERING SIGNAL</p>
+        <p class="meter-desc" id="meterDesc">Answer a few more rounds today to reveal your intuition level.</p>
+        <p class="meter-sub" id="meterSub">No guesses logged today yet</p>
+      </section>
     </div>
-    <div class="meter-track">
-      <div class="meter-fill" id="meterFill"></div>
-      <div class="meter-marker" id="meterMarker"><span id="meterMarkerLabel">odds: 50%</span></div>
-    </div>
-    <p class="meter-level" id="meterLevel">GATHERING SIGNAL</p>
-    <p class="meter-desc" id="meterDesc">Answer a few more rounds today to reveal your intuition level.</p>
-    <p class="meter-sub" id="meterSub">No guesses logged today yet</p>
-  </section>
+  </div>
 
   <section class="panel progress-panel">
     <p class="progress-label">DAILY PROGRESS</p>
@@ -400,6 +432,16 @@ body.ultra-low #cosmos{display:none}
     <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (lower on days with more What Comes Next rounds)</p>
   </section>
 </main>
+
+<div id="floatMeter">
+  <div id="floatMeterTrack" aria-hidden="true">
+    <div id="floatMeterFill"></div>
+    <div id="floatMeterMarker"></div>
+  </div>
+  <button type="button" id="meterInfoBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="meterInfoOverlay" aria-label="Visa dagens intuitionsnivå">i</button>
+</div>
+
+
 
 <section class="panel intuition-seo" aria-labelledby="seoHeading">
   <h2 id="seoHeading">Train Your Intuition, One Round at a Time</h2>
@@ -449,6 +491,20 @@ body.ultra-low #cosmos{display:none}
   addEventListener('resize',()=>{if(innerWidth>720)closeMenu()});
 })();
 
+/* ===== "i" info button — opens the today's-intuition-level info box ===== */
+(function(){
+  const btn=document.getElementById('meterInfoBtn');
+  const overlay=document.getElementById('meterInfoOverlay');
+  const closeBtn=document.getElementById('meterInfoClose');
+  if(!btn||!overlay||!closeBtn)return;
+  function openInfo(){overlay.hidden=false;btn.setAttribute('aria-expanded','true');closeBtn.focus()}
+  function closeInfo(){overlay.hidden=true;btn.setAttribute('aria-expanded','false');btn.focus()}
+  btn.addEventListener('click',openInfo);
+  closeBtn.addEventListener('click',closeInfo);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeInfo()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)closeInfo()});
+})();
+
 /* ===== keep the fixed header's height in sync so the title frame sits correctly ===== */
 (function(){
   function syncNavH(){const nav=document.getElementById('topNav');const frame=document.querySelector('.h1-frame');if(nav)document.documentElement.style.setProperty('--navH',nav.getBoundingClientRect().height+'px');if(frame)document.documentElement.style.setProperty('--titleH',frame.getBoundingClientRect().height+'px')}
@@ -470,6 +526,7 @@ body.ultra-low #cosmos{display:none}
   const logProgressBtn=$('#logProgressBtn');
   const meterFill=$('#meterFill'),meterLevel=$('#meterLevel'),meterDesc=$('#meterDesc'),meterSub=$('#meterSub');
   const meterMarker=$('#meterMarker'),meterMarkerLabel=$('#meterMarkerLabel');
+  const floatMeterFill=$('#floatMeterFill'),floatMeterMarker=$('#floatMeterMarker');
   let scoreCorrect=0,scoreTotal=0,AC;
 
   /* ===== streak tracker (current session streak + all-time best, remembered locally) ===== */
@@ -698,6 +755,8 @@ body.ultra-low #cosmos{display:none}
       meterMarker.style.left=Math.max(0,Math.min(100,baseline))+'%';
       meterMarkerLabel.textContent=`odds: ${baseline}%`;
     }
+    if(floatMeterFill)floatMeterFill.style.height=Math.max(0,Math.min(100,percent))+'%';
+    if(floatMeterMarker)floatMeterMarker.style.bottom=Math.max(0,Math.min(100,baseline))+'%';
     meterLevel.textContent=lvl.label;
     meterDesc.textContent=lvl.desc;
     meterSub.textContent=total?`${percent}% correct today over ${total} guess${total===1?'':'es'} \u2014 pure chance would be about ${baseline}%`:'No guesses logged today yet';
