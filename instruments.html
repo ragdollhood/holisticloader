@@ -1136,7 +1136,7 @@ isPremium = true;
     <p class="htu-lead">Press <b>Record</b> to capture your playing, then download it as an audio file once you stop.</p>
     <h4>Signal generator</h4>
     <p class="htu-lead">A separate tone generator further down the page. Drag the slider anywhere from 20 Hz to 20,000 Hz, pick a waveform and press <b>Play</b> — the scope above shows the waveform live. Handy for exploring one exact frequency on its own.</p>
-    <p class="htu-foot">Four instruments — the gong, the singing bowl, the handpan and the tongue drum — are free to play. The rest, along with the full signal generator and the ability to record &amp; save, unlock with Premium.</p>
+    <p class="htu-foot">All instruments, the signal generator and the ability to record &amp; save are free to use.</p>
     <div aria-hidden="true" style="height:40px"></div>
   </div>
 </div>
@@ -4206,61 +4206,12 @@ registerVisit();
 
   function applyInstrumentLocks(){
     clearInstrumentLocks();
-    if(typeof isPremium!=='undefined' && isPremium) return; // premium users: nothing locked
-
-    LOCKED.forEach(function(key){
-      var wrap=document.getElementById(key+'Wrap');
-      if(!wrap) return;
-      wrap.classList.add('locked-instr');
-      var overlay=document.createElement('div');
-      overlay.className='premLock';
-      overlay.setAttribute('role','button');
-      overlay.setAttribute('aria-label','Premium instrument, locked');
-      overlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
-      ['pointerdown','click'].forEach(function(ev){
-        overlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();openPremiumModal();});
-      });
-      wrap.appendChild(overlay);
-
-      document.querySelectorAll('[data-i="'+key+'"]').forEach(function(el){
-        el.disabled=true;el.classList.add('locked-ctrl');el.title='Premium — coming soon';
-      });
-      var tune=document.getElementById(key+'Tune');
-      if(tune){tune.disabled=true;tune.classList.add('locked-ctrl');tune.title='Premium — coming soon';}
-    });
-
-    var recBox=document.getElementById('recBox');
-    if(recBox){
-      recBox.classList.add('locked-instr','rec-locked');
-      var recOverlay=document.createElement('div');
-      recOverlay.className='premLock';
-      recOverlay.setAttribute('role','button');
-      recOverlay.setAttribute('aria-label','Premium feature, locked');
-      recOverlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
-      ['pointerdown','click'].forEach(function(ev){
-        recOverlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();openPremiumModal();});
-      });
-      recBox.appendChild(recOverlay);
-      var recBtn=document.getElementById('rec');
-      if(recBtn){recBtn.disabled=true;recBtn.classList.add('locked-ctrl');recBtn.title='Premium — coming soon';}
-    }
-
-    var sigPanel=document.getElementById('sigGenPanel');
-    if(sigPanel){
-      sigPanel.classList.add('panel-locked');
-      var sigOverlay=document.createElement('div');
-      sigOverlay.className='premLock';
-      sigOverlay.setAttribute('role','button');
-      sigOverlay.setAttribute('aria-label','Premium feature, locked');
-      sigOverlay.innerHTML='<span class="premBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Premium</span>';
-      ['pointerdown','click'].forEach(function(ev){
-        sigOverlay.addEventListener(ev,function(e){e.stopPropagation();e.preventDefault();openPremiumModal();});
-      });
-      sigPanel.appendChild(sigOverlay);
-      var sigToggle=document.getElementById('toggle'), sigSlider=document.getElementById('slider');
-      if(sigToggle){sigToggle.disabled=true;sigToggle.classList.add('locked-ctrl');sigToggle.title='Premium — coming soon';}
-      if(sigSlider){sigSlider.disabled=true;sigSlider.classList.add('locked-ctrl');sigSlider.title='Premium — coming soon';}
-    }
+    /* Nothing is ever locked on this page: every instrument, the recorder
+       and the signal generator are free to use for everyone. Deliberately
+       not gated on isPremium — auth.js can reassign that variable later
+       once it resolves the real login/subscription state, and this must
+       stay unlocked regardless of what that resolves to. */
+    return;
   }
 
   applyInstrumentLocks();
