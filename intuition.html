@@ -272,7 +272,16 @@ body.ultra-low #cosmos{display:none}
 #floatMeterMarker::after{right:-6px;border-left:6px solid #fff;transform:translateY(-50%)}
 #meterInfoBtn{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 14px Georgia;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:0}
 #meterInfoBtn:hover{background:rgba(255,217,138,.18)}
-@media(max-width:720px){#floatMeter{left:auto;right:10px;gap:8px}#floatMeterScore{font-size:clamp(14px,4vw,18px)}#floatMeterTrack{width:16px;height:min(40vh,290px);border-radius:9px}#meterInfoBtn{width:25px;height:25px;font-size:12px}}
+@media(max-width:720px){#floatMeter{left:auto;right:10px;gap:8px}#floatMeterScore{font-size:clamp(14px,4vw,18px)}#floatMeterTrack{width:16px;height:min(40vh,290px);border-radius:9px}#meterInfoBtn{width:25px;height:25px;font-size:12px}
+/* docked mode: meter is moved inside the first exercise box's panel so its height always matches that panel exactly */
+#floatMeter.docked{position:absolute;top:0;bottom:0;right:-46px;left:auto;transform:none;justify-content:center;gap:6px}
+#floatMeter.docked #floatMeterTrack{height:100%;max-height:none}
+.tri-panel.meter-host{position:relative;margin-right:46px}
+.triple-wrap{padding-right:46px}
+.triple-wrap .game-panel{max-width:280px;padding:26px 18px 22px}
+.triple-wrap .mall-box{width:min(38vw,170px)}
+}
+@media(max-width:480px){#floatMeter.docked{right:-40px}.tri-panel.meter-host{margin-right:40px}.triple-wrap{padding-right:40px}.triple-wrap .game-panel{max-width:250px}.triple-wrap .mall-box{width:min(34vw,150px)}}
 
 /* ===== info box (opened via the "i" button) showing the full meter panel ===== */
 .meter-info-overlay{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,4,9,.72);backdrop-filter:blur(4px)}
@@ -434,6 +443,7 @@ body.ultra-low #cosmos{display:none}
   </section>
 </main>
 
+<span id="floatMeterAnchor" style="display:none" aria-hidden="true"></span>
 <div id="floatMeter">
   <p id="floatMeterScore" aria-hidden="true"><span id="floatScoreCorrect">0</span>/<span id="floatScoreTotal">0</span></p>
   <div id="floatMeterTrack" aria-hidden="true">
@@ -505,6 +515,29 @@ body.ultra-low #cosmos{display:none}
   closeBtn.addEventListener('click',closeInfo);
   overlay.addEventListener('click',e=>{if(e.target===overlay)closeInfo()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)closeInfo()});
+})();
+
+/* ===== on mobile, dock the floating meter inside the first exercise box so its height always matches that box exactly ===== */
+(function(){
+  const meter=document.getElementById('floatMeter');
+  const anchor=document.getElementById('floatMeterAnchor');
+  const host=document.querySelector('.tri-panel');
+  if(!meter||!anchor||!host)return;
+  const mq=window.matchMedia('(max-width:720px)');
+  function apply(){
+    if(mq.matches){
+      if(meter.parentElement!==host){host.appendChild(meter)}
+      host.classList.add('meter-host');
+      meter.classList.add('docked');
+    }else{
+      if(meter.parentElement!==anchor.parentElement||meter.previousElementSibling!==anchor){anchor.parentElement.insertBefore(meter,anchor.nextSibling)}
+      host.classList.remove('meter-host');
+      meter.classList.remove('docked');
+    }
+  }
+  apply();
+  mq.addEventListener?mq.addEventListener('change',apply):mq.addListener(apply);
+  addEventListener('orientationchange',()=>setTimeout(apply,60));
 })();
 
 /* ===== keep the fixed header's height in sync so the title frame sits correctly ===== */
