@@ -274,14 +274,14 @@ body.ultra-low #cosmos{display:none}
 #meterInfoBtn:hover{background:rgba(255,217,138,.18)}
 @media(max-width:720px){#floatMeter{left:auto;right:10px;gap:8px}#floatMeterScore{font-size:clamp(14px,4vw,18px)}#floatMeterTrack{width:16px;height:min(40vh,290px);border-radius:9px}#meterInfoBtn{width:25px;height:25px;font-size:12px}
 /* docked mode: meter is moved inside the first exercise box's panel so its height always matches that panel exactly */
-#floatMeter.docked{position:absolute;top:0;bottom:0;right:-46px;left:auto;transform:none;justify-content:center;gap:6px}
+#floatMeter.docked{position:absolute;top:0;bottom:0;right:-34px;left:auto;transform:none;justify-content:center;gap:6px}
 #floatMeter.docked #floatMeterTrack{height:100%;max-height:none}
-.tri-panel.meter-host{position:relative;margin-right:46px}
-.triple-wrap{padding-right:46px}
-.triple-wrap .game-panel{max-width:280px;padding:26px 18px 22px}
-.triple-wrap .mall-box{width:min(38vw,170px)}
+.tri-panel.meter-host{position:relative;margin-right:34px}
+.triple-wrap{padding-right:34px}
+.triple-wrap .game-panel{max-width:312px;padding:30px 20px 26px}
+.triple-wrap .options-row{gap:16px}
 }
-@media(max-width:480px){#floatMeter.docked{right:-40px}.tri-panel.meter-host{margin-right:40px}.triple-wrap{padding-right:40px}.triple-wrap .game-panel{max-width:250px}.triple-wrap .mall-box{width:min(34vw,150px)}}
+@media(max-width:400px){#floatMeter.docked{right:-26px}.tri-panel.meter-host{margin-right:26px}.triple-wrap{padding-right:26px}.triple-wrap .game-panel{max-width:280px;padding:26px 16px 22px}.triple-wrap .options-row{gap:12px}}
 
 /* ===== info box (opened via the "i" button) showing the full meter panel ===== */
 .meter-info-overlay{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,4,9,.72);backdrop-filter:blur(4px)}
