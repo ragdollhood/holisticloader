@@ -122,28 +122,22 @@
             <div class="map-title" id="mapTitle">Choose an island</div>
             <div class="map-frame" id="mapFrame"></div>
 
-            <!-- Map-screen ad — covers the "world map", "between islands",
-                 and "after an island is cleared" placements in one slot,
-                 since clearing an island always drops the player back on
-                 this screen (see checkWorldClear()). Free users only.
-
-                 TEMPORARY: .house-ad-creative is a static self-promo
-                 image standing in for a real AdSense unit while that's
-                 still pending approval — see the matching comment on
-                 #sidebarAdSlot below. Delete just this inner <picture>
-                 block (leave the surrounding #mapAdSlot div and its
-                 ad-label alone) once adsense.js is wired up to fill
-                 this slot for real. -->
-            <div class="hud ad-slot ad-slot--map" id="mapAdSlot" aria-label="Advertisement">
-              <button type="button" class="ad-slot-close" id="mapAdCloseBtn" aria-label="Close advertisement">✕</button>
-              <span class="ad-label">Advertisement</span>
-              <a class="house-ad-link" href="https://kidsgonnaplay.com/store" target="_blank" rel="noopener sponsored">
+            <!-- Map-screen donation button — covers the "world map",
+                 "between islands", and "after an island is cleared"
+                 placements in one slot, since clearing an island always
+                 drops the player back on this screen (see
+                 checkWorldClear()). Free users only (hidden once ads
+                 are removed, same as before — see #gameLayout.ads-
+                 removed #mapAdSlot in the CSS). Was a temporary
+                 self-promo house ad; now the donation link/image that
+                 used to live in the sidebar .remove-ads-card. -->
+            <div class="hud ad-slot ad-slot--map" id="mapAdSlot" aria-label="Support the game">
+              <button type="button" class="ad-slot-close" id="mapAdCloseBtn" aria-label="Close">✕</button>
+              <a class="house-ad-link" href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer">
                 <picture class="house-ad-creative">
-                  <source srcset="images/ad-kidsgonnaplay.webp" type="image/webp">
                   <img
-                    src="images/ad-kidsgonnaplay.jpg"
-                    alt="Kids Gonna Play — 100+ screen-free games and activities e-book"
-                    width="900" height="600"
+                    src="images/donation.jpg"
+                    alt="Donate"
                     loading="lazy" decoding="async"
                   >
                 </picture>
@@ -270,15 +264,14 @@
           </ol>
         </div>
 
-        <!-- Donation button (replaces the old "Remove Ads" purchase
-             card). Links straight to the Stripe payment link — no
-             checkout-session Edge Function, no account requirement.
-             Reuses the .remove-ads-card wrapper so it keeps the same
-             map-only / not-ads-removed visibility window and position
-             as before. -->
-        <div class="hud remove-ads-card" id="removeAdsCard" aria-label="Support the game">
-          <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="donation-link" id="donationLink">
-            <img src="images/donation.jpg" alt="Donate" class="donation-image">
+        <!-- Promo button linking to game2.html. Reuses the
+             .remove-ads-card wrapper so it keeps the same map-only /
+             not-ads-removed visibility window and position as before.
+             (The donation link that used to be here now lives in
+             #mapAdSlot instead.) -->
+        <div class="hud remove-ads-card" id="removeAdsCard" aria-label="Play Mergico 2">
+          <a href="game2.html" class="donation-link" id="mergico2PreviewLink">
+            <img src="images/preview-mergico2.jpg" alt="Play Mergico 2" class="donation-image">
           </a>
         </div>
 
@@ -521,19 +514,16 @@
     </div>
   </div>
 
-  <!-- "About to start playing" interstitial ad — shown right as the
-       player leaves the map and a level begins (see the observer
-       script near the end of the page, which watches #gameLayout for
-       its "on-map" class being removed). Free users only; skipped
-       automatically once ads are removed (Premium sign-in or the
-       one-time purchase) — same as #mapAdSlot.
+  <!-- #playAdModal removed from active use (space freed up for later
+       — this used to be the "about to start playing" interstitial ad,
+       shown right as the player left the map and a level began; see
+       the observer script near the end of the page).
+       Original markup kept below, commented out, in case this
+       interstitial slot is wanted again — see the matching CSS rules
+       for .play-ad-card / #playAdModal (also left in place) and the
+       showPlayAd()/hidePlayAd() helpers in the script further down
+       (they already no-op safely now that playAdModal is null).
 
-       TEMPORARY: like #mapAdSlot / the old #sidebarAdSlot, this is a
-       static self-promo image standing in for a real AdSense unit
-       while that's still pending approval. Once adsense.js can fill
-       this placement for real, swap the <a>/<picture> block below for
-       the ad unit and drop the click-to-dismiss ✕ if the network's
-       own unit already provides one. -->
   <div class="modal" id="playAdModal" role="dialog" aria-modal="true" aria-label="Advertisement">
     <div class="modal-card play-ad-card">
       <button type="button" class="ad-slot-close" id="playAdCloseBtn" aria-label="Close advertisement">✕</button>
@@ -551,6 +541,7 @@
       </a>
     </div>
   </div>
+  -->
 
   <!-- Cookie / data-storage consent banner — a quiet bar pinned to the
        bottom of the viewport (NOT a blocking full-screen .modal, so it
