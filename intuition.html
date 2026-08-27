@@ -127,9 +127,6 @@ body.ultra-low #cosmos{display:none}
 #menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
 #menuToggle svg{width:17px;height:17px;flex:none}
 #menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
-#menuBrand{display:none}
-/* ===== desktop/laptop version of the dropdown, opened by the same #menuToggle icon,
-   as an extra way in alongside the always-visible horizontal tab row ===== */
 #menuToggleDesktopPanel{display:none}
 @media(min-width:721px){
   #menuToggleDesktopPanel{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;z-index:52;
@@ -148,13 +145,13 @@ body.ultra-low #cosmos{display:none}
   #menuToggleDesktopPanel .nav-contact-email a{color:var(--gold);text-decoration:none}
   #menuToggleDesktopPanel .nav-contact-email a:hover{text-decoration:underline}
 }
+.menu-logo-link{display:flex;width:100%;align-items:center;justify-content:center;padding:4px 4px 10px;text-decoration:none;box-sizing:border-box}
+.menu-logo-img{max-height:34px;width:auto;display:block}
 @media(max-width:720px){
   #brand{margin-top:2px}
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:45}
   body.menu-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;z-index:49}
   body.menu-open #floatMeter{z-index:44}
-  #menuBrand{display:block;pointer-events:auto;text-align:center;text-decoration:none;padding:8px 6px 14px;margin:0 0 6px;border-bottom:1px solid rgba(220,190,130,.28)}
-  #menuBrand img{display:block;margin:0 auto;max-width:74%;height:auto;max-height:52px;filter:drop-shadow(0 2px 8px #0008)}
   #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px;display:block;flex:1 1 auto;width:100%;box-sizing:border-box}
   #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
   #topNavLine{display:none}
@@ -366,7 +363,8 @@ body.ultra-low #cosmos{display:none}
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
   </button>
   <nav id="menuToggleDesktopPanel" aria-label="Main sections (menu)">
-    <a href="breathing.html" class="tab">Guided Breathing</a>
+  <a href="index.html" class="menu-logo-link"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+    <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
     <a href="soundscape.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="yoga.html" class="tab">Yoga Loader</a>
@@ -377,6 +375,7 @@ body.ultra-low #cosmos{display:none}
     <a href="about.html" class="tab">About</a>
     <button type="button" id="menuDesktopContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="menuDesktopContactEmail">Contact</button>
     <p id="menuDesktopContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener" class="tab nav-sep">Support Holistic Loader</a>
   </nav>
   <h1 id="brand">
     <a href="index.html">
@@ -384,18 +383,19 @@ body.ultra-low #cosmos{display:none}
     </a>
   </h1>
   <nav id="topTabs">
-    <a href="index.html" id="menuBrand"><img src="images/title-holistic-menu.png" alt="Holistic Loader"></a>
-    <a href="breathing.html" class="tab">Guided Breathing</a>
+    <a href="index.html" class="menu-logo-link mobile-extra"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+    <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
     <a href="soundscape.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="yoga.html" class="tab">Yoga Loader</a>
     <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
     <a href="intuition.html" class="tab active" aria-current="page">Intuition Loader</a>
     <a href="shop.html" class="tab">Shop</a>
-    <a href="terms.html" class="tab mobile-extra">Terms &amp; Conditions</a>
+    <a href="terms.html" class="tab mobile-extra nav-sep">Terms &amp; Conditions</a>
     <a href="about.html" class="tab mobile-extra">About</a>
     <button type="button" id="contactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="contactEmail">Contact</button>
     <p id="contactEmail" class="contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener" class="tab mobile-extra nav-sep">Support Holistic Loader</a>
   </nav>
   <div id="topNavLine"></div>
 </header>
