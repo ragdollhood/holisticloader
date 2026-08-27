@@ -279,6 +279,9 @@ body.ultra-low #cosmos{display:none}
   .option-tile{width:min(16vw,190px)}
 }
 .progress-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center;border-color:#5eead4;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(94,234,212,.16)}
+.next-progress-panel{border-color:var(--violet);box-shadow:0 18px 55px #0008,0 0 0 1px rgba(201,168,255,.16)}
+.next-progress-panel .progress-label{color:var(--violet)}
+#nextProgressChart{width:100%;height:180px;display:block}
 .progress-label{margin:0 0 14px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
 #progressChart{width:100%;height:180px;display:block}
 .progress-empty{margin:18px 0;color:#cfc3db;font-size:13px}
@@ -567,6 +570,13 @@ body.ultra-low #cosmos{display:none}
       <p class="progress-sub">&#128293; Highest streak reached on each day</p>
     </div>
   </section>
+
+  <section class="panel progress-panel next-progress-panel">
+    <p class="progress-label">WHAT COMES NEXT &mdash; PROGRESS</p>
+    <canvas id="nextProgressChart" width="880" height="180"></canvas>
+    <p class="progress-empty" id="nextProgressEmpty">Play a few rounds of What Comes Next to start this chart.</p>
+    <p class="progress-sub">% correct guesses per day &mdash; dashed line marks the 20% pure-chance baseline (1 of 5 symbols)</p>
+  </section>
 </main>
 
 <div id="floatMeter">
@@ -837,6 +847,7 @@ body.ultra-low #cosmos{display:none}
 
   /* ===== daily progress log (stored locally, one averaged value per day) ===== */
   const PROGRESS_KEY='intuitionCombinedProgressLog';
+  const NEXT_PROGRESS_KEY='intuitionNextProgressLog';
 
   function todayKey(){
     const d=new Date();
@@ -1074,6 +1085,128 @@ body.ultra-low #cosmos{display:none}
     });
   }
 
+  /* ===== separate daily-progress chart for What Comes Next — kept out of
+     the shared (turquoise) progress log since this game isn't counted
+     toward the combined meter/graph above. Same log shape as
+     PROGRESS_KEY ({sum,count} per day), but the baseline is always the
+     fixed 20% chance level instead of a per-day computed baseline. ===== */
+  function loadNextProgressLog(){
+    try{return JSON.parse(localStorage.getItem(NEXT_PROGRESS_KEY))||{};}catch(e){return{};}
+  }
+  function saveNextProgressLog(log){
+    try{localStorage.setItem(NEXT_PROGRESS_KEY,JSON.stringify(log));}catch(e){}
+  }
+  function logNextProgress(){
+    if(nextTotalCount<=0)return;
+    const percent=(nextCorrectCount/nextTotalCount)*100;
+    const log=loadNextProgressLog();
+    const key=todayKey();
+    const entry=log[key]||{sum:0,count:0};
+    entry.sum+=percent;
+    entry.count+=1;
+    log[key]=entry;
+    saveNextProgressLog(log);
+    drawNextChart();
+  }
+  let _nextAutoLogTimer=null;
+  function scheduleNextAutoLog(){
+    clearTimeout(_nextAutoLogTimer);
+    _nextAutoLogTimer=setTimeout(logNextProgress,1500);
+  }
+
+  function drawNextChart(){
+    const canvas=$('#nextProgressChart'),emptyEl=$('#nextProgressEmpty');
+    if(!canvas)return;
+    const log=loadNextProgressLog();
+    const days=Object.keys(log).sort();
+    if(days.length===0){
+      canvas.style.display='none';
+      if(emptyEl)emptyEl.style.display='block';
+      return;
+    }
+    canvas.style.display='block';
+    if(emptyEl)emptyEl.style.display='none';
+
+    const recentDays=days.slice(-14);
+    const values=recentDays.map(k=>{const e=log[k];return e.count?e.sum/e.count:0;});
+    const NEXT_BASELINE_PCT=20;
+
+    const dpr=window.devicePixelRatio||1;
+    const cssW=canvas.clientWidth||canvas.parentElement.clientWidth||600;
+    const cssH=180;
+    canvas.width=cssW*dpr;
+    canvas.height=cssH*dpr;
+    const ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+
+    const padL=34,padR=14,padT=14,padB=26;
+    const plotW=cssW-padL-padR,plotH=cssH-padT-padB;
+
+    ctx.strokeStyle='rgba(255,255,255,.14)';
+    ctx.fillStyle='#cfc3db';
+    ctx.font='10px Georgia, serif';
+    ctx.lineWidth=1;
+    [0,50,100].forEach(v=>{
+      const y=padT+plotH-(v/100)*plotH;
+      ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+plotW,y);ctx.stroke();
+      ctx.textAlign='right';ctx.textBaseline='middle';
+      ctx.fillText(v+'%',padL-6,y);
+    });
+
+    const n=values.length;
+    const stepX=n>1?plotW/(n-1):0;
+    const pts=values.map((v,i)=>({
+      x:padL+(n>1?i*stepX:plotW/2),
+      y:padT+plotH-(Math.max(0,Math.min(100,v))/100)*plotH
+    }));
+    const baseY=padT+plotH-(NEXT_BASELINE_PCT/100)*plotH;
+
+    if(n>1){
+      const grad=ctx.createLinearGradient(0,padT,0,padT+plotH);
+      grad.addColorStop(0,'rgba(201,168,255,.35)');
+      grad.addColorStop(1,'rgba(201,168,255,0)');
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x,padT+plotH);
+      pts.forEach(p=>ctx.lineTo(p.x,p.y));
+      ctx.lineTo(pts[n-1].x,padT+plotH);
+      ctx.closePath();
+      ctx.fillStyle=grad;
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle='rgba(207,195,219,.55)';
+    ctx.lineWidth=1.6;
+    ctx.moveTo(padL,baseY);
+    ctx.lineTo(padL+plotW,baseY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.strokeStyle='#c9a8ff';
+    ctx.lineWidth=2.4;
+    ctx.lineJoin='round';
+    pts.forEach((p,i)=>{i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);});
+    ctx.stroke();
+
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+    const labelEvery=Math.max(1,Math.ceil(n/8));
+    pts.forEach((p,i)=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,3.2,0,7);
+      ctx.fillStyle=i===n-1?'#c9a8ff':'#f3efe4';
+      ctx.fill();
+      if(n<=8||i%labelEvery===0||i===n-1){
+        ctx.fillStyle='#cfc3db';
+        ctx.font='9.5px Georgia, serif';
+        ctx.fillText(recentDays[i].slice(5).replace('-','/'),p.x,padT+plotH+6);
+      }
+    });
+  }
+
   function drawStreakChart(){
     const canvas=$('#streakChart'),emptyEl=$('#streakEmpty');
     if(!canvas)return;
@@ -1157,7 +1290,7 @@ body.ultra-low #cosmos{display:none}
   }
 
   let _chartResizeT;
-  addEventListener('resize',()=>{clearTimeout(_chartResizeT);_chartResizeT=setTimeout(()=>{drawProgressChart();drawStreakChart();},150)});
+  addEventListener('resize',()=>{clearTimeout(_chartResizeT);_chartResizeT=setTimeout(()=>{drawProgressChart();drawStreakChart();drawNextChart();},150)});
 
   /* ===== today's live intuition meter (correct vs the 50% odds) ===== */
   const DAY_STATS_KEY='intuitionCombinedDayStats';
@@ -1650,6 +1783,7 @@ body.ultra-low #cosmos{display:none}
     nextTotalCount++;
     if(correct)nextCorrectCount++;
     updateNextMeter();
+    scheduleNextAutoLog();
     setTimeout(newRoundNext,1500);
   }
 
@@ -1664,6 +1798,7 @@ body.ultra-low #cosmos{display:none}
   if(dayStats.bestStreak)recordDailyStreak(dayStats.bestStreak); // backfill today's entry if a streak was already set earlier today
   drawProgressChart();
   drawStreakChart();
+  drawNextChart();
   updateMeter();
   updateStreakDisplay();
 })();
