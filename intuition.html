@@ -503,7 +503,7 @@ body.ultra-low #cosmos{display:none}
         <p class="meter-title" id="meterInfoHeading">TODAY'S INTUITION LEVEL</p>
         <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
         <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Sense the Direction (What Comes Next isn&rsquo;t counted here)</p>
-        <p class="streak-line">&#128293; Current streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
+        <p class="streak-line">&#128293; Todays streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
         <div class="meter-score-actions">
           <button class="score-reset" id="scoreReset" type="button">Reset</button>
           <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
@@ -726,17 +726,25 @@ body.ultra-low #cosmos{display:none}
   try{bestStreak=parseInt(localStorage.getItem(BEST_STREAK_KEY),10)||0;}catch(e){bestStreak=0;}
 
   function updateStreakDisplay(){
-    streakCurrentEl.textContent=currentStreak;
+    if(dayStats.date!==todayKey())dayStats=loadDayStats();
+    const todayStreak=dayStats.bestStreak||0;
+    streakCurrentEl.textContent=todayStreak;
     streakBestEl.textContent=bestStreak;
-    if(floatStreakEl)floatStreakEl.textContent=currentStreak;
+    if(floatStreakEl)floatStreakEl.textContent=todayStreak;
   }
 
   function registerStreak(correct){
+    if(dayStats.date!==todayKey())dayStats=loadDayStats();
     if(correct){
       currentStreak++;
       if(currentStreak>bestStreak){
         bestStreak=currentStreak;
         try{localStorage.setItem(BEST_STREAK_KEY,String(bestStreak));}catch(e){}
+        saveCloudProgress();
+      }
+      if(currentStreak>(dayStats.bestStreak||0)){
+        dayStats.bestStreak=currentStreak;
+        saveDayStats(dayStats);
         saveCloudProgress();
       }
     }else{
@@ -1007,9 +1015,9 @@ body.ultra-low #cosmos{display:none}
   function loadDayStats(){
     try{
       const raw=JSON.parse(localStorage.getItem(DAY_STATS_KEY));
-      if(raw&&raw.date===todayKey())return {chanceSum:0,...raw};
+      if(raw&&raw.date===todayKey())return {chanceSum:0,bestStreak:0,...raw};
     }catch(e){}
-    return {date:todayKey(),correct:0,total:0,chanceSum:0};
+    return {date:todayKey(),correct:0,total:0,chanceSum:0,bestStreak:0};
   }
   function saveDayStats(stats){
     try{localStorage.setItem(DAY_STATS_KEY,JSON.stringify(stats));}catch(e){}
