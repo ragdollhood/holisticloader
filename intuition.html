@@ -243,6 +243,7 @@ body.ultra-low #cosmos{display:none}
 .score-label{margin:0 0 10px;font:600 14px Georgia;letter-spacing:.14em;color:var(--gold)}
 .score-value{margin:0;font:700 clamp(34px,8vw,52px) Georgia;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .score-sub{margin:8px 0 0;font-size:12px;color:#cfc3db}
+.meter-reset-note{margin:10px 0 0;font-size:11px;line-height:1.4;color:#a89bb8}
 .score-reset{margin-top:16px;padding:8px 20px;font:600 12px Georgia;letter-spacing:.08em;color:#cfc3db;background:rgba(255,255,255,.06);border:1.5px solid rgba(220,190,130,.35);border-radius:12px;cursor:pointer;transition:transform .15s,border-color .15s,color .15s}
 .score-reset:hover{transform:translateY(-2px);border-color:var(--gold);color:var(--gold)}
 .score-log{margin-top:10px;width:100%;padding:9px 14px;font:600 11.5px Georgia;letter-spacing:.05em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s,opacity .15s}
@@ -458,7 +459,7 @@ body.ultra-low #cosmos{display:none}
 
   <div class="duo-wrap">
     <section class="panel game-panel next-panel">
-      <p class="prompt-title">WHAT COMES NEXT? (no measurement)</p>
+      <p class="prompt-title">WHAT COMES NEXT?</p>
       <div class="next-mystery tarot-box" id="nextMysteryBox">
         <span id="nextMysteryQ">?</span>
         <img id="nextMysteryImg" alt="Mystery symbol" hidden>
@@ -506,8 +507,8 @@ body.ultra-low #cosmos{display:none}
         <p class="streak-line">&#128293; Todays streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
         <div class="meter-score-actions">
           <button class="score-reset" id="scoreReset" type="button">Reset</button>
-          <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
         </div>
+        <p class="meter-reset-note">Reset only clears today&rsquo;s meter above &mdash; your daily history and progress graph are unaffected.</p>
         <div class="meter-track">
           <div class="meter-fill" id="meterFill"></div>
           <div class="meter-marker" id="meterMarker"><span id="meterMarkerLabel">odds: 50%</span></div>
@@ -527,7 +528,7 @@ body.ultra-low #cosmos{display:none}
     </div>
     <div id="progressUnlocked" class="progress-unlocked" hidden>
       <canvas id="progressChart" width="880" height="180"></canvas>
-      <p class="progress-empty" id="progressEmpty">Log your progress after a few rounds to start your chart.</p>
+      <p class="progress-empty" id="progressEmpty">Play a few rounds to start your chart &mdash; it logs automatically.</p>
       <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (What Comes Next isn&rsquo;t counted here)</p>
     </div>
   </section>
@@ -702,7 +703,7 @@ body.ultra-low #cosmos{display:none}
 
   /* ---------- shared score / meter / graph (Tile + Side) ---------- */
   const scoreCorrectEl=$('#scoreCorrect'),scoreTotalEl=$('#scoreTotal'),scoreReset=$('#scoreReset');
-  const logProgressBtn=$('#logProgressBtn');
+  // (logProgressBtn removed — progress now logs automatically, see recordGuess/logProgress below)
   const meterFill=$('#meterFill'),meterLevel=$('#meterLevel'),meterDesc=$('#meterDesc'),meterSub=$('#meterSub');
   const meterMarker=$('#meterMarker'),meterMarkerLabel=$('#meterMarkerLabel');
   const floatMeterFill=$('#floatMeterFill'),floatMeterMarker=$('#floatMeterMarker');
@@ -771,17 +772,12 @@ body.ultra-low #cosmos{display:none}
   });
   updateSoundToggleUI();
 
-  function updateLogButtonState(){
-    logProgressBtn.disabled=scoreTotal<=0;
-  }
-
   function resetScore(){
     scoreCorrect=0;
     scoreTotal=0;
     currentStreak=0;
     updateStreakDisplay();
     syncScoreDisplay();
-    updateLogButtonState();
   }
   scoreReset.addEventListener('click',resetScore);
   if(floatMeterReset)floatMeterReset.addEventListener('click',resetScore);
@@ -904,7 +900,16 @@ body.ultra-low #cosmos{display:none}
     drawProgressChart();
     saveCloudProgress();
   }
-  logProgressBtn.addEventListener('click',logProgress);
+
+  /* Progress now logs itself automatically — no manual button. A short
+     debounce after each counted guess means one log entry per natural
+     "session" of play (same shape the old manual button produced),
+     instead of writing on every single guess. */
+  let _autoLogTimer=null;
+  function scheduleAutoLog(){
+    clearTimeout(_autoLogTimer);
+    _autoLogTimer=setTimeout(logProgress,1500);
+  }
 
   function drawProgressChart(){
     const canvas=$('#progressChart'),emptyEl=$('#progressEmpty');
@@ -1071,7 +1076,7 @@ body.ultra-low #cosmos{display:none}
       saveDayStats(dayStats);
       updateMeter();
       syncScoreDisplay();
-      updateLogButtonState();
+      scheduleAutoLog();
       saveCloudProgress();
     }
     registerStreak(correct);
