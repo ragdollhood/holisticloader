@@ -366,8 +366,9 @@ function _buildAuthDom() {
           <svg viewBox="0 0 24 24"><path d="M12 12.5a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"/><path d="M4 20.25c0-3.73 3.58-6.75 8-6.75s8 3.02 8 6.75"/></svg>
         </button>
         <div id="accountMenu" role="menu">
+          <p id="accountGreeting" hidden></p>
           <div id="accountEmailLabel"></div>
-          <label id="accountNameLabel" for="accountNameInput">Display name</label>
+          <label id="accountNameLabel" for="accountNameInput">Choose a display name</label>
           <div id="accountNameRow">
             <input id="accountNameInput" type="text" maxlength="20" placeholder="Choose a display name">
             <button id="accountNameSaveBtn" type="button">Save</button>
@@ -603,8 +604,15 @@ function _wireAuthDom() {
           .eq("user_id", currentUser.id);
         if (error) throw error;
         currentDisplayName = name;
-        accountNameInput.value = name;
+        // Field goes blank again — the label above now reads "Hello, <name>"
+        // and the placeholder switches to "Choose a new display name", so
+        // an empty box + updated label communicates the saved state clearly.
+        accountNameInput.value = "";
         accountNameMsg.textContent = "Saved!";
+        renderAuthUI(); // updates the "Hello, <name>" label above the field
+        // Other page scripts (e.g. the intuition-game leaderboard) listen
+        // via onPremiumStatusChange to re-sync their own copy of the name.
+        _firePremiumChangeListeners();
       } catch (e) {
         console.error("Save display name error:", e);
         accountNameMsg.textContent = "Could not save \u2014 try again.";
@@ -727,35 +735,59 @@ function renderAuthUI() {
   const accountNameRow = document.getElementById("accountNameRow");
   const accountNameInput = document.getElementById("accountNameInput");
   const accountNameMsg = document.getElementById("accountNameMsg");
+  const accountGreeting = document.getElementById("accountGreeting");
   if (!accountRoot) return; // DOM not built yet
 
   if (currentUser) {
     accountRoot.classList.add("loggedIn");
     accountBtn.setAttribute("aria-label", "Account menu");
     emailLabel.textContent = "Logged in as: " + currentUser.email;
+    if (accountGreeting) {
+      if (currentDisplayName) {
+        accountGreeting.textContent = "Hello, " + currentDisplayName;
+        accountGreeting.hidden = false;
+      } else {
+        accountGreeting.hidden = true;
+      }
+    }
     // Only ACTUAL PAYING customers have a Stripe subscription to manage
     // — trial users are premium (isPremium) but have nothing to manage.
     manageSubBtn.style.display = isPaidPremium ? "" : "none";
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "none";
-    if (accountNameLabel) accountNameLabel.style.display = "";
+    if (accountNameLabel) {
+      accountNameLabel.style.display = "";
+      // Once a name is chosen (here or via the leaderboard), the label
+      // itself becomes the "Hello, <name>" greeting instead of a generic
+      // instruction — the input's placeholder guides changing it further.
+      accountNameLabel.textContent = currentDisplayName
+        ? "Hello, " + currentDisplayName
+        : "Choose a display name";
+    }
     if (accountNameRow) accountNameRow.style.display = "";
-    // Don't stomp on text the user is actively typing/hasn't saved yet —
-    // only sync the field from the fetched value when it's still empty.
-    if (accountNameInput && document.activeElement !== accountNameInput && !accountNameInput.value) {
-      accountNameInput.value = currentDisplayName || "";
+    if (accountNameInput) {
+      accountNameInput.placeholder = currentDisplayName
+        ? "Choose a new display name"
+        : "Choose a display name";
     }
   } else {
     accountRoot.classList.remove("loggedIn");
     accountBtn.setAttribute("aria-label", "Log in");
     emailLabel.textContent = "";
+    if (accountGreeting) accountGreeting.hidden = true;
     manageSubBtn.style.display = "none";
     // Logged out (or logging out) — always collapse the menu.
     accountMenu.classList.remove("show");
     accountBtn.setAttribute("aria-expanded", "false");
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "";
-    if (accountNameLabel) accountNameLabel.style.display = "none";
+    if (accountNameLabel) {
+      accountNameLabel.style.display = "none";
+      accountNameLabel.textContent = "Choose a display name";
+    }
     if (accountNameRow) accountNameRow.style.display = "none";
-    if (accountNameInput) accountNameInput.value = "";
+    if (accountNameInput) {
+      accountNameInput.value = "";
+      accountNameInput.placeholder = "Choose a display name";
+    }
     if (accountNameMsg) accountNameMsg.textContent = "";
   }
 }
