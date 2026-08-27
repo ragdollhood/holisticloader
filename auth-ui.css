@@ -69,6 +69,31 @@
   margin-bottom:4px;
 }
 
+/* ---------- Display name (change via account dropdown) ---------- */
+#accountNameLabel{
+  display:block; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--muted); padding:2px 10px 4px;
+}
+#accountNameRow{ display:flex; gap:6px; padding:0 10px 2px; }
+#accountNameInput{
+  flex:1; min-width:0; box-sizing:border-box;
+  font-size:12.5px; color:var(--ink); background:rgba(244,241,234,.06);
+  border:1px solid var(--line); border-radius:8px; padding:7px 9px;
+  outline:none; transition:border-color .2s ease;
+}
+#accountNameInput:focus{ border-color:var(--gold); }
+#accountNameSaveBtn{
+  flex:none; font-size:11.5px; font-weight:600; letter-spacing:.03em;
+  color:var(--bg); background:var(--gold); border:none; border-radius:8px;
+  padding:0 12px; cursor:pointer; white-space:nowrap; transition:opacity .15s ease;
+}
+#accountNameSaveBtn:hover{ opacity:.9; }
+#accountNameSaveBtn:disabled{ opacity:.6; cursor:not-allowed; }
+#accountNameMsg{
+  margin:0; padding:4px 10px 8px; font-size:11px; color:var(--gold);
+  min-height:14px; border-bottom:1px solid var(--line);
+}
+
 #accountMenu button{
   font-family:var(--ui,inherit); font-size:13px; text-align:left;
   color:var(--ink); background:transparent; border:none; border-radius:8px;

@@ -102,6 +102,7 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 let isPremium = false;      // true if user has ANY premium access (paid OR active trial)
 let isPaidPremium = false;  // true ONLY for actual paying customers (profiles.premium === true)
 let currentUser = null;     // Supabase auth user object, or null when logged out
+let currentDisplayName = null; // profiles.display_name for currentUser; null = not fetched yet, '' = fetched but not set
 
 /* Callbacks other page scripts can register to be notified whenever
    premium status changes (e.g. so they can re-render locked grids). */
@@ -167,10 +168,32 @@ async function isPremiumUser() {
 
 async function refreshPremiumStatus() {
   isPremium = await isPremiumUser();
+  await fetchDisplayName();
   _firePremiumChangeListeners();
   renderAuthUI();
   renderTrialBanner();
   return isPremium;
+}
+
+/* Reads profiles.display_name fresh from Supabase (same column used by
+   the intuition-game leaderboard's own name form — this just gives the
+   account dropdown a second, site-wide way to set/change it). Keeps
+   currentDisplayName in sync on login/logout/refresh. */
+async function fetchDisplayName() {
+  if (!currentUser) { currentDisplayName = null; return null; }
+  try {
+    const { data, error } = await sb
+      .from("profiles")
+      .select("display_name")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+    if (error) throw error;
+    currentDisplayName = (data && data.display_name) ? data.display_name : "";
+  } catch (e) {
+    console.error("fetchDisplayName() error:", e.message || e);
+    currentDisplayName = "";
+  }
+  return currentDisplayName;
 }
 
 /* Shows "X days left of your trial" only for logged-in, non-paying
@@ -344,6 +367,12 @@ function _buildAuthDom() {
         </button>
         <div id="accountMenu" role="menu">
           <div id="accountEmailLabel"></div>
+          <label id="accountNameLabel" for="accountNameInput">Display name</label>
+          <div id="accountNameRow">
+            <input id="accountNameInput" type="text" maxlength="20" placeholder="Choose a display name">
+            <button id="accountNameSaveBtn" type="button">Save</button>
+          </div>
+          <p id="accountNameMsg" role="status"></p>
           <button id="manageSubBtn" type="button" role="menuitem" style="display:none">Manage Subscription</button>
           <button id="logoutBtn" type="button" role="menuitem">Logout</button>
         </div>
@@ -408,6 +437,9 @@ function _wireAuthDom() {
   const accountBtn = document.getElementById("accountBtn");
   const accountRoot = document.getElementById("accountRoot");
   const accountMenu = document.getElementById("accountMenu");
+  const accountNameInput = document.getElementById("accountNameInput");
+  const accountNameSaveBtn = document.getElementById("accountNameSaveBtn");
+  const accountNameMsg = document.getElementById("accountNameMsg");
   const modal = document.getElementById("authModal");
   const closeBtn = document.getElementById("authModalClose");
   const form = document.getElementById("authForm");
@@ -553,6 +585,47 @@ function _wireAuthDom() {
     await openBillingPortal(manageSubBtn);
   };
 
+  // Lets a logged-in user set/change the same profiles.display_name
+  // used by the intuition-game leaderboard, from anywhere on the site.
+  if (accountNameSaveBtn) {
+    accountNameSaveBtn.onclick = async () => {
+      if (!currentUser) return;
+      const name = (accountNameInput.value || "").trim().slice(0, 20);
+      if (!name) {
+        accountNameMsg.textContent = "Please enter a name.";
+        return;
+      }
+      accountNameSaveBtn.disabled = true;
+      try {
+        const { error } = await sb
+          .from("profiles")
+          .update({ display_name: name })
+          .eq("user_id", currentUser.id);
+        if (error) throw error;
+        currentDisplayName = name;
+        accountNameInput.value = name;
+        accountNameMsg.textContent = "Saved!";
+      } catch (e) {
+        console.error("Save display name error:", e);
+        accountNameMsg.textContent = "Could not save \u2014 try again.";
+      } finally {
+        accountNameSaveBtn.disabled = false;
+      }
+    };
+  }
+  if (accountNameInput) {
+    accountNameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        accountNameSaveBtn.click();
+      }
+    });
+    // Typing again after a save clears the old "Saved!" message.
+    accountNameInput.addEventListener("input", () => {
+      accountNameMsg.textContent = "";
+    });
+  }
+
   // "Forgot password?" — sends the Supabase reset email. The link inside
   // that email points at reset-password.html, which reads the recovery
   // token from the URL and lets the user set a new password.
@@ -650,6 +723,10 @@ function renderAuthUI() {
   const emailLabel = document.getElementById("accountEmailLabel");
   const manageSubBtn = document.getElementById("manageSubBtn");
   const getPremiumMenuBtn = document.getElementById("getPremiumMenuBtn");
+  const accountNameLabel = document.getElementById("accountNameLabel");
+  const accountNameRow = document.getElementById("accountNameRow");
+  const accountNameInput = document.getElementById("accountNameInput");
+  const accountNameMsg = document.getElementById("accountNameMsg");
   if (!accountRoot) return; // DOM not built yet
 
   if (currentUser) {
@@ -660,6 +737,13 @@ function renderAuthUI() {
     // — trial users are premium (isPremium) but have nothing to manage.
     manageSubBtn.style.display = isPaidPremium ? "" : "none";
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "none";
+    if (accountNameLabel) accountNameLabel.style.display = "";
+    if (accountNameRow) accountNameRow.style.display = "";
+    // Don't stomp on text the user is actively typing/hasn't saved yet —
+    // only sync the field from the fetched value when it's still empty.
+    if (accountNameInput && document.activeElement !== accountNameInput && !accountNameInput.value) {
+      accountNameInput.value = currentDisplayName || "";
+    }
   } else {
     accountRoot.classList.remove("loggedIn");
     accountBtn.setAttribute("aria-label", "Log in");
@@ -669,6 +753,10 @@ function renderAuthUI() {
     accountMenu.classList.remove("show");
     accountBtn.setAttribute("aria-expanded", "false");
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "";
+    if (accountNameLabel) accountNameLabel.style.display = "none";
+    if (accountNameRow) accountNameRow.style.display = "none";
+    if (accountNameInput) accountNameInput.value = "";
+    if (accountNameMsg) accountNameMsg.textContent = "";
   }
 }
 
