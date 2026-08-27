@@ -375,6 +375,7 @@ body.ultra-low #cosmos{display:none}
 .leaderboard-locked{padding:26px 12px 8px;text-align:center}
 .leaderboard-locked-text{margin:0 0 16px;color:#e7dfcf;font-size:13.5px;line-height:1.5}
 .leaderboard-name-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 16px}
+.leaderboard-name-form[hidden]{display:none}
 .leaderboard-name-input{padding:10px 14px;border-radius:12px;border:1.5px solid rgba(220,190,130,.4);background:rgba(255,255,255,.06);color:#f3efe4;font:500 13px Georgia;min-width:220px}
 .leaderboard-name-input::placeholder{color:#cfc3db}
 .leaderboard-save-btn{padding:10px 22px;font:600 12px Georgia;letter-spacing:.08em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s}
@@ -1112,9 +1113,9 @@ body.ultra-low #cosmos{display:none}
         .eq('user_id',currentUser.id);
       if(error)throw error;
       _lbPlayerName=name;
-      _lbLastSyncedName=name; // will match whatever submitHighscore() writes next
       updateNameFormVisibility();
       showLbNameMsg('Name saved!');
+      await syncPlayerNameToHighscore(); // rewrite it on any existing highscore row right away
       loadLeaderboard();
       scheduleAutoSubmitHighscore(); // now that a name exists, sync today's score
     }catch(e){
