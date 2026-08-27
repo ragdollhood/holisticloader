@@ -372,9 +372,12 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
   display:flex;align-items:center;justify-content:center;
   border:none;background:transparent;box-shadow:none;
   padding:0;border-radius:0;
-  transition:opacity .15s ease;cursor:pointer;
-  position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:47;}
-#langBtn:hover{opacity:.85}
+  transition:transform .15s ease;cursor:pointer;
+  position:fixed;top:60px;right:16px;z-index:47;}
+@supports(padding:max(0px)){
+  #langBtn{right:max(16px,env(safe-area-inset-right));}
+}
+#langBtn:hover{transform:translateY(-1px)}
 /* plain rectangular flag chip — sized to exactly match the flag SVGs' 16:10
    viewBox (28x17.5 = 16:10) so the flag fills the box with no letterboxing/
    cropping, and just a small corner radius (not a pill) so nothing gets cut */
@@ -3828,18 +3831,12 @@ buildBody(); buildOrganBars(); buildMicrowave(); buildSugarBox(); buildAlcoholBo
   if(!langBtn || !authRoot) return;
 
   function syncPosition(){
-    /* drill into the actual icon graphic (img/svg/button/a) rather than just
-       authRoot's first child — a loosely-fitted wrapper div would give a
-       rect wider than the visible icon and throw the centering off */
-    var target = authRoot.querySelector('img,svg,button,a') || authRoot.firstElementChild || authRoot;
+    var target = authRoot.firstElementChild || authRoot;
     var rect = target.getBoundingClientRect();
     if(rect.width === 0 && rect.height === 0) return false;
     var gap = 8;
-    var centerX = rect.left + rect.width / 2;
     langBtn.style.top = (rect.bottom + gap) + 'px';
-    langBtn.style.left = centerX + 'px';
-    langBtn.style.right = 'auto';
-    langBtn.style.transform = 'translateX(-50%)';
+    langBtn.style.right = (Math.max(0, window.innerWidth - rect.right)) + 'px';
     return true;
   }
 
