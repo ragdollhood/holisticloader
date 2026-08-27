@@ -373,9 +373,15 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
   border:1px solid #d9d0c3;background:#f7f4ef;border-radius:999px;
   padding:1px 1px;font-size:13px;font-weight:700;letter-spacing:.04em;color:#41382f;
   box-shadow:0 3px 10px rgba(85,70,55,.10);transition:transform .15s ease;
-  z-index: 46;}
+  position:fixed;top:60px;right:16px;z-index:47;}
+@supports(padding:max(0px)){
+  #langBtn{right:max(16px,env(safe-area-inset-right));}
+}
 #langBtn:hover{transform:translateY(-1px)}
-#langBtn .flag{width:22px;height:15px;border-radius:2px;overflow:hidden;display:block;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+/* sized to exactly match the flag SVGs' 16:10 viewBox (24x15 = 16:10) so the
+   flag scales to fill the box with no letterboxing/cropping */
+#langBtn .flag{width:24px;height:15px;border-radius:2px;overflow:hidden;display:flex;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+#langBtn .flag svg{width:100%;height:100%;display:block}
 /* below 560px the standalone flag button is hidden — the language switch
    instead lives as a row inside the hamburger menu (see #langMenuBtn) */
 @media(max-width:560px){
@@ -3811,6 +3817,43 @@ buildBody(); buildOrganBars(); buildMicrowave(); buildSugarBox(); buildAlcoholBo
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
+<script>
+/* Keep the language-flag button pinned directly under whatever login/account
+   icon auth.js renders into #authRoot (top-right corner), instead of its old
+   fixed spot in the top-left #donateWrap. Polls until auth.js has actually
+   rendered something (its icon can appear asynchronously), then re-syncs on
+   resize and whenever #authRoot's content changes (e.g. login state changes
+   the icon's size). */
+(function(){
+  var langBtn = document.getElementById('langBtn');
+  var authRoot = document.getElementById('authRoot');
+  if(!langBtn || !authRoot) return;
+
+  function syncPosition(){
+    var target = authRoot.firstElementChild || authRoot;
+    var rect = target.getBoundingClientRect();
+    if(rect.width === 0 && rect.height === 0) return false;
+    var gap = 8;
+    langBtn.style.top = (rect.bottom + gap) + 'px';
+    langBtn.style.right = (Math.max(0, window.innerWidth - rect.right)) + 'px';
+    return true;
+  }
+
+  function pollUntilReady(attemptsLeft){
+    if(syncPosition()) return;
+    if(attemptsLeft <= 0) return;
+    setTimeout(function(){ pollUntilReady(attemptsLeft - 1); }, 200);
+  }
+
+  window.addEventListener('load', function(){ pollUntilReady(25); });
+  window.addEventListener('resize', syncPosition);
+
+  if(window.MutationObserver){
+    var mo = new MutationObserver(function(){ syncPosition(); });
+    mo.observe(authRoot, {childList:true, subtree:true, attributes:true});
+  }
+})();
+</script>
 <script>
 /* Premium lock removed on this page: everyone gets full, unlocked access.
    hasPremiumAccess() is redefined here (after auth.js) so every future
