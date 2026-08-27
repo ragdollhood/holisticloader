@@ -263,6 +263,11 @@ body.ultra-low #cosmos{display:none}
 #progressChart{width:100%;height:180px;display:block}
 .progress-empty{margin:18px 0;color:#cfc3db;font-size:13px}
 .progress-sub{margin:10px 0 0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
+.progress-locked{padding:26px 12px 8px;text-align:center}
+.progress-locked-text{margin:0 0 16px;color:#e7dfcf;font-size:13.5px;line-height:1.5}
+.progress-login-btn{border-radius:999px;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 13px Georgia;letter-spacing:.12em;padding:11px 30px;cursor:pointer;box-shadow:0 10px 24px #0008;transition:background .15s ease,transform .15s ease}
+.progress-login-btn:hover{background:rgba(255,217,138,.18)}
+.progress-login-btn:active{transform:scale(.96)}
 .meter-panel{max-width:900px;margin:20px auto 0;padding:24px 22px 22px;text-align:center}
 .meter-title{margin:0 0 16px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
 .intro-tagline{max-width:620px;margin:11px auto 20px;text-align:center;color:#f3efe4;font-size:clamp(13px,2.5vw,15px);line-height:1.65;opacity:1;text-shadow:0 1px 4px rgba(0,0,0,.65)}
@@ -516,9 +521,15 @@ body.ultra-low #cosmos{display:none}
 
   <section class="panel progress-panel">
     <p class="progress-label">DAILY PROGRESS</p>
-    <canvas id="progressChart" width="880" height="180"></canvas>
-    <p class="progress-empty" id="progressEmpty">Log your progress after a few rounds to start your chart.</p>
-    <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (lower on days with more What Comes Next rounds)</p>
+    <div id="progressLocked" class="progress-locked">
+      <p class="progress-locked-text">Log in to see your progress graph.</p>
+      <button type="button" id="progressLoginBtn" class="progress-login-btn">LOG IN</button>
+    </div>
+    <div id="progressUnlocked" class="progress-unlocked" hidden>
+      <canvas id="progressChart" width="880" height="180"></canvas>
+      <p class="progress-empty" id="progressEmpty">Log your progress after a few rounds to start your chart.</p>
+      <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (lower on days with more What Comes Next rounds)</p>
+    </div>
   </section>
 </main>
 
@@ -834,7 +845,29 @@ body.ultra-low #cosmos{display:none}
     updateStreakDisplay();
   }
 
-  if(typeof onPremiumStatusChange==='function')onPremiumStatusChange(syncWithCloud);
+  /* ===== gate the progress graph behind login — no graph is rendered
+     or visible in the DOM until `currentUser` (from auth.js) is set. ===== */
+  const progressLockedEl=$('#progressLocked'),progressUnlockedEl=$('#progressUnlocked'),progressLoginBtn=$('#progressLoginBtn');
+  function isLoggedIn(){return typeof currentUser!=='undefined'&&!!currentUser;}
+  function updateProgressAccess(){
+    if(!progressLockedEl||!progressUnlockedEl)return;
+    const loggedIn=isLoggedIn();
+    progressLockedEl.hidden=loggedIn;
+    progressUnlockedEl.hidden=!loggedIn;
+    if(loggedIn)drawProgressChart();
+  }
+  if(progressLoginBtn){
+    progressLoginBtn.addEventListener('click',()=>{
+      // Defers to the site's shared login widget rendered into #authRoot.
+      const authTrigger=document.querySelector('#authRoot [data-auth-open]')
+        ||document.querySelector('#authRoot button')
+        ||document.querySelector('#authRoot a');
+      if(authTrigger)authTrigger.click();
+    });
+  }
+  updateProgressAccess();
+
+  if(typeof onPremiumStatusChange==='function')onPremiumStatusChange(()=>{updateProgressAccess();syncWithCloud();});
 
   function logProgress(){
     if(scoreTotal<=0)return;
