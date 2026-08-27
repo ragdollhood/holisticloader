@@ -224,7 +224,7 @@ text-decoration:none;
 
 <style>
 /* ===== mobile page-nav dropdown (mirrors intuition.html's mobile menu) ===== */
-#menuToggle{display:none;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
+#menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
 #menuToggle svg{width:17px;height:17px;flex:none}
 #menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
 body.immersive #menuToggle{opacity:0;pointer-events:none}
@@ -232,8 +232,27 @@ body.preset-active #menuToggle{display:none}
 .tab-howto{display:none}
 .tab-row{display:contents}
 .h1-frame .title-img{display:block;margin:0 auto;height:clamp(26px,6.4vw,42px);width:auto;max-width:100%}
+/* ===== desktop/laptop version of the same dropdown, opened by the same #menuToggle icon,
+   as an extra way in alongside the always-visible horizontal tab row ===== */
+#menuToggleDesktopPanel{display:none}
+@media(min-width:721px){
+  #menuToggleDesktopPanel{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;z-index:52;
+    display:flex;flex-direction:column;gap:4px;width:min(72vw,240px);max-height:calc(100vh - 90px);overflow-y:auto;
+    background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;
+    box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);
+    transition:opacity .18s ease,transform .18s ease;pointer-events:none}
+  body.tabs-open #menuToggleDesktopPanel{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #menuToggleDesktopPanel .tab{border:1px solid transparent;border-radius:10px;background:transparent;color:var(--soft);
+    text-decoration:none;text-align:left;margin:0;padding:9px 12px;font-family:'Outfit',system-ui,sans-serif;
+    font-weight:500;font-size:13px;letter-spacing:.04em;display:block;box-sizing:border-box;cursor:pointer}
+  #menuToggleDesktopPanel .tab:hover{color:var(--ink);background:rgba(244,241,234,.06)}
+  #menuToggleDesktopPanel .tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold)}
+  #menuToggleDesktopPanel .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  #menuToggleDesktopPanel .nav-contact-email{margin:2px 0 4px;padding:0 12px;text-align:left;font-size:12px}
+  #menuToggleDesktopPanel .nav-contact-email a{color:var(--gold);text-decoration:none}
+  #menuToggleDesktopPanel .nav-contact-email a:hover{text-decoration:underline}
+}
 @media(max-width:720px){
-  #menuToggle{display:flex}
   #donateWrap{left:58px}
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:52}
   body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
@@ -245,9 +264,22 @@ body.preset-active #menuToggle{display:none}
 </style>
 </head>
 <body>
-  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs" aria-label="Meny">
+  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs menuToggleDesktopPanel" aria-label="Meny">
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
   </button>
+  <nav id="menuToggleDesktopPanel" aria-label="Main sections (menu)">
+    <a href="breathing.html" class="tab">Guided Breathing</a>
+    <a href="soundscape.html" class="tab">Soundscape Creator</a>
+    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="yoga.html" class="tab">Yoga Loader</a>
+    <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
+    <a href="intuition.html" class="tab">Intuition Loader</a>
+    <a href="shop.html" class="tab active" aria-current="page">Shop</a>
+    <a href="terms.html" class="tab nav-sep">Terms &amp; Conditions</a>
+    <a href="about.html" class="tab">About</a>
+    <button type="button" id="menuDesktopContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="menuDesktopContactEmail">Contact</button>
+    <p id="menuDesktopContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+  </nav>
 
 
 <div class="sr-only">
@@ -629,15 +661,25 @@ registerVisit();
   }
 })();
 (function(){
-  var mt=document.getElementById('menuToggle'), tabs=document.getElementById('topTabs');
+  var mt=document.getElementById('menuToggle'), tabs=document.getElementById('topTabs'), dPanel=document.getElementById('menuToggleDesktopPanel');
   function closeTabs(){document.body.classList.remove('tabs-open'); if(mt)mt.setAttribute('aria-expanded','false');}
   function openTabs(){document.body.classList.add('tabs-open'); if(mt)mt.setAttribute('aria-expanded','true');}
   if(mt&&tabs){
     mt.addEventListener('click',function(e){e.stopPropagation(); document.body.classList.contains('tabs-open')?closeTabs():openTabs();});
     tabs.addEventListener('click',function(e){ var a=e.target.closest('a'); if(a && !e.target.closest('.tab-howto'))closeTabs(); });
-    document.addEventListener('click',function(e){ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target))closeTabs(); });
+    if(dPanel)dPanel.addEventListener('click',function(e){ if(e.target.closest('a'))closeTabs(); });
+    document.addEventListener('click',function(e){ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target)&&!(dPanel&&dPanel.contains(e.target)))closeTabs(); });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeTabs(); });
   }
+  (function(){
+    var btn=document.getElementById('menuDesktopContactTab'), email=document.getElementById('menuDesktopContactEmail');
+    if(!btn||!email)return;
+    btn.addEventListener('click',function(){
+      var showing=!email.hidden;
+      email.hidden=showing;
+      btn.setAttribute('aria-expanded',String(!showing));
+    });
+  })();
   function syncMobileNavH(){
     var nav=document.getElementById('topNav');
     var frame=document.querySelector('.h1-frame');
