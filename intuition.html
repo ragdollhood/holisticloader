@@ -150,7 +150,8 @@ body.ultra-low #cosmos{display:none}
 @media(max-width:720px){
   #brand{margin-top:2px}
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:45}
-  body.menu-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  body.menu-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;z-index:49}
+  body.menu-open #floatMeter{z-index:44}
   #menuBrand{display:block;pointer-events:auto;text-align:center;text-decoration:none;padding:8px 6px 14px;margin:0 0 6px;border-bottom:1px solid rgba(220,190,130,.28)}
   #menuBrand img{display:block;margin:0 auto;max-width:74%;height:auto;max-height:52px;filter:drop-shadow(0 2px 8px #0008)}
   #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px}
@@ -334,6 +335,12 @@ body.ultra-low #cosmos{display:none}
 .privacy-link{position:fixed;left:14px;bottom:14px;z-index:45;font-size:11px;color:#cfc3db;opacity:.7;text-decoration:none;padding:6px 11px;border-radius:10px;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;transition:.2s}
 .privacy-link:hover{opacity:1;color:#ffd98a;border-color:#ffd98a55}
 @media(max-width:480px){.privacy-link{font-size:10px;padding:5px 9px;left:8px;bottom:8px}}
+
+/* ===== donation image, inline at the bottom of the page ===== */
+.page-donate-row{max-width:820px;margin:8px auto 40px;padding:0 clamp(18px,4vw,40px);display:flex;justify-content:center}
+.page-donate-link{display:inline-block;max-width:min(92vw,420px)}
+.page-donate-img{display:block;width:100%;height:auto;border:1.5px solid var(--gold);border-radius:16px;box-shadow:0 18px 45px #0008;transition:transform .15s ease}
+.page-donate-link:hover .page-donate-img{transform:scale(1.03)}
 .h1-desktop{display:none}
 @media (min-width:721px){
   .h1-mobile{display:none}
@@ -540,6 +547,12 @@ body.ultra-low #cosmos{display:none}
   <h3>How to Use Intuition Loader to Build the Habit</h3>
   <p>Play a few rounds each day rather than many at once — consistency trains intuition better than long single sessions. Pause for a breath before each guess, notice your very first impulse, and pick that instead of second-guessing yourself. Your daily intuition meter and progress chart make it easy to see your instincts sharpen over time.</p>
 </section>
+
+<div class="page-donate-row">
+  <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="page-donate-link">
+    <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="page-donate-img">
+  </a>
+</div>
 
 <a class="privacy-link" href="https://holisticloader.com/intuition-privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
 <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="Mute sound">&#128266;</button>
