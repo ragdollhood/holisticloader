@@ -197,6 +197,11 @@ body.ultra-low #cosmos{display:none}
 /* ===== tarot-card treatment for the game panels & mystery boxes ===== */
 .game-panel{position:relative;border:1px solid rgba(255,217,138,.38)}
 .game-panel::before{content:'';position:absolute;inset:6px;border:1px solid rgba(255,217,138,.16);border-radius:16px;pointer-events:none}
+/* ===== color-coded frames: turquoise links the four "sense" games + graphs + meter, violet marks "What Comes Next" as its own (uncounted) game ===== */
+.tri-panel,.direction-panel{border-color:#5eead4;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(94,234,212,.16)}
+.tri-panel::before,.direction-panel::before{border-color:rgba(94,234,212,.32)}
+.next-panel{border-color:#c9a8ff;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(201,168,255,.16)}
+.next-panel::before{border-color:rgba(201,168,255,.32)}
 .game-panel::after{content:'';position:absolute;inset:0;border-radius:24px;pointer-events:none;
   background:
     radial-gradient(circle 2.5px at 13px 13px, var(--gold) 55%, transparent 60%),
@@ -259,17 +264,19 @@ body.ultra-low #cosmos{display:none}
   .mall-box,.direction-stage,.next-mystery{width:min(20vw,230px)}
   .option-tile{width:min(16vw,190px)}
 }
-.progress-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center}
+.progress-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center;border-color:#5eead4;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(94,234,212,.16)}
 .progress-label{margin:0 0 14px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
 #progressChart{width:100%;height:180px;display:block}
 .progress-empty{margin:18px 0;color:#cfc3db;font-size:13px}
 .progress-sub{margin:10px 0 0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
 .progress-locked{padding:26px 12px 8px;text-align:center}
+.streak-chart-label{margin-top:28px}
+#streakChart{width:100%;height:180px;display:block}
 .progress-locked-text{margin:0 0 16px;color:#e7dfcf;font-size:13.5px;line-height:1.5}
 .progress-login-btn{border-radius:999px;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 13px Georgia;letter-spacing:.12em;padding:11px 30px;cursor:pointer;box-shadow:0 10px 24px #0008;transition:background .15s ease,transform .15s ease}
 .progress-login-btn:hover{background:rgba(255,217,138,.18)}
 .progress-login-btn:active{transform:scale(.96)}
-.meter-panel{max-width:900px;margin:20px auto 0;padding:24px 22px 22px;text-align:center}
+.meter-panel{max-width:900px;margin:20px auto 0;padding:24px 22px 22px;text-align:center;border-color:#5eead4;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(94,234,212,.16)}
 .meter-title{margin:0 0 16px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
 .intro-tagline{max-width:620px;margin:11px auto 20px;text-align:center;color:#f3efe4;font-size:clamp(13px,2.5vw,15px);line-height:1.65;opacity:1;text-shadow:0 1px 4px rgba(0,0,0,.65)}
 .streak-line{margin:14px 0 0;font-size:12.5px;letter-spacing:.03em;color:#e7dfcf}
@@ -287,8 +294,8 @@ body.ultra-low #cosmos{display:none}
 
 /* ===== floating "today's meter" widget, in its own framed card — vertical bar on desktop ===== */
 #floatMeter{position:fixed;top:50%;right:32px;transform:translateY(-50%);z-index:48;display:flex;flex-direction:column;align-items:center;gap:10px;
-  padding:18px 16px 15px;border-radius:20px;background:var(--glass);border:1px solid rgba(220,190,130,.3);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 45px #0008}
+  padding:18px 16px 15px;border-radius:20px;background:var(--glass);border:1.5px solid #5eead4;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 45px #0008,0 0 0 1px rgba(94,234,212,.16)}
 #floatMeterInfo{display:flex;flex-direction:column;align-items:center;gap:4px}
 #floatMeterScore{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center}
 #floatMeterPercent{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center}
@@ -530,6 +537,10 @@ body.ultra-low #cosmos{display:none}
       <canvas id="progressChart" width="880" height="180"></canvas>
       <p class="progress-empty" id="progressEmpty">Play a few rounds to start your chart &mdash; it logs automatically.</p>
       <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (What Comes Next isn&rsquo;t counted here)</p>
+      <p class="progress-label streak-chart-label">DAILY BEST STREAK</p>
+      <canvas id="streakChart" width="880" height="180"></canvas>
+      <p class="progress-empty" id="streakEmpty">Land a few correct guesses in a row &mdash; your best streak each day shows up here.</p>
+      <p class="progress-sub">&#128293; Highest streak reached on each day</p>
     </div>
   </section>
 </main>
@@ -746,12 +757,31 @@ body.ultra-low #cosmos{display:none}
       if(currentStreak>(dayStats.bestStreak||0)){
         dayStats.bestStreak=currentStreak;
         saveDayStats(dayStats);
+        recordDailyStreak(dayStats.bestStreak);
         saveCloudProgress();
       }
     }else{
       currentStreak=0;
     }
     updateStreakDisplay();
+  }
+
+  /* ===== daily best-streak log (highest streak reached each day, feeds the streak chart) ===== */
+  const STREAK_LOG_KEY='intuitionDailyStreakLog';
+  function loadStreakLog(){
+    try{return JSON.parse(localStorage.getItem(STREAK_LOG_KEY))||{};}catch(e){return{};}
+  }
+  function saveStreakLog(log){
+    try{localStorage.setItem(STREAK_LOG_KEY,JSON.stringify(log));}catch(e){}
+  }
+  function recordDailyStreak(value){
+    const log=loadStreakLog();
+    const key=todayKey();
+    if(!log[key]||value>log[key]){
+      log[key]=value;
+      saveStreakLog(log);
+    }
+    drawStreakChart();
   }
 
   /* ===== sound toggle (remembered locally) ===== */
@@ -775,7 +805,6 @@ body.ultra-low #cosmos{display:none}
   function resetScore(){
     scoreCorrect=0;
     scoreTotal=0;
-    currentStreak=0;
     updateStreakDisplay();
     syncScoreDisplay();
   }
@@ -814,6 +843,7 @@ body.ultra-low #cosmos{display:none}
           progress_log:loadProgressLog(),
           day_stats:dayStats,
           best_streak:bestStreak,
+          streak_log:loadStreakLog(),
           updated_at:new Date().toISOString()
         });
       }catch(e){console.error('saveCloudProgress error:',e);}
@@ -828,7 +858,7 @@ body.ultra-low #cosmos{display:none}
     let cloud=null;
     try{
       const{data,error}=await sb.from(CLOUD_TABLE)
-        .select('progress_log, day_stats, best_streak')
+        .select('progress_log, day_stats, best_streak, streak_log')
         .eq('user_id',currentUser.id)
         .maybeSingle();
       if(error)throw error;
@@ -847,12 +877,22 @@ body.ultra-low #cosmos{display:none}
         bestStreak=cloud.best_streak;
         try{localStorage.setItem(BEST_STREAK_KEY,String(bestStreak));}catch(e){}
       }
+      if(cloud.streak_log){
+        // merge day-by-day, keeping whichever value (local vs cloud) is higher
+        const local=loadStreakLog();
+        const merged={...local};
+        Object.keys(cloud.streak_log).forEach(k=>{
+          merged[k]=Math.max(merged[k]||0,cloud.streak_log[k]);
+        });
+        saveStreakLog(merged);
+      }
     }else{
       // First time this account logs in on any device — upload whatever
       // guest results already exist in this browser.
       saveCloudProgress();
     }
     drawProgressChart();
+    drawStreakChart();
     updateMeter();
     updateStreakDisplay();
   }
@@ -866,7 +906,7 @@ body.ultra-low #cosmos{display:none}
     const loggedIn=isLoggedIn();
     progressLockedEl.hidden=loggedIn;
     progressUnlockedEl.hidden=!loggedIn;
-    if(loggedIn)drawProgressChart();
+    if(loggedIn){drawProgressChart();drawStreakChart();}
   }
   if(progressLoginBtn){
     progressLoginBtn.addEventListener('click',()=>{
@@ -1010,8 +1050,90 @@ body.ultra-low #cosmos{display:none}
     });
   }
 
+  function drawStreakChart(){
+    const canvas=$('#streakChart'),emptyEl=$('#streakEmpty');
+    if(!canvas)return;
+    const log=loadStreakLog();
+    const days=Object.keys(log).sort();
+    if(days.length===0){
+      canvas.style.display='none';
+      if(emptyEl)emptyEl.style.display='block';
+      return;
+    }
+    canvas.style.display='block';
+    if(emptyEl)emptyEl.style.display='none';
+
+    const recentDays=days.slice(-14);
+    const values=recentDays.map(k=>log[k]||0);
+    const maxVal=Math.max(5,...values); // keep a sensible floor so a couple of short bars don't look huge
+
+    const dpr=window.devicePixelRatio||1;
+    const cssW=canvas.clientWidth||canvas.parentElement.clientWidth||600;
+    const cssH=180;
+    canvas.width=cssW*dpr;
+    canvas.height=cssH*dpr;
+    const ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+
+    const padL=28,padR=14,padT=14,padB=26;
+    const plotW=cssW-padL-padR,plotH=cssH-padT-padB;
+
+    // gridlines at 0 / half / max
+    const gridVals=[0,Math.round(maxVal/2),maxVal];
+    ctx.strokeStyle='rgba(255,255,255,.14)';
+    ctx.fillStyle='#cfc3db';
+    ctx.font='10px Georgia, serif';
+    ctx.lineWidth=1;
+    gridVals.forEach(v=>{
+      const y=padT+plotH-(v/maxVal)*plotH;
+      ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+plotW,y);ctx.stroke();
+      ctx.textAlign='right';ctx.textBaseline='middle';
+      ctx.fillText(String(v),padL-6,y);
+    });
+
+    const n=values.length;
+    const slot=plotW/n;
+    const barW=Math.max(6,Math.min(34,slot*0.55));
+
+    const barGrad=ctx.createLinearGradient(0,padT,0,padT+plotH);
+    barGrad.addColorStop(0,'#ffd98a');
+    barGrad.addColorStop(1,'#c9a8ff');
+
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+    const labelEvery=Math.max(1,Math.ceil(n/8));
+    values.forEach((v,i)=>{
+      const cx=padL+slot*i+slot/2;
+      const barH=(Math.max(0,v)/maxVal)*plotH;
+      const y=padT+plotH-barH;
+      ctx.fillStyle=barGrad;
+      const r=Math.min(5,barW/2);
+      ctx.beginPath();
+      ctx.moveTo(cx-barW/2,padT+plotH);
+      ctx.lineTo(cx-barW/2,y+r);
+      ctx.arcTo(cx-barW/2,y,cx-barW/2+r,y,r);
+      ctx.lineTo(cx+barW/2-r,y);
+      ctx.arcTo(cx+barW/2,y,cx+barW/2,y+r,r);
+      ctx.lineTo(cx+barW/2,padT+plotH);
+      ctx.closePath();
+      ctx.fill();
+
+      if(v>0){
+        ctx.fillStyle=i===n-1?'#ffd98a':'#f3efe4';
+        ctx.font='10px Georgia, serif';
+        ctx.fillText(String(v),cx,Math.max(padT,y-13));
+      }
+      if(n<=8||i%labelEvery===0||i===n-1){
+        ctx.fillStyle='#cfc3db';
+        ctx.font='9.5px Georgia, serif';
+        ctx.fillText(recentDays[i].slice(5).replace('-','/'),cx,padT+plotH+6);
+      }
+    });
+  }
+
   let _chartResizeT;
-  addEventListener('resize',()=>{clearTimeout(_chartResizeT);_chartResizeT=setTimeout(drawProgressChart,150)});
+  addEventListener('resize',()=>{clearTimeout(_chartResizeT);_chartResizeT=setTimeout(()=>{drawProgressChart();drawStreakChart();},150)});
 
   /* ===== today's live intuition meter (correct vs the 50% odds) ===== */
   const DAY_STATS_KEY='intuitionCombinedDayStats';
@@ -1494,7 +1616,9 @@ body.ultra-low #cosmos{display:none}
   newRoundSide();
   newRoundDots();
   newRoundNext();
+  if(dayStats.bestStreak)recordDailyStreak(dayStats.bestStreak); // backfill today's entry if a streak was already set earlier today
   drawProgressChart();
+  drawStreakChart();
   updateMeter();
   updateStreakDisplay();
 })();
