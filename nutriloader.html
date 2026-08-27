@@ -365,8 +365,8 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
   letter-spacing:.04em;color:var(--ink-soft);box-shadow:0 2px 8px rgba(85,70,55,.12);cursor:pointer;
   transition:transform .15s ease}
 #resetBtnTop:hover{color:var(--rose-deep);border-color:var(--rose-soft);transform:scale(1.6);position:relative;z-index:10}
-#donateBtn2{display:block}
-#donateBtn2 img{display:block;width:100%;height:auto;border-radius:16px}
+#donateBtn2{display:block;opacity:1}
+#donateBtn2 img{display:block;width:100%;height:auto;border-radius:16px;opacity:1;filter:none;backface-visibility:hidden;transform:translateZ(0)}
 #donateBtn2:hover{transform:scale(1.02)}
 #langBtn{
   display:flex;align-items:center;gap:8px;
@@ -1005,6 +1005,8 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
 .nav-contact-email{margin:2px 0 4px;text-align:center;font-size:12px}
 .nav-contact-email a{color:var(--tn-gold);text-decoration:none}
 .nav-contact-email a:hover{text-decoration:underline}
+.menu-logo-link{display:flex;width:100%;align-items:center;justify-content:center;padding:4px 4px 10px;text-decoration:none;box-sizing:border-box}
+.menu-logo-img{max-height:34px;width:auto;display:block}
 @media(max-width:720px){
   .mobile-extra{display:block!important}
   #topTabs .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
@@ -1219,7 +1221,8 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
   </button>
   <nav id="menuToggleDesktopPanel" aria-label="Main sections (menu)">
-    <a href="breathing.html" class="tab">Guided Breathing</a>
+    <a href="index.html" class="menu-logo-link"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+    <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
     <a href="soundscape.html" class="tab">Soundscape Creator</a>
     <div class="tab-row"><a href="nutriloader.html" class="tab active" aria-current="page">Nutrition Tracker</a><button type="button" class="tab-howto" id="menuDesktopHowToBtn">- how to use</button></div>
     <a href="yoga.html" class="tab">Yoga Loader</a>
@@ -1230,6 +1233,7 @@ footer b{color:var(--rose-deep);letter-spacing:.05em}
     <a href="about.html" class="tab">About</a>
     <button type="button" id="menuDesktopContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="menuDesktopContactEmail">Contact</button>
     <p id="menuDesktopContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ingenskit%40hotmail.com&item_name=NUTRILOADER&currency_code=SEK&no_shipping=1" target="_blank" rel="noopener" class="tab nav-sep">Support Holistic Loader</a>
   </nav>
 
 <style>
@@ -1340,7 +1344,8 @@ body.preset-active #menuToggle{display:none}
     <header id="topNav">
       <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
       <nav id="topTabs" aria-label="Main sections">
-        <a href="breathing.html" class="tab">Guided Breathing</a>
+        <a href="index.html" class="menu-logo-link mobile-extra"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+        <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
         <a href="soundscape.html" class="tab">Soundscape Creator</a>
         <div class="tab-row"><a href="nutriloader.html" class="tab active" aria-current="page">Nutrition Tracker</a><button type="button" class="tab-howto" id="tabHowToBtn">- how to use</button></div>
         <a href="yoga.html" class="tab">Yoga Loader</a>
@@ -1351,6 +1356,7 @@ body.preset-active #menuToggle{display:none}
         <a href="about.html" class="tab mobile-extra">About</a>
         <button type="button" id="navContactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
         <p id="navContactEmail" class="nav-contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ingenskit%40hotmail.com&item_name=NUTRILOADER&currency_code=SEK&no_shipping=1" target="_blank" rel="noopener" class="tab mobile-extra nav-sep">Support Holistic Loader</a>
       </nav>
       <div id="authRoot"></div>
       <div id="topNavLine"></div>
@@ -1483,13 +1489,13 @@ body.preset-active #menuToggle{display:none}
 
 
 
-<footer><b>HOLISTIC LOADER - DISCLAIMER</b><br><span data-i18n="footer">This page is about what food gives you — never about counting or restricting. Nutrient values are based on data from the USDA FoodData Central (fdc.nal.usda.gov), converted to a percentage of EU adult reference intakes per stated serving. Actual content varies by variety, ripeness and preparation, and this is not medical advice. The information provided on this website is for informational and educational purposes only. It should not be considered medical or professional advice and is not intended to replace consultation with a qualified healthcare provider. We strive to provide accurate and up-to-date information about nutrition and health, but we make no guarantees regarding the completeness, accuracy, or suitability of the information for any individual. Nutritional needs and physical conditions vary from person to person. Your use of the information on this website is at your own risk. We are not responsible for any decisions, actions, or consequences resulting from the use of this information. Always consult a qualified healthcare professional before making changes to your diet or lifestyle, especially if you have existing health conditions or specific dietary needs. By using this website, you agree to these terms. © 2026 Malin Larsson / NutriLoader. All rights reserved.\nDisclaimer\nThe information provided on this website is for informational and educational purposes only. It should not be considered medical or professional advice and is not intended to replace consultation with a qualified healthcare provider. We strive to provide accurate and up-to-date information about nutrition and health, but we make no guarantees regarding the completeness, accuracy, or suitability of the information for any individual. Nutritional needs and physical conditions vary from person to person. Your use of the information on this website is at your own risk. We are not responsible for any decisions, actions, or consequences resulting from the use of this information. Always consult a qualified healthcare professional before making changes to your diet or lifestyle, especially if you have existing health conditions or specific dietary needs. By using this website, you agree to these terms. © 2026 Malin Larsson / NutriLoader. All rights reserved. CONTACT: holisticloader@gmail.com</span><br><span style="opacity:.85">Nutrient data source: <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">USDA FoodData Central</a> (fdc.nal.usda.gov)</span></footer>
-
 <div id="pageDonateBox">
   <a id="donateBtn2" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ingenskit%40hotmail.com&item_name=NUTRILOADER&currency_code=SEK&no_shipping=1" target="_blank" rel="noopener">
     <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader">
   </a>
 </div>
+
+<footer><b>HOLISTIC LOADER - DISCLAIMER</b><br><span data-i18n="footer">This page is about what food gives you — never about counting or restricting. Nutrient values are based on data from the USDA FoodData Central (fdc.nal.usda.gov), converted to a percentage of EU adult reference intakes per stated serving. Actual content varies by variety, ripeness and preparation, and this is not medical advice. The information provided on this website is for informational and educational purposes only. It should not be considered medical or professional advice and is not intended to replace consultation with a qualified healthcare provider. We strive to provide accurate and up-to-date information about nutrition and health, but we make no guarantees regarding the completeness, accuracy, or suitability of the information for any individual. Nutritional needs and physical conditions vary from person to person. Your use of the information on this website is at your own risk. We are not responsible for any decisions, actions, or consequences resulting from the use of this information. Always consult a qualified healthcare professional before making changes to your diet or lifestyle, especially if you have existing health conditions or specific dietary needs. By using this website, you agree to these terms. © 2026 Malin Larsson / NutriLoader. All rights reserved.\nDisclaimer\nThe information provided on this website is for informational and educational purposes only. It should not be considered medical or professional advice and is not intended to replace consultation with a qualified healthcare provider. We strive to provide accurate and up-to-date information about nutrition and health, but we make no guarantees regarding the completeness, accuracy, or suitability of the information for any individual. Nutritional needs and physical conditions vary from person to person. Your use of the information on this website is at your own risk. We are not responsible for any decisions, actions, or consequences resulting from the use of this information. Always consult a qualified healthcare professional before making changes to your diet or lifestyle, especially if you have existing health conditions or specific dietary needs. By using this website, you agree to these terms. © 2026 Malin Larsson / NutriLoader. All rights reserved. CONTACT: holisticloader@gmail.com</span><br><span style="opacity:.85">Nutrient data source: <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">USDA FoodData Central</a> (fdc.nal.usda.gov)</span></footer>
 
 <div id="toast"></div>
 <div id="celebrateOverlay" aria-hidden="true">
