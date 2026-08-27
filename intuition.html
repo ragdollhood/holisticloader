@@ -369,6 +369,26 @@ body.ultra-low #cosmos{display:none}
 .privacy-link:hover{opacity:1;color:#ffd98a;border-color:#ffd98a55}
 @media(max-width:480px){.privacy-link{font-size:10px;padding:5px 9px;left:8px;bottom:8px}}
 
+/* ===== intuition leaderboard panel (glassmorphism, gold + violet, matches progress-panel) ===== */
+.leaderboard-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center;border-color:var(--gold);box-shadow:0 18px 55px #0008,0 0 0 1px rgba(255,217,138,.18),0 0 46px -14px rgba(201,168,255,.4)}
+.leaderboard-label{margin:0 0 14px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
+.leaderboard-locked{padding:26px 12px 8px;text-align:center}
+.leaderboard-locked-text{margin:0 0 16px;color:#e7dfcf;font-size:13.5px;line-height:1.5}
+.leaderboard-name-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 16px}
+.leaderboard-name-input{padding:10px 14px;border-radius:12px;border:1.5px solid rgba(220,190,130,.4);background:rgba(255,255,255,.06);color:#f3efe4;font:500 13px Georgia;min-width:220px}
+.leaderboard-name-input::placeholder{color:#cfc3db}
+.leaderboard-save-btn{padding:10px 22px;font:600 12px Georgia;letter-spacing:.08em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s}
+.leaderboard-save-btn:hover{transform:translateY(-2px)}
+.leaderboard-name-msg{margin:0 0 16px;font-size:12px;color:var(--gold)}
+.leaderboard-list{list-style:none;margin:0 auto;padding:0;max-width:520px;text-align:left}
+.leaderboard-row{padding:10px 16px;margin:0 0 8px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font:500 14px Georgia;color:#f3efe4;letter-spacing:.02em}
+.leaderboard-row.lb-me{background:rgba(255,217,138,.16);border-color:var(--gold);box-shadow:0 0 18px rgba(255,217,138,.45);font-weight:700}
+.leaderboard-empty{margin:16px 0 4px;color:#cfc3db;font-size:13px}
+.leaderboard-submit-btn{margin-top:14px;padding:10px 24px;font:600 12px Georgia;letter-spacing:.08em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s,opacity .15s}
+.leaderboard-submit-btn:hover:not(:disabled){transform:translateY(-2px)}
+.leaderboard-submit-btn:disabled{opacity:.45;cursor:not-allowed}
+.leaderboard-submit-msg{margin:10px 0 0;font-size:12px;color:var(--gold)}
+
 /* ===== donation image, inline at the bottom of the page ===== */
 .page-donate-row{max-width:820px;margin:8px auto 40px;padding:0 clamp(18px,4vw,40px);display:flex;justify-content:center}
 .page-donate-link{display:inline-block;max-width:min(92vw,420px)}
@@ -554,6 +574,8 @@ body.ultra-low #cosmos{display:none}
         <p class="meter-level" id="meterLevel">GATHERING SIGNAL</p>
         <p class="meter-desc" id="meterDesc">Answer a few more rounds today to reveal your intuition level.</p>
         <p class="meter-sub" id="meterSub">No guesses logged today yet</p>
+        <button type="button" id="submitScoreBtn" class="leaderboard-submit-btn">Submit Today's Score</button>
+        <p id="submitScoreMsg" class="leaderboard-submit-msg" hidden></p>
       </section>
     </div>
   </div>
@@ -613,6 +635,26 @@ body.ultra-low #cosmos{display:none}
 
   <h3>How to Use Intuition Loader to Build the Habit</h3>
   <p>Play a few rounds each day rather than many at once — consistency trains intuition better than long single sessions. Pause for a breath before each guess, notice your very first impulse, and pick that instead of second-guessing yourself. Your daily intuition meter and progress chart make it easy to see your instincts sharpen over time.</p>
+</section>
+
+<section class="panel leaderboard-panel">
+  <p class="leaderboard-label">INTUITION LEADERBOARD</p>
+
+  <div id="leaderboardLocked" class="leaderboard-locked">
+    <p class="leaderboard-locked-text">Log in to see the leaderboard and submit your score.</p>
+    <button type="button" id="leaderboardLoginBtn" class="progress-login-btn">LOG IN</button>
+  </div>
+
+  <div id="leaderboardUnlocked" hidden>
+    <div id="leaderboardNameForm" class="leaderboard-name-form" hidden>
+      <input type="text" id="playerName" class="leaderboard-name-input" maxlength="20" placeholder="Your leaderboard name">
+      <button type="button" id="saveNameBtn" class="leaderboard-save-btn">Save Name</button>
+    </div>
+    <p id="leaderboardNameMsg" class="leaderboard-name-msg" hidden></p>
+
+    <ol id="leaderboardList" class="leaderboard-list"></ol>
+    <p id="leaderboardEmpty" class="leaderboard-empty" hidden>No scores yet &mdash; be the first on the board!</p>
+  </div>
 </section>
 
 <div class="page-donate-row">
@@ -962,7 +1004,182 @@ body.ultra-low #cosmos{display:none}
   }
   updateProgressAccess();
 
-  if(typeof onPremiumStatusChange==='function')onPremiumStatusChange(()=>{updateProgressAccess();syncWithCloud();});
+  if(typeof onPremiumStatusChange==='function')onPremiumStatusChange(()=>{updateProgressAccess();syncWithCloud();updateLeaderboardAccess();});
+
+  /* ===== Intuition Leaderboard (Supabase) — one row per user, only the
+     player's best score is kept; requires auth.js (`sb` + `currentUser`). ===== */
+  const HIGHSCORE_TABLE='intuition_highscores';
+  const lbLockedEl=$('#leaderboardLocked'),lbUnlockedEl=$('#leaderboardUnlocked');
+  const lbLoginBtn=$('#leaderboardLoginBtn');
+  const lbNameForm=$('#leaderboardNameForm'),playerNameInput=$('#playerName'),saveNameBtn=$('#saveNameBtn');
+  const lbNameMsg=$('#leaderboardNameMsg');
+  const lbListEl=$('#leaderboardList'),lbEmptyEl=$('#leaderboardEmpty');
+  const submitScoreBtn=$('#submitScoreBtn'),submitScoreMsg=$('#submitScoreMsg');
+
+  let _lbPlayerName=null; // null = not fetched yet, '' = fetched but no name set
+
+  if(lbLoginBtn){
+    lbLoginBtn.addEventListener('click',()=>{
+      // same shared login modal used by the progress panel's login button
+      const authTrigger=document.querySelector('#accountBtn');
+      if(authTrigger)authTrigger.click();
+    });
+  }
+
+  function showLbNameMsg(text){
+    if(!lbNameMsg)return;
+    lbNameMsg.textContent=text;
+    lbNameMsg.hidden=false;
+  }
+  function showSubmitMsg(text){
+    if(!submitScoreMsg)return;
+    submitScoreMsg.textContent=text;
+    submitScoreMsg.hidden=false;
+  }
+
+  async function fetchPlayerName(){
+    if(!isLoggedIn())return null;
+    try{
+      const{data,error}=await sb.from('profiles')
+        .select('display_name')
+        .eq('user_id',currentUser.id)
+        .maybeSingle();
+      if(error)throw error;
+      _lbPlayerName=(data&&data.display_name)?data.display_name:'';
+    }catch(e){console.error('fetchPlayerName error:',e);_lbPlayerName='';}
+    return _lbPlayerName;
+  }
+
+  function updateNameFormVisibility(){
+    if(!lbNameForm)return;
+    lbNameForm.hidden=!(isLoggedIn()&&!_lbPlayerName);
+  }
+
+  async function saveName(){
+    if(!isLoggedIn()||!saveNameBtn)return;
+    const raw=(playerNameInput&&playerNameInput.value)||'';
+    const name=raw.trim().slice(0,20);
+    if(!name){showLbNameMsg('Please enter a name.');return;}
+    saveNameBtn.disabled=true;
+    try{
+      const{error}=await sb.from('profiles')
+        .update({display_name:name})
+        .eq('user_id',currentUser.id);
+      if(error)throw error;
+      _lbPlayerName=name;
+      updateNameFormVisibility();
+      showLbNameMsg('Name saved!');
+      loadLeaderboard();
+    }catch(e){
+      console.error('saveName error:',e);
+      showLbNameMsg('Could not save name \u2014 try again.');
+    }finally{
+      saveNameBtn.disabled=false;
+    }
+  }
+  if(saveNameBtn)saveNameBtn.addEventListener('click',saveName);
+
+  async function submitHighscore(){
+    if(!submitScoreBtn)return;
+    if(!isLoggedIn()){showSubmitMsg('Log in to submit your score.');return;}
+    if(dayStats.date!==todayKey())dayStats=loadDayStats();
+    if(dayStats.total<20){showSubmitMsg('You need at least 20 attempts.');return;}
+
+    const score=Math.round((dayStats.correct/dayStats.total)*100);
+
+    if(_lbPlayerName===null)await fetchPlayerName();
+    if(!_lbPlayerName){
+      showSubmitMsg('Choose a leaderboard name first.');
+      updateNameFormVisibility();
+      return;
+    }
+
+    submitScoreBtn.disabled=true;
+    try{
+      const{data:existing,error:fetchErr}=await sb.from(HIGHSCORE_TABLE)
+        .select('score')
+        .eq('user_id',currentUser.id)
+        .maybeSingle();
+      if(fetchErr)throw fetchErr;
+
+      if(!existing){
+        const{error:insertErr}=await sb.from(HIGHSCORE_TABLE).insert({
+          user_id:currentUser.id,
+          player_name:_lbPlayerName,
+          score:score,
+          achieved_at:new Date().toISOString()
+        });
+        if(insertErr)throw insertErr;
+        showSubmitMsg('Score saved.');
+      }else if(score>existing.score){
+        const{error:updateErr}=await sb.from(HIGHSCORE_TABLE).update({
+          player_name:_lbPlayerName,
+          score:score,
+          achieved_at:new Date().toISOString()
+        }).eq('user_id',currentUser.id);
+        if(updateErr)throw updateErr;
+        showSubmitMsg('New Personal Best!');
+      }else{
+        showSubmitMsg('Your current highscore is higher.');
+      }
+      loadLeaderboard();
+    }catch(e){
+      console.error('submitHighscore error:',e);
+      showSubmitMsg('Could not submit score \u2014 try again.');
+    }finally{
+      submitScoreBtn.disabled=false;
+    }
+  }
+  if(submitScoreBtn)submitScoreBtn.addEventListener('click',submitHighscore);
+
+  async function loadLeaderboard(){
+    if(!lbListEl)return;
+    try{
+      const{data,error}=await sb.from(HIGHSCORE_TABLE)
+        .select('*')
+        .order('score',{ascending:false})
+        .limit(20);
+      if(error)throw error;
+      renderLeaderboard(data||[]);
+    }catch(e){console.error('loadLeaderboard error:',e);}
+  }
+
+  function renderLeaderboard(rows){
+    if(!lbListEl)return;
+    lbListEl.innerHTML='';
+    if(!rows.length){
+      if(lbEmptyEl)lbEmptyEl.hidden=false;
+      return;
+    }
+    if(lbEmptyEl)lbEmptyEl.hidden=true;
+    const medals=['\u{1F947}','\u{1F948}','\u{1F949}'];
+    rows.forEach((row,i)=>{
+      const rank=i+1;
+      const isMe=isLoggedIn()&&row.user_id===currentUser.id;
+      const li=document.createElement('li');
+      li.className='leaderboard-row'+(isMe?' lb-me':'');
+      let prefix='';
+      if(isMe)prefix+='\u2B50 ';
+      if(medals[i])prefix+=medals[i]+' ';
+      li.textContent=`${prefix}${rank}. ${row.player_name||'Player'} - ${row.score}%`;
+      lbListEl.appendChild(li);
+    });
+  }
+
+  async function updateLeaderboardAccess(){
+    if(!lbLockedEl||!lbUnlockedEl)return;
+    const loggedIn=isLoggedIn();
+    lbLockedEl.hidden=loggedIn;
+    lbUnlockedEl.hidden=!loggedIn;
+    if(loggedIn){
+      await fetchPlayerName();
+      updateNameFormVisibility();
+    }else{
+      _lbPlayerName=null;
+    }
+    loadLeaderboard();
+  }
+  updateLeaderboardAccess();
 
   function logProgress(){
     if(scoreTotal<=0)return;
