@@ -372,6 +372,8 @@ body.ultra-low #cosmos{display:none}
 /* ===== intuition leaderboard panel (glassmorphism, gold + violet, matches progress-panel) ===== */
 .leaderboard-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center;border-color:var(--gold);box-shadow:0 18px 55px #0008,0 0 0 1px rgba(255,217,138,.18),0 0 46px -14px rgba(201,168,255,.4)}
 .leaderboard-label{margin:0 0 14px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
+.leaderboard-sublabel{margin:0 0 10px;font:600 clamp(12px,2.6vw,13.5px) Georgia;letter-spacing:.12em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent;text-align:center}
+.leaderboard-sublabel-streak{margin-top:22px}
 .leaderboard-locked{padding:26px 12px 8px;text-align:center}
 .leaderboard-locked-text{margin:0 0 16px;color:#e7dfcf;font-size:13.5px;line-height:1.5}
 .leaderboard-name-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 16px}
@@ -649,8 +651,13 @@ body.ultra-low #cosmos{display:none}
       <p id="leaderboardGreetingHint" class="leaderboard-greeting-hint" hidden>Want to change your name? Use the account icon (top right) &rarr; &ldquo;Choose a display name&rdquo;.</p>
       <p id="leaderboardNameMsg" class="leaderboard-name-msg" hidden></p>
 
+      <p class="leaderboard-sublabel">&#127942; BEST ACCURACY</p>
       <ol id="leaderboardList" class="leaderboard-list"></ol>
       <p id="leaderboardEmpty" class="leaderboard-empty" hidden>No scores yet &mdash; be the first on the board!</p>
+
+      <p class="leaderboard-sublabel leaderboard-sublabel-streak">&#128293; BEST STREAKS</p>
+      <ol id="streakLeaderboardList" class="leaderboard-list"></ol>
+      <p id="streakLeaderboardEmpty" class="leaderboard-empty" hidden>No streaks yet &mdash; be the first on the board!</p>
     </div>
   </section>
 
@@ -1030,6 +1037,7 @@ body.ultra-low #cosmos{display:none}
   const lbGreetingEl=$('#leaderboardGreeting'),lbGreetingHintEl=$('#leaderboardGreetingHint');
   let _lbLastSyncedName=null; // last player_name we know is stored in the highscore row
   const lbListEl=$('#leaderboardList'),lbEmptyEl=$('#leaderboardEmpty');
+  const streakLbListEl=$('#streakLeaderboardList'),streakLbEmptyEl=$('#streakLeaderboardEmpty');
   const submitScoreBtn=$('#submitScoreBtn'),submitScoreMsg=$('#submitScoreMsg');
 
   let _lbPlayerName=null; // null = not fetched yet, '' = fetched but no name set
@@ -1098,6 +1106,7 @@ body.ultra-low #cosmos{display:none}
         .eq('user_id',currentUser.id);
       if(updateErr)throw updateErr;
       loadLeaderboard();
+      loadStreakLeaderboard();
     }catch(e){console.error('syncPlayerNameToHighscore error:',e);}
   }
 
@@ -1117,6 +1126,7 @@ body.ultra-low #cosmos{display:none}
       showLbNameMsg('Name saved!');
       await syncPlayerNameToHighscore(); // rewrite it on any existing highscore row right away
       loadLeaderboard();
+      loadStreakLeaderboard();
       scheduleAutoSubmitHighscore(); // now that a name exists, sync today's score
     }catch(e){
       console.error('saveName error:',e);
@@ -1145,7 +1155,7 @@ body.ultra-low #cosmos{display:none}
     submitScoreBtn.disabled=true;
     try{
       const{data:existing,error:fetchErr}=await sb.from(HIGHSCORE_TABLE)
-        .select('score')
+        .select('score,best_streak')
         .eq('user_id',currentUser.id)
         .maybeSingle();
       if(fetchErr)throw fetchErr;
@@ -1155,6 +1165,7 @@ body.ultra-low #cosmos{display:none}
           user_id:currentUser.id,
           player_name:_lbPlayerName,
           score:score,
+          best_streak:bestStreak,
           achieved_at:new Date().toISOString()
         });
         if(insertErr)throw insertErr;
@@ -1164,6 +1175,7 @@ body.ultra-low #cosmos{display:none}
         const{error:updateErr}=await sb.from(HIGHSCORE_TABLE).update({
           player_name:_lbPlayerName,
           score:score,
+          best_streak:Math.max(existing.best_streak||0,bestStreak),
           achieved_at:new Date().toISOString()
         }).eq('user_id',currentUser.id);
         if(updateErr)throw updateErr;
@@ -1173,6 +1185,7 @@ body.ultra-low #cosmos{display:none}
         showSubmitMsg('Your current highscore is higher.');
       }
       loadLeaderboard();
+      loadStreakLeaderboard();
     }catch(e){
       console.error('submitHighscore error:',e);
       showSubmitMsg('Could not submit score \u2014 try again.');
@@ -1216,6 +1229,44 @@ body.ultra-low #cosmos{display:none}
     });
   }
 
+  /* ===== Best Streaks leaderboard — same table, same panel, sorted by
+     best_streak instead of score. Mirrors loadLeaderboard/renderLeaderboard
+     exactly so it always matches the existing look (glassmorphism, gold
+     highlight for the current user, medal system). ===== */
+  async function loadStreakLeaderboard(){
+    if(!streakLbListEl)return;
+    try{
+      const{data,error}=await sb.from(HIGHSCORE_TABLE)
+        .select('*')
+        .order('best_streak',{ascending:false})
+        .limit(20);
+      if(error)throw error;
+      renderStreakLeaderboard(data||[]);
+    }catch(e){console.error('loadStreakLeaderboard error:',e);}
+  }
+
+  function renderStreakLeaderboard(rows){
+    if(!streakLbListEl)return;
+    streakLbListEl.innerHTML='';
+    if(!rows.length){
+      if(streakLbEmptyEl)streakLbEmptyEl.hidden=false;
+      return;
+    }
+    if(streakLbEmptyEl)streakLbEmptyEl.hidden=true;
+    const medals=['\u{1F947}','\u{1F948}','\u{1F949}'];
+    rows.forEach((row,i)=>{
+      const rank=i+1;
+      const isMe=isLoggedIn()&&row.user_id===currentUser.id;
+      const li=document.createElement('li');
+      li.className='leaderboard-row'+(isMe?' lb-me':'');
+      let prefix='';
+      if(isMe)prefix+='\u2B50 ';
+      if(medals[i])prefix+=medals[i]+' ';
+      li.textContent=`${prefix}${rank}. ${row.player_name||'Player'} - ${row.best_streak||0}`;
+      streakLbListEl.appendChild(li);
+    });
+  }
+
   async function updateLeaderboardAccess(){
     if(!lbLockedEl||!lbUnlockedEl)return;
     const loggedIn=isLoggedIn();
@@ -1230,6 +1281,7 @@ body.ultra-low #cosmos{display:none}
       _lbLastSyncedName=null;
     }
     loadLeaderboard();
+    loadStreakLeaderboard();
   }
   updateLeaderboardAccess();
 
