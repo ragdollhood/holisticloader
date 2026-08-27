@@ -115,6 +115,7 @@ body.ultra-low #cosmos{display:none}
 #topTabs{display:flex;pointer-events:auto;flex-wrap:wrap;justify-content:center}
 #topTabs .tab{font-family:Outfit,system-ui;font-weight:500;font-size:12.5px;padding:9px 18px;color:#b3a98f;text-decoration:none;white-space:nowrap;background:#f3efe40a;border:1px solid rgba(220,190,130,.16);border-bottom:0;border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px}
 #topTabs .tab.active{color:#ffd98a;background:rgba(231,201,162,.14);top:0;border-color:#ffd98a}
+#topTabs .tab:hover{color:#f3efe4}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#ffd98a 15%,#c9a8ff 50%,#ffd98a 85%,transparent)}
 .h1-frame{position:fixed;top:var(--navH,max(118px,calc(env(safe-area-inset-top) + 106px)));left:50%;transform:translateX(-50%);z-index:30;width:min(var(--tabsW,820px),94vw);padding:9px 24px;border:1.5px solid #ffd98a;border-top:0;border-radius:0 0 30px 30px;background:rgba(16,11,25,.72);backdrop-filter:blur(10px);text-align:center}
 .h1-frame h1{margin:0;font:600 clamp(15px,4.2vw,20px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,#ffd98a,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
@@ -154,7 +155,7 @@ body.ultra-low #cosmos{display:none}
   body.menu-open #floatMeter{z-index:44}
   #menuBrand{display:block;pointer-events:auto;text-align:center;text-decoration:none;padding:8px 6px 14px;margin:0 0 6px;border-bottom:1px solid rgba(220,190,130,.28)}
   #menuBrand img{display:block;margin:0 auto;max-width:74%;height:auto;max-height:52px;filter:drop-shadow(0 2px 8px #0008)}
-  #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px}
+  #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px;display:block;flex:1 1 auto;width:100%;box-sizing:border-box}
   #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
   #topNavLine{display:none}
 }
