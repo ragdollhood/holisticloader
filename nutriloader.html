@@ -369,18 +369,19 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
 #donateBtn2 img{display:block;width:100%;height:auto;border-radius:16px;opacity:1;filter:none;backface-visibility:hidden;transform:translateZ(0)}
 #donateBtn2:hover{transform:scale(1.02)}
 #langBtn{
-  display:flex;align-items:center;gap:8px;
-  border:1px solid #d9d0c3;background:#f7f4ef;border-radius:999px;
-  padding:1px 1px;font-size:13px;font-weight:700;letter-spacing:.04em;color:#41382f;
-  box-shadow:0 3px 10px rgba(85,70,55,.10);transition:transform .15s ease;
+  display:flex;align-items:center;justify-content:center;
+  border:none;background:transparent;box-shadow:none;
+  padding:0;border-radius:0;
+  transition:transform .15s ease;cursor:pointer;
   position:fixed;top:60px;right:16px;z-index:47;}
 @supports(padding:max(0px)){
   #langBtn{right:max(16px,env(safe-area-inset-right));}
 }
 #langBtn:hover{transform:translateY(-1px)}
-/* sized to exactly match the flag SVGs' 16:10 viewBox (24x15 = 16:10) so the
-   flag scales to fill the box with no letterboxing/cropping */
-#langBtn .flag{width:24px;height:15px;border-radius:2px;overflow:hidden;display:flex;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+/* plain rectangular flag chip — sized to exactly match the flag SVGs' 16:10
+   viewBox (28x17.5 = 16:10) so the flag fills the box with no letterboxing/
+   cropping, and just a small corner radius (not a pill) so nothing gets cut */
+#langBtn .flag{width:28px;height:17.5px;border-radius:3px;overflow:hidden;display:flex;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
 #langBtn .flag svg{width:100%;height:100%;display:block}
 /* below 560px the standalone flag button is hidden — the language switch
    instead lives as a row inside the hamburger menu (see #langMenuBtn) */
