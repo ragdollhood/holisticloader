@@ -186,6 +186,20 @@ body.ultra-low #cosmos{display:none}
 .next-mystery{width:min(42vw,210px);aspect-ratio:.78;margin:0 auto 22px;padding:14px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 18px 45px #0008;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .next-mystery #nextMysteryQ{font:700 clamp(30px,8vw,46px) Georgia;background:linear-gradient(180deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .next-mystery img{width:64%;height:64%;object-fit:contain;filter:drop-shadow(0 0 12px #c9a8ffaa)}
+.next-stage-row{display:flex;align-items:stretch;justify-content:center;gap:16px;margin:0 auto 22px}
+.next-stage-row .next-mystery{margin:0}
+.next-meter-vert{display:flex;flex-direction:column;align-items:center;gap:7px;width:56px;flex:none}
+.next-meter-vert-pct{margin:0;font:700 clamp(12px,3vw,14px) Georgia;letter-spacing:.02em;color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums}
+.next-meter-vert-track{position:relative;flex:1;width:20px;min-height:80px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:visible;box-shadow:0 12px 30px #0008}
+.next-meter-vert-fill{position:absolute;left:0;right:0;bottom:0;width:auto;height:calc(var(--pct,0) * 1%);background:linear-gradient(0deg,#ff8a5c,var(--gold),var(--violet));border-radius:10px;transition:height .4s ease}
+.next-meter-vert-marker{position:absolute;left:-6px;right:-6px;height:3px;background:#fff;border-radius:2px;box-shadow:0 0 8px #fff,0 0 14px rgba(255,255,255,.75);bottom:20%;z-index:2}
+.next-meter-vert-marker::before,.next-meter-vert-marker::after{content:'';position:absolute;top:50%;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.next-meter-vert-marker::before{left:-6px;border-right:6px solid #fff;transform:translateY(-50%)}
+.next-meter-vert-marker::after{right:-6px;border-left:6px solid #fff;transform:translateY(-50%)}
+.next-meter-vert-marker span{position:absolute;left:26px;top:50%;transform:translateY(-50%);font-size:9px;line-height:1.25;color:#fff;white-space:nowrap;text-align:left;text-shadow:0 1px 3px #000}
+.next-meter-vert-sub{margin:0;font-size:10px;color:#cfc3db;white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(min-width:901px){.next-meter-vert{width:64px}.next-meter-vert-track{width:24px}}
+@media(max-width:480px){.next-meter-vert{width:46px;gap:5px}.next-meter-vert-track{width:16px}.next-meter-vert-pct{font-size:11px}.next-meter-vert-sub{font-size:9px}.next-meter-vert-marker span{left:20px;font-size:8px}}
 .next-options-row{display:flex;justify-content:center;gap:14px;margin:6px 0 16px;flex-wrap:wrap}
 .next-option{width:min(15vw,74px);aspect-ratio:1;padding:12px;border:1.5px solid rgba(220,190,130,.35);border-radius:16px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
 .next-option:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
@@ -467,9 +481,19 @@ body.ultra-low #cosmos{display:none}
   <div class="duo-wrap">
     <section class="panel game-panel next-panel">
       <p class="prompt-title">WHAT COMES NEXT?</p>
-      <div class="next-mystery tarot-box" id="nextMysteryBox">
-        <span id="nextMysteryQ">?</span>
-        <img id="nextMysteryImg" alt="Mystery symbol" hidden>
+      <div class="next-stage-row">
+        <div class="next-mystery tarot-box" id="nextMysteryBox">
+          <span id="nextMysteryQ">?</span>
+          <img id="nextMysteryImg" alt="Mystery symbol" hidden>
+        </div>
+        <div class="next-meter-vert" id="nextMeterVert" title="20% is the expected accuracy by pure chance (1 of 5 symbols) — the white arrow marks that baseline.">
+          <p class="next-meter-vert-pct" id="nextMeterPct">0%</p>
+          <div class="next-meter-vert-track" id="nextMeterTrack">
+            <div class="next-meter-vert-fill" id="nextMeterFill"></div>
+            <div class="next-meter-vert-marker" id="nextMeterMarker"><span>20%<br>expected</span></div>
+          </div>
+          <p class="next-meter-vert-sub" id="nextMeterSub">0/0</p>
+        </div>
       </div>
       <p class="feedback" id="nextFeedback" aria-live="polite">&nbsp;</p>
       <div class="next-options-row">
@@ -1572,6 +1596,23 @@ body.ultra-low #cosmos{display:none}
   nextButtons.forEach(btn=>{btn.querySelector('img').src=symbolSVG(btn.dataset.symbol);});
   let correctSymbol=null,answeredNext=false;
 
+  /* own accuracy meter for What Comes Next — kept separate from the shared
+     meter above because chance here is 1-in-5 (20%), not 1-in-2 (50%).
+     nextMeterFill's height is driven by the *actual* correct/total ratio;
+     the white marker is pinned at the statistically-correct chance
+     baseline (20%) via CSS (bottom:20%), so the two only line up when the
+     player is guessing at pure chance. */
+  const nextMeterFill=$('#nextMeterFill'),nextMeterPct=$('#nextMeterPct'),nextMeterSub=$('#nextMeterSub');
+  const NEXT_CHANCE=1/symbolList.length; // 0.2 for 5 symbols
+  let nextCorrectCount=0,nextTotalCount=0;
+
+  function updateNextMeter(){
+    const pct=nextTotalCount?Math.round((nextCorrectCount/nextTotalCount)*100):0;
+    if(nextMeterFill)nextMeterFill.style.setProperty('--pct',Math.max(0,Math.min(100,pct)));
+    if(nextMeterPct)nextMeterPct.textContent=pct+'%';
+    if(nextMeterSub)nextMeterSub.textContent=`${nextCorrectCount}/${nextTotalCount}`;
+  }
+
   function newRoundNext(){
     answeredNext=false;
     nextFeedback.textContent='\u00A0';
@@ -1605,7 +1646,10 @@ body.ultra-low #cosmos{display:none}
       nextFeedback.textContent='TRY AGAIN!';
       nextFeedback.className='feedback wrong';
     }
-    recordGuess(correct,1/5,{countsForStats:false});
+    recordGuess(correct,NEXT_CHANCE,{countsForStats:false});
+    nextTotalCount++;
+    if(correct)nextCorrectCount++;
+    updateNextMeter();
     setTimeout(newRoundNext,1500);
   }
 
@@ -1616,6 +1660,7 @@ body.ultra-low #cosmos{display:none}
   newRoundSide();
   newRoundDots();
   newRoundNext();
+  updateNextMeter();
   if(dayStats.bestStreak)recordDailyStreak(dayStats.bestStreak); // backfill today's entry if a streak was already set earlier today
   drawProgressChart();
   drawStreakChart();
