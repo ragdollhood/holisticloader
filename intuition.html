@@ -283,21 +283,22 @@ body.ultra-low #cosmos{display:none}
 #floatMeter{position:fixed;top:50%;right:32px;transform:translateY(-50%);z-index:48;display:flex;flex-direction:column;align-items:center;gap:10px;
   padding:18px 16px 15px;border-radius:20px;background:var(--glass);border:1px solid rgba(220,190,130,.3);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 45px #0008}
-#floatMeterInfo{display:flex;flex-direction:column;align-items:center}
-#floatMeterScore{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap}
-#floatMeterPercent{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap}
-#floatMeterStreak{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap}
+#floatMeterInfo{display:flex;flex-direction:column;align-items:center;gap:4px}
+#floatMeterScore{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center}
+#floatMeterPercent{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center}
+#floatMeterStreak{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center;display:flex;align-items:baseline;justify-content:center;gap:5px}
+#floatMeterStreak .streak-icon{font-size:.72em}
 #floatMeterTrack{position:relative;width:22px;height:min(56vh,430px);border-radius:11px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:visible;box-shadow:0 12px 30px #0008}
 #floatMeterFill{position:absolute;left:0;right:0;bottom:0;width:auto;height:calc(var(--pct,0) * 1%);background:linear-gradient(0deg,#ff8a5c,var(--gold),var(--violet));border-radius:11px;transition:height .4s ease,width .4s ease}
 #floatMeterMarker{position:absolute;left:-7px;right:-7px;top:auto;height:3px;width:auto;background:#fff;border-radius:2px;box-shadow:0 0 8px #fff,0 0 14px rgba(255,255,255,.75);bottom:calc(var(--baseline,50) * 1%);z-index:2;transition:bottom .3s ease,left .3s ease}
 #floatMeterMarker::before,#floatMeterMarker::after{content:'';position:absolute;top:50%;left:auto;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent}
 #floatMeterMarker::before{left:-6px;border-right:6px solid #fff;transform:translateY(-50%)}
 #floatMeterMarker::after{right:-6px;border-left:6px solid #fff;transform:translateY(-50%)}
-#floatMeterBtnRow{display:flex;align-items:center;gap:8px;margin-top:2px}
-#meterInfoBtn,#floatMeterReset{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 14px Georgia;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:0;transition:background .15s ease,transform .15s ease}
+#floatMeterBtnRow{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:2px}
+#meterInfoBtn{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 14px Georgia;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:0;transition:background .15s ease,transform .15s ease}
+#floatMeterReset{flex:none;border-radius:999px;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 13px Georgia;letter-spacing:.12em;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:10px 22px;transition:background .15s ease,transform .15s ease;white-space:nowrap}
 #meterInfoBtn:hover,#floatMeterReset:hover{background:rgba(255,217,138,.18)}
-#floatMeterReset:active{transform:scale(.92)}
-#floatMeterReset svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+#floatMeterReset:active{transform:scale(.96)}
 /* ===== mobile: horizontal bar, flush edge-to-edge right under the title plaque ===== */
 @media(max-width:720px){
   #floatMeter{
@@ -316,9 +317,9 @@ body.ultra-low #cosmos{display:none}
   #floatMeterMarker::before,#floatMeterMarker::after{top:auto;left:50%;border-top:0;border-bottom:0;border-left:5px solid transparent;border-right:5px solid transparent}
   #floatMeterMarker::before{top:-6px;left:50%;border-bottom:6px solid #fff;border-right:5px solid transparent;transform:translateX(-50%)}
   #floatMeterMarker::after{bottom:-6px;top:auto;right:auto;left:50%;border-top:6px solid #fff;border-bottom:0;transform:translateX(-50%)}
-  #floatMeterBtnRow{gap:6px;margin-top:0;flex:none}
-  #meterInfoBtn,#floatMeterReset{width:25px;height:25px;font-size:12px}
-  #floatMeterReset svg{width:12px;height:12px}
+  #floatMeterBtnRow{flex-direction:row;gap:6px;margin-top:0;flex:none}
+  #meterInfoBtn{width:25px;height:25px;font-size:12px}
+  #floatMeterReset{padding:5px 12px;font-size:10px}
   .triple-wrap{padding-right:0}
 }
 
@@ -522,7 +523,7 @@ body.ultra-low #cosmos{display:none}
   <div id="floatMeterInfo">
     <p id="floatMeterPercent" aria-hidden="true"><span id="floatScorePercent">0</span>%</p>
     <p id="floatMeterScore" aria-hidden="true"><span id="floatScoreCorrect">0</span>/<span id="floatScoreTotal">0</span></p>
-    <p id="floatMeterStreak" aria-hidden="true">&#128293; <span id="floatStreakCurrent">0</span></p>
+    <p id="floatMeterStreak" aria-hidden="true"><span class="streak-icon">&#128293;</span><span id="floatStreakCurrent">0</span></p>
   </div>
   <div id="floatMeterTrack" aria-hidden="true">
     <div id="floatMeterFill"></div>
@@ -530,9 +531,7 @@ body.ultra-low #cosmos{display:none}
   </div>
   <div id="floatMeterBtnRow">
     <button type="button" id="meterInfoBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="meterInfoOverlay" aria-label="Visa dagens intuitionsnivå">i</button>
-    <button type="button" id="floatMeterReset" aria-label="Nollställ dagens resultat">
-      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M16 4v5h-5"/><path d="M4 16v-5h5"/><path d="M5.5 8A6 6 0 0 1 16 6.2M14.5 12A6 6 0 0 1 4 13.8"/></svg>
-    </button>
+    <button type="button" id="floatMeterReset" aria-label="Nollställ dagens resultat">RESET</button>
   </div>
 </div>
 
