@@ -2388,6 +2388,18 @@ button {
       outline: none;
     }
 
+    /* Mobile only: the donation image's ✕ (#mapAdCloseBtn) was way too
+       big relative to the small donation card on a phone — shrink just
+       that button here. Laptop/desktop keeps the base 68px size above. */
+    @media (max-width: 1199px) {
+      #mapAdCloseBtn.ad-slot-close {
+        width: 30px;
+        height: 30px;
+        font-size: 15px;
+        border-width: 1px;
+      }
+    }
+
     /* Interstitial "about to start playing" ad card (#playAdModal) —
        reuses the .modal / .modal-card shell (see further down) but,
        unlike the text-heavy modals that shell was built for, this one
@@ -3282,15 +3294,14 @@ button {
 
       #gameLayout.on-map .side-panel .top-row {
         position: relative;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         min-height: 26px;
       }
 
-      /* Explicitly center the "how to play" and login icons on the
-         cross-axis within the icon bar's own height, regardless of any
-         difference in their intrinsic sizes (auth.js's injected
-         #accountBtn vs. the fixed 34px howtoplay-btn). */
+      /* Explicitly center the login icon on the cross-axis within the
+         icon bar's own height (harmless no-op for the other, now
+         hidden/absolutely-positioned children). */
       #gameLayout.on-map .side-panel .top-row > * {
         align-self: center;
       }
@@ -3315,29 +3326,41 @@ button {
 
       #gameLayout.on-map .brand-logo { max-height: 38px; }
 
-      /* Turns the icon on for the map screen only — its base rule
-         (display:none) keeps it off on desktop and during gameplay.
-         Now the leftmost item in the icon bar (see .top-row's
-         space-between above and #authRoot's position at the opposite
-         end, further down). */
-      #gameLayout.on-map .howtoplay-btn { display: inline-flex; order: -1; }
+      /* Mobile only: pulled out of the icon bar entirely and pinned to
+         the bottom of the screen as a floating round button, since its
+         old spot (leftmost in the icon bar, near the top-left corner)
+         sat directly under the fixed site hamburger menu (#siteMenuToggle,
+         same top-left corner, z-index:60) and was effectively
+         unreachable/hidden behind it. Laptop/desktop is untouched — the
+         base .howtoplay-btn rule keeps it display:none there regardless
+         of this block. */
+      #gameLayout.on-map .howtoplay-btn {
+        display: inline-flex;
+        position: fixed;
+        left: 50%;
+        bottom: max(14px, env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        z-index: 32;
+      }
 
       /* Title image (images/game-holisticgametiteltext.png) — moved by
          JS (see the mobile branch of layoutSideExtras()) into the icon
-         bar itself, between the "how to play" and login icons, so all
-         three now sit on the same row instead of the logo getting its
-         own row below. */
+         bar itself. Absolutely centered here (rather than relying on
+         flex space-between) so it stays dead-center regardless of
+         #authRoot's width, now that the "how to play" icon (which used
+         to balance it out on the left) has moved down to the bottom of
+         the screen — see .howtoplay-btn above. */
       #gameLayout.on-map .top-row .map-brand {
         display: flex;
-        position: static;
-        left: auto;
-        top: auto;
-        transform: none;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
         z-index: auto;
         align-items: center;
         justify-content: center;
-        flex: 0 1 auto;
-        max-width: none;
+        flex: none;
+        max-width: 60%;
         width: auto;
         margin: 0;
         text-align: center;
@@ -3356,15 +3379,16 @@ button {
       /* The small logo that used to be the icon bar's only title is now
          redundant once the big title image sits on the map itself —
          hide it so there's just the one title, not two stacked on top
-         of each other. The bar keeps only the "how to play" and login
-         icons. */
+         of each other. The bar now keeps only the login icon (the
+         "how to play" icon moved to a floating button at the bottom
+         of the screen — see .howtoplay-btn above). */
       #gameLayout.on-map .top-row .brand-map-logo {
         display: none;
       }
 
-      /* Login/account icon — rightmost item in the icon bar now that
-         "how to play" moved to the far left (see .howtoplay-btn's
-         order:-1 above and .top-row's space-between). */
+      /* Login/account icon — the only remaining flex item in the icon
+         bar, pushed to the right edge via .top-row's justify-content:
+         flex-end above. */
       #gameLayout.on-map #authRoot { order: 1; }
 
       /* Guest "island cleared" upsell — pushed down from the very top
