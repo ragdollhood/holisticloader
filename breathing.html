@@ -661,6 +661,10 @@ body.preset-active #menuToggle{display:none}
   #menuToggleDesktopPanel .nav-contact-email{margin:2px 0 4px;padding:0 12px;text-align:left;font-size:12px}
   #menuToggleDesktopPanel .nav-contact-email a{color:var(--gold);text-decoration:none}
   #menuToggleDesktopPanel .nav-contact-email a:hover{text-decoration:underline}
+  #menuToggleDesktopPanel .tab-row{display:flex;align-items:center;gap:4px}
+  /* "how to use" now lives only in the hamburger dropdown on desktop, not in
+     the always-visible horizontal tab bar */
+  #topTabs>.tab-row>.tab-howto{display:none}
 }
 @media(max-width:720px){
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:52}
@@ -678,7 +682,7 @@ body.preset-active #menuToggle{display:none}
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
   </button>
   <nav id="menuToggleDesktopPanel" aria-label="Main sections (menu)">
-    <a href="breathing.html" class="tab active" aria-current="page">Guided Breathing</a>
+    <div class="tab-row"><a href="breathing.html" class="tab active" aria-current="page">Guided Breathing</a><button type="button" class="tab-howto" id="menuDesktopHowToBtn">- how to use</button></div>
     <a href="soundscape.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="yoga.html" class="tab">Yoga Loader</a>
@@ -1548,26 +1552,31 @@ function setSound(on){S.soundOn=on;
 }
 
 /* how to use: tap to reveal the "Choose your" steps box, tap again / click outside to close.
-   Trigger is #tabHowToBtn, in the tab-row right next to "Guided Breathing" — visible in the
-   horizontal desktop tab bar and in both the mobile and desktop dropdown menus. */
+   Triggers are all .tab-howto buttons — #tabHowToBtn in the mobile dropdown (#topTabs) next
+   to "Guided Breathing", and #menuDesktopHowToBtn in the desktop hamburger dropdown
+   (#menuToggleDesktopPanel). Whichever one was clicked positions the box. */
 {
-  const hBtn=$('tabHowToBtn'), hBox=$('howToBox');
-  const hide=()=>{ if(hBox){hBox.classList.remove('show');} if(hBtn)hBtn.setAttribute('aria-expanded','false'); };
-  function positionHowToBox(){
+  const hBtns=Array.prototype.slice.call(document.querySelectorAll('.tab-howto')), hBox=$('howToBox');
+  let activeHBtn=null;
+  const hide=()=>{ if(hBox){hBox.classList.remove('show');} hBtns.forEach(b=>b.setAttribute('aria-expanded','false')); };
+  function positionHowToBox(hBtn){
     if(!hBtn||!hBox||innerWidth<=560)return;
     const r=hBtn.getBoundingClientRect();
     const maxLeft=innerWidth-hBox.offsetWidth-12;
     hBox.style.left=Math.max(12,Math.min(r.left,maxLeft))+'px';
     hBox.style.top=(r.bottom+7)+'px';
   }
-  if(hBtn&&hBox){
-    hBtn.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
-      if(typeof window.closeMainNav==='function')window.closeMainNav();
-      positionHowToBox();
-      const open=hBox.classList.toggle('show'); hBtn.setAttribute('aria-expanded',open?'true':'false'); });
-    document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
+  if(hBtns.length&&hBox){
+    hBtns.forEach(hBtn=>{
+      hBtn.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
+        if(typeof window.closeMainNav==='function')window.closeMainNav();
+        activeHBtn=hBtn;
+        positionHowToBox(hBtn);
+        const open=hBox.classList.toggle('show'); hBtns.forEach(b=>b.setAttribute('aria-expanded',open&&b===hBtn?'true':'false')); });
+    });
+    document.addEventListener('click',e=>{ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&hBtns.indexOf(e.target)===-1) hide(); });
     document.addEventListener('keydown',e=>{ if(e.key==='Escape')hide(); });
-    addEventListener('resize',()=>{ if(hBox.classList.contains('show'))positionHowToBox(); });
+    addEventListener('resize',()=>{ if(hBox.classList.contains('show'))positionHowToBox(activeHBtn); });
     const hClose=$('howToClose');
     if(hClose)hClose.addEventListener('click',e=>{ e.stopPropagation(); hide(); });
   }

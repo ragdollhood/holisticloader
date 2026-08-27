@@ -555,9 +555,9 @@
   .nav-contact-email a:hover{text-decoration:underline}
   @media(max-width:720px){
     .mobile-extra{display:block!important}
-    #topTabs a[href="terms.html"].mobile-extra{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+    .mobile-extra[hidden]{display:none!important}
+    #topTabs .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
     .nav-contact-email{padding:0 12px}
-    #donateWrap{display:none!important}
   }
   /* mobile tab sizing must be re-asserted here: the earlier @media rules above
      were being cancelled out by the unconditional desktop rule right above
@@ -571,50 +571,6 @@
   #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
     background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
     opacity:.55}
-  #donateWrap{position:fixed;left:16px;top:max(6px,calc(env(safe-area-inset-top) - 6px));z-index:45;pointer-events:auto}
-  @supports(padding:max(0px)){
-    #donateWrap{left:max(16px,env(safe-area-inset-left))}
-  }
-  /* hamburger menu (same system as index.html) */
-  #menuBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:34px;height:34px;padding:0;
-    border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);cursor:pointer;
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.3);transition:background .2s ease,transform .12s ease}
-  #menuBtn:hover{background:rgba(243,239,228,.12)}
-  #menuBtn:active{transform:scale(.95)}
-  #menuBtn .menu-bar{width:16px;height:2px;border-radius:2px;background:currentColor;transition:transform .22s ease,opacity .18s ease}
-  #menuBtn.open .menu-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
-  #menuBtn.open .menu-bar:nth-child(2){opacity:0}
-  #menuBtn.open .menu-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-  #menuPanel{position:absolute;top:calc(100% + 8px);left:0;z-index:46;width:max-content;min-width:190px;
-    display:flex;flex-direction:column;
-    background:var(--glass-strong);border:1px solid var(--line);border-radius:14px;
-    padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.4);
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .22s ease,transform .22s ease}
-  #menuPanel.show{opacity:1;pointer-events:auto;transform:translateY(0)}
-  /* contact — plain row inside the shared #menuPanel background, expands to reveal the email */
-  #contactBtn{display:flex;align-items:center;width:100%;box-sizing:border-box;max-width:calc(100vw - 32px);overflow:hidden;
-    border-radius:8px;padding:9px 10px;background:transparent;border:none;color:var(--ink);cursor:pointer;
-    transition:background .15s ease}
-  #contactBtn:hover{background:rgba(244,241,234,.1)}
-  #contactBtn .env{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-  #contactBtn .clabel{font-size:12px;letter-spacing:.04em;margin-left:8px;white-space:nowrap}
-  #contactBtn .ctext{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.03em;color:var(--gold);text-decoration:none;transition:max-width .32s ease,opacity .26s ease,margin-left .32s ease}
-  #contactBtn .ctext:hover{text-decoration:underline}
-  #contactBtn.open .ctext{max-width:360px;opacity:1;margin-left:6px;pointer-events:auto}
-  #contactBtn.hidden{display:none}
-  /* "How to use" is a plain row sharing the
-     #menuPanel background (no individual pill/border per item). */
-  #howToBtn,#shopMenuBtn{
-    display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
-    width:100%;box-sizing:border-box;
-    font-family:inherit;font-size:12px;letter-spacing:.04em;color:var(--ink);text-decoration:none;
-    background:transparent;border:none;border-radius:8px;
-    padding:9px 10px;cursor:pointer;transition:background .15s ease;
-  }
-  #howToBtn .htu-ic,#shopMenuBtn .shop-ic{flex:0 0 auto;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;display:block}
-  #howToBtn:hover,#shopMenuBtn:hover{background:rgba(244,241,234,.1)}
-  #howToBtn:active,#shopMenuBtn:active{background:rgba(244,241,234,.16)}
   /* info box, hidden until "How to use" is tapped — position set by JS to track the button.
      Desktop: capped height with its own scrollbar so the guide is always fully reachable.
      Mobile override is placed AFTER this rule on purpose — same-specificity CSS rules are
@@ -666,12 +622,6 @@
   .htu-list li i{color:var(--ink);font-style:normal;font-weight:500}
   .htu-foot{margin-top:16px;font-size:11.5px;line-height:1.6;letter-spacing:.01em;color:var(--faint);text-transform:none}
   @media(max-width:560px){
-    #donateWrap{left:4px;top:max(4px,calc(env(safe-area-inset-top) - 8px))}
-    @supports(padding:max(0px)){
-      #donateWrap{left:max(4px,env(safe-area-inset-left))}
-    }
-    /* menuBtn should never stand taller than the tabs beside it */
-    #menuBtn{width:30px;height:30px}
     /* pull the h1 up closer to the gold line under the tabs on mobile */
     body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}
     /* how-to-use fills the whole screen and only scrolls vertically, never sideways */
@@ -986,17 +936,39 @@
 
 <style>
 /* ===== mobile page-nav dropdown (mirrors intuition.html's mobile menu) ===== */
-#menuToggle{display:none;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
+#menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
 #menuToggle svg{width:17px;height:17px;flex:none}
 #menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
 body.immersive #menuToggle{opacity:0;pointer-events:none}
 body.preset-active #menuToggle{display:none}
-.tab-howto{display:none}
+.tab-howto{display:inline-block;align-self:center;color:#ffd98a;font-size:11px;font-weight:700;letter-spacing:.03em;text-decoration:underline;white-space:nowrap;background:none;border:0;padding:0 4px 0 0;cursor:pointer;font-family:inherit}
 .tab-row{display:contents}
 .h1-frame .title-img{display:block;margin:0 auto;height:clamp(26px,6.4vw,42px);width:auto;max-width:100%}
+/* ===== desktop/laptop version of the same dropdown, opened by the same #menuToggle icon,
+   as an extra way in alongside the always-visible horizontal tab row ===== */
+#menuToggleDesktopPanel{display:none}
+@media(min-width:721px){
+  #menuToggleDesktopPanel{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;z-index:52;
+    display:flex;flex-direction:column;gap:4px;width:min(72vw,240px);max-height:calc(100vh - 90px);overflow-y:auto;
+    background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;
+    box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);
+    transition:opacity .18s ease,transform .18s ease;pointer-events:none}
+  body.tabs-open #menuToggleDesktopPanel{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #menuToggleDesktopPanel .tab{border:1px solid transparent;border-radius:10px;background:transparent;color:var(--soft);
+    text-decoration:none;text-align:left;margin:0;padding:9px 12px;font-family:'Outfit',system-ui,sans-serif;
+    font-weight:500;font-size:13px;letter-spacing:.04em;display:block;box-sizing:border-box;cursor:pointer}
+  #menuToggleDesktopPanel .tab:hover{color:var(--ink);background:rgba(244,241,234,.06)}
+  #menuToggleDesktopPanel .tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold)}
+  #menuToggleDesktopPanel .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  #menuToggleDesktopPanel .nav-contact-email{margin:2px 0 4px;padding:0 12px;text-align:left;font-size:12px}
+  #menuToggleDesktopPanel .nav-contact-email a{color:var(--gold);text-decoration:none}
+  #menuToggleDesktopPanel .nav-contact-email a:hover{text-decoration:underline}
+  #menuToggleDesktopPanel .tab-row{display:flex;align-items:center;gap:4px}
+  /* "how to use" now lives only in the hamburger dropdown on desktop, not in
+     the always-visible horizontal tab bar */
+  #topTabs>.tab-row>.tab-howto{display:none}
+}
 @media(max-width:720px){
-  #menuToggle{display:flex}
-  #donateWrap{left:58px}
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:52}
   body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
   #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px;display:block;flex:1 1 auto;width:100%;box-sizing:border-box}
@@ -1004,14 +976,26 @@ body.preset-active #menuToggle{display:none}
   #topNavLine{display:none}
   #brandLogo{max-height:clamp(37px,9.6vw,67px)!important}
   .tab-row{display:flex;align-items:center;gap:4px}
-  .tab-howto{display:inline-block;color:#ffd98a;font-size:11px;font-weight:700;letter-spacing:.03em;text-decoration:underline;white-space:nowrap;background:none;border:0;padding:0 4px 0 0;cursor:pointer;font-family:inherit}
 }
 </style>
 </head>
 <body>
-  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs" aria-label="Meny">
+  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs menuToggleDesktopPanel" aria-label="Meny">
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
   </button>
+  <nav id="menuToggleDesktopPanel" aria-label="Main sections (menu)">
+    <a href="breathing.html" class="tab">Guided Breathing</a>
+    <div class="tab-row"><a href="soundscape.html" class="tab active" aria-current="page">Soundscape Creator</a><button type="button" class="tab-howto" id="menuDesktopHowToBtn">- how to use</button></div>
+    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="yoga.html" class="tab">Yoga Loader</a>
+    <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
+    <a href="intuition.html" class="tab">Intuition Loader</a>
+    <a href="shop.html" class="tab">Shop</a>
+    <a href="terms.html" class="tab nav-sep">Terms &amp; Conditions</a>
+    <a href="about.html" class="tab">About</a>
+    <button type="button" id="menuDesktopContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="menuDesktopContactEmail">Contact</button>
+    <p id="menuDesktopContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+  </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="auth.js"></script>
@@ -1058,25 +1042,6 @@ isPremium = true;
   </div>
 </div>
 
-<div id="donateWrap">
-  <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
-    <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
-  </button>
-  <div id="menuPanel" role="menu">
-    <button id="howToBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
-      <svg class="htu-ic" viewBox="0 0 24 24"><path d="M12 6.5c-1.6-1.2-3.7-1.7-6-1.7v12.7c2.3 0 4.4.5 6 1.7 1.6-1.2 3.7-1.7 6-1.7V4.8c-2.3 0-4.4.5-6 1.7Z"/><path d="M12 6.5v12.7"/></svg>How to use
-    </button>
-    <a id="shopMenuBtn" href="store.html">
-      <svg class="shop-ic" viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Shop
-    </a>
-    <div id="contactBtn" role="button" tabindex="0" aria-label="Contact" aria-expanded="false">
-      <svg class="env" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg>
-      <span class="clabel">Contact</span>
-      <a class="ctext" id="contactEmail" href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a>
-    </div>
-  </div>
-</div>
-
 <header id="topNav">
   <h1 id="brand"><a href="index.html" aria-label="Holistic Loader — home"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
   <nav id="topTabs" aria-label="Main sections">
@@ -1087,7 +1052,7 @@ isPremium = true;
     <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
     <a href="intuition.html" class="tab">Intuition Loader</a>
     <a href="shop.html" class="tab">Shop</a>
-    <a href="terms.html" class="tab mobile-extra">Terms &amp; Conditions</a>
+    <a href="terms.html" class="tab mobile-extra nav-sep">Terms &amp; Conditions</a>
     <a href="about.html" class="tab mobile-extra">About</a>
     <button type="button" id="navContactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
     <p id="navContactEmail" class="nav-contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
@@ -1489,54 +1454,17 @@ isPremium = true;
                    (navigator.maxTouchPoints>1 && /Mac/i.test(navigator.platform)); // iPadOS uppger sig som Mac
   const _perfScale=(_cores<=2?.55:_cores<=4?.75:1) * (_isMobile?.7:1);
 
-  /* hamburger menu: toggles the panel holding Login + Get Premium + How to use + Contact */
+  /* how to use: tap to reveal the "Choose your" steps box, tap again / click outside to close.
+     Triggers are all .tab-howto buttons — #tabHowToBtn in the mobile dropdown (#topTabs) next
+     to "Soundscape Creator", and #menuDesktopHowToBtn in the desktop hamburger dropdown
+     (#menuToggleDesktopPanel). Whichever one was clicked positions the box. */
   (function(){
-    const mBtn=$('menuBtn'), mPanel=$('menuPanel');
-    const closeMenu=function(){ if(mPanel)mPanel.classList.remove('show'); if(mBtn){mBtn.classList.remove('open');mBtn.setAttribute('aria-expanded','false');} };
-    // Exposed so auth.js's account-icon menu can close this one when it opens.
-    window.closeHamburgerMenu=closeMenu;
-    if(mBtn&&mPanel){
-      mBtn.addEventListener('click',function(e){ e.stopPropagation();
-        // Close the account-icon menu (if auth.js built one) before opening
-        // this one, so only one menu is ever open at a time.
-        if(typeof window.closeAccountMenu==='function') window.closeAccountMenu();
-        const open=mPanel.classList.toggle('show'); mBtn.classList.toggle('open',open); mBtn.setAttribute('aria-expanded',open?'true':'false');
-        if(!open){ const hBox=$('howToBox'); if(hBox)hBox.classList.remove('show'); const cBtn=$('contactBtn'); if(cBtn)cBtn.classList.remove('open'); } });
-      document.addEventListener('click',function(e){ if(mPanel.classList.contains('show')&&!mPanel.contains(e.target)&&e.target!==mBtn) closeMenu(); });
-      document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeMenu(); });
-    }
-    /* "Get Premium" in the menu just triggers the same header button
-       (built by auth.js) and closes this menu. */
-  })();
-
-  /* contact: tap the envelope to expand it and reveal the email */
-  (function(){
-    const cBtn=$('contactBtn');
-    if(!cBtn) return;
-    const hide=function(){ cBtn.classList.remove('open'); cBtn.setAttribute('aria-expanded','false'); };
-    function updateContactMaxWidth(){
-      if(innerWidth<=560)return;
-      const rect=cBtn.getBoundingClientRect();
-      const avail=Math.max(120,innerWidth-rect.left-16);
-      cBtn.style.maxWidth=avail+'px';
-    }
-    cBtn.addEventListener('click',function(e){ e.stopPropagation();
-      updateContactMaxWidth();
-      const open=cBtn.classList.toggle('open'); cBtn.setAttribute('aria-expanded',open?'true':'false'); });
-    cBtn.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cBtn.click(); } });
-    (function(){const cEmail=$('contactEmail'); if(cEmail)cEmail.addEventListener('click',function(e){e.stopPropagation();});})();
-    document.addEventListener('click',function(e){ if(cBtn.classList.contains('open')&&!cBtn.contains(e.target)) hide(); });
-    document.addEventListener('keydown',function(e){ if(e.key==='Escape')hide(); });
-    addEventListener('resize',function(){ if(cBtn.classList.contains('open'))updateContactMaxWidth(); });
-  })();
-
-  /* how to use: tap to reveal the "Choose your" steps box, tap again / click outside to close */
-  (function(){
-    const hBtn=$('howToBtn'), hBox=$('howToBox'), hClose=$('howToClose');
-    if(!hBtn||!hBox)return;
-    const hide=function(){ hBox.classList.remove('show'); hBtn.setAttribute('aria-expanded','false'); };
-    function positionHowToBox(){
-      if(innerWidth<=560)return;
+    const hBtns=Array.prototype.slice.call(document.querySelectorAll('.tab-howto')), hBox=$('howToBox'), hClose=$('howToClose');
+    if(!hBtns.length||!hBox)return;
+    let activeHBtn=null;
+    const hide=function(){ hBox.classList.remove('show'); hBtns.forEach(function(b){b.setAttribute('aria-expanded','false');}); };
+    function positionHowToBox(hBtn){
+      if(!hBtn||innerWidth<=560)return;
       const r=hBtn.getBoundingClientRect();
       const maxLeft=innerWidth-hBox.offsetWidth-12;
       const boxLeft=Math.max(12,Math.min(r.left,maxLeft));
@@ -1547,13 +1475,17 @@ isPremium = true;
          automatically stays pinned to the box's top-right corner — no need to
          track it separately here. */
     }
-    hBtn.addEventListener('click',function(e){ e.stopPropagation();
-      positionHowToBox();
-      const open=hBox.classList.toggle('show'); hBtn.setAttribute('aria-expanded',open?'true':'false'); });
-    document.addEventListener('click',function(e){ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&e.target!==hBtn) hide(); });
+    hBtns.forEach(function(hBtn){
+      hBtn.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation();
+        if(typeof window.closeMainNav==='function')window.closeMainNav();
+        activeHBtn=hBtn;
+        positionHowToBox(hBtn);
+        const open=hBox.classList.toggle('show'); hBtns.forEach(function(b){b.setAttribute('aria-expanded',open&&b===hBtn?'true':'false');}); });
+    });
+    document.addEventListener('click',function(e){ if(hBox.classList.contains('show')&&!hBox.contains(e.target)&&hBtns.indexOf(e.target)===-1) hide(); });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape')hide(); });
-    addEventListener('resize',function(){ if(hBox.classList.contains('show'))positionHowToBox(); });
-    if(hClose)hClose.addEventListener('click',function(e){ e.stopPropagation(); hide(); if(typeof window.closeHamburgerMenu==='function')window.closeHamburgerMenu(); });
+    addEventListener('resize',function(){ if(hBox.classList.contains('show'))positionHowToBox(activeHBtn); });
+    if(hClose)hClose.addEventListener('click',function(e){ e.stopPropagation(); hide(); });
   })();
 
   /* ============ KOSMOS: galaxer som roterar, norrsken, supernovor ============
@@ -4245,13 +4177,17 @@ registerVisit();
 
 <script>
 (function(){
-  var mt=document.getElementById('menuToggle'), tabs=document.getElementById('topTabs');
+  var mt=document.getElementById('menuToggle'), tabs=document.getElementById('topTabs'), dPanel=document.getElementById('menuToggleDesktopPanel');
   function closeTabs(){document.body.classList.remove('tabs-open'); if(mt)mt.setAttribute('aria-expanded','false');}
   function openTabs(){document.body.classList.add('tabs-open'); if(mt)mt.setAttribute('aria-expanded','true');}
+  // Exposed so the "how to use" handler (bound earlier in the page) can close
+  // this dropdown first when it's opened from inside it on mobile.
+  window.closeMainNav=closeTabs;
   if(mt&&tabs){
     mt.addEventListener('click',function(e){e.stopPropagation(); document.body.classList.contains('tabs-open')?closeTabs():openTabs();});
     tabs.addEventListener('click',function(e){ var a=e.target.closest('a'); if(a && !e.target.closest('.tab-howto'))closeTabs(); });
-    document.addEventListener('click',function(e){ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target))closeTabs(); });
+    if(dPanel)dPanel.addEventListener('click',function(e){ if(e.target.closest('a'))closeTabs(); });
+    document.addEventListener('click',function(e){ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target)&&!(dPanel&&dPanel.contains(e.target)))closeTabs(); });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeTabs(); });
   }
   (function(){
@@ -4263,12 +4199,15 @@ registerVisit();
       btn.setAttribute('aria-expanded',String(!showing));
     });
   })();
-  var tHow=document.getElementById('tabHowToBtn'), hBox=document.getElementById('howToBox');
-  if(tHow&&hBox){
-    tHow.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation();
-      closeTabs();
-      var open=hBox.classList.toggle('show'); tHow.setAttribute('aria-expanded',open?'true':'false'); });
-  }
+  (function(){
+    var btn=document.getElementById('menuDesktopContactTab'), email=document.getElementById('menuDesktopContactEmail');
+    if(!btn||!email)return;
+    btn.addEventListener('click',function(){
+      var showing=!email.hidden;
+      email.hidden=showing;
+      btn.setAttribute('aria-expanded',String(!showing));
+    });
+  })();
   function syncMobileNavH(){
     var nav=document.getElementById('topNav');
     var frame=document.querySelector('.h1-frame');
