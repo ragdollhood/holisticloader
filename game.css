@@ -121,6 +121,98 @@
       position: relative;
     }
 
+    /* ===== Site hamburger menu — same menu/behavior as intuition.html,
+       reused here as a compact icon + dropdown (rather than the full
+       horizontal tab header) so it doesn't compete with the game's own
+       top-row/brand/authRoot UI. Opens the same list of site pages on
+       every breakpoint via body.site-menu-open; markup + toggle script
+       live in game.html/game2.html right after <body>. */
+    #siteMenuToggle {
+      display: flex;
+      position: fixed;
+      top: max(12px, env(safe-area-inset-top));
+      left: 14px;
+      z-index: 60;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      background: rgba(19, 14, 28, .85);
+      border: 1px solid rgba(220, 190, 130, .4);
+      border-radius: 12px;
+      color: var(--text);
+      cursor: pointer;
+    }
+    #siteMenuToggle svg { width: 17px; height: 17px; flex: none; }
+    #siteMenuToggle svg line { stroke: var(--gold); stroke-width: 2; stroke-linecap: round; }
+
+    #siteMenuPanel {
+      position: fixed;
+      top: calc(max(12px, env(safe-area-inset-top)) + 46px);
+      left: 14px;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: min(72vw, 240px);
+      max-height: calc(100vh - 90px);
+      overflow-y: auto;
+      background: rgba(13, 9, 22, .97);
+      border: 1px solid rgba(220, 190, 130, .3);
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, .6);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events: none;
+    }
+    body.site-menu-open #siteMenuPanel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    #siteMenuPanel a {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      text-decoration: none;
+      text-align: left;
+      margin: 0;
+      padding: 9px 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      font-size: 13px;
+      letter-spacing: .04em;
+      display: block;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+    #siteMenuPanel a:hover { color: var(--text); background: rgba(255, 255, 255, .06); }
+    #siteMenuPanel a.nav-sep { border-top: 1px solid rgba(220, 190, 130, .2); margin-top: 4px; padding-top: 13px; }
+    #siteMenuPanel .menu-contact-btn {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      width: 100%;
+      padding: 9px 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      font-size: 13px;
+      letter-spacing: .04em;
+      cursor: pointer;
+    }
+    #siteMenuPanel .menu-contact-btn:hover { color: var(--text); background: rgba(255, 255, 255, .06); }
+    #siteMenuPanel .menu-contact-email { margin: 2px 0 4px; padding: 0 12px; font-size: 12px; }
+    #siteMenuPanel .menu-contact-email a { padding: 0; display: inline; color: var(--gold); }
+    #siteMenuPanel .menu-contact-email a:hover { text-decoration: underline; background: none; }
+
     /* ---------- Game layout ----------
        Two siblings, side by side: .stage-frame (the game-world image —
        board of planting circles + the "next item" preview, nothing
