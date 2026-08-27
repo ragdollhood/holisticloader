@@ -233,17 +233,6 @@
             </div>
           </div>
 
-          <!-- Mobile-only "How to play" info icon — opens #howToPlayModal.
-               Sits between the brand/logo and the account icon so the
-               top row reads: logo (left) ... how-to-play, account (right). -->
-          <button type="button" class="howtoplay-btn" id="howToPlayBtn" aria-label="How to play" aria-haspopup="dialog">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9.25"></circle>
-              <path d="M9.4 9.2a2.6 2.6 0 0 1 5 .95c0 1.75-2.5 2.05-2.5 3.55"></path>
-              <line x1="12" y1="16.9" x2="12.01" y2="16.9"></line>
-            </svg>
-          </button>
-
           <!-- Moved out of .score so the account icon is always part of the
                top row (visible on the map screen too, not just gameplay). -->
           <div id="authRoot"></div>
@@ -253,10 +242,11 @@
           <!-- Landscape-mobile-only: replaces the full instructions
                below with just this icon + "How to Use" label, which
                opens the exact same #howToPlayModal popup that mobile
-               portrait's own icon (#howToPlayBtn, in the icon bar
-               above) opens — see the click handler (JS) and the
-               landscape-mobile media query (CSS) that swaps which of
-               the two is visible. Hidden everywhere else by default. -->
+               portrait's own button (#howToPlayBtn, now below the map
+               image — see .howtoplay-mobile-btn) opens — see the click
+               handler (JS) and the landscape-mobile media query (CSS)
+               that swaps which of the two is visible. Hidden everywhere
+               else by default. -->
           <button type="button" class="how-to-play-compact-btn" id="howToPlayCompactBtn" aria-haspopup="dialog">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <circle cx="12" cy="12" r="9.25"></circle>
@@ -438,6 +428,23 @@
         </p>
       </aside>
 
+      <!-- Mobile-only, map-screen-only "How to play" button — moved down
+           here (out of the top icon bar) because it used to sit at the
+           far-left of that bar, right under the fixed site hamburger
+           menu (#siteMenuToggle, top-left corner), and the two visually
+           collided on the map/start screen. Now sits below the (shrunk)
+           map image instead, same slot the old mobile Remove Ads button
+           used to occupy — see the max-width:1199px
+           .howtoplay-mobile-btn rules further down in the CSS. Hidden
+           everywhere else (desktop or during gameplay) by default. -->
+      <button type="button" class="howtoplay-mobile-btn" id="howToPlayBtn" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9.25"></circle>
+          <path d="M9.4 9.2a2.6 2.6 0 0 1 5 .95c0 1.75-2.5 2.05-2.5 3.55"></path>
+          <line x1="12" y1="16.9" x2="12.01" y2="16.9"></line>
+        </svg>
+        <span>How to Play</span>
+      </button>
     </div>
   </main>
 
@@ -466,10 +473,11 @@
     </div>
   </div>
 
-  <!-- Mobile "How to play" popup, opened via the top-row info icon
-       (#howToPlayBtn). Same copy as the desktop side-panel .how-to-play
-       box, just presented as a modal since mobile has no room for a
-       standing text panel once the map fills the whole screen. -->
+  <!-- Mobile "How to play" popup, opened via the button below the map
+       image (#howToPlayBtn). Same copy as the desktop side-panel
+       .how-to-play box, just presented as a modal since mobile has no
+       room for a standing text panel once the map fills the whole
+       screen. -->
   <div class="modal" id="howToPlayModal">
     <div class="modal-card how-to-play-card">
       <h2>How to Play</h2>
