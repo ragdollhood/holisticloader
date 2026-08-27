@@ -638,6 +638,12 @@
   @media (min-width:900px){
     body{padding-left:280px}
 
+    /* .sub is centered via text-align within body's content box, but that box
+       is now shifted right by the sidebar's padding-left — cancel that shift
+       so the text stays centered under the (viewport-centered, fixed) title
+       instead of drifting right */
+    .sub{margin-left:-280px}
+
     /* gutter: osynlig zon mellan vänsterkanten och instrumenten — centrerar regelrutan i den lediga ytan */
     #tsPanelGutter{
       position:fixed;
