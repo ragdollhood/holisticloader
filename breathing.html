@@ -523,6 +523,22 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .end-card p{color:var(--muted);margin:12px 0 26px;font-weight:300;letter-spacing:.04em}
 body.immersive #brand{opacity:0}
 
+/* ===== post-session donation popup — image + thick gold frame, shown
+   once a breathing session ends (timer runs out or the person presses
+   End); clicking the image opens the Stripe donation link, the big "×"
+   in the corner closes it without navigating anywhere. ===== */
+#sessionDonateOverlay{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;padding:24px;
+  background:rgba(6,7,10,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#sessionDonateOverlay.show{display:flex}
+.session-donate-link{display:block;max-width:min(92vw,480px);max-height:80vh}
+.session-donate-img{display:block;width:100%;height:auto;max-height:80vh;object-fit:contain;
+  border:8px solid var(--gold);border-radius:14px;box-shadow:0 25px 70px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.35)}
+.session-donate-close{position:absolute;top:max(16px,env(safe-area-inset-top));right:20px;z-index:2;
+  background:none;border:0;color:#fff;font-size:64px;line-height:1;cursor:pointer;padding:4px 14px;
+  font-family:Georgia,"Times New Roman",serif;text-shadow:0 2px 10px rgba(0,0,0,.65);transition:color .15s ease,transform .15s ease}
+.session-donate-close:hover{color:var(--gold);transform:scale(1.08)}
+@media(max-width:480px){.session-donate-close{font-size:48px;top:12px;right:14px}}
+
 .sess-toggles{position:absolute;top:max(70px,calc(env(safe-area-inset-top) + 64px));left:18px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-start;touch-action:manipulation}
 #sessBtns{display:flex;flex-direction:column;align-items:center;gap:8px}
 .sess-toggles.collapsed #sessBtns{display:none}
@@ -948,6 +964,13 @@ body.preset-active #menuToggle{display:none}
   <div id="endOverlay">
     <div class="end-card"><h2>Your session is over</h2><p>Breathe out. Carry the calm with you.</p>
       <button class="done-btn" id="btnAgain">Start again</button></div>
+  </div>
+
+  <div id="sessionDonateOverlay" aria-hidden="true">
+    <button type="button" id="sessionDonateClose" class="session-donate-close" aria-label="Close">&times;</button>
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="session-donate-link">
+      <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="session-donate-img">
+    </a>
   </div>
 </div>
 
@@ -2189,7 +2212,7 @@ requestAnimationFrame(loop);
 /* session */
 function startSession(){
   initAudio(); resumeAudio(); requestWakeLock();
-  S.ended=false;$('endOverlay').classList.remove('show');
+  S.ended=false;$('endOverlay').classList.remove('show');hideSessionDonateOverlay();
   if(ambPreviewTimer){clearTimeout(ambPreviewTimer);ambPreviewTimer=null;} /* the sound now plays for the whole session, not just a short preview */
   if(isAmbSound(S.sound)){
     /* being selected is enough — turn it back on even if its preview had already faded to silence */
@@ -2234,7 +2257,8 @@ function endSession(){S.running=false;S.ended=false;stopScheduler();releaseWakeL
   document.body.classList.remove('immersive');
   $('endOverlay').classList.remove('show');
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
-  $('timerCluster').classList.add('hidden');$('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
+  $('timerCluster').classList.add('hidden');$('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);
+  showSessionDonateOverlay();}
 function resetToFront(){S.running=false;S.ended=false;stopScheduler();releaseWakeLock();remainingMs=0;breathClock=0;wanderT=0;
   stopAllAmbience();
   if(audio.ctx){audio.master.gain.cancelScheduledValues(audio.ctx.currentTime);audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.25);}
@@ -2243,6 +2267,22 @@ function resetToFront(){S.running=false;S.ended=false;stopScheduler();releaseWak
   $('center').classList.remove('live');$('front').classList.remove('gone');$('brand').style.opacity='';
   $('timerCluster').classList.add('hidden');$('breathCue').style.opacity=0;
   $('sessToggles').classList.add('hidden');$('frontMeta').classList.remove('hidden');$('donateWrap')&&$('donateWrap').classList.remove('hidden');$('contactBtn')&&$('contactBtn').classList.remove('hidden');$('sessToggles').classList.remove('collapsed');requestAnimationFrame(positionOrb);}
+
+/* post-session donation popup */
+function showSessionDonateOverlay(){
+  const ov=$('sessionDonateOverlay'); if(!ov)return;
+  ov.classList.add('show'); ov.setAttribute('aria-hidden','false');
+}
+function hideSessionDonateOverlay(){
+  const ov=$('sessionDonateOverlay'); if(!ov)return;
+  ov.classList.remove('show'); ov.setAttribute('aria-hidden','true');
+}
+(function(){
+  const closeBtn=$('sessionDonateClose'), ov=$('sessionDonateOverlay');
+  if(closeBtn)closeBtn.addEventListener('click',hideSessionDonateOverlay);
+  if(ov)ov.addEventListener('click',e=>{if(e.target===ov)hideSessionDonateOverlay();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')hideSessionDonateOverlay();});
+})();
 
 /* panel */
 const TITLES={sound:'My sound tempo',breath:'Breathing',preset:'Preset'};
