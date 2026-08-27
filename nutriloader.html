@@ -365,11 +365,10 @@ header h1 em{font-style:normal;color:var(--rose-deep)}
   letter-spacing:.04em;color:var(--ink-soft);box-shadow:0 2px 8px rgba(85,70,55,.12);cursor:pointer;
   transition:transform .15s ease}
 #resetBtnTop:hover{color:var(--rose-deep);border-color:var(--rose-soft);transform:scale(1.6);position:relative;z-index:10}
-#donateBtn2{display:flex;align-items:center;gap:6px;border:1px solid #b0c8f0;background:#fffdf9f2;
-  border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:700;
-  letter-spacing:.04em;color:#003087;box-shadow:0 2px 8px rgba(85,70,55,.12);
-  text-decoration:none;white-space:nowrap;transition:transform .15s ease}
-#donateBtn2:hover{background:#e8f0fc;border-color:#0070e0;transform:scale(1.06)}
+#donateBtn2{display:inline-flex;align-items:center;border-radius:12px;overflow:hidden;
+  box-shadow:0 2px 8px rgba(85,70,55,.12);transition:transform .15s ease}
+#donateBtn2 img{display:block;height:40px;width:auto;border-radius:12px}
+#donateBtn2:hover{transform:scale(1.06)}
 #langBtn{
   display:flex;align-items:center;gap:8px;
   border:1px solid #d9d0c3;background:#f7f4ef;border-radius:999px;
@@ -1475,11 +1474,7 @@ body.preset-active #menuToggle{display:none}
         <div id="supportRow">
           <span id="supportMsg" data-i18n="supportMsg">This service is free to use, but your support is always appreciated and gratefully received.</span>
           <a id="donateBtn2" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ingenskit%40hotmail.com&item_name=NUTRILOADER&currency_code=SEK&no_shipping=1" target="_blank" rel="noopener">
-            <svg class="ppmark" viewBox="0 0 24 28" width="14" height="16" aria-hidden="true">
-              <path d="M7.4 27 l.9-5.6 H6 L8.6 4.3 h7.3 c3.7 0 6 1.9 5.4 5.8 -.6 4.2 -3.7 6.2 -7.8 6.2 H10 l-.9 5.7 -.2 1.4 Z" fill="#003087"/>
-              <path d="M9.1 22.8 l.9-5.6 h2.9 c4.6 0 8-2.2 8.7-7 .1-.5.1-1 .1-1.4 1.6 .9 2.3 2.6 1.8 5.3 -.8 4.7 -4.1 6.9 -8.7 6.9 h-1.6 l-.9 5.6 -.2 1.4 H9 Z" fill="#0070e0"/>
-            </svg>
-            <span>Thank you!</span>
+            <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader">
           </a>
         </div>
       </div>

@@ -471,9 +471,49 @@ body.preset-active #menuToggle{display:none}
   .tab-row{display:flex;align-items:center;gap:4px}
   .tab-howto{display:inline-block;color:#ffd98a;font-size:11px;font-weight:700;letter-spacing:.03em;text-decoration:underline;white-space:nowrap;background:none;border:0;padding:0 4px 0 0;cursor:pointer;font-family:inherit}
 }
+
+/* ===== donation popup — image with a thick gold frame + big "×" close
+   sitting on the image's own top-right corner; shown after a completed
+   yoga session. Same treatment as soundscape.html. Backdrop is a light
+   dim, not a heavy blur, so the page behind stays visible through it. ===== */
+#sessionDonateOverlay{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;padding:24px;
+  background:rgba(6,7,10,.38);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+#sessionDonateOverlay.show{display:flex}
+.session-donate-frame{position:relative;display:inline-block;max-width:min(92vw,480px)}
+.session-donate-link{display:block;max-width:100%;max-height:80vh}
+.session-donate-img{display:block;width:100%;height:auto;max-height:80vh;object-fit:contain;
+  border:8px solid var(--gold);border-radius:14px;box-shadow:0 25px 70px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.35)}
+.session-donate-close{position:absolute;top:-20px;right:-20px;z-index:2;width:48px;height:48px;
+  display:flex;align-items:center;justify-content:center;background:rgba(13,9,22,.94);
+  border:2px solid var(--gold);border-radius:50%;color:#fff;font-size:32px;line-height:1;cursor:pointer;
+  font-family:Georgia,"Times New Roman",serif;box-shadow:0 8px 22px rgba(0,0,0,.55);
+  transition:color .15s ease,transform .15s ease,background .15s ease}
+.session-donate-close:hover{color:var(--gold);transform:scale(1.08)}
+@media(max-width:480px){.session-donate-close{width:38px;height:38px;font-size:24px;top:-14px;right:-14px}}
 </style>
 </head>
 <body>
+  <div id="sessionDonateOverlay" aria-hidden="true">
+    <div class="session-donate-frame">
+      <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="session-donate-link">
+        <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="session-donate-img">
+      </a>
+      <button type="button" id="sessionDonateClose" class="session-donate-close" aria-label="Close">&times;</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var closeBtn=document.getElementById('sessionDonateClose'), ov=document.getElementById('sessionDonateOverlay');
+    if(!ov)return;
+    function showSessionDonate(){ov.classList.add('show');ov.setAttribute('aria-hidden','false');}
+    function hideSessionDonate(){ov.classList.remove('show');ov.setAttribute('aria-hidden','true');}
+    if(closeBtn)closeBtn.addEventListener('click',hideSessionDonate);
+    ov.addEventListener('click',function(e){if(e.target===ov)hideSessionDonate();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')hideSessionDonate();});
+    window.showSessionDonate=showSessionDonate;
+    window.hideSessionDonate=hideSessionDonate;
+  })();
+  </script>
   <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs menuToggleDesktopPanel" aria-label="Meny">
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
   </button>
@@ -1602,6 +1642,7 @@ function yogaEndSession(){
   const endTxt=$('yogaEndText');
   if(endTxt)endTxt.textContent=`You moved through all ${yogaSessionPoses.length} poses. Take a breath, and carry that calm with you.`;
   const endCard=$('yogaEndCard');if(endCard)endCard.classList.add('show');
+  if(window.showSessionDonate)window.showSessionDonate();
 }
 function yogaCloseSession(){
   clearTimeout(yogaAdvanceTimer);clearInterval(yogaBreathTimer);clearInterval(yogaPoseTimerInterval);yogaClearCountdown();
