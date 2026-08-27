@@ -483,11 +483,7 @@ function _wireAuthDom() {
     } else {
       title.textContent = "Log in";
       submitBtn.textContent = "Log in";
-      // On the Remove Ads flow (game.html) the footer button below
-      // "Log in" points at removing ads instead of a Premium trial —
-      // it still just switches the form to register mode underneath,
-      // since an account is required either way.
-      if (trialLabel) trialLabel.textContent = window.HL_HIDE_TRIAL_UI ? "Remove Ads for $2.99" : "Free Registration";
+      if (trialLabel) trialLabel.textContent = "Free Registration";
       if (forgotRow) forgotRow.style.display = "";
       passwordInput.setAttribute("autocomplete", "current-password");
     }
