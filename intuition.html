@@ -201,6 +201,8 @@ body.ultra-low #cosmos{display:none}
 @media(min-width:901px){.next-meter-vert{width:64px}.next-meter-vert-track{width:24px}}
 @media(max-width:480px){.next-meter-vert{width:46px;gap:5px}.next-meter-vert-track{width:16px}.next-meter-vert-pct{font-size:11px}.next-meter-vert-sub{font-size:9px}.next-meter-vert-marker span{left:20px;font-size:8px}}
 .next-options-row{display:flex;justify-content:center;gap:14px;margin:6px 0 16px;flex-wrap:wrap}
+.next-row-break{display:none}
+@media(max-width:480px){.next-row-break{display:block;flex-basis:100%;width:0;height:0}}
 .next-option{width:min(15vw,74px);aspect-ratio:1;padding:12px;border:1.5px solid rgba(220,190,130,.35);border-radius:16px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
 .next-option:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
 .next-option:disabled{cursor:default;opacity:.9}
@@ -482,6 +484,27 @@ body.ultra-low #cosmos{display:none}
   </div>
 
   <div class="duo-wrap">
+    <section class="panel game-panel direction-panel">
+      <p class="prompt-title">SENSE THE DIRECTION</p>
+      <div class="direction-stage tarot-box" id="directionStage">
+        <span class="direction-arrow left" aria-hidden="true">&#8592;</span>
+        <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
+        <div class="direction-circle" id="directionCircle"></div>
+      </div>
+      <p class="feedback" id="directionFeedback" aria-live="polite">&nbsp;</p>
+      <div class="direction-actions">
+        <button class="sense-btn direction-start" id="directionStart" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="playGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><path d="M7 4L20 12L7 20Z" fill="url(#playGrad)"/></svg>
+          <span>Start</span>
+        </button>
+        <button class="sense-btn direction-stop" id="directionStop" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="stopGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><rect x="5" y="5" width="14" height="14" rx="2" fill="url(#stopGrad)"/></svg>
+          <span>Stop</span>
+        </button>
+      </div>
+      <p class="press-hint" id="directionHint">Press start — you can grab and swipe the ball as soon as it appears</p>
+    </section>
+
     <section class="panel game-panel next-panel">
       <p class="prompt-title">WHAT COMES NEXT?</p>
       <div class="next-stage-row">
@@ -503,33 +526,14 @@ body.ultra-low #cosmos{display:none}
         <button class="next-option" id="nextOptStar" type="button" data-symbol="star" aria-label="Star"><img alt="Star symbol"></button>
         <button class="next-option" id="nextOptCircle" type="button" data-symbol="circle" aria-label="Circle"><img alt="Circle symbol"></button>
         <button class="next-option" id="nextOptWave" type="button" data-symbol="wave" aria-label="Waves"><img alt="Wave symbol"></button>
+        <div class="next-row-break" aria-hidden="true"></div>
         <button class="next-option" id="nextOptSquare" type="button" data-symbol="square" aria-label="Square"><img alt="Square symbol"></button>
         <button class="next-option" id="nextOptPlus" type="button" data-symbol="plus" aria-label="Cross"><img alt="Cross symbol"></button>
       </div>
       <p class="press-hint" id="nextPressHint">Sense it, then choose one</p>
     </section>
-
-    <section class="panel game-panel direction-panel">
-      <p class="prompt-title">SENSE THE DIRECTION</p>
-      <div class="direction-stage tarot-box" id="directionStage">
-        <span class="direction-arrow left" aria-hidden="true">&#8592;</span>
-        <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
-        <div class="direction-circle" id="directionCircle"></div>
-      </div>
-      <p class="feedback" id="directionFeedback" aria-live="polite">&nbsp;</p>
-      <div class="direction-actions">
-        <button class="sense-btn direction-start" id="directionStart" type="button">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="playGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><path d="M7 4L20 12L7 20Z" fill="url(#playGrad)"/></svg>
-          <span>Start</span>
-        </button>
-        <button class="sense-btn direction-stop" id="directionStop" type="button" disabled>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="stopGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><rect x="5" y="5" width="14" height="14" rx="2" fill="url(#stopGrad)"/></svg>
-          <span>Stop</span>
-        </button>
-      </div>
-      <p class="press-hint" id="directionHint">Press start — you can grab and swipe the ball as soon as it appears</p>
-    </section>
   </div>
+
 
   <div id="meterInfoOverlay" class="meter-info-overlay" hidden>
     <div class="meter-info-box" role="dialog" aria-modal="true" aria-labelledby="meterInfoHeading">
