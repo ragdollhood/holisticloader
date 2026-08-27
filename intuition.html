@@ -502,7 +502,7 @@ body.ultra-low #cosmos{display:none}
       <section class="panel meter-panel">
         <p class="meter-title" id="meterInfoHeading">TODAY'S INTUITION LEVEL</p>
         <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
-        <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Sense the Direction + What Comes Next</p>
+        <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Sense the Direction (What Comes Next isn&rsquo;t counted here)</p>
         <p class="streak-line">&#128293; Current streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
         <div class="meter-score-actions">
           <button class="score-reset" id="scoreReset" type="button">Reset</button>
@@ -528,7 +528,7 @@ body.ultra-low #cosmos{display:none}
     <div id="progressUnlocked" class="progress-unlocked" hidden>
       <canvas id="progressChart" width="880" height="180"></canvas>
       <p class="progress-empty" id="progressEmpty">Log your progress after a few rounds to start your chart.</p>
-      <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (lower on days with more What Comes Next rounds)</p>
+      <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (What Comes Next isn&rsquo;t counted here)</p>
     </div>
   </section>
 </main>
@@ -1036,22 +1036,29 @@ body.ultra-low #cosmos{display:none}
     meterSub.textContent=total?`${percent}% correct today over ${total} guess${total===1?'':'es'} \u2014 pure chance would be about ${baseline}%`:'No guesses logged today yet';
   }
 
-  function recordGuess(correct,chance){
+  function recordGuess(correct,chance,opts){
     if(typeof chance!=='number')chance=.5;
-    scoreTotal++;
-    if(dayStats.date!==todayKey())dayStats=loadDayStats();
-    dayStats.total++;
-    dayStats.chanceSum=(dayStats.chanceSum||0)+chance;
-    if(correct){
-      scoreCorrect++;
-      dayStats.correct++;
+    // opts.countsForStats=false lets a mode (e.g. What Comes Next) give
+    // feedback/streak without feeding the meter, dayStats, or the
+    // progress graph (logProgress reads scoreCorrect/scoreTotal, and the
+    // meter reads dayStats — both stay untouched when this is false).
+    const countsForStats=!opts||opts.countsForStats!==false;
+    if(countsForStats){
+      scoreTotal++;
+      if(dayStats.date!==todayKey())dayStats=loadDayStats();
+      dayStats.total++;
+      dayStats.chanceSum=(dayStats.chanceSum||0)+chance;
+      if(correct){
+        scoreCorrect++;
+        dayStats.correct++;
+      }
+      saveDayStats(dayStats);
+      updateMeter();
+      syncScoreDisplay();
+      updateLogButtonState();
+      saveCloudProgress();
     }
-    saveDayStats(dayStats);
-    updateMeter();
     registerStreak(correct);
-    syncScoreDisplay();
-    updateLogButtonState();
-    saveCloudProgress();
     if(navigator.vibrate){
       try{navigator.vibrate(correct?45:[30,50,30]);}catch(e){}
     }
@@ -1455,7 +1462,7 @@ body.ultra-low #cosmos{display:none}
       nextFeedback.textContent='TRY AGAIN!';
       nextFeedback.className='feedback wrong';
     }
-    recordGuess(correct,1/5);
+    recordGuess(correct,1/5,{countsForStats:false});
     setTimeout(newRoundNext,1500);
   }
 
