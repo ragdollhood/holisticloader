@@ -694,6 +694,12 @@ body.preset-active #menuToggle{display:none}
 </style>
 </head>
 <body>
+  <div id="sessionDonateOverlay" aria-hidden="true">
+    <button type="button" id="sessionDonateClose" class="session-donate-close" aria-label="Close">&times;</button>
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="session-donate-link">
+      <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="session-donate-img">
+    </a>
+  </div>
   <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs menuToggleDesktopPanel" aria-label="Meny">
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
   </button>
@@ -964,13 +970,6 @@ body.preset-active #menuToggle{display:none}
   <div id="endOverlay">
     <div class="end-card"><h2>Your session is over</h2><p>Breathe out. Carry the calm with you.</p>
       <button class="done-btn" id="btnAgain">Start again</button></div>
-  </div>
-
-  <div id="sessionDonateOverlay" aria-hidden="true">
-    <button type="button" id="sessionDonateClose" class="session-donate-close" aria-label="Close">&times;</button>
-    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="session-donate-link">
-      <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="session-donate-img">
-    </a>
   </div>
 </div>
 
