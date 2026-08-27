@@ -1035,7 +1035,6 @@ body.ultra-low #cosmos{display:none}
   const lbNameForm=$('#leaderboardNameForm'),playerNameInput=$('#playerName'),saveNameBtn=$('#saveNameBtn');
   const lbNameMsg=$('#leaderboardNameMsg');
   const lbGreetingEl=$('#leaderboardGreeting'),lbGreetingHintEl=$('#leaderboardGreetingHint');
-  let _lbLastSyncedName=null; // last player_name we know is stored in the highscore row
   const lbListEl=$('#leaderboardList'),lbEmptyEl=$('#leaderboardEmpty');
   const streakLbListEl=$('#streakLeaderboardList'),streakLbEmptyEl=$('#streakLeaderboardEmpty');
   const submitScoreBtn=$('#submitScoreBtn'),submitScoreMsg=$('#submitScoreMsg');
@@ -1070,7 +1069,13 @@ body.ultra-low #cosmos{display:none}
         .maybeSingle();
       if(error)throw error;
       _lbPlayerName=(data&&data.display_name)?data.display_name:'';
-    }catch(e){console.error('fetchPlayerName error:',e);_lbPlayerName='';}
+    }catch(e){
+      console.error('fetchPlayerName error:',e);
+      // Don't blank out a name we already know about just because this
+      // particular fetch hiccuped — that would wrongly reopen the
+      // "choose a name" box even though a name is really saved.
+      if(!_lbPlayerName)_lbPlayerName='';
+    }
     return _lbPlayerName;
   }
 
@@ -1088,18 +1093,18 @@ body.ultra-low #cosmos{display:none}
   /* Keeps the name stored in the highscore table in sync with
      profiles.display_name, so changing your name via the account icon
      (anywhere on the site) rewrites it on the leaderboard too — even if
-     your score itself doesn't change. */
+     your score itself doesn't change. Always compares fresh against the
+     database (no local "already synced" cache) so a rename is never
+     silently missed, e.g. on the next login. */
   async function syncPlayerNameToHighscore(){
     if(!isLoggedIn()||!_lbPlayerName)return;
-    if(_lbLastSyncedName===_lbPlayerName)return; // nothing changed
     try{
       const{data:existing,error:fetchErr}=await sb.from(HIGHSCORE_TABLE)
         .select('player_name')
         .eq('user_id',currentUser.id)
         .maybeSingle();
       if(fetchErr)throw fetchErr;
-      if(!existing){_lbLastSyncedName=_lbPlayerName;return;} // no row yet — nothing to rename
-      _lbLastSyncedName=_lbPlayerName;
+      if(!existing)return; // no row yet — nothing to rename
       if(existing.player_name===_lbPlayerName)return; // already matches
       const{error:updateErr}=await sb.from(HIGHSCORE_TABLE)
         .update({player_name:_lbPlayerName})
@@ -1169,7 +1174,6 @@ body.ultra-low #cosmos{display:none}
           achieved_at:new Date().toISOString()
         });
         if(insertErr)throw insertErr;
-        _lbLastSyncedName=_lbPlayerName;
         showSubmitMsg('Score saved.');
       }else if(score>existing.score){
         const{error:updateErr}=await sb.from(HIGHSCORE_TABLE).update({
@@ -1179,7 +1183,6 @@ body.ultra-low #cosmos{display:none}
           achieved_at:new Date().toISOString()
         }).eq('user_id',currentUser.id);
         if(updateErr)throw updateErr;
-        _lbLastSyncedName=_lbPlayerName;
         showSubmitMsg('New Personal Best!');
       }else{
         showSubmitMsg('Your current highscore is higher.');
@@ -1278,7 +1281,6 @@ body.ultra-low #cosmos{display:none}
       await syncPlayerNameToHighscore();
     }else{
       _lbPlayerName=null;
-      _lbLastSyncedName=null;
     }
     loadLeaderboard();
     loadStreakLeaderboard();
