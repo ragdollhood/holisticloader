@@ -309,34 +309,26 @@
       gap: 8px;
     }
 
-    /* Mobile-only "How to play" button (see #howToPlayBtn in the
+    /* Mobile-only "How to play" info icon (see #howToPlayBtn in the
        markup) — hidden everywhere by default; the mobile media query
-       further down turns it on for the map screen only, below the map
-       image (moved there so it no longer collides with the fixed site
-       hamburger menu, which used to sit right on top of this icon when
-       it lived in the top icon bar). Pill shape + icon + label, same
-       visual family as .how-to-play-compact-btn. */
-    .howtoplay-mobile-btn {
+       further down turns it on for the map screen only. Sized and
+       styled to match the account icon it sits next to. */
+    .howtoplay-btn {
       display: none;
+      flex: 0 0 auto;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 10px 20px;
-      border-radius: 999px;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 50%;
       border: 1px solid rgba(248,217,139,.22);
       background: linear-gradient(145deg, rgba(248,217,139,.14), rgba(255,255,255,.04)), var(--glass);
       color: var(--gold2);
-      font-family: Arial, sans-serif;
-      font-weight: 900;
-      font-size: 12px;
-      letter-spacing: .04em;
-      text-transform: uppercase;
       cursor: pointer;
     }
 
-    .howtoplay-mobile-btn svg { flex: 0 0 auto; }
-
-    .howtoplay-mobile-btn:hover, .howtoplay-mobile-btn:focus-visible {
+    .howtoplay-btn:hover, .howtoplay-btn:focus-visible {
       background: linear-gradient(145deg, rgba(248,217,139,.22), rgba(255,255,255,.08)), var(--glass);
       outline: none;
     }
@@ -2124,11 +2116,12 @@ button {
        live exclusively on holisticloader.com). Sits right under the
        How to Play panel (same map-only visibility window — see
        .how-to-play above).
-       Visibility is driven by #gameLayout's "ads-removed" class,
-       toggled in refreshMonetizationUI() (JS below) whenever premium
-       status OR the ads_removed purchase flag changes:
-         - ads still showing  -> .remove-ads-card + .holistic-member-line
-         - ads already gone   -> .premium-active-badge only
+       .remove-ads-card (the game2 promo/donation link) is now shown
+       on the map screen for everyone, regardless of #gameLayout's
+       "ads-removed" class. .premium-active-badge is still toggled by
+       refreshMonetizationUI() whenever premium status OR the
+       ads_removed purchase flag changes, and now appears alongside
+       .remove-ads-card once ads are gone rather than replacing it.
        Styled with the same gold eyebrow pill + gradient serif headline
        used elsewhere (see the shared .premium-* / .gcm-* rules further
        below, still used by #guestClearModal), plus a soft lavender
@@ -2151,7 +2144,7 @@ button {
       box-shadow: 0 16px 40px rgba(0,0,0,.28), 0 0 0 1px rgba(255,217,138,.06) inset;
     }
 
-    #gameLayout.on-map:not(.ads-removed) .remove-ads-card {
+    #gameLayout.on-map .remove-ads-card {
       display: flex;
     }
 
@@ -2200,9 +2193,8 @@ button {
       color: var(--gold);
     }
 
-    /* Shown instead of the two blocks above once ads are actually gone
-       (Premium OR a completed ads_removed purchase) — calm, quiet
-       confirmation rather than another offer. */
+    /* Hidden permanently — donation images are shown to everyone now,
+       so this "ads gone" confirmation is no longer needed. */
     .premium-active-badge {
       display: none;
       width: 100%;
@@ -2212,9 +2204,6 @@ button {
       border-radius: 16px;
       border: 1px solid rgba(159,224,178,.4);
       background: linear-gradient(145deg, rgba(159,224,178,.12), rgba(255,255,255,.03)), var(--glass);
-    }
-    #gameLayout.on-map.ads-removed .premium-active-badge {
-      display: flex;
     }
 
     /* Belt-and-suspenders: adsense.js's AdBanner()/canShowAds() is
@@ -2491,9 +2480,6 @@ button {
       overflow-x: hidden;
     }
 
-    #gameLayout.ads-removed #mapAdSlot {
-      display: none !important;
-    }
     /* Same belt-and-suspenders guarantee as #mapAdSlot above, applied to
        the interstitial "about to start playing" ad card. Previously this
        one relied solely on the JS observer in game.html (showPlayAd()'s
@@ -3301,9 +3287,10 @@ button {
         min-height: 26px;
       }
 
-      /* Explicitly center the title image and login icon on the
+      /* Explicitly center the "how to play" and login icons on the
          cross-axis within the icon bar's own height, regardless of any
-         difference in their intrinsic sizes. */
+         difference in their intrinsic sizes (auth.js's injected
+         #accountBtn vs. the fixed 34px howtoplay-btn). */
       #gameLayout.on-map .side-panel .top-row > * {
         align-self: center;
       }
@@ -3328,24 +3315,18 @@ button {
 
       #gameLayout.on-map .brand-logo { max-height: 38px; }
 
-      /* "How to play" button — turned on for the map screen only; its
-         base rule (display:none) keeps it off on desktop and during
-         gameplay. Sits below the map image now (see the markup right
-         after #gameLayout closes), same slot the old mobile Remove Ads
-         button used to occupy, instead of the icon bar — it used to be
-         the leftmost item there, which put it right under the fixed
-         site hamburger menu in the top-left corner. */
-      #gameLayout.on-map .howtoplay-mobile-btn {
-        display: flex;
-        width: auto;
-        flex: 0 0 auto;
-        margin: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
-      }
+      /* Turns the icon on for the map screen only — its base rule
+         (display:none) keeps it off on desktop and during gameplay.
+         Now the leftmost item in the icon bar (see .top-row's
+         space-between above and #authRoot's position at the opposite
+         end, further down). */
+      #gameLayout.on-map .howtoplay-btn { display: inline-flex; order: -1; }
 
       /* Title image (images/game-holisticgametiteltext.png) — moved by
          JS (see the mobile branch of layoutSideExtras()) into the icon
-         bar itself, in front of the login icon, so the two sit on the
-         same row instead of the logo getting its own row below. */
+         bar itself, between the "how to play" and login icons, so all
+         three now sit on the same row instead of the logo getting its
+         own row below. */
       #gameLayout.on-map .top-row .map-brand {
         display: flex;
         position: static;
@@ -3362,10 +3343,10 @@ button {
         text-align: center;
       }
 
-      /* Sized to fit inside the icon row's own height rather than the
-         old full-width header block — width:auto lets it keep its
-         natural aspect ratio instead of the base rule's width:100%,
-         which would otherwise force it to stretch. */
+      /* Sized to fit inside the icon row's own height (howtoplay-btn is
+         34px) rather than the old full-width header block — width:auto
+         lets it keep its natural aspect ratio instead of the base
+         rule's width:100%, which would otherwise force it to stretch. */
       #gameLayout.on-map .top-row .map-brand-img {
         width: auto;
         max-height: 30px;
@@ -3375,16 +3356,15 @@ button {
       /* The small logo that used to be the icon bar's only title is now
          redundant once the big title image sits on the map itself —
          hide it so there's just the one title, not two stacked on top
-         of each other. The bar keeps only the title image and login
-         icon. */
+         of each other. The bar keeps only the "how to play" and login
+         icons. */
       #gameLayout.on-map .top-row .brand-map-logo {
         display: none;
       }
 
-      /* Login/account icon — the only other item in the icon bar now
-         that "how to play" lives below the map image (see
-         .howtoplay-mobile-btn above) — kept as the rightmost item via
-         .top-row's space-between. */
+      /* Login/account icon — rightmost item in the icon bar now that
+         "how to play" moved to the far left (see .howtoplay-btn's
+         order:-1 above and .top-row's space-between). */
       #gameLayout.on-map #authRoot { order: 1; }
 
       /* Guest "island cleared" upsell — pushed down from the very top

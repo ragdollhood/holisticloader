@@ -694,10 +694,10 @@ function getItem(level) {
        Also relocates the big map-screen title image (#mapBrand):
        - Desktop/laptop: unchanged — stays inside .map-screen itself,
          overlaid on top of the map artwork.
-       - Mobile: moved into the icon bar itself (.top-row), in front of
-         the login icon, so both sit on the same row (see the
-         max-width:1199px .top-row .map-brand rules) instead of the
-         logo getting its own row below the icon.
+       - Mobile: moved into the icon bar itself (.top-row), between the
+         "how to play" and login icons, so all three sit on the same row
+         (see the max-width:1199px .top-row .map-brand rules) instead of
+         the logo getting its own row below the icons.
        Called once at load and again every time DESKTOP_MEDIA_QUERY's
        "change" event fires, so resizing across the breakpoint (or
        rotating a foldable) relocates them immediately. */
@@ -745,8 +745,8 @@ function getItem(level) {
         scoreBoxEl.insertBefore(nextItemGroupEl, scoreBoxEl.firstChild);
         scoreBoxEl.appendChild(homeBtnEl);
         // Logo goes inside the icon bar, before the login icon — its
-        // default flex order (0) naturally lands it ahead of
-        // #authRoot's order:1.
+        // default flex order (0) naturally lands it between
+        // howtoplay-btn's order:-1 and #authRoot's order:1.
         topRowEl.insertBefore(mapBrandEl, authRootEl);
       }
     }
@@ -791,10 +791,10 @@ function getItem(level) {
     document.getElementById("againBtn").addEventListener("click", () => { hideModal(); newGarden(); });
     document.getElementById("closeModalBtn").addEventListener("click", hideModal);
 
-    // Mobile "How to play" button (below the map image) → modal (see
-    // .howtoplay-mobile-btn in the CSS/markup). Desktop never shows the
-    // button, so this only ever opens on phones, where the standing
-    // side-panel text box is replaced by this popup.
+    // Mobile "How to play" info icon → modal (see .howtoplay-btn in the
+    // CSS/markup). Desktop never shows the icon, so this only ever
+    // opens on phones, where the standing side-panel text box is
+    // replaced by this popup.
     const howToPlayModalEl = document.getElementById("howToPlayModal");
     document.getElementById("howToPlayBtn").addEventListener("click", () => {
       howToPlayModalEl.classList.add("show");
@@ -848,8 +848,8 @@ function getItem(level) {
       }
     }
 
-    // Sidebar donation button (map-only, hidden once ads are already
-    // gone — see .remove-ads-card CSS / refreshMonetizationUI()). It's
+    // Sidebar donation button (map-only, always shown regardless of
+    // ads-removed/Premium status — see .remove-ads-card CSS). It's
     // a plain link to a Stripe payment link in the HTML now, so it
     // needs no click handler here. The old #removeAdsBuyBtn /
     // #holisticMemberSignInBtn elements no longer exist in the markup.
