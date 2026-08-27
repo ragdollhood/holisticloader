@@ -265,7 +265,7 @@ body.ultra-low #cosmos{display:none}
 .progress-sub{margin:10px 0 0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
 .meter-panel{max-width:900px;margin:20px auto 0;padding:24px 22px 22px;text-align:center}
 .meter-title{margin:0 0 16px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
-.intro-tagline{max-width:620px;margin:22px auto 20px;text-align:center;color:#f3efe4;font-size:clamp(13px,2.5vw,15px);line-height:1.65;opacity:1;text-shadow:0 1px 4px rgba(0,0,0,.65)}
+.intro-tagline{max-width:620px;margin:11px auto 20px;text-align:center;color:#f3efe4;font-size:clamp(13px,2.5vw,15px);line-height:1.65;opacity:1;text-shadow:0 1px 4px rgba(0,0,0,.65)}
 .streak-line{margin:14px 0 0;font-size:12.5px;letter-spacing:.03em;color:#e7dfcf}
 .streak-line span{color:var(--gold);font-weight:700}
 .sound-toggle{position:fixed;right:14px;bottom:14px;z-index:45;width:38px;height:38px;line-height:1;font-size:16px;color:#cfc3db;opacity:.75;text-decoration:none;border-radius:50%;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
@@ -285,7 +285,8 @@ body.ultra-low #cosmos{display:none}
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 45px #0008}
 #floatMeterInfo{display:flex;flex-direction:column;align-items:center}
 #floatMeterScore{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap}
-#floatMeterPercent{margin:-6px 0 2px;font:600 11px/1 -apple-system,system-ui,sans-serif;letter-spacing:.06em;color:#cfc3db;white-space:nowrap}
+#floatMeterPercent{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap}
+#floatMeterStreak{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap}
 #floatMeterTrack{position:relative;width:22px;height:min(56vh,430px);border-radius:11px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:visible;box-shadow:0 12px 30px #0008}
 #floatMeterFill{position:absolute;left:0;right:0;bottom:0;width:auto;height:calc(var(--pct,0) * 1%);background:linear-gradient(0deg,#ff8a5c,var(--gold),var(--violet));border-radius:11px;transition:height .4s ease,width .4s ease}
 #floatMeterMarker{position:absolute;left:-7px;right:-7px;top:auto;height:3px;width:auto;background:#fff;border-radius:2px;box-shadow:0 0 8px #fff,0 0 14px rgba(255,255,255,.75);bottom:calc(var(--baseline,50) * 1%);z-index:2;transition:bottom .3s ease,left .3s ease}
@@ -307,7 +308,8 @@ body.ultra-low #cosmos{display:none}
   }
   #floatMeterInfo{flex-direction:row;align-items:baseline;gap:6px;flex:none}
   #floatMeterScore{font-size:clamp(13px,3.8vw,16px)}
-  #floatMeterPercent{margin:0;font-size:10.5px}
+  #floatMeterPercent{margin:0;font-size:clamp(13px,3.8vw,16px)}
+  #floatMeterStreak{font-size:clamp(13px,3.8vw,16px)}
   #floatMeterTrack{width:auto;flex:1 1 auto;height:14px;border-radius:8px;box-shadow:0 8px 20px #0006}
   #floatMeterFill{left:0;right:auto;top:0;bottom:0;height:auto;width:calc(var(--pct,0) * 1%);border-radius:8px}
   #floatMeterMarker{left:calc(var(--baseline,50) * 1%);right:auto;top:-5px;bottom:-5px;height:auto;width:3px}
@@ -518,8 +520,9 @@ body.ultra-low #cosmos{display:none}
 
 <div id="floatMeter">
   <div id="floatMeterInfo">
-    <p id="floatMeterScore" aria-hidden="true"><span id="floatScoreCorrect">0</span>/<span id="floatScoreTotal">0</span></p>
     <p id="floatMeterPercent" aria-hidden="true"><span id="floatScorePercent">0</span>%</p>
+    <p id="floatMeterScore" aria-hidden="true"><span id="floatScoreCorrect">0</span>/<span id="floatScoreTotal">0</span></p>
+    <p id="floatMeterStreak" aria-hidden="true">&#128293; <span id="floatStreakCurrent">0</span></p>
   </div>
   <div id="floatMeterTrack" aria-hidden="true">
     <div id="floatMeterFill"></div>
@@ -642,6 +645,32 @@ body.ultra-low #cosmos{display:none}
   if(floatMeterEl)new ResizeObserver(syncNavH).observe(floatMeterEl);
 })();
 
+/* ===== desktop: align the floating meter's top edge with the top of the
+   game-card row (.triple-wrap), instead of it being vertically centered on
+   the viewport. Mobile keeps its own separate top-of-page positioning. ===== */
+(function(){
+  const meter=document.getElementById('floatMeter');
+  const anchor=document.querySelector('.triple-wrap');
+  if(!meter||!anchor) return;
+  function syncMeterTop(){
+    if(innerWidth<=720){ meter.style.top=''; meter.style.transform=''; return; }
+    const rect=anchor.getBoundingClientRect();
+    if(rect.width===0 && rect.height===0) return;
+    meter.style.top=Math.round(rect.top)+'px';
+    meter.style.transform='none';
+  }
+  function trySync(attemptsLeft){
+    syncMeterTop();
+    if(attemptsLeft>0) setTimeout(()=>trySync(attemptsLeft-1),150);
+  }
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>trySync(10));
+  else trySync(10);
+  addEventListener('load',()=>trySync(5));
+  addEventListener('resize',syncMeterTop);
+  addEventListener('orientationchange',()=>setTimeout(syncMeterTop,60));
+  if(window.ResizeObserver) new ResizeObserver(syncMeterTop).observe(anchor);
+})();
+
 /* ===== Intuition games: Guess the Tile, Guess the Side, Guess the Direction ===== */
 /* Guess the Tile and Guess the Side share one SCORE, one daily intuition meter, and one daily progress graph. */
 (function(){
@@ -667,7 +696,7 @@ body.ultra-low #cosmos{display:none}
 
   /* ===== streak tracker (current session streak + all-time best, remembered locally) ===== */
   const BEST_STREAK_KEY='intuitionBestStreak';
-  const streakCurrentEl=$('#streakCurrent'),streakBestEl=$('#streakBest');
+  const streakCurrentEl=$('#streakCurrent'),streakBestEl=$('#streakBest'),floatStreakEl=$('#floatStreakCurrent');
   let currentStreak=0;
   let bestStreak=0;
   try{bestStreak=parseInt(localStorage.getItem(BEST_STREAK_KEY),10)||0;}catch(e){bestStreak=0;}
@@ -675,6 +704,7 @@ body.ultra-low #cosmos{display:none}
   function updateStreakDisplay(){
     streakCurrentEl.textContent=currentStreak;
     streakBestEl.textContent=bestStreak;
+    if(floatStreakEl)floatStreakEl.textContent=currentStreak;
   }
 
   function registerStreak(correct){
