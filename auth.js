@@ -604,12 +604,9 @@ function _wireAuthDom() {
           .eq("user_id", currentUser.id);
         if (error) throw error;
         currentDisplayName = name;
-        // Field goes blank again — the label above now reads "Hello, <name>"
-        // and the placeholder switches to "Choose a new display name", so
-        // an empty box + updated label communicates the saved state clearly.
-        accountNameInput.value = "";
+        accountNameInput.value = name;
         accountNameMsg.textContent = "Saved!";
-        renderAuthUI(); // updates the "Hello, <name>" label above the field
+        renderAuthUI(); // updates the "Hello, <name>" greeting above the email
         // Other page scripts (e.g. the intuition-game leaderboard) listen
         // via onPremiumStatusChange to re-sync their own copy of the name.
         _firePremiumChangeListeners();
@@ -754,20 +751,12 @@ function renderAuthUI() {
     // — trial users are premium (isPremium) but have nothing to manage.
     manageSubBtn.style.display = isPaidPremium ? "" : "none";
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "none";
-    if (accountNameLabel) {
-      accountNameLabel.style.display = "";
-      // Once a name is chosen (here or via the leaderboard), the label
-      // itself becomes the "Hello, <name>" greeting instead of a generic
-      // instruction — the input's placeholder guides changing it further.
-      accountNameLabel.textContent = currentDisplayName
-        ? "Hello, " + currentDisplayName
-        : "Choose a display name";
-    }
+    if (accountNameLabel) accountNameLabel.style.display = "";
     if (accountNameRow) accountNameRow.style.display = "";
-    if (accountNameInput) {
-      accountNameInput.placeholder = currentDisplayName
-        ? "Choose a new display name"
-        : "Choose a display name";
+    // Don't stomp on text the user is actively typing/hasn't saved yet —
+    // only sync the field from the fetched value when it's still empty.
+    if (accountNameInput && document.activeElement !== accountNameInput && !accountNameInput.value) {
+      accountNameInput.value = currentDisplayName || "";
     }
   } else {
     accountRoot.classList.remove("loggedIn");
@@ -779,15 +768,9 @@ function renderAuthUI() {
     accountMenu.classList.remove("show");
     accountBtn.setAttribute("aria-expanded", "false");
     if (getPremiumMenuBtn) getPremiumMenuBtn.style.display = "";
-    if (accountNameLabel) {
-      accountNameLabel.style.display = "none";
-      accountNameLabel.textContent = "Choose a display name";
-    }
+    if (accountNameLabel) accountNameLabel.style.display = "none";
     if (accountNameRow) accountNameRow.style.display = "none";
-    if (accountNameInput) {
-      accountNameInput.value = "";
-      accountNameInput.placeholder = "Choose a display name";
-    }
+    if (accountNameInput) accountNameInput.value = "";
     if (accountNameMsg) accountNameMsg.textContent = "";
   }
 }
