@@ -2554,32 +2554,6 @@ button {
       color: var(--gold); font-size: 9.5px; font-weight: 900;
     }
 
-    /* Mobile map-screen floating CTA — see the max-width:1199px query
-       further down for its layout. Same gradient pill previously used
-       for the "Free Trial" button; now used for the single Remove Ads
-       offer instead. Hidden by default everywhere else so it never
-       affects desktop. */
-    .mobile-remove-ads-btn {
-      width: 100%; display: flex; flex-direction: column; align-items: center;
-      gap: 2px; padding: 12px 14px; border-radius: 999px; cursor: pointer;
-      border: none; background: linear-gradient(135deg, #5EA8FF, #7C6BFF);
-      color: #fff; box-shadow: 0 12px 30px rgba(124,107,255,.4);
-      margin-bottom: 8px; text-decoration: none;
-    }
-    .mobile-remove-ads-btn .ptCta {
-      font-family: Arial, sans-serif; font-weight: 900; font-size: 12px;
-      letter-spacing: .01em; text-transform: none;
-    }
-    .mobile-remove-ads-btn .ptNote {
-      font-family: Arial, sans-serif; font-weight: 700; font-size: 9.5px;
-      letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.88);
-    }
-
-    /* New standalone button (mobile map screen only — see the
-       max-width:1199px query further down for its actual layout).
-       Hidden by default everywhere else so it never affects desktop. */
-    .mobile-map-cta-btn { display: none; }
-
     .remove-ads-btn, .premium-buy-btn {
       display: flex; align-items: center; justify-content: center;
       width: 100%; padding: 11px 12px; border-radius: 999px;
@@ -3398,20 +3372,6 @@ button {
          "how to play" moved to the far left (see .howtoplay-btn's
          order:-1 above and .top-row's space-between). */
       #gameLayout.on-map #authRoot { order: 1; }
-
-      /* "Remove Ads" floating button (see the markup right after
-         #gameLayout closes) — sits below the map image, in the space
-         freed up by shrinking the map (see .map-brand's comment
-         above). Only ever shown on mobile's map screen while ads
-         haven't already been removed; base rule
-         (.mobile-map-cta-btn { display:none }) keeps it off desktop
-         and off the gameplay board. */
-      #gameLayout.on-map:not(.ads-removed) .mobile-map-cta-btn {
-        display: flex;
-        width: auto;
-        flex: 0 0 auto;
-        margin: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px));
-      }
 
       /* Guest "island cleared" upsell — pushed down from the very top
          of the screen (instead of vertically centered) so it always

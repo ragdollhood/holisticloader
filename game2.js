@@ -758,9 +758,6 @@ function getItem(level) {
       layoutSideExtras();
     });
 
-    const mobileMapRemoveAdsBtnEl = document.getElementById("mobileMapRemoveAdsBtn");
-    mobileMapRemoveAdsBtnEl.addEventListener("click", startRemoveAdsPurchase);
-
     document.getElementById("newBtn").addEventListener("click", newGarden);
     document.getElementById("diffEasyBtn").addEventListener("click", () => { setDifficulty("easy"); showDifficultyRulesToast(); });
     document.getElementById("diffHardBtn").addEventListener("click", () => { setDifficulty("hard"); showDifficultyRulesToast(); });
@@ -960,9 +957,8 @@ function getItem(level) {
       }
 
       const buyBtn = document.getElementById("removeAdsBuyBtn");
-      const mobileBuyBtn = document.getElementById("mobileMapRemoveAdsBtn");
 
-      [buyBtn, mobileBuyBtn].forEach((b) => {
+      [buyBtn].forEach((b) => {
         if (b) b.disabled = true;
       });
 
@@ -989,7 +985,7 @@ function getItem(level) {
         console.error("startRemoveAdsPurchase() error:", err);
         showToast("Couldn't start checkout — please try again.");
 
-        [buyBtn, mobileBuyBtn].forEach((b) => {
+        [buyBtn].forEach((b) => {
           if (b) b.disabled = false;
         });
       }
