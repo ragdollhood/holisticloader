@@ -1253,6 +1253,7 @@ body.ultra-low #cosmos{display:none}
     lbUnlockedEl.hidden=!loggedIn;
     if(loggedIn){
       await fetchPlayerName();
+      console.log('[leaderboard] logged in, player name from profiles.display_name:',JSON.stringify(_lbPlayerName));
       updateNameFormVisibility();
       await syncPlayerNameToHighscore();
     }else{
@@ -1262,6 +1263,13 @@ body.ultra-low #cosmos{display:none}
     loadStreakLeaderboard();
   }
   updateLeaderboardAccess();
+  // Safety net: on some connections the Supabase session takes a beat
+  // longer to restore than this script's very first pass (which runs
+  // before auth.js has necessarily finished checking for an existing
+  // session). Re-checking shortly after catches that race so a name
+  // that's really saved doesn't get stuck showing the "choose a name"
+  // box on login. Cheap and safe to re-run — it just re-syncs state.
+  setTimeout(updateLeaderboardAccess,1500);
 
   function logProgress(){
     if(scoreTotal<=0)return;
