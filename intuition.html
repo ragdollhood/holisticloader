@@ -87,7 +87,7 @@
 <!-- ========== /SEO ========== -->
 
 <style>
-:root{--gold:#ffd98a;--violet:#c9a8ff;--glass:rgba(13,9,22,.61)}*{box-sizing:border-box}html{background:#090712}html,body{margin:0;min-height:100%;font-family:-apple-system,system-ui,'Segoe UI',sans-serif;color:#f3efe4}body{padding-top:max(180px,calc(env(safe-area-inset-top) + 164px));overflow-x:hidden;user-select:none}.app{max-width:1140px;margin:auto;padding:16px}.panel{background:var(--glass);border:1px solid #ffffff26;backdrop-filter:blur(13px);box-shadow:0 18px 55px #0008;border-radius:24px}
+:root{--gold:#ffd98a;--violet:#c9a8ff;--glass:rgba(13,9,22,.61);--ink:#f3efe4;--muted:#cfc3db;--line:rgba(255,255,255,.16);--bg:#090712;--glass-strong:rgba(19,14,28,.94)}*{box-sizing:border-box}html{background:#090712}html,body{margin:0;min-height:100%;font-family:-apple-system,system-ui,'Segoe UI',sans-serif;color:#f3efe4}body{padding-top:max(180px,calc(env(safe-area-inset-top) + 164px));overflow-x:hidden;user-select:none}.app{max-width:1140px;margin:auto;padding:16px}.panel{background:var(--glass);border:1px solid #ffffff26;backdrop-filter:blur(13px);box-shadow:0 18px 55px #0008;border-radius:24px}
 
 /* ===== aurora backdrop ===== */
 #stage{position:fixed;inset:0;z-index:-3;overflow:hidden;background:linear-gradient(160deg,#221a38 0%,#2c1c42 40%,#241a36 70%,#180f26 100%)}
@@ -356,7 +356,9 @@ body.ultra-low #cosmos{display:none}
   #topTabs a[href="terms.html"].mobile-extra{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
   .contact-email{padding:0 12px}
 }
-</style></head>
+</style>
+<link rel="stylesheet" href="auth-ui.css">
+</head>
 <body>
 <div id="stage"><div class="aurora"></div></div>
 <canvas id="cosmos"></canvas>
@@ -401,6 +403,7 @@ body.ultra-low #cosmos{display:none}
     <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener" class="tab mobile-extra nav-sep">Support Holistic Loader</a>
   </nav>
   <div id="topNavLine"></div>
+  <div id="authRoot"></div>
 </header>
 
 <div class="h1-frame">
@@ -560,6 +563,9 @@ body.ultra-low #cosmos{display:none}
 <a class="privacy-link" href="https://holisticloader.com/intuition-privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
 <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="Mute sound">&#128266;</button>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+
 <script>
 /* ===== gentle starfield backdrop (same technique as the rest of the site) ===== */
 (function(){
@@ -712,6 +718,7 @@ body.ultra-low #cosmos{display:none}
       if(currentStreak>bestStreak){
         bestStreak=currentStreak;
         try{localStorage.setItem(BEST_STREAK_KEY,String(bestStreak));}catch(e){}
+        saveCloudProgress();
       }
     }else{
       currentStreak=0;
@@ -765,6 +772,70 @@ body.ultra-low #cosmos{display:none}
   function saveProgressLog(log){
     try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(log));}catch(e){}
   }
+
+  /* ===== cloud sync (Supabase) — results & graph follow the logged-in
+     account instead of just this browser. Requires auth.js to be loaded
+     (defines `sb` and `currentUser`); everything below is a no-op for
+     guests, so local-only behavior is unchanged when logged out. */
+  const CLOUD_TABLE='intuition_progress';
+  let _cloudSyncedUserId=null;   // guards against re-fetching every time
+  let _cloudSaveTimer=null;
+
+  function saveCloudProgress(){
+    if(typeof currentUser==='undefined'||!currentUser)return;
+    clearTimeout(_cloudSaveTimer);
+    _cloudSaveTimer=setTimeout(async()=>{
+      try{
+        await sb.from(CLOUD_TABLE).upsert({
+          user_id:currentUser.id,
+          progress_log:loadProgressLog(),
+          day_stats:dayStats,
+          best_streak:bestStreak,
+          updated_at:new Date().toISOString()
+        });
+      }catch(e){console.error('saveCloudProgress error:',e);}
+    },800);
+  }
+
+  async function syncWithCloud(){
+    if(typeof currentUser==='undefined'||!currentUser){_cloudSyncedUserId=null;return;}
+    if(_cloudSyncedUserId===currentUser.id)return; // already synced this login
+    _cloudSyncedUserId=currentUser.id;
+
+    let cloud=null;
+    try{
+      const{data,error}=await sb.from(CLOUD_TABLE)
+        .select('progress_log, day_stats, best_streak')
+        .eq('user_id',currentUser.id)
+        .maybeSingle();
+      if(error)throw error;
+      cloud=data;
+    }catch(e){console.error('syncWithCloud load error:',e);return;}
+
+    if(cloud){
+      // Account already has saved results in the cloud — that becomes
+      // the source of truth for this browser.
+      if(cloud.progress_log)saveProgressLog(cloud.progress_log);
+      if(cloud.day_stats&&cloud.day_stats.date===todayKey()){
+        dayStats=cloud.day_stats;
+        saveDayStats(dayStats);
+      }
+      if(typeof cloud.best_streak==='number'&&cloud.best_streak>bestStreak){
+        bestStreak=cloud.best_streak;
+        try{localStorage.setItem(BEST_STREAK_KEY,String(bestStreak));}catch(e){}
+      }
+    }else{
+      // First time this account logs in on any device — upload whatever
+      // guest results already exist in this browser.
+      saveCloudProgress();
+    }
+    drawProgressChart();
+    updateMeter();
+    updateStreakDisplay();
+  }
+
+  if(typeof onPremiumStatusChange==='function')onPremiumStatusChange(syncWithCloud);
+
   function logProgress(){
     if(scoreTotal<=0)return;
     const percent=(scoreCorrect/scoreTotal)*100;
@@ -778,6 +849,7 @@ body.ultra-low #cosmos{display:none}
     log[key]=entry;
     saveProgressLog(log);
     drawProgressChart();
+    saveCloudProgress();
   }
   logProgressBtn.addEventListener('click',logProgress);
 
@@ -942,6 +1014,7 @@ body.ultra-low #cosmos{display:none}
     registerStreak(correct);
     syncScoreDisplay();
     updateLogButtonState();
+    saveCloudProgress();
     if(navigator.vibrate){
       try{navigator.vibrate(correct?45:[30,50,30]);}catch(e){}
     }
