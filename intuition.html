@@ -672,7 +672,15 @@ body.ultra-low #cosmos{display:none}
     if(innerWidth<=720){ meter.style.top=''; meter.style.transform=''; return; }
     const rect=anchor.getBoundingClientRect();
     if(rect.width===0 && rect.height===0) return;
-    meter.style.top=Math.round(rect.top)+'px';
+    /* rect.top is viewport-relative (depends on current scroll position),
+       but this element is position:fixed, so its "top" must be a constant
+       distance from the top of the viewport regardless of scroll. Adding
+       scrollY converts it to the anchor's scroll-independent document
+       offset, so re-syncing (on resize/orientationchange/etc.) gives the
+       same correct value no matter where the page happens to be scrolled
+       when it fires — otherwise the meter could end up pinned above the
+       viewport and appear to vanish. */
+    meter.style.top=Math.round(rect.top+window.scrollY)+'px';
     meter.style.transform='none';
   }
   function trySync(attemptsLeft){
