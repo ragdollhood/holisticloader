@@ -389,10 +389,6 @@ body.ultra-low #cosmos{display:none}
 .leaderboard-row{padding:10px 16px;margin:0 0 8px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font:500 14px Georgia;color:#f3efe4;letter-spacing:.02em}
 .leaderboard-row.lb-me{background:rgba(255,217,138,.16);border-color:var(--gold);box-shadow:0 0 18px rgba(255,217,138,.45);font-weight:700}
 .leaderboard-empty{margin:16px 0 4px;color:#cfc3db;font-size:13px}
-.leaderboard-submit-btn{margin-top:14px;padding:10px 24px;font:600 12px Georgia;letter-spacing:.08em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s,opacity .15s}
-.leaderboard-submit-btn:hover:not(:disabled){transform:translateY(-2px)}
-.leaderboard-submit-btn:disabled{opacity:.45;cursor:not-allowed}
-.leaderboard-submit-msg{margin:10px 0 0;font-size:12px;color:var(--gold)}
 
 /* ===== leaderboard + donation box, side by side on laptop/desktop ===== */
 .lb-donate-wrap{display:flex;gap:24px;justify-content:center;align-items:stretch;flex-wrap:wrap;max-width:1200px;margin:24px auto 0}
@@ -586,8 +582,6 @@ body.ultra-low #cosmos{display:none}
         <p class="meter-level" id="meterLevel">GATHERING SIGNAL</p>
         <p class="meter-desc" id="meterDesc">Answer a few more rounds today to reveal your intuition level.</p>
         <p class="meter-sub" id="meterSub">No guesses logged today yet</p>
-        <button type="button" id="submitScoreBtn" class="leaderboard-submit-btn">Submit Today's Score</button>
-        <p id="submitScoreMsg" class="leaderboard-submit-msg" hidden></p>
       </section>
     </div>
   </div>
@@ -1037,7 +1031,6 @@ body.ultra-low #cosmos{display:none}
   const lbGreetingEl=$('#leaderboardGreeting'),lbGreetingHintEl=$('#leaderboardGreetingHint');
   const lbListEl=$('#leaderboardList'),lbEmptyEl=$('#leaderboardEmpty');
   const streakLbListEl=$('#streakLeaderboardList'),streakLbEmptyEl=$('#streakLeaderboardEmpty');
-  const submitScoreBtn=$('#submitScoreBtn'),submitScoreMsg=$('#submitScoreMsg');
 
   let _lbPlayerName=null; // null = not fetched yet, '' = fetched but no name set
 
@@ -1053,11 +1046,6 @@ body.ultra-low #cosmos{display:none}
     if(!lbNameMsg)return;
     lbNameMsg.textContent=text;
     lbNameMsg.hidden=false;
-  }
-  function showSubmitMsg(text){
-    if(!submitScoreMsg)return;
-    submitScoreMsg.textContent=text;
-    submitScoreMsg.hidden=false;
   }
 
   async function fetchPlayerName(){
@@ -1143,21 +1131,18 @@ body.ultra-low #cosmos{display:none}
   if(saveNameBtn)saveNameBtn.addEventListener('click',saveName);
 
   async function submitHighscore(){
-    if(!submitScoreBtn)return;
-    if(!isLoggedIn()){showSubmitMsg('Log in to submit your score.');return;}
+    if(!isLoggedIn())return;
     if(dayStats.date!==todayKey())dayStats=loadDayStats();
-    if(dayStats.total<20){showSubmitMsg('You need at least 20 attempts.');return;}
+    if(dayStats.total<20)return;
 
     const score=Math.round((dayStats.correct/dayStats.total)*100);
 
     if(_lbPlayerName===null)await fetchPlayerName();
     if(!_lbPlayerName){
-      showSubmitMsg('Choose a leaderboard name first.');
       updateNameFormVisibility();
       return;
     }
 
-    submitScoreBtn.disabled=true;
     try{
       const{data:existing,error:fetchErr}=await sb.from(HIGHSCORE_TABLE)
         .select('score,best_streak')
@@ -1174,7 +1159,6 @@ body.ultra-low #cosmos{display:none}
           achieved_at:new Date().toISOString()
         });
         if(insertErr)throw insertErr;
-        showSubmitMsg('Score saved.');
       }else if(score>existing.score){
         const{error:updateErr}=await sb.from(HIGHSCORE_TABLE).update({
           player_name:_lbPlayerName,
@@ -1183,21 +1167,13 @@ body.ultra-low #cosmos{display:none}
           achieved_at:new Date().toISOString()
         }).eq('user_id',currentUser.id);
         if(updateErr)throw updateErr;
-        showSubmitMsg('New Personal Best!');
-      }else{
-        showSubmitMsg('Your current highscore is higher.');
       }
       loadLeaderboard();
       loadStreakLeaderboard();
     }catch(e){
       console.error('submitHighscore error:',e);
-      showSubmitMsg('Could not submit score \u2014 try again.');
-    }finally{
-      submitScoreBtn.disabled=false;
     }
   }
-  if(submitScoreBtn)submitScoreBtn.addEventListener('click',submitHighscore);
-
   async function loadLeaderboard(){
     if(!lbListEl)return;
     try{
