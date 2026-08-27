@@ -1070,6 +1070,7 @@ body.ultra-low #cosmos{display:none}
       updateNameFormVisibility();
       showLbNameMsg('Name saved!');
       loadLeaderboard();
+      scheduleAutoSubmitHighscore(); // now that a name exists, sync today's score
     }catch(e){
       console.error('saveName error:',e);
       showLbNameMsg('Could not save name \u2014 try again.');
@@ -1205,6 +1206,20 @@ body.ultra-low #cosmos{display:none}
   function scheduleAutoLog(){
     clearTimeout(_autoLogTimer);
     _autoLogTimer=setTimeout(logProgress,1500);
+  }
+
+  /* Auto-submits today's score to the highscore table a beat after the
+     last guess, so logged-in players with a leaderboard name never have
+     to press "Submit Today's Score" manually. Debounced so a burst of
+     guesses only triggers one write, not one per guess. submitHighscore()
+     itself already no-ops below 20 attempts and without a saved name. */
+  let _hsAutoSubmitTimer=null;
+  function scheduleAutoSubmitHighscore(){
+    if(!isLoggedIn())return;
+    clearTimeout(_hsAutoSubmitTimer);
+    _hsAutoSubmitTimer=setTimeout(()=>{
+      if(dayStats.total>=20&&_lbPlayerName)submitHighscore();
+    },1500);
   }
 
   function drawProgressChart(){
@@ -1578,6 +1593,7 @@ body.ultra-low #cosmos{display:none}
       syncScoreDisplay();
       scheduleAutoLog();
       saveCloudProgress();
+      scheduleAutoSubmitHighscore();
     }
     registerStreak(correct);
     if(navigator.vibrate){
