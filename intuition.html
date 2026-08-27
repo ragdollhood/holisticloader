@@ -858,10 +858,14 @@ body.ultra-low #cosmos{display:none}
   }
   if(progressLoginBtn){
     progressLoginBtn.addEventListener('click',()=>{
-      // Defers to the site's shared login widget rendered into #authRoot.
-      const authTrigger=document.querySelector('#authRoot [data-auth-open]')
-        ||document.querySelector('#authRoot button')
-        ||document.querySelector('#authRoot a');
+      // Defers to the site's shared account icon (#accountBtn) so this
+      // button opens exactly the same view as clicking it — logged out
+      // that's the login modal (see accountBtn.onclick in auth.js).
+      // NOTE: don't use a generic '#authRoot button' selector here — it
+      // matches the hidden #registerBtn (display:none but still in the
+      // DOM, and it comes before #accountBtn in the markup), which opens
+      // the premium modal instead of the login modal.
+      const authTrigger=document.querySelector('#accountBtn');
       if(authTrigger)authTrigger.click();
     });
   }
