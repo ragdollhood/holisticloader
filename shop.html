@@ -231,7 +231,7 @@ body.immersive #menuToggle{opacity:0;pointer-events:none}
 body.preset-active #menuToggle{display:none}
 .tab-howto{display:none}
 .tab-row{display:contents}
-.h1-frame .title-img{display:block;margin:0 auto;height:clamp(26px,6.4vw,42px);width:auto;max-width:100%}
+.h1-frame .title-img{display:block;margin:0 auto;height:clamp(20.8px,5.12vw,33.6px);width:auto;max-width:100%}
 /* ===== desktop/laptop version of the same dropdown, opened by the same #menuToggle icon,
    as an extra way in alongside the always-visible horizontal tab row ===== */
 #menuToggleDesktopPanel{display:none}
@@ -252,6 +252,8 @@ body.preset-active #menuToggle{display:none}
   #menuToggleDesktopPanel .nav-contact-email a{color:var(--gold);text-decoration:none}
   #menuToggleDesktopPanel .nav-contact-email a:hover{text-decoration:underline}
 }
+.menu-logo-link{display:flex;width:100%;align-items:center;justify-content:center;padding:4px 4px 10px;text-decoration:none;box-sizing:border-box}
+.menu-logo-img{max-height:34px;width:auto;display:block}
 @media(max-width:720px){
   #donateWrap{left:58px}
   #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:52}
@@ -268,7 +270,8 @@ body.preset-active #menuToggle{display:none}
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
   </button>
   <nav id="menuToggleDesktopPanel" aria-label="Main sections (menu)">
-    <a href="breathing.html" class="tab">Guided Breathing</a>
+  <a href="index.html" class="menu-logo-link"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+    <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
     <a href="soundscape.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="yoga.html" class="tab">Yoga Loader</a>
@@ -279,6 +282,7 @@ body.preset-active #menuToggle{display:none}
     <a href="about.html" class="tab">About</a>
     <button type="button" id="menuDesktopContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="menuDesktopContactEmail">Contact</button>
     <p id="menuDesktopContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener" class="tab nav-sep">Support Holistic Loader</a>
   </nav>
 
 
@@ -330,17 +334,19 @@ body.preset-active #menuToggle{display:none}
 <header id="topNav">
   <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
   <nav id="topTabs" aria-label="Main sections">
-    <a href="breathing.html" class="tab">Guided Breathing</a>
+    <a href="index.html" class="menu-logo-link mobile-extra"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+    <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
     <a href="soundscape.html" class="tab">Soundscape Creator</a>
     <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
     <a href="yoga.html" class="tab">Yoga Loader</a>
     <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
     <a href="intuition.html" class="tab">Intuition Loader</a>
     <a href="shop.html" class="tab active" aria-current="page">Shop</a>
-    <a href="terms.html" class="tab mobile-extra">Terms &amp; Conditions</a>
+    <a href="terms.html" class="tab mobile-extra nav-sep">Terms &amp; Conditions</a>
     <a href="about.html" class="tab mobile-extra">About</a>
     <button type="button" id="navContactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
     <p id="navContactEmail" class="nav-contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener" class="tab mobile-extra nav-sep">Support Holistic Loader</a>
   </nav>
   <div id="authRoot"></div>
   <div id="topNavLine"></div>
