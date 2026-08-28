@@ -64,24 +64,26 @@
       --gold:#f1d49e;--gold2:#c99f59;--lav:#c7a6f5;--line:rgba(241,212,158,.2);
       --serif:"Cormorant Garamond",Georgia,serif;--sans:"Outfit",system-ui,sans-serif;
       --shadow:0 24px 70px rgba(0,0,0,.45);--radius:28px;
+      --glass:rgba(255,255,255,.05);--glass-strong:rgba(18,16,13,.94);
+      --trial-banner-h:0px;
     }
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden}
     body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(45% 30% at 50% 8%,rgba(241,212,158,.15),transparent 72%),radial-gradient(35% 35% at 8% 40%,rgba(119,83,181,.1),transparent 72%),linear-gradient(180deg,#0d0906 0%,#060504 48%,#090706 100%)}
     a{color:inherit}button{font:inherit}.shell{width:min(1180px,calc(100% - 32px));margin:auto}.skip{position:fixed;left:12px;top:-60px;z-index:100;background:#fff;color:#111;padding:10px 14px;border-radius:8px}.skip:focus{top:12px}
 
-    .topbar{position:sticky;top:0;z-index:40;background:rgba(7,6,4,.78);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.07)}
-    .nav{height:76px;display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:16px}.brand{justify-self:center}.brand img{display:block;max-width:min(350px,58vw);max-height:54px}
-    .menu-btn{width:42px;height:42px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.04);color:var(--gold);cursor:pointer;font-size:21px}
-    #authRoot{min-width:42px}.menu{position:fixed;top:84px;left:max(16px,calc((100vw - 1180px)/2));width:min(290px,calc(100vw - 32px));padding:10px;background:rgba(14,10,18,.98);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);opacity:0;visibility:hidden;transform:translateY(-8px);transition:.2s}
+    .topbar{position:sticky;top:var(--trial-banner-h,0px);z-index:40;background:rgba(7,6,4,.78);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.07)}
+    .nav{height:76px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}.brand{justify-self:center}.brand img{display:block;max-width:min(350px,58vw);max-height:54px}
+    .menu-btn{justify-self:start;width:44px;height:44px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.04);color:var(--gold);cursor:pointer;font-size:21px}
+    #authRoot{justify-self:end;min-width:44px}.menu{position:fixed;top:calc(84px + var(--trial-banner-h,0px));left:max(16px,calc((100vw - 1180px)/2));width:min(290px,calc(100vw - 32px));padding:10px;background:rgba(14,10,18,.98);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);opacity:0;visibility:hidden;transform:translateY(-8px);transition:.2s}
     body.menu-open .menu{opacity:1;visibility:visible;transform:none}.menu a,.menu button{display:block;width:100%;padding:12px 13px;text-align:left;text-decoration:none;color:var(--muted);background:none;border:0;border-radius:10px;cursor:pointer}.menu a:hover,.menu button:hover{background:rgba(241,212,158,.1);color:var(--gold)}
 
     .hero{min-height:620px;display:grid;place-items:center;text-align:center;padding:86px 0 58px;position:relative}.hero::after{content:"";position:absolute;inset:8% 10% 4%;z-index:-1;background:radial-gradient(circle,rgba(255,210,132,.15),transparent 62%);filter:blur(25px)}
     .eyebrow{text-transform:uppercase;letter-spacing:.22em;color:var(--gold);font-size:12px;font-weight:700}.hero h1{font-family:var(--serif);font-size:clamp(48px,8vw,92px);line-height:.93;max-width:950px;margin:18px auto;background:linear-gradient(105deg,#fff,#f2d69f 45%,#d2b4fa 85%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;text-wrap:balance}.lead{max-width:660px;margin:0 auto;color:var(--muted);font-size:clamp(17px,2.2vw,21px);line-height:1.65}.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 22px;border-radius:999px;text-decoration:none;font-weight:700}.btn-primary{color:#21170b;background:linear-gradient(135deg,#fff1cf,#d9ab62);box-shadow:0 12px 36px rgba(215,171,98,.22)}.btn-secondary{border:1px solid var(--line);background:rgba(255,255,255,.045)}.micro{margin-top:14px;color:var(--faint);font-size:13px}
 
-    section{padding:70px 0}.section-head{text-align:center;max-width:720px;margin:0 auto 34px}.section-head h2{font-family:var(--serif);font-size:clamp(36px,5vw,58px);line-height:1;margin:8px 0 14px}.section-head p{color:var(--muted);line-height:1.65;margin:0}
+    section{padding:70px 0;scroll-margin-top:92px}.section-head{text-align:center;max-width:720px;margin:0 auto 34px}.section-head h2{font-family:var(--serif);font-size:clamp(36px,5vw,58px);line-height:1;margin:8px 0 14px}.section-head p{color:var(--muted);line-height:1.65;margin:0}
     .goal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}.goal{min-height:360px;border-radius:var(--radius);position:relative;overflow:hidden;text-decoration:none;background-size:cover;background-position:center;box-shadow:var(--shadow);isolation:isolate;transition:transform .3s}.goal:hover{transform:translateY(-7px)}.goal::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,4,4,.92) 0%,rgba(5,4,4,.67) 48%,rgba(5,4,4,.12) 78%);z-index:-1}.goal::after{content:"";position:absolute;inset:0;border:1px solid rgba(241,212,158,.5);border-radius:inherit;pointer-events:none}.goal-content{height:100%;width:58%;padding:34px;display:flex;flex-direction:column;align-items:flex-start}.icon{font-size:30px;width:58px;height:58px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.28);border-radius:50%;background:rgba(0,0,0,.34)}.goal h3{font-family:var(--serif);font-size:34px;line-height:1;margin:24px 0 10px}.goal p{color:#eee6d9;line-height:1.55;margin:0}.open{margin-top:auto;color:var(--gold);font-weight:700}
 
-    .proof{padding:22px 0}.proof-inner{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;padding:28px 32px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.035)}.quote{font-family:var(--serif);font-size:24px;line-height:1.35}.quote small{display:block;font:500 13px var(--sans);color:var(--muted);margin-top:8px}.stars{color:var(--gold);white-space:nowrap}
+    .proof{padding:22px 0}.proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.proof-card{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:28px 32px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.035)}.quote{font-family:var(--serif);font-size:24px;line-height:1.35}.quote small{display:block;font:500 13px var(--sans);color:var(--muted);margin-top:8px}.stars{color:var(--gold);white-space:nowrap}
 
     .feature-grid,.game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}.visual-card{display:block;position:relative;min-height:360px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);transition:.3s}.visual-card:hover{transform:translateY(-6px);border-color:var(--gold)}.visual-card img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}.visual-card span{position:absolute;left:18px;bottom:18px;padding:9px 14px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid var(--line);font-weight:700}
 
@@ -90,7 +92,17 @@
 
     footer{border-top:1px solid var(--line);padding:34px 0 max(34px,env(safe-area-inset-bottom))}.footer{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}.footer-links{display:flex;gap:18px;flex-wrap:wrap}.footer a{color:var(--muted);text-decoration:none;font-size:13px}.footer a:hover{color:var(--gold)}.copyright{color:var(--faint);font-size:13px}
     :focus-visible{outline:2px solid var(--gold);outline-offset:4px}
-    @media(max-width:760px){.hero{min-height:560px}.goal-grid,.feature-grid,.game-grid,.story{grid-template-columns:1fr}.goal{min-height:310px}.goal-content{width:68%;padding:26px}.proof-inner{grid-template-columns:1fr}.story h2{position:static}.visual-card{min-height:270px}.nav{grid-template-columns:44px 1fr 44px}.shell{width:min(100% - 24px,1180px)}}
+    /* auth-ui.css pins #authRoot with position:absolute + right:16px, which
+       is relative to the full-width .topbar, not the centered .shell. On
+       screens wider than ~1212px that leaves it stranded near the browser
+       edge instead of lining up with the shell's right edge (where the
+       hamburger button's left offset already lines up). Anchor it the same
+       way .menu does below. */
+    #authRoot{right:max(16px,calc((100vw - 1180px)/2 + 16px))}
+    @media(max-width:1024px){.shell{width:min(1180px,calc(100% - 26px))}.goal-grid{gap:16px}.goal{min-height:330px}section{padding:56px 0}}
+    @media(max-width:900px){.proof-grid{grid-template-columns:1fr}}
+    @media(max-width:760px){.hero{min-height:560px}.goal-grid,.feature-grid,.game-grid,.story{grid-template-columns:1fr}.goal{min-height:310px}.goal-content{width:68%;padding:26px}.proof-card{grid-template-columns:1fr}.story h2{position:static}.visual-card{min-height:270px}.shell{width:min(100% - 24px,1180px)}}
+    @media(max-height:480px) and (orientation:landscape){.hero{min-height:auto;padding:70px 0 40px}}
     @media(max-width:430px){.hero h1{font-size:48px}.goal-content{width:76%}.goal h3{font-size:29px}.goal p{font-size:14px}.btn{width:100%}}
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
   </style>
@@ -144,7 +156,12 @@
       </div>
     </section>
 
-    <section class="proof"><div class="shell proof-inner"><div class="quote">“My baby daughter slept so much better while listening to the white noise. Thank you!”<small>Johanna, Sweden</small></div><div class="stars" aria-label="Five stars">★★★★★</div></div></section>
+    <section class="proof">
+      <div class="shell proof-grid">
+        <div class="proof-card"><div class="quote">“My baby daughter slept so much better while listening to the white noise. Thank you!”<small>Johanna, Sweden</small></div><div class="stars" aria-label="Five stars">★★★★★</div></div>
+        <div class="proof-card"><div class="quote">“I always knew my mom had great intuition, but her getting 9 in a row playing Intuition Loader was beyond my expectations.”<small>Ann-Sofie</small></div><div class="stars" aria-label="Five stars">★★★★★</div></div>
+      </div>
+    </section>
 
     <section>
       <div class="shell">

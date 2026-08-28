@@ -214,10 +214,30 @@ function renderTrialBanner() {
     if (daysLeft > 0 && daysLeft <= 4) {
       banner.textContent = "⭐ Du har " + daysLeft + " dag" + (daysLeft === 1 ? "" : "ar") + " kvar av din Premium-testperiod.";
       banner.style.display = "";
+      _syncTrialBannerHeight(banner);
       return;
     }
   }
   banner.style.display = "none";
+  document.documentElement.style.setProperty("--trial-banner-h", "0px");
+}
+
+/* Keeps the sticky header (and the hamburger menu, which is positioned
+   relative to it) below the fixed trial banner instead of underneath it.
+   .topbar reads this custom property as its sticky `top` offset. Runs
+   once immediately (next frame, so the browser has laid the banner out)
+   and again via ResizeObserver whenever the banner's own size changes —
+   e.g. the Swedish message wrapping onto two lines on a narrow phone. */
+let _trialBannerObserver = null;
+function _syncTrialBannerHeight(banner) {
+  const apply = () => {
+    document.documentElement.style.setProperty("--trial-banner-h", banner.offsetHeight + "px");
+  };
+  requestAnimationFrame(apply);
+  if (!_trialBannerObserver && "ResizeObserver" in window) {
+    _trialBannerObserver = new ResizeObserver(apply);
+    _trialBannerObserver.observe(banner);
+  }
 }
 
 /* -----------------------------------------------------------------------
