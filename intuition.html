@@ -177,7 +177,11 @@ body.ultra-low #cosmos{display:none}
 .feedback.correct{color:var(--gold)}
 .feedback.wrong{color:#ff8a8a}
 .options-row{display:flex;justify-content:center;gap:24px;margin:6px 0 16px;flex-wrap:wrap}
-.option-tile{width:min(32vw,175px);aspect-ratio:.78;padding:10px;border:1.5px solid rgba(220,190,130,.35);border-radius:18px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
+.option-tile{position:relative;width:min(32vw,175px);aspect-ratio:.78;padding:10px;border:1.5px solid rgba(220,190,130,.35);border-radius:18px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
+#placeOptionsRow .place-tile-hint{display:none}
+#placeOptionsRow.awaiting .option-tile img{visibility:hidden}
+#placeOptionsRow.awaiting .place-tile-hint{position:absolute;inset:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#cfc3db;font-size:12.5px;line-height:1.35;text-align:center;padding:0 4px}
+#placeOptionsRow .place-tile-hint-arrow{font-size:24px;line-height:1;color:var(--gold)}
 /* Scoped to real pointers (mouse/trackpad) only — on touch devices
    :hover has no real "leave" event, so a tapped option's gold hover
    border used to stay stuck on it (looking like a permanent
@@ -584,9 +588,15 @@ body.ultra-low #cosmos{display:none}
       </div>
       <button type="button" class="place-action-btn" id="placeActionBtn">PLACE A TILE</button>
       <p class="feedback" id="placeFeedback" aria-live="polite">&nbsp;</p>
-      <div class="options-row" id="placeOptionsRow" hidden>
-        <button class="option-tile" id="placeOptA" type="button" aria-label="Tile option A"><img id="placeOptAImg" alt="Tile option A"></button>
-        <button class="option-tile" id="placeOptB" type="button" aria-label="Tile option B"><img id="placeOptBImg" alt="Tile option B"></button>
+      <div class="options-row awaiting" id="placeOptionsRow">
+        <button class="option-tile" id="placeOptA" type="button" aria-label="Tile option A">
+          <img id="placeOptAImg" alt="Tile option A">
+          <span class="place-tile-hint" aria-hidden="true"><span class="place-tile-hint-arrow">&#8593;</span>Place a tile on the button above</span>
+        </button>
+        <button class="option-tile" id="placeOptB" type="button" aria-label="Tile option B">
+          <img id="placeOptBImg" alt="Tile option B">
+          <span class="place-tile-hint" aria-hidden="true"><span class="place-tile-hint-arrow">&#8593;</span>Place a tile on the button above</span>
+        </button>
       </div>
     </section>
 
@@ -1968,7 +1978,7 @@ body.ultra-low #cosmos{display:none}
     placeChosenSide=null;
     placeFeedback.textContent='\u00A0';
     placeFeedback.className='feedback';
-    placeOptionsRow.hidden=true;
+    placeOptionsRow.classList.add('awaiting');
     placeOptA.disabled=placeOptB.disabled=false;
     placeArrow.hidden=true;
     placeImg.src=tileSVG(null);
@@ -1991,7 +2001,7 @@ body.ultra-low #cosmos{display:none}
     otherImg.src=placeTileSrc(keyOther);
     mainBtn.dataset.key=keyMain;
     otherBtn.dataset.key=keyOther;
-    placeOptionsRow.hidden=false;
+    placeOptionsRow.classList.remove('awaiting');
     placeActionBtn.textContent='Press the tile you think is in the box';
     placeActionBtn.disabled=true;
     placePhase='placed';
