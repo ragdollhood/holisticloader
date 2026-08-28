@@ -425,19 +425,29 @@ body.ultra-low #cosmos{display:none}
 .leaderboard-columns{display:flex;gap:24px;align-items:flex-start;justify-content:center}
 .leaderboard-column{flex:1 1 0;min-width:0}
 .leaderboard-column .leaderboard-list{max-width:none}
-@media(max-width:560px){
-  .leaderboard-columns{gap:10px}
-  .leaderboard-row{padding:7px 8px;margin:0 0 6px;font-size:11.5px;letter-spacing:.01em;border-radius:9px}
-  .leaderboard-sublabel{font-size:11px;letter-spacing:.08em;margin-bottom:7px}
-}
-@media(max-width:400px){
-  .leaderboard-columns{gap:6px}
-  .leaderboard-row{padding:6px 5px;font-size:10px}
-  .leaderboard-sublabel{font-size:9.5px}
-}
 .leaderboard-row{padding:10px 16px;margin:0 0 8px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font:500 14px Georgia;color:#f3efe4;letter-spacing:.02em}
 .leaderboard-row.lb-me{background:rgba(255,217,138,.16);border-color:var(--gold);box-shadow:0 0 18px rgba(255,217,138,.45);font-weight:700}
 .leaderboard-empty{margin:16px 0 4px;color:#cfc3db;font-size:13px}
+/* Mobile: tighter panel padding/margins so there isn't a lot of empty
+   air above/below the results, and rows are shrunk (and the list's
+   max-height raised to match) so all 3 rows are fully visible instead
+   of the 3rd one getting clipped by the scroll container. */
+@media(max-width:560px){
+  .leaderboard-panel{padding:18px 14px 16px}
+  .leaderboard-label{margin-bottom:10px}
+  .leaderboard-columns{gap:10px}
+  .leaderboard-sublabel{font-size:11px;letter-spacing:.08em;margin:0 0 6px}
+  .leaderboard-list{max-height:116px}
+  .leaderboard-row{padding:7px 8px;margin:0 0 6px;font-size:11.5px;letter-spacing:.01em;border-radius:9px}
+}
+@media(max-width:400px){
+  .leaderboard-panel{padding:14px 10px 12px}
+  .leaderboard-columns{gap:6px}
+  .leaderboard-sublabel{font-size:9.5px;margin-bottom:5px}
+  .leaderboard-list{max-height:104px}
+  .leaderboard-row{padding:6px 5px;margin:0 0 5px;font-size:10px}
+}
+
 
 /* ===== leaderboard + donation box, side by side on laptop/desktop ===== */
 .lb-donate-wrap{display:flex;gap:24px;justify-content:center;align-items:stretch;flex-wrap:wrap;max-width:1200px;margin:24px auto 0}
@@ -570,7 +580,7 @@ body.ultra-low #cosmos{display:none}
         <button type="button" id="saveNameBtn" class="leaderboard-save-btn">Save Name</button>
       </div>
       <p id="leaderboardGreeting" class="leaderboard-greeting" hidden></p>
-      <p id="leaderboardGreetingHint" class="leaderboard-greeting-hint" hidden>Want to change your name? Use the account icon (top right) &rarr; &ldquo;Choose a display name&rdquo;.</p>
+      <p id="leaderboardGreetingHint" class="leaderboard-greeting-hint" hidden>Use the account button (top right) to change your name.</p>
       <p id="leaderboardNameMsg" class="leaderboard-name-msg" hidden></p>
 
       <div class="leaderboard-columns">
