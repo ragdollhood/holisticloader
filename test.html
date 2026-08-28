@@ -122,6 +122,10 @@ body.ultra-low #cosmos{display:none}
 .h1-frame .title-img{display:block;margin:0 auto;height:clamp(20.8px,5.12vw,33.6px);width:auto;max-width:100%}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:720px){body{padding-top:calc(var(--navH,108px) + var(--titleH,50px) + var(--meterH,54px) + 2px)}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.app{padding-top:4px}.intro-tagline{margin:0 auto 12px;line-height:1.5}}
+@media(max-width:720px){
+  .h1-frame{transition:opacity .25s ease,visibility .25s ease}
+  body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
+}
 
 /* ===== hamburger menu (mobile + desktop) ===== */
 #menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
@@ -737,6 +741,28 @@ body.ultra-low #cosmos{display:none}
   function loop(now){rafId=requestAnimationFrame(loop);if(perf<.7&&now-frame<33)return;frame=now;let dt=Math.min(50,now-last);last=now;x.clearRect(0,0,c.width,c.height);x.fillStyle='#f3ead4';stars.forEach(s=>{s.p+=dt*.001;x.globalAlpha=.25+.45*Math.abs(Math.sin(s.p));x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});x.globalAlpha=1}
   rafId=requestAnimationFrame(loop);
   document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(rafId)}else{last=performance.now();rafId=requestAnimationFrame(loop)}});
+})();
+
+/* ===== mobile only: hide the h1-frame title image + its plaque once the
+   page is scrolled, while leaving the nav bar, hamburger menu, brand
+   logo, and the floating meter fixed/visible as before. ===== */
+(function(){
+  function isMobile(){return innerWidth<=720}
+  const SCROLL_HIDE_AT=24;
+  let ticking=false;
+  function updateTitleVisibility(){
+    if(!isMobile()){document.body.classList.remove('title-hidden');return}
+    document.body.classList.toggle('title-hidden',window.scrollY>SCROLL_HIDE_AT);
+  }
+  function onScroll(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(()=>{updateTitleVisibility();ticking=false});
+  }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',updateTitleVisibility);
+  addEventListener('orientationchange',()=>setTimeout(updateTitleVisibility,60));
+  updateTitleVisibility();
 })();
 
 /* ===== hamburger menu toggle (mobile + desktop) ===== */
