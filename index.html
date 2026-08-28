@@ -129,6 +129,11 @@
     .proof{padding:22px 0}.proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.proof-card{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:28px 32px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.035)}.quote{font-family:var(--serif);font-size:24px;line-height:1.35}.quote small{display:block;font:500 13px var(--sans);color:var(--muted);margin-top:8px}.stars{color:var(--gold);white-space:nowrap}
 
     .feature-grid,.game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;position:relative}.visual-card{display:block;position:relative;min-height:360px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease,border-color .3s ease}.visual-card:hover{transform:translateY(-6px);border-color:var(--gold)}.visual-card img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}.visual-card span{position:absolute;left:18px;bottom:18px;padding:9px 14px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid var(--line);font-weight:700}
+    /* ---- stacked variant: image on top, button below it instead of
+       overlaid on the photo (used for the Intuition and Mahjong cards) ---- */
+    .visual-card.visual-card--stacked{display:flex;flex-direction:column;min-height:0;background:var(--surface)}
+    .visual-card.visual-card--stacked img{position:static;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;display:block}
+    .visual-card.visual-card--stacked span{position:static;display:inline-flex;align-self:flex-start;margin:16px 18px 20px}
 
     /* ---- same ambient/radiating glow mechanic, applied to the 4 remaining
        tiles: Intuition, Mahjong, Mergico and the second game ---- */
@@ -152,7 +157,7 @@
     }
 
     .story{display:grid;grid-template-columns:.9fr 1.1fr;gap:54px;align-items:start}.story h2{font-family:var(--serif);font-size:clamp(38px,5vw,60px);line-height:1;margin:0;position:sticky;top:120px}.copy{color:var(--muted);font-size:17px;line-height:1.82}.copy h3{color:var(--ink);font-family:var(--serif);font-size:30px;margin:32px 0 8px}.copy p{margin:0 0 18px}
-    .faq{max-width:820px;margin:auto}.faq details{border-top:1px solid var(--line);padding:20px 0}.faq details:last-child{border-bottom:1px solid var(--line)}.faq summary{cursor:pointer;font-weight:700;font-size:18px}.faq p{color:var(--muted);line-height:1.7}
+    .faq{max-width:820px;margin:auto}.faq details{border-top:1px solid var(--line);padding:20px 0}.faq details:last-child{border-bottom:1px solid var(--line)}.faq summary{cursor:pointer;font-weight:700;font-size:18px}.faq p{color:var(--muted);line-height:1.7}.faq img{display:block;width:100%;max-width:420px;margin-top:14px;border-radius:16px;box-shadow:var(--shadow)}
 
     footer{border-top:1px solid var(--line);padding:34px 0 max(34px,env(safe-area-inset-bottom))}.footer{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}.footer-links{display:flex;gap:18px;flex-wrap:wrap}.footer a{color:var(--muted);text-decoration:none;font-size:13px}.footer a:hover{color:var(--gold)}.copyright{color:var(--faint);font-size:13px}
     :focus-visible{outline:2px solid var(--gold);outline-offset:4px}
@@ -232,9 +237,9 @@
         <div class="section-head"><div class="eyebrow">Featured experiences</div><h2>Wellness can be playful, too.</h2><p>Explore intuitive tools and sound-inspired games created to bring focus, curiosity and calm into your day.</p></div>
         <div class="feature-grid">
           <div class="visual-glow visual-glow--intuition" aria-hidden="true"></div>
-          <a class="visual-card" data-glow="intuition" href="/intuition" aria-label="Open Intuition Loader"><img src="images/preview-intuition.jpg" alt="Intuition Loader preview" loading="lazy"><span>Explore Intuition Loader →</span></a>
+          <a class="visual-card visual-card--stacked" data-glow="intuition" href="/intuition" aria-label="Train your intuition"><img src="images/preview-intuition.jpg" alt="Intuition Loader preview" loading="lazy"><span>Train your intuition →</span></a>
           <div class="visual-glow visual-glow--mahjong" aria-hidden="true"></div>
-          <a class="visual-card" data-glow="mahjong" href="/mahjong" aria-label="Play Mahjong Soundbath"><img src="images/preview-mahjong.jpg" alt="Mahjong Soundbath preview" loading="lazy"><span>Play Mahjong Soundbath →</span></a>
+          <a class="visual-card visual-card--stacked" data-glow="mahjong" href="/mahjong" aria-label="Play Mahjong Soundbath"><img src="images/preview-mahjong.jpg" alt="Mahjong Soundbath preview" loading="lazy"><span>Play Mahjong Soundbath →</span></a>
         </div>
       </div>
     </section>
@@ -260,9 +265,9 @@
         <div class="section-head"><div class="eyebrow">More to discover</div><h2>Play in the Holistic Loader world.</h2></div>
         <div class="game-grid">
           <div class="visual-glow visual-glow--mergico" aria-hidden="true"></div>
-          <a class="visual-card" data-glow="mergico" href="/game" aria-label="Play Mergico"><img src="images/game-preview.jpg" alt="Mergico game preview" loading="lazy"><span>Play Mergico →</span></a>
+          <a class="visual-card visual-card--stacked" data-glow="mergico" href="/game" aria-label="Play Mergico"><img src="images/game-preview.jpg" alt="Mergico game preview" loading="lazy"><span>Play Mergico →</span></a>
           <div class="visual-glow visual-glow--mergico2" aria-hidden="true"></div>
-          <a class="visual-card" data-glow="mergico2" href="/game2" aria-label="Play the second featured game"><img src="images/game2-preview.jpg" alt="Featured game preview" loading="lazy"><span>Discover another game →</span></a>
+          <a class="visual-card visual-card--stacked" data-glow="mergico2" href="/game2" aria-label="Play the second featured game"><img src="images/game2-preview.jpg" alt="Featured game preview" loading="lazy"><span>Discover another game →</span></a>
         </div>
       </div>
     </section>
@@ -273,6 +278,7 @@
         <details><summary>What is Holistic Loader?</summary><p>Holistic Loader is a browser-based collection of guided breathing, soundscape, yoga, nutrition and mindful game experiences.</p></details>
         <details><summary>Do I need to install an app?</summary><p>No. Holistic Loader runs in your browser on phone and desktop.</p></details>
         <details><summary>Where should I start?</summary><p>Choose the goal that best matches how you want to feel today. Each goal card takes you directly to a suitable tool.</p></details>
+        <details><summary>Is Holistic Loader free?</summary><p>Yes. Holistic Loader is free to use thanks to the generosity of donors who help keep it running.</p><img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader with a donation" loading="lazy"></details>
       </div>
     </section>
   </main>
