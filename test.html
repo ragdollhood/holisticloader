@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="canonical" id="canonicalLink" href="https://holisticloader.com/intuition-loader.html">
+<link rel="canonical" id="canonicalLink" href="https://holisticloader.com/intuition.html">
 <link rel="icon" type="image/png" href="images/icon-holistic.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon-holistic.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/icon-holistic.png">
@@ -30,17 +30,17 @@
 <meta property="og:site_name" content="Holistic Loader">
 <meta property="og:title" content="Intuition Loader — Train Your Intuition & Awaken Your Third Eye">
 <meta property="og:description" content="Practice trusting your gut, sharpen your intuitive predictions, and awaken your third eye with daily guessing exercises.">
-<meta property="og:image" id="ogImage" content="https://holisticloader.com/images/preview-intuition-loader.jpg">
+<meta property="og:image" id="ogImage" content="https://holisticloader.com/images/preview-intuition.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:url" id="ogUrl" content="https://holisticloader.com/intuition-loader.html">
+<meta property="og:url" id="ogUrl" content="https://holisticloader.com/intuition.html">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Intuition Loader — Train Your Intuition & Awaken Your Third Eye">
 <meta name="twitter:description" content="Practice trusting your gut, sharpen your intuitive predictions, and awaken your third eye with daily guessing exercises.">
-<meta name="twitter:image" id="twImage" content="https://holisticloader.com/images/preview-intuition-loader.jpg">
+<meta name="twitter:image" id="twImage" content="https://holisticloader.com/images/preview-intuition.jpg">
 
 <script type="application/ld+json">
 {
@@ -78,7 +78,7 @@
 (function(){try{
   var loc=location.href.split('#')[0];
   var base=loc.replace(/[^/]*$/,'');
-  var img=base+'images/preview-intuition-loader.jpg';
+  var img=base+'images/preview-intuition.jpg';
   var set=function(id,prop,val){var el=document.getElementById(id);if(!el)return;if(prop==='href')el.href=val;else el.content=val;};
   set('ogImage','content',img);
   set('twImage','content',img);
@@ -87,7 +87,7 @@
 <!-- ========== /SEO ========== -->
 
 <style>
-:root{--gold:#ffd98a;--violet:#c9a8ff;--glass:rgba(13,9,22,.61)}*{box-sizing:border-box}html{background:#090712}html,body{margin:0;min-height:100%;font-family:-apple-system,system-ui,'Segoe UI',sans-serif;color:#f3efe4}body{padding-top:max(164px,calc(env(safe-area-inset-top) + 148px));overflow-x:hidden;user-select:none}.app{max-width:1140px;margin:auto;padding:16px}.panel{background:var(--glass);border:1px solid #ffffff26;backdrop-filter:blur(13px);box-shadow:0 18px 55px #0008;border-radius:24px}
+:root{--gold:#ffd98a;--violet:#c9a8ff;--glass:rgba(13,9,22,.61);--ink:#f3efe4;--muted:#cfc3db;--line:rgba(255,255,255,.16);--bg:#090712;--glass-strong:rgba(19,14,28,.94)}*{box-sizing:border-box}html{background:#090712}html,body{margin:0;min-height:100%;font-family:-apple-system,system-ui,'Segoe UI',sans-serif;color:#f3efe4}body{padding-top:max(180px,calc(env(safe-area-inset-top) + 164px));overflow-x:hidden;user-select:none}.app{max-width:1140px;margin:auto;padding:16px}.panel{background:var(--glass);border:1px solid #ffffff26;backdrop-filter:blur(13px);box-shadow:0 18px 55px #0008;border-radius:24px}
 
 /* ===== aurora backdrop ===== */
 #stage{position:fixed;inset:0;z-index:-3;overflow:hidden;background:linear-gradient(160deg,#221a38 0%,#2c1c42 40%,#241a36 70%,#180f26 100%)}
@@ -115,10 +115,47 @@ body.ultra-low #cosmos{display:none}
 #topTabs{display:flex;pointer-events:auto;flex-wrap:wrap;justify-content:center}
 #topTabs .tab{font-family:Outfit,system-ui;font-weight:500;font-size:12.5px;padding:9px 18px;color:#b3a98f;text-decoration:none;white-space:nowrap;background:#f3efe40a;border:1px solid rgba(220,190,130,.16);border-bottom:0;border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px}
 #topTabs .tab.active{color:#ffd98a;background:rgba(231,201,162,.14);top:0;border-color:#ffd98a}
+#topTabs .tab:hover{color:#f3efe4}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#ffd98a 15%,#c9a8ff 50%,#ffd98a 85%,transparent)}
-.h1-frame{position:fixed;top:var(--navH,max(118px,calc(env(safe-area-inset-top) + 106px)));left:50%;transform:translateX(-50%);z-index:30;width:min(94vw,820px);padding:9px 24px;border:1.5px solid #ffd98a;border-top:0;border-radius:0 0 30px 30px;background:rgba(16,11,25,.72);backdrop-filter:blur(10px);text-align:center}
+.h1-frame{position:fixed;top:var(--navH,max(118px,calc(env(safe-area-inset-top) + 106px)));left:50%;transform:translateX(-50%);z-index:30;width:min(var(--tabsW,820px),94vw);padding:9px 24px;border:1.5px solid #ffd98a;border-top:0;border-radius:0 0 30px 30px;background:rgba(16,11,25,.72);backdrop-filter:blur(10px);text-align:center}
 .h1-frame h1{margin:0;font:600 clamp(15px,4.2vw,20px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,#ffd98a,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
-@media(max-width:720px){body{padding-top:max(121px,calc(env(safe-area-inset-top) + 105px))}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(46px,12vw,84px)}#topTabs .tab{padding:8px 9px;font-size:10px}}
+.h1-frame .title-img{display:block;margin:0 auto;height:clamp(20.8px,5.12vw,33.6px);width:auto;max-width:100%}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:720px){body{padding-top:calc(var(--navH,108px) + var(--titleH,50px) + var(--meterH,54px) + 2px)}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.app{padding-top:4px}.intro-tagline{margin:0 auto 12px;line-height:1.5}}
+
+/* ===== hamburger menu (mobile + desktop) ===== */
+#menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
+#menuToggle svg{width:17px;height:17px;flex:none}
+#menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
+#menuToggleDesktopPanel{display:none}
+@media(min-width:721px){
+  #menuToggleDesktopPanel{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;z-index:52;
+    display:flex;flex-direction:column;gap:4px;width:min(72vw,240px);max-height:calc(100vh - 90px);overflow-y:auto;
+    background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;
+    box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);
+    transition:opacity .18s ease,transform .18s ease;pointer-events:none}
+  body.menu-open #menuToggleDesktopPanel{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #menuToggleDesktopPanel .tab{border:1px solid transparent;border-radius:10px;background:transparent;color:#b3a98f;
+    text-decoration:none;text-align:left;margin:0;padding:9px 12px;font-family:'Outfit',system-ui,sans-serif;
+    font-weight:500;font-size:13px;letter-spacing:.04em;display:block;box-sizing:border-box;cursor:pointer}
+  #menuToggleDesktopPanel .tab:hover{color:#f3efe4;background:rgba(244,241,234,.06)}
+  #menuToggleDesktopPanel .tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold)}
+  #menuToggleDesktopPanel .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  #menuToggleDesktopPanel .nav-contact-email{margin:2px 0 4px;padding:0 12px;text-align:left;font-size:12px}
+  #menuToggleDesktopPanel .nav-contact-email a{color:var(--gold);text-decoration:none}
+  #menuToggleDesktopPanel .nav-contact-email a:hover{text-decoration:underline}
+}
+.menu-logo-link{display:flex;width:100%;align-items:center;justify-content:center;padding:4px 4px 10px;text-decoration:none;box-sizing:border-box}
+.menu-logo-img{max-height:34px;width:auto;display:block}
+@media(max-width:720px){
+  #brand{margin-top:2px}
+  #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:45}
+  body.menu-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;z-index:49}
+  body.menu-open #floatMeter{z-index:44}
+  #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px;display:block;flex:1 1 auto;width:100%;box-sizing:border-box}
+  #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
+  #topNavLine{display:none}
+}
 
 /* ===== game ===== */
 .game-panel{max-width:620px;margin:26px auto 0;padding:34px 24px 30px;text-align:center}
@@ -141,7 +178,13 @@ body.ultra-low #cosmos{display:none}
 .feedback.wrong{color:#ff8a8a}
 .options-row{display:flex;justify-content:center;gap:24px;margin:6px 0 16px;flex-wrap:wrap}
 .option-tile{width:min(32vw,175px);aspect-ratio:.78;padding:10px;border:1.5px solid rgba(220,190,130,.35);border-radius:18px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
-.option-tile:hover:not(:disabled){transform:translateY(-5px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+/* Scoped to real pointers (mouse/trackpad) only — on touch devices
+   :hover has no real "leave" event, so a tapped option's gold hover
+   border used to stay stuck on it (looking like a permanent
+   "last picked" ring) until the next tap elsewhere. */
+@media (hover:hover) and (pointer:fine){
+  .option-tile:hover:not(:disabled){transform:translateY(-5px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+}
 .option-tile:disabled{cursor:default;opacity:.9}
 .option-tile img{width:100%;height:100%;object-fit:contain;pointer-events:none}
 .press-hint{color:#cfc3db;font-size:14px;margin:0}
@@ -149,9 +192,27 @@ body.ultra-low #cosmos{display:none}
 .next-mystery{width:min(42vw,210px);aspect-ratio:.78;margin:0 auto 22px;padding:14px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 18px 45px #0008;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .next-mystery #nextMysteryQ{font:700 clamp(30px,8vw,46px) Georgia;background:linear-gradient(180deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .next-mystery img{width:64%;height:64%;object-fit:contain;filter:drop-shadow(0 0 12px #c9a8ffaa)}
+.next-stage-row{display:flex;align-items:stretch;justify-content:center;gap:16px;margin:0 auto 22px}
+.next-stage-row .next-mystery{margin:0}
+.next-meter-vert{display:flex;flex-direction:column;align-items:center;gap:7px;width:56px;flex:none}
+.next-meter-vert-pct{margin:0;font:700 clamp(12px,3vw,14px) Georgia;letter-spacing:.02em;color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums}
+.next-meter-vert-track{position:relative;flex:1;width:20px;min-height:80px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:visible;box-shadow:0 12px 30px #0008}
+.next-meter-vert-fill{position:absolute;left:0;right:0;bottom:0;width:auto;height:calc(var(--pct,0) * 1%);background:linear-gradient(0deg,#ff8a5c,var(--gold),var(--violet));border-radius:10px;transition:height .4s ease}
+.next-meter-vert-marker{position:absolute;left:-6px;right:-6px;height:3px;background:#fff;border-radius:2px;box-shadow:0 0 8px #fff,0 0 14px rgba(255,255,255,.75);bottom:20%;z-index:2}
+.next-meter-vert-marker::before,.next-meter-vert-marker::after{content:'';position:absolute;top:50%;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.next-meter-vert-marker::before{left:-6px;border-right:6px solid #fff;transform:translateY(-50%)}
+.next-meter-vert-marker::after{right:-6px;border-left:6px solid #fff;transform:translateY(-50%)}
+.next-meter-vert-marker span{position:absolute;left:26px;top:50%;transform:translateY(-50%);font-size:9px;line-height:1.25;color:#fff;white-space:nowrap;text-align:left;text-shadow:0 1px 3px #000}
+.next-meter-vert-sub{margin:0;font-size:10px;color:#cfc3db;white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(min-width:901px){.next-meter-vert{width:64px}.next-meter-vert-track{width:24px}}
+@media(max-width:480px){.next-meter-vert{width:46px;gap:5px}.next-meter-vert-track{width:16px}.next-meter-vert-pct{font-size:11px}.next-meter-vert-sub{font-size:9px}.next-meter-vert-marker span{left:20px;font-size:8px}}
 .next-options-row{display:flex;justify-content:center;gap:14px;margin:6px 0 16px;flex-wrap:wrap}
+.next-row-break{display:none}
+@media(max-width:480px){.next-row-break{display:block;flex-basis:100%;width:0;height:0}}
 .next-option{width:min(15vw,74px);aspect-ratio:1;padding:12px;border:1.5px solid rgba(220,190,130,.35);border-radius:16px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
-.next-option:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+@media (hover:hover) and (pointer:fine){
+  .next-option:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+}
 .next-option:disabled{cursor:default;opacity:.9}
 .next-option img{width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 6px #c9a8ff88)}
 .next-option.correct-glow{border-color:#7af0d0;box-shadow:0 0 22px #7af0d0aa}
@@ -160,6 +221,11 @@ body.ultra-low #cosmos{display:none}
 /* ===== tarot-card treatment for the game panels & mystery boxes ===== */
 .game-panel{position:relative;border:1px solid rgba(255,217,138,.38)}
 .game-panel::before{content:'';position:absolute;inset:6px;border:1px solid rgba(255,217,138,.16);border-radius:16px;pointer-events:none}
+/* ===== color-coded frames: turquoise links the five "sense" games + graphs + meter, violet marks "What Comes Next" as its own (uncounted) game ===== */
+.tri-panel,.direction-panel{border-color:#5eead4;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(94,234,212,.16)}
+.tri-panel::before,.direction-panel::before{border-color:rgba(94,234,212,.32)}
+.next-panel{border-color:#c9a8ff;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(201,168,255,.16)}
+.next-panel::before{border-color:rgba(201,168,255,.32)}
 .game-panel::after{content:'';position:absolute;inset:0;border-radius:24px;pointer-events:none;
   background:
     radial-gradient(circle 2.5px at 13px 13px, var(--gold) 55%, transparent 60%),
@@ -167,7 +233,7 @@ body.ultra-low #cosmos{display:none}
     radial-gradient(circle 2.5px at 13px calc(100% - 13px), var(--gold) 55%, transparent 60%),
     radial-gradient(circle 2.5px at calc(100% - 13px) calc(100% - 13px), var(--gold) 55%, transparent 60%);
   opacity:.55}
-.tarot-box{position:relative;margin-bottom:6px!important}
+.tarot-box{position:relative;margin-bottom:22px!important}
 .tarot-box::before{content:'';position:absolute;inset:7px;border:1px solid rgba(255,217,138,.5);border-radius:13px;pointer-events:none}
 .tarot-box::after{content:'';position:absolute;inset:0;border-radius:20px;pointer-events:none;
   background:
@@ -176,12 +242,6 @@ body.ultra-low #cosmos{display:none}
     radial-gradient(circle 2px at 11px calc(100% - 11px), var(--gold) 60%, transparent 65%),
     radial-gradient(circle 2px at calc(100% - 11px) calc(100% - 11px), var(--gold) 60%, transparent 65%);
   opacity:.85}
-.sense-icon-badge{position:relative;z-index:2;width:34px;height:34px;margin:-17px auto 16px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#241a38,#0c0815 78%);
-  border:1.5px solid var(--gold);box-shadow:0 0 14px rgba(255,217,138,.4),0 4px 10px #0008;
-  display:flex;align-items:center;justify-content:center}
-.sense-icon-badge svg{width:52%;height:52%;overflow:visible}
-@media(min-width:901px){.sense-icon-badge{width:38px;height:38px;margin:-19px auto 18px}}
 .intuition-seo{max-width:820px;margin:40px auto 10px;padding:28px clamp(18px,4vw,40px)}
 .intuition-seo h2{margin:0 0 14px;font:600 clamp(18px,3.4vw,24px) Georgia;letter-spacing:.04em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .intuition-seo h3{margin:22px 0 8px;font:600 16px Georgia;color:var(--gold)}
@@ -201,7 +261,9 @@ body.ultra-low #cosmos{display:none}
 .direction-arrow.right{right:10px}
 .direction-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:6px 0 16px}
 .sense-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:min(15vw,74px);aspect-ratio:1;padding:12px;border:1.5px solid rgba(220,190,130,.35);border-radius:16px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;font:600 11px Georgia;letter-spacing:.05em;color:#f3efe4}
-.sense-btn:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+@media (hover:hover) and (pointer:fine){
+  .sense-btn:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+}
 .sense-btn:disabled{cursor:not-allowed;opacity:.4;transform:none}
 .sense-btn svg{width:30%;height:30%;filter:drop-shadow(0 0 6px #c9a8ff88)}
 .meter-score-value{font-size:clamp(28px,6vw,40px);margin:0}
@@ -212,12 +274,26 @@ body.ultra-low #cosmos{display:none}
 .score-label{margin:0 0 10px;font:600 14px Georgia;letter-spacing:.14em;color:var(--gold)}
 .score-value{margin:0;font:700 clamp(34px,8vw,52px) Georgia;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .score-sub{margin:8px 0 0;font-size:12px;color:#cfc3db}
+.meter-reset-note{margin:10px 0 0;font-size:11px;line-height:1.4;color:#a89bb8}
 .score-reset{margin-top:16px;padding:8px 20px;font:600 12px Georgia;letter-spacing:.08em;color:#cfc3db;background:rgba(255,255,255,.06);border:1.5px solid rgba(220,190,130,.35);border-radius:12px;cursor:pointer;transition:transform .15s,border-color .15s,color .15s}
 .score-reset:hover{transform:translateY(-2px);border-color:var(--gold);color:var(--gold)}
 .score-log{margin-top:10px;width:100%;padding:9px 14px;font:600 11.5px Georgia;letter-spacing:.05em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s,opacity .15s}
 .score-log:hover:not(:disabled){transform:translateY(-2px)}
 .score-log:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:900px){.triple-wrap{flex-direction:column;align-items:center}.triple-wrap .game-panel{max-width:340px;width:100%}}
+/* ===== "Place a Tile" — a mystery tile sits under a solid-color lid
+   (same fill as the other games' blank/mystery tile, via tileSVG(null))
+   that must be dragged upward to reveal it. ===== */
+.place-img,.place-lid{position:absolute;top:14px;left:14px;right:14px;bottom:14px;width:calc(100% - 28px);height:calc(100% - 28px);object-fit:contain;filter:drop-shadow(0 6px 14px #0007)}
+.place-lid{cursor:grab;touch-action:none;will-change:transform,opacity}
+.place-lid:active{cursor:grabbing}
+.place-arrow{position:absolute;top:20px;left:50%;transform:translate(-50%,0);font-size:26px;line-height:1;color:var(--gold);text-shadow:0 0 10px rgba(255,217,138,.85);pointer-events:none;animation:placeArrowBlink 1.1s ease-in-out infinite;z-index:3}
+@keyframes placeArrowBlink{0%,100%{opacity:.25;transform:translate(-50%,4px)}50%{opacity:1;transform:translate(-50%,-6px)}}
+.place-action-btn{display:block;width:100%;max-width:280px;margin:16px auto 0;font:600 12.5px Georgia;letter-spacing:.03em;color:var(--gold);background:transparent;border:1.5px solid var(--gold);border-radius:999px;padding:12px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,opacity .2s ease}
+@media (hover:hover) and (pointer:fine){
+  .place-action-btn:hover:not(:disabled){background:var(--gold);color:var(--bg)}
+}
+.place-action-btn:disabled{cursor:default;opacity:.85}
 @media(min-width:901px){
   .app{max-width:1600px}
   .triple-wrap{max-width:1560px;gap:32px}
@@ -227,14 +303,24 @@ body.ultra-low #cosmos{display:none}
   .mall-box,.direction-stage,.next-mystery{width:min(20vw,230px)}
   .option-tile{width:min(16vw,190px)}
 }
-.progress-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center}
+.progress-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center;border-color:#5eead4;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(94,234,212,.16)}
+.next-progress-panel{border-color:var(--violet);box-shadow:0 18px 55px #0008,0 0 0 1px rgba(201,168,255,.16)}
+.next-progress-panel .progress-label{color:var(--violet)}
+#nextProgressChart{width:100%;height:180px;display:block}
 .progress-label{margin:0 0 14px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
 #progressChart{width:100%;height:180px;display:block}
 .progress-empty{margin:18px 0;color:#cfc3db;font-size:13px}
 .progress-sub{margin:10px 0 0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
-.meter-panel{max-width:900px;margin:20px auto 0;padding:24px 22px 22px;text-align:center}
+.progress-locked{padding:26px 12px 8px;text-align:center}
+.streak-chart-label{margin-top:28px}
+#streakChart{width:100%;height:180px;display:block}
+.progress-locked-text{margin:0 0 16px;color:#e7dfcf;font-size:13.5px;line-height:1.5}
+.progress-login-btn{border-radius:999px;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 13px Georgia;letter-spacing:.12em;padding:11px 30px;cursor:pointer;box-shadow:0 10px 24px #0008;transition:background .15s ease,transform .15s ease}
+.progress-login-btn:hover{background:rgba(255,217,138,.18)}
+.progress-login-btn:active{transform:scale(.96)}
+.meter-panel{max-width:900px;margin:20px auto 0;padding:24px 22px 22px;text-align:center;border-color:#5eead4;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(94,234,212,.16)}
 .meter-title{margin:0 0 16px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;color:var(--gold)}
-.intro-tagline{max-width:620px;margin:0 auto 20px;text-align:center;color:#e7dfcf;font-size:clamp(12.5px,2.4vw,14px);line-height:1.6;opacity:.85}
+.intro-tagline{max-width:620px;margin:11px auto 20px;text-align:center;color:#f3efe4;font-size:clamp(13px,2.5vw,15px);line-height:1.65;opacity:1;text-shadow:0 1px 4px rgba(0,0,0,.65)}
 .streak-line{margin:14px 0 0;font-size:12.5px;letter-spacing:.03em;color:#e7dfcf}
 .streak-line span{color:var(--gold);font-weight:700}
 .sound-toggle{position:fixed;right:14px;bottom:14px;z-index:45;width:38px;height:38px;line-height:1;font-size:16px;color:#cfc3db;opacity:.75;text-decoration:none;border-radius:50%;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
@@ -247,43 +333,176 @@ body.ultra-low #cosmos{display:none}
 .meter-level{margin:22px 0 6px;font:700 clamp(15px,3.4vw,19px) Georgia;letter-spacing:.06em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .meter-desc{margin:0 auto 8px;font-size:13px;color:#e7dfcf;max-width:480px}
 .meter-sub{margin:0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
+
+/* ===== floating "today's meter" widget, in its own framed card — vertical bar on desktop ===== */
+#floatMeter{position:fixed;top:50%;right:32px;transform:translateY(-50%);z-index:48;display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:18px 16px 15px;border-radius:20px;background:var(--glass);border:1.5px solid #5eead4;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 45px #0008,0 0 0 1px rgba(94,234,212,.16)}
+#floatMeterInfo{display:flex;flex-direction:column;align-items:center;gap:4px}
+#floatMeterScore{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center}
+#floatMeterPercent{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center}
+#floatMeterStreak{margin:0;font:700 clamp(17px,3.2vw,22px) Georgia;letter-spacing:.03em;color:var(--gold);text-shadow:0 0 12px rgba(255,217,138,.55),0 2px 6px #0009;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center;display:flex;align-items:baseline;justify-content:center;gap:5px}
+#floatMeterStreak .streak-icon{font-size:.72em}
+#floatMeterTrack{position:relative;width:22px;height:min(56vh,430px);border-radius:11px;background:rgba(255,255,255,.08);border:1px solid rgba(220,190,130,.3);overflow:visible;box-shadow:0 12px 30px #0008}
+#floatMeterFill{position:absolute;left:0;right:0;bottom:0;width:auto;height:calc(var(--pct,0) * 1%);background:linear-gradient(0deg,#ff8a5c,var(--gold),var(--violet));border-radius:11px;transition:height .4s ease,width .4s ease}
+#floatMeterMarker{position:absolute;left:-7px;right:-7px;top:auto;height:3px;width:auto;background:#fff;border-radius:2px;box-shadow:0 0 8px #fff,0 0 14px rgba(255,255,255,.75);bottom:calc(var(--baseline,50) * 1%);z-index:2;transition:bottom .3s ease,left .3s ease}
+#floatMeterMarker::before,#floatMeterMarker::after{content:'';position:absolute;top:50%;left:auto;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent}
+#floatMeterMarker::before{left:-6px;border-right:6px solid #fff;transform:translateY(-50%)}
+#floatMeterMarker::after{right:-6px;border-left:6px solid #fff;transform:translateY(-50%)}
+#floatMeterBtnRow{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:2px}
+#meterInfoBtn{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 14px Georgia;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:0;transition:background .15s ease,transform .15s ease}
+#floatMeterReset{flex:none;border-radius:999px;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 13px Georgia;letter-spacing:.12em;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:10px 22px;transition:background .15s ease,transform .15s ease;white-space:nowrap}
+#meterInfoBtn:hover,#floatMeterReset:hover{background:rgba(255,217,138,.18)}
+#floatMeterReset:active{transform:scale(.96)}
+/* ===== mobile: horizontal bar, flush edge-to-edge right under the title plaque ===== */
+@media(max-width:720px){
+  #floatMeter{
+    flex-direction:row;align-items:center;justify-content:space-between;gap:10px;
+    position:fixed;top:calc(var(--navH,108px) + var(--titleH,50px));left:50%;right:auto;
+    transform:translateX(-50%);width:92vw;max-width:none;
+    padding:9px 14px;border-radius:0 0 18px 18px;border-top:0;
+  }
+  #floatMeterInfo{flex-direction:row;align-items:baseline;gap:6px;flex:none}
+  #floatMeterScore{font-size:clamp(13px,3.8vw,16px)}
+  #floatMeterPercent{margin:0;font-size:clamp(13px,3.8vw,16px)}
+  #floatMeterStreak{font-size:clamp(13px,3.8vw,16px)}
+  #floatMeterTrack{width:auto;flex:1 1 auto;height:14px;border-radius:8px;box-shadow:0 8px 20px #0006}
+  #floatMeterFill{left:0;right:auto;top:0;bottom:0;height:auto;width:calc(var(--pct,0) * 1%);border-radius:8px}
+  #floatMeterMarker{left:calc(var(--baseline,50) * 1%);right:auto;top:-5px;bottom:-5px;height:auto;width:3px}
+  #floatMeterMarker::before,#floatMeterMarker::after{top:auto;left:50%;border-top:0;border-bottom:0;border-left:5px solid transparent;border-right:5px solid transparent}
+  #floatMeterMarker::before{top:-6px;left:50%;border-bottom:6px solid #fff;border-right:5px solid transparent;transform:translateX(-50%)}
+  #floatMeterMarker::after{bottom:-6px;top:auto;right:auto;left:50%;border-top:6px solid #fff;border-bottom:0;transform:translateX(-50%)}
+  #floatMeterBtnRow{flex-direction:row;gap:6px;margin-top:0;flex:none}
+  #meterInfoBtn{width:25px;height:25px;font-size:12px}
+  #floatMeterReset{padding:5px 12px;font-size:10px}
+  .triple-wrap{padding-right:0}
+}
+
+
+/* ===== info box (opened via the "i" button) showing the full meter panel ===== */
+.meter-info-overlay{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,4,9,.72);backdrop-filter:blur(4px)}
+.meter-info-overlay[hidden]{display:none}
+.meter-info-box{position:relative;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:rgba(16,11,25,.97);border:1.5px solid var(--gold);border-radius:22px;box-shadow:0 25px 70px #000c;padding:6px}
+.meter-info-box .meter-panel{margin:0;max-width:100%}
+.meter-info-close{position:absolute;top:10px;right:12px;width:30px;height:30px;border-radius:50%;border:1px solid rgba(220,190,130,.4);background:rgba(255,255,255,.06);color:#f3efe4;font-size:18px;line-height:1;cursor:pointer;z-index:2}
+.meter-info-close:hover{border-color:var(--gold);color:var(--gold)}
 .confetti-piece{position:fixed;top:-24px;width:9px;height:15px;z-index:70;pointer-events:none;border-radius:2px;animation-name:confettiFall;animation-timing-function:cubic-bezier(.35,0,.65,1);animation-fill-mode:forwards}
 @keyframes confettiFall{to{transform:translateY(112vh) rotate(760deg);opacity:.85}}
 .privacy-link{position:fixed;left:14px;bottom:14px;z-index:45;font-size:11px;color:#cfc3db;opacity:.7;text-decoration:none;padding:6px 11px;border-radius:10px;background:#120c20aa;backdrop-filter:blur(6px);border:1px solid #ffffff20;transition:.2s}
 .privacy-link:hover{opacity:1;color:#ffd98a;border-color:#ffd98a55}
 @media(max-width:480px){.privacy-link{font-size:10px;padding:5px 9px;left:8px;bottom:8px}}
+
+/* ===== intuition leaderboard panel (glassmorphism, gold + violet, matches progress-panel) ===== */
+.leaderboard-panel{max-width:900px;margin:24px auto 0;padding:26px 22px 22px;text-align:center;border-color:var(--gold);box-shadow:0 18px 55px #0008,0 0 0 1px rgba(255,217,138,.18),0 0 46px -14px rgba(201,168,255,.4)}
+.leaderboard-label{margin:0 0 14px;font:600 clamp(13px,3vw,15px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
+.leaderboard-sublabel{margin:0 0 10px;font:600 clamp(12px,2.6vw,13.5px) Georgia;letter-spacing:.12em;background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent;text-align:center}
+.leaderboard-sublabel-streak{margin-top:22px}
+.leaderboard-locked{padding:26px 12px 8px;text-align:center}
+.leaderboard-locked-text{margin:0 0 16px;color:#e7dfcf;font-size:13.5px;line-height:1.5}
+.leaderboard-name-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 16px}
+.leaderboard-name-form[hidden]{display:none}
+.leaderboard-name-input{padding:10px 14px;border-radius:12px;border:1.5px solid rgba(220,190,130,.4);background:rgba(255,255,255,.06);color:#f3efe4;font:500 13px Georgia;min-width:220px}
+.leaderboard-name-input::placeholder{color:#cfc3db}
+.leaderboard-save-btn{padding:10px 22px;font:600 12px Georgia;letter-spacing:.08em;color:#090712;background:linear-gradient(90deg,var(--gold),var(--violet));border:none;border-radius:12px;cursor:pointer;transition:transform .15s}
+.leaderboard-save-btn:hover{transform:translateY(-2px)}
+.leaderboard-name-msg{margin:0 0 16px;font-size:12px;color:var(--gold)}
+.leaderboard-greeting{margin:0 0 4px;font:600 14.5px Georgia;letter-spacing:.02em;color:var(--gold)}
+.leaderboard-greeting-hint{margin:0 0 16px;font-size:11.5px;color:#cfc3db}
+.leaderboard-list{list-style:none;margin:0 auto;padding:0;max-width:520px;text-align:left}
+.leaderboard-row{padding:10px 16px;margin:0 0 8px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font:500 14px Georgia;color:#f3efe4;letter-spacing:.02em}
+.leaderboard-row.lb-me{background:rgba(255,217,138,.16);border-color:var(--gold);box-shadow:0 0 18px rgba(255,217,138,.45);font-weight:700}
+.leaderboard-empty{margin:16px 0 4px;color:#cfc3db;font-size:13px}
+
+/* ===== leaderboard + donation box, side by side on laptop/desktop ===== */
+.lb-donate-wrap{display:flex;gap:24px;justify-content:center;align-items:stretch;flex-wrap:wrap;max-width:1200px;margin:24px auto 0}
+.lb-donate-wrap .leaderboard-panel{margin:0;flex:1 1 420px;max-width:560px;display:flex;flex-direction:column;justify-content:center}
+.lb-donate-wrap .page-donate-row{margin:0;flex:1 1 420px;max-width:560px}
+@media(max-width:820px){.lb-donate-wrap{flex-direction:column;align-items:center}.lb-donate-wrap .leaderboard-panel,.lb-donate-wrap .page-donate-row{max-width:560px;width:100%}}
+@media(min-width:901px){.lb-donate-wrap{max-width:1200px;gap:32px}.lb-donate-wrap .leaderboard-panel,.lb-donate-wrap .page-donate-row{flex:1 1 500px;min-width:400px}}
+
+/* ===== donation image, now paired with the leaderboard in .lb-donate-wrap ===== */
+.page-donate-row{max-width:820px;margin:8px auto 40px;padding:26px 22px;display:flex;align-items:center;justify-content:center;text-align:center}
+.page-donate-link{display:inline-block;max-width:min(92vw,420px);width:100%}
+.page-donate-img{display:block;width:100%;height:auto;border:1.5px solid var(--gold);border-radius:16px;box-shadow:0 18px 45px #0008;transition:transform .15s ease}
+.page-donate-link:hover .page-donate-img{transform:scale(1.03)}
 .h1-desktop{display:none}
 @media (min-width:721px){
   .h1-mobile{display:none}
   .h1-desktop{display:inline}
+  .mobile-extra{display:none!important}
 }
-</style></head>
+#topTabs .contact-tab{cursor:pointer;display:block;width:100%;background:none;border:0;margin:0}
+.contact-email{margin:2px 0 4px;text-align:center;font-size:12px}
+.contact-email a{color:var(--gold);text-decoration:none}
+.contact-email a:hover{text-decoration:underline}
+@media(max-width:720px){
+  #topTabs a[href="terms.html"].mobile-extra{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  .contact-email{padding:0 12px}
+}
+</style>
+<link rel="stylesheet" href="auth-ui.css">
+</head>
 <body>
 <div id="stage"><div class="aurora"></div></div>
 <canvas id="cosmos"></canvas>
 
 <header id="topNav">
-  <h1 id="brand"><a href="index.html"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
+  <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs menuToggleDesktopPanel" aria-label="Meny">
+    <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
+  </button>
+  <nav id="menuToggleDesktopPanel" aria-label="Main sections (menu)">
+  <a href="index.html" class="menu-logo-link"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+    <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
+    <a href="soundscape.html" class="tab">Soundscape Creator</a>
+    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="yoga.html" class="tab">Yoga Loader</a>
+    <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
+    <a href="intuition.html" class="tab active" aria-current="page">Intuition Loader</a>
+    <a href="shop.html" class="tab">Shop</a>
+    <a href="terms.html" class="tab nav-sep">Terms &amp; Conditions</a>
+    <a href="about.html" class="tab">About</a>
+    <button type="button" id="menuDesktopContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="menuDesktopContactEmail">Contact</button>
+    <p id="menuDesktopContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener" class="tab nav-sep">Support Holistic Loader</a>
+  </nav>
+  <h1 id="brand">
+    <a href="index.html">
+      <img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo">
+    </a>
+  </h1>
   <nav id="topTabs">
-    <a href="breathing.html" class="tab"><span class="h1-mobile">Breathing</span><span class="h1-desktop">Guided Breathing</span></a>
-    <a href="instruments.html" class="tab"><span class="h1-mobile">Sounds</span><span class="h1-desktop">Soundscape Creator</span></a>
-    <a href="nutriloader.html" class="tab"><span class="h1-mobile">Nutrition</span><span class="h1-desktop">Nutrition tracker</span></a>
-    <a href="yoga-loader.html" class="tab">Yoga</a>
-    <a href="mahjong.html" class="tab">Mahjong</a>
-    <a href="intuition-loader.html" class="tab active" aria-current="page">Intuition Loader</a>
+    <a href="index.html" class="menu-logo-link mobile-extra"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+    <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
+    <a href="soundscape.html" class="tab">Soundscape Creator</a>
+    <a href="nutriloader.html" class="tab">Nutrition Tracker</a>
+    <a href="yoga.html" class="tab">Yoga Loader</a>
+    <a href="mahjong.html" class="tab">Mahjong Soundbath</a>
+    <a href="intuition.html" class="tab active" aria-current="page">Intuition Loader</a>
+    <a href="shop.html" class="tab">Shop</a>
+    <a href="terms.html" class="tab mobile-extra nav-sep">Terms &amp; Conditions</a>
+    <a href="about.html" class="tab mobile-extra">About</a>
+    <button type="button" id="contactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="contactEmail">Contact</button>
+    <p id="contactEmail" class="contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener" class="tab mobile-extra nav-sep">Support Holistic Loader</a>
   </nav>
   <div id="topNavLine"></div>
+  <div id="authRoot"></div>
 </header>
 
-<div class="h1-frame"><h1>INTUITION LOADER</h1></div>
+<div class="h1-frame">
+  <h1 class="sr-only">Intuition Loader</h1>
+  <picture>
+    <source srcset="images/title-intuition-loader.webp" type="image/webp">
+    <img src="images/title-intuition-loader.png" alt="Intuition Loader" class="title-img" width="2171" height="186" loading="eager" decoding="async">
+  </picture>
+</div>
 
 <main class="app">
-  <p class="intro-tagline">Five quick, calming games. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance.</p>
+  <p class="intro-tagline">Train your intuition. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance. The graph below will let you monitor your progress over time.</p>
   <div class="triple-wrap">
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">SENSE THE TILE</p>
       <div class="mall-box tarot-box"><img id="mallImg" alt="Mystery tile"></div>
-      <div class="sense-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="gEye" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><path d="M2 12C4.5 6.2 9 3.2 12 3.2s7.5 3 10 8.8c-2.5 5.8-7 8.8-10 8.8S4.5 17.8 2 12Z" stroke="url(#gEye)" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="url(#gEye)" stroke-width="1.6"/></svg></div>
       <p class="feedback" id="feedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optA" type="button" aria-label="Option A"><img id="optAImg" alt="Tile option A"></button>
@@ -295,7 +514,6 @@ body.ultra-low #cosmos{display:none}
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">SENSE THE SIDE</p>
       <div class="mall-box tarot-box"><img id="sideMysteryImg" alt="Mystery tile"></div>
-      <div class="sense-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="gSide" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><path d="M2.5 12h19M2.5 12l4.5-4.5M2.5 12l4.5 4.5M21.5 12l-4.5-4.5M21.5 12l-4.5 4.5" stroke="url(#gSide)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <p class="feedback" id="sideFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optLeft" type="button" aria-label="Line is on the left"><img id="optLeftImg" alt="White tile with a line on the left"></button>
@@ -307,7 +525,6 @@ body.ultra-low #cosmos{display:none}
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">SENSE THE DOTS</p>
       <div class="mall-box tarot-box"><img id="dotsMysteryImg" alt="Mystery tile"></div>
-      <div class="sense-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="gDots" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><circle cx="8" cy="8" r="2.1" fill="url(#gDots)"/><circle cx="16" cy="8" r="2.1" fill="url(#gDots)"/><circle cx="8" cy="16" r="2.1" fill="url(#gDots)"/><circle cx="16" cy="16" r="2.1" fill="url(#gDots)"/></svg></div>
       <p class="feedback" id="dotsFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
         <button class="option-tile" id="optOne" type="button" aria-label="One dot"><img id="optOneImg" alt="White tile with a single dot"></button>
@@ -315,27 +532,25 @@ body.ultra-low #cosmos{display:none}
       </div>
       <p class="press-hint" id="dotsPressHint">Choose one</p>
     </section>
+
+    <section class="panel game-panel tri-panel">
+      <p class="prompt-title">PLACE A TILE</p>
+      <div class="mall-box tarot-box" id="placeStage">
+        <img id="placeImg" class="place-img" alt="" aria-hidden="true">
+        <img id="placeLid" class="place-lid" alt="" aria-hidden="true">
+        <span class="place-arrow" id="placeArrow" aria-hidden="true" hidden>&#8593;</span>
+      </div>
+      <p class="feedback" id="placeFeedback" aria-live="polite">&nbsp;</p>
+      <div class="options-row" id="placeOptionsRow" hidden>
+        <button class="option-tile" id="placeOptA" type="button" aria-label="Tile option A"><img id="placeOptAImg" alt="Tile option A"></button>
+        <button class="option-tile" id="placeOptB" type="button" aria-label="Tile option B"><img id="placeOptBImg" alt="Tile option B"></button>
+      </div>
+      <button type="button" class="place-action-btn" id="placeActionBtn">PLACE A TILE</button>
+    </section>
   </div>
 
-  <div class="duo-wrap">
-    <section class="panel game-panel next-panel">
-      <p class="prompt-title">WHAT COMES NEXT?</p>
-      <div class="next-mystery tarot-box" id="nextMysteryBox">
-        <span id="nextMysteryQ">?</span>
-        <img id="nextMysteryImg" alt="Mystery symbol" hidden>
-      </div>
-      <div class="sense-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="gStar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><path d="M12 2.6l2.5 6.6 7 .5-5.4 4.6 1.8 6.9L12 17.4 5.9 21.2l1.8-6.9L2.3 9.7l7-.5Z" stroke="url(#gStar)" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
-      <p class="feedback" id="nextFeedback" aria-live="polite">&nbsp;</p>
-      <div class="next-options-row">
-        <button class="next-option" id="nextOptStar" type="button" data-symbol="star" aria-label="Star"><img alt="Star symbol"></button>
-        <button class="next-option" id="nextOptCircle" type="button" data-symbol="circle" aria-label="Circle"><img alt="Circle symbol"></button>
-        <button class="next-option" id="nextOptWave" type="button" data-symbol="wave" aria-label="Waves"><img alt="Wave symbol"></button>
-        <button class="next-option" id="nextOptSquare" type="button" data-symbol="square" aria-label="Square"><img alt="Square symbol"></button>
-        <button class="next-option" id="nextOptPlus" type="button" data-symbol="plus" aria-label="Cross"><img alt="Cross symbol"></button>
-      </div>
-      <p class="press-hint" id="nextPressHint">Sense it, then choose one</p>
-    </section>
 
+  <div class="duo-wrap">
     <section class="panel game-panel direction-panel">
       <p class="prompt-title">SENSE THE DIRECTION</p>
       <div class="direction-stage tarot-box" id="directionStage">
@@ -343,7 +558,6 @@ body.ultra-low #cosmos{display:none}
         <span class="direction-arrow right" aria-hidden="true">&#8594;</span>
         <div class="direction-circle" id="directionCircle"></div>
       </div>
-      <div class="sense-icon-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="gDir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a"/><stop offset="1" stop-color="#c9a8ff"/></linearGradient></defs><path d="M3 11.2 21 3l-8.2 18-2-8-8-1.8Z" stroke="url(#gDir)" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
       <p class="feedback" id="directionFeedback" aria-live="polite">&nbsp;</p>
       <div class="direction-actions">
         <button class="sense-btn direction-start" id="directionStart" type="button">
@@ -357,33 +571,137 @@ body.ultra-low #cosmos{display:none}
       </div>
       <p class="press-hint" id="directionHint">Press start — you can grab and swipe the ball as soon as it appears</p>
     </section>
+
+    <section class="panel game-panel next-panel">
+      <p class="prompt-title">WHAT COMES NEXT?</p>
+      <div class="next-stage-row">
+        <div class="next-mystery tarot-box" id="nextMysteryBox">
+          <span id="nextMysteryQ">?</span>
+          <img id="nextMysteryImg" alt="Mystery symbol" hidden>
+        </div>
+        <div class="next-meter-vert" id="nextMeterVert" title="20% is the expected accuracy by pure chance (1 of 5 symbols) — the white arrow marks that baseline.">
+          <p class="next-meter-vert-pct" id="nextMeterPct">0%</p>
+          <div class="next-meter-vert-track" id="nextMeterTrack">
+            <div class="next-meter-vert-fill" id="nextMeterFill"></div>
+            <div class="next-meter-vert-marker" id="nextMeterMarker"><span>20%<br>expected</span></div>
+          </div>
+          <p class="next-meter-vert-sub" id="nextMeterSub">0/0</p>
+        </div>
+      </div>
+      <p class="feedback" id="nextFeedback" aria-live="polite">&nbsp;</p>
+      <div class="next-options-row">
+        <button class="next-option" id="nextOptStar" type="button" data-symbol="star" aria-label="Star"><img alt="Star symbol"></button>
+        <button class="next-option" id="nextOptCircle" type="button" data-symbol="circle" aria-label="Circle"><img alt="Circle symbol"></button>
+        <button class="next-option" id="nextOptWave" type="button" data-symbol="wave" aria-label="Waves"><img alt="Wave symbol"></button>
+        <div class="next-row-break" aria-hidden="true"></div>
+        <button class="next-option" id="nextOptSquare" type="button" data-symbol="square" aria-label="Square"><img alt="Square symbol"></button>
+        <button class="next-option" id="nextOptPlus" type="button" data-symbol="plus" aria-label="Cross"><img alt="Cross symbol"></button>
+      </div>
+      <p class="press-hint" id="nextPressHint">Sense it, then choose one</p>
+    </section>
   </div>
 
-  <section class="panel meter-panel">
-    <p class="meter-title">TODAY'S INTUITION LEVEL</p>
-    <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
-    <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Sense the Direction + What Comes Next</p>
-    <p class="streak-line">&#128293; Current streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
-    <div class="meter-score-actions">
-      <button class="score-reset" id="scoreReset" type="button">Reset</button>
-      <button class="score-log" id="logProgressBtn" type="button" disabled>Log your progress</button>
+
+  <div id="meterInfoOverlay" class="meter-info-overlay" hidden>
+    <div class="meter-info-box" role="dialog" aria-modal="true" aria-labelledby="meterInfoHeading">
+      <button type="button" id="meterInfoClose" class="meter-info-close" aria-label="Stäng">&times;</button>
+      <section class="panel meter-panel">
+        <p class="meter-title" id="meterInfoHeading">TODAY'S INTUITION LEVEL</p>
+        <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
+        <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Place a Tile + Sense the Direction (What Comes Next isn&rsquo;t counted here)</p>
+        <p class="streak-line">&#128293; Todays streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
+        <div class="meter-score-actions">
+          <button class="score-reset" id="scoreReset" type="button">Reset</button>
+        </div>
+        <p class="meter-reset-note">Reset only clears today&rsquo;s meter above &mdash; your daily history and progress graph are unaffected.</p>
+        <div class="meter-track">
+          <div class="meter-fill" id="meterFill"></div>
+          <div class="meter-marker" id="meterMarker"><span id="meterMarkerLabel">odds: 50%</span></div>
+        </div>
+        <p class="meter-level" id="meterLevel">GATHERING SIGNAL</p>
+        <p class="meter-desc" id="meterDesc">Answer a few more rounds today to reveal your intuition level.</p>
+        <p class="meter-sub" id="meterSub">No guesses logged today yet</p>
+      </section>
     </div>
-    <div class="meter-track">
-      <div class="meter-fill" id="meterFill"></div>
-      <div class="meter-marker" id="meterMarker"><span id="meterMarkerLabel">odds: 50%</span></div>
-    </div>
-    <p class="meter-level" id="meterLevel">GATHERING SIGNAL</p>
-    <p class="meter-desc" id="meterDesc">Answer a few more rounds today to reveal your intuition level.</p>
-    <p class="meter-sub" id="meterSub">No guesses logged today yet</p>
-  </section>
+  </div>
 
   <section class="panel progress-panel">
     <p class="progress-label">DAILY PROGRESS</p>
-    <canvas id="progressChart" width="880" height="180"></canvas>
-    <p class="progress-empty" id="progressEmpty">Log your progress after a few rounds to start your chart.</p>
-    <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (lower on days with more What Comes Next rounds)</p>
+    <div id="progressLocked" class="progress-locked">
+      <p class="progress-locked-text">Log in to see your progress graph.</p>
+      <button type="button" id="progressLoginBtn" class="progress-login-btn">LOG IN</button>
+    </div>
+    <div id="progressUnlocked" class="progress-unlocked" hidden>
+      <canvas id="progressChart" width="880" height="180"></canvas>
+      <p class="progress-empty" id="progressEmpty">Play a few rounds to start your chart &mdash; it logs automatically.</p>
+      <p class="progress-sub">% correct guesses per day &mdash; dashed line marks that day&rsquo;s pure-chance baseline (What Comes Next isn&rsquo;t counted here)</p>
+      <p class="progress-label streak-chart-label">DAILY BEST STREAK</p>
+      <canvas id="streakChart" width="880" height="180"></canvas>
+      <p class="progress-empty" id="streakEmpty">Land a few correct guesses in a row &mdash; your best streak each day shows up here.</p>
+      <p class="progress-sub">&#128293; Highest streak reached on each day</p>
+    </div>
+  </section>
+
+  <section class="panel progress-panel next-progress-panel">
+    <p class="progress-label">WHAT COMES NEXT &mdash; PROGRESS</p>
+    <canvas id="nextProgressChart" width="880" height="180"></canvas>
+    <p class="progress-empty" id="nextProgressEmpty">Play a few rounds of What Comes Next to start this chart.</p>
+    <p class="progress-sub">% correct guesses per day &mdash; dashed line marks the 20% pure-chance baseline (1 of 5 symbols)</p>
   </section>
 </main>
+
+<div id="floatMeter">
+  <div id="floatMeterInfo">
+    <p id="floatMeterPercent" aria-hidden="true"><span id="floatScorePercent">0</span>%</p>
+    <p id="floatMeterScore" aria-hidden="true"><span id="floatScoreCorrect">0</span>/<span id="floatScoreTotal">0</span></p>
+    <p id="floatMeterStreak" aria-hidden="true"><span class="streak-icon">&#128293;</span><span id="floatStreakCurrent">0</span></p>
+  </div>
+  <div id="floatMeterTrack" aria-hidden="true">
+    <div id="floatMeterFill"></div>
+    <div id="floatMeterMarker"></div>
+  </div>
+  <div id="floatMeterBtnRow">
+    <button type="button" id="meterInfoBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="meterInfoOverlay" aria-label="Visa dagens intuitionsnivå">i</button>
+    <button type="button" id="floatMeterReset" aria-label="Nollställ dagens resultat">RESET</button>
+  </div>
+</div>
+
+<div class="lb-donate-wrap">
+  <section class="panel leaderboard-panel">
+    <p class="leaderboard-label">INTUITION LEADERBOARD</p>
+
+    <div id="leaderboardLocked" class="leaderboard-locked">
+      <p class="leaderboard-locked-text">Log in to see the leaderboard and submit your score.</p>
+      <button type="button" id="leaderboardLoginBtn" class="progress-login-btn">LOG IN</button>
+    </div>
+
+    <div id="leaderboardUnlocked" hidden>
+      <div id="leaderboardNameForm" class="leaderboard-name-form" hidden>
+        <input type="text" id="playerName" class="leaderboard-name-input" maxlength="20" placeholder="Your leaderboard name">
+        <button type="button" id="saveNameBtn" class="leaderboard-save-btn">Save Name</button>
+      </div>
+      <p id="leaderboardGreeting" class="leaderboard-greeting" hidden></p>
+      <p id="leaderboardGreetingHint" class="leaderboard-greeting-hint" hidden>Want to change your name? Use the account icon (top right) &rarr; &ldquo;Choose a display name&rdquo;.</p>
+      <p id="leaderboardNameMsg" class="leaderboard-name-msg" hidden></p>
+
+      <p class="leaderboard-sublabel">&#127942; BEST ACCURACY</p>
+      <ol id="leaderboardList" class="leaderboard-list"></ol>
+      <p id="leaderboardEmpty" class="leaderboard-empty" hidden>No scores yet &mdash; be the first on the board!</p>
+
+      <p class="leaderboard-sublabel leaderboard-sublabel-streak">&#128293; BEST STREAKS</p>
+      <ol id="streakLeaderboardList" class="leaderboard-list"></ol>
+      <p id="streakLeaderboardEmpty" class="leaderboard-empty" hidden>No streaks yet &mdash; be the first on the board!</p>
+    </div>
+  </section>
+
+  <div class="panel page-donate-row">
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="page-donate-link">
+      <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="page-donate-img">
+    </a>
+  </div>
+</div>
+
+
 
 <section class="panel intuition-seo" aria-labelledby="seoHeading">
   <h2 id="seoHeading">Train Your Intuition, One Round at a Time</h2>
@@ -402,6 +720,9 @@ body.ultra-low #cosmos{display:none}
 <a class="privacy-link" href="https://holisticloader.com/intuition-privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
 <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="Mute sound">&#128266;</button>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="auth.js"></script>
+
 <script>
 /* ===== gentle starfield backdrop (same technique as the rest of the site) ===== */
 (function(){
@@ -419,52 +740,182 @@ body.ultra-low #cosmos{display:none}
   document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(rafId)}else{last=performance.now();rafId=requestAnimationFrame(loop)}});
 })();
 
+/* ===== hamburger menu toggle (mobile + desktop) ===== */
+(function(){
+  const btn=document.getElementById('menuToggle');
+  const nav=document.getElementById('topTabs');
+  const dPanel=document.getElementById('menuToggleDesktopPanel');
+  if(!btn||!nav)return;
+  function closeMenu(){document.body.classList.remove('menu-open');btn.setAttribute('aria-expanded','false')}
+  function openMenu(){document.body.classList.add('menu-open');btn.setAttribute('aria-expanded','true')}
+  btn.addEventListener('click',e=>{e.stopPropagation();document.body.classList.contains('menu-open')?closeMenu():openMenu()});
+  nav.addEventListener('click',e=>{if(e.target.closest('a'))closeMenu()});
+  if(dPanel)dPanel.addEventListener('click',e=>{if(e.target.closest('a'))closeMenu()});
+  document.addEventListener('click',e=>{if(document.body.classList.contains('menu-open')&&!nav.contains(e.target)&&!btn.contains(e.target)&&!(dPanel&&dPanel.contains(e.target)))closeMenu()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+})();
+
+/* ===== "Contact" tab in the menu — reveals the email address on click ===== */
+(function(){
+  const btn=document.getElementById('contactTab');
+  const email=document.getElementById('contactEmail');
+  if(!btn||!email)return;
+  btn.addEventListener('click',()=>{
+    const showing=!email.hidden;
+    email.hidden=showing;
+    btn.setAttribute('aria-expanded',String(!showing));
+  });
+})();
+
+/* ===== "Contact" tab in the desktop hamburger dropdown — same behavior ===== */
+(function(){
+  const btn=document.getElementById('menuDesktopContactTab');
+  const email=document.getElementById('menuDesktopContactEmail');
+  if(!btn||!email)return;
+  btn.addEventListener('click',()=>{
+    const showing=!email.hidden;
+    email.hidden=showing;
+    btn.setAttribute('aria-expanded',String(!showing));
+  });
+})();
+
+/* ===== "i" info button — opens the today's-intuition-level info box ===== */
+(function(){
+  const btn=document.getElementById('meterInfoBtn');
+  const overlay=document.getElementById('meterInfoOverlay');
+  const closeBtn=document.getElementById('meterInfoClose');
+  if(!btn||!overlay||!closeBtn)return;
+  function openInfo(){overlay.hidden=false;btn.setAttribute('aria-expanded','true');closeBtn.focus()}
+  function closeInfo(){overlay.hidden=true;btn.setAttribute('aria-expanded','false');btn.focus()}
+  btn.addEventListener('click',openInfo);
+  closeBtn.addEventListener('click',closeInfo);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeInfo()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)closeInfo()});
+})();
+
 /* ===== keep the fixed header's height in sync so the title frame sits correctly ===== */
 (function(){
-  function syncNavH(){const nav=document.getElementById('topNav');const frame=document.querySelector('.h1-frame');if(nav)document.documentElement.style.setProperty('--navH',nav.getBoundingClientRect().height+'px');if(frame)document.documentElement.style.setProperty('--titleH',frame.getBoundingClientRect().height+'px')}
+  function syncNavH(){const nav=document.getElementById('topNav');const frame=document.querySelector('.h1-frame');const tabs=document.getElementById('topTabs');const meter=document.getElementById('floatMeter');if(nav)document.documentElement.style.setProperty('--navH',nav.getBoundingClientRect().height+'px');if(frame)document.documentElement.style.setProperty('--titleH',frame.getBoundingClientRect().height+'px');if(tabs){if(innerWidth>720){document.documentElement.style.setProperty('--tabsW',tabs.getBoundingClientRect().width+'px')}else{document.documentElement.style.removeProperty('--tabsW')}}if(meter){if(innerWidth<=720){document.documentElement.style.setProperty('--meterH',meter.getBoundingClientRect().height+'px')}else{document.documentElement.style.removeProperty('--meterH')}}}
   syncNavH();addEventListener('resize',syncNavH);addEventListener('orientationchange',()=>setTimeout(syncNavH,60));
   const brandLogo=document.getElementById('brandLogo');
   if(brandLogo){if(brandLogo.complete)syncNavH();else brandLogo.addEventListener('load',syncNavH)}
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncNavH);
   new ResizeObserver(syncNavH).observe(document.getElementById('topNav'));
   new ResizeObserver(syncNavH).observe(document.querySelector('.h1-frame'));
+  new ResizeObserver(syncNavH).observe(document.getElementById('topTabs'));
+  const floatMeterEl=document.getElementById('floatMeter');
+  if(floatMeterEl)new ResizeObserver(syncNavH).observe(floatMeterEl);
 })();
 
-/* ===== Intuition games: Guess the Tile, Guess the Side, Guess the Direction ===== */
-/* Guess the Tile and Guess the Side share one SCORE, one daily intuition meter, and one daily progress graph. */
+/* ===== desktop: align the floating meter's top edge with the top of the
+   game-card row (.triple-wrap), instead of it being vertically centered on
+   the viewport. Mobile keeps its own separate top-of-page positioning. ===== */
+(function(){
+  const meter=document.getElementById('floatMeter');
+  const anchor=document.querySelector('.triple-wrap');
+  if(!meter||!anchor) return;
+  function syncMeterTop(){
+    if(innerWidth<=720){ meter.style.top=''; meter.style.transform=''; return; }
+    const rect=anchor.getBoundingClientRect();
+    if(rect.width===0 && rect.height===0) return;
+    /* rect.top is viewport-relative (depends on current scroll position),
+       but this element is position:fixed, so its "top" must be a constant
+       distance from the top of the viewport regardless of scroll. Adding
+       scrollY converts it to the anchor's scroll-independent document
+       offset, so re-syncing (on resize/orientationchange/etc.) gives the
+       same correct value no matter where the page happens to be scrolled
+       when it fires — otherwise the meter could end up pinned above the
+       viewport and appear to vanish. */
+    meter.style.top=Math.round(rect.top+window.scrollY)+'px';
+    meter.style.transform='none';
+  }
+  function trySync(attemptsLeft){
+    syncMeterTop();
+    if(attemptsLeft>0) setTimeout(()=>trySync(attemptsLeft-1),150);
+  }
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>trySync(10));
+  else trySync(10);
+  addEventListener('load',()=>trySync(5));
+  addEventListener('resize',syncMeterTop);
+  addEventListener('orientationchange',()=>setTimeout(syncMeterTop,60));
+  if(window.ResizeObserver) new ResizeObserver(syncMeterTop).observe(anchor);
+})();
+
+/* ===== Intuition games: Guess the Tile, Place a Tile, Guess the Side, Guess the Direction ===== */
+/* Guess the Tile, Place a Tile, and Guess the Side share one SCORE, one daily intuition meter, and one daily progress graph. */
 (function(){
   const $=s=>document.querySelector(s);
 
   /* ---------- shared score / meter / graph (Tile + Side) ---------- */
   const scoreCorrectEl=$('#scoreCorrect'),scoreTotalEl=$('#scoreTotal'),scoreReset=$('#scoreReset');
-  const logProgressBtn=$('#logProgressBtn');
+  // (logProgressBtn removed — progress now logs automatically, see recordGuess/logProgress below)
   const meterFill=$('#meterFill'),meterLevel=$('#meterLevel'),meterDesc=$('#meterDesc'),meterSub=$('#meterSub');
   const meterMarker=$('#meterMarker'),meterMarkerLabel=$('#meterMarkerLabel');
+  const floatMeterFill=$('#floatMeterFill'),floatMeterMarker=$('#floatMeterMarker');
+  const floatScoreCorrectEl=$('#floatScoreCorrect'),floatScoreTotalEl=$('#floatScoreTotal');
+  const floatScorePercentEl=$('#floatScorePercent'),floatMeterReset=$('#floatMeterReset');
   let scoreCorrect=0,scoreTotal=0,AC;
+
+  function syncScoreDisplay(){
+    scoreCorrectEl.textContent=scoreCorrect;
+    scoreTotalEl.textContent=scoreTotal;
+    if(floatScoreCorrectEl)floatScoreCorrectEl.textContent=scoreCorrect;
+    if(floatScoreTotalEl)floatScoreTotalEl.textContent=scoreTotal;
+    if(floatScorePercentEl)floatScorePercentEl.textContent=scoreTotal>0?Math.round(scoreCorrect/scoreTotal*100):0;
+  }
 
   /* ===== streak tracker (current session streak + all-time best, remembered locally) ===== */
   const BEST_STREAK_KEY='intuitionBestStreak';
-  const streakCurrentEl=$('#streakCurrent'),streakBestEl=$('#streakBest');
+  const streakCurrentEl=$('#streakCurrent'),streakBestEl=$('#streakBest'),floatStreakEl=$('#floatStreakCurrent');
   let currentStreak=0;
   let bestStreak=0;
   try{bestStreak=parseInt(localStorage.getItem(BEST_STREAK_KEY),10)||0;}catch(e){bestStreak=0;}
 
   function updateStreakDisplay(){
-    streakCurrentEl.textContent=currentStreak;
+    if(dayStats.date!==todayKey())dayStats=loadDayStats();
+    const todayStreak=dayStats.bestStreak||0;
+    streakCurrentEl.textContent=todayStreak;
     streakBestEl.textContent=bestStreak;
+    if(floatStreakEl)floatStreakEl.textContent=todayStreak;
   }
 
   function registerStreak(correct){
+    if(dayStats.date!==todayKey())dayStats=loadDayStats();
     if(correct){
       currentStreak++;
       if(currentStreak>bestStreak){
         bestStreak=currentStreak;
         try{localStorage.setItem(BEST_STREAK_KEY,String(bestStreak));}catch(e){}
+        saveCloudProgress();
+      }
+      if(currentStreak>(dayStats.bestStreak||0)){
+        dayStats.bestStreak=currentStreak;
+        saveDayStats(dayStats);
+        recordDailyStreak(dayStats.bestStreak);
+        saveCloudProgress();
       }
     }else{
       currentStreak=0;
     }
     updateStreakDisplay();
+  }
+
+  /* ===== daily best-streak log (highest streak reached each day, feeds the streak chart) ===== */
+  const STREAK_LOG_KEY='intuitionDailyStreakLog';
+  function loadStreakLog(){
+    try{return JSON.parse(localStorage.getItem(STREAK_LOG_KEY))||{};}catch(e){return{};}
+  }
+  function saveStreakLog(log){
+    try{localStorage.setItem(STREAK_LOG_KEY,JSON.stringify(log));}catch(e){}
+  }
+  function recordDailyStreak(value){
+    const log=loadStreakLog();
+    const key=todayKey();
+    if(!log[key]||value>log[key]){
+      log[key]=value;
+      saveStreakLog(log);
+    }
+    drawStreakChart();
   }
 
   /* ===== sound toggle (remembered locally) ===== */
@@ -485,23 +936,18 @@ body.ultra-low #cosmos{display:none}
   });
   updateSoundToggleUI();
 
-  function updateLogButtonState(){
-    logProgressBtn.disabled=scoreTotal<=0;
-  }
-
   function resetScore(){
     scoreCorrect=0;
     scoreTotal=0;
-    currentStreak=0;
     updateStreakDisplay();
-    scoreCorrectEl.textContent=scoreCorrect;
-    scoreTotalEl.textContent=scoreTotal;
-    updateLogButtonState();
+    syncScoreDisplay();
   }
   scoreReset.addEventListener('click',resetScore);
+  if(floatMeterReset)floatMeterReset.addEventListener('click',resetScore);
 
   /* ===== daily progress log (stored locally, one averaged value per day) ===== */
   const PROGRESS_KEY='intuitionCombinedProgressLog';
+  const NEXT_PROGRESS_KEY='intuitionNextProgressLog';
 
   function todayKey(){
     const d=new Date();
@@ -513,6 +959,357 @@ body.ultra-low #cosmos{display:none}
   function saveProgressLog(log){
     try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(log));}catch(e){}
   }
+
+  /* ===== cloud sync (Supabase) — results & graph follow the logged-in
+     account instead of just this browser. Requires auth.js to be loaded
+     (defines `sb` and `currentUser`); everything below is a no-op for
+     guests, so local-only behavior is unchanged when logged out. */
+  const CLOUD_TABLE='intuition_progress';
+  let _cloudSyncedUserId=null;   // guards against re-fetching every time
+  let _cloudSaveTimer=null;
+
+  function saveCloudProgress(){
+    if(typeof currentUser==='undefined'||!currentUser)return;
+    clearTimeout(_cloudSaveTimer);
+    _cloudSaveTimer=setTimeout(async()=>{
+      try{
+        await sb.from(CLOUD_TABLE).upsert({
+          user_id:currentUser.id,
+          progress_log:loadProgressLog(),
+          day_stats:dayStats,
+          best_streak:bestStreak,
+          streak_log:loadStreakLog(),
+          updated_at:new Date().toISOString()
+        });
+      }catch(e){console.error('saveCloudProgress error:',e);}
+    },800);
+  }
+
+  async function syncWithCloud(){
+    if(typeof currentUser==='undefined'||!currentUser){_cloudSyncedUserId=null;return;}
+    if(_cloudSyncedUserId===currentUser.id)return; // already synced this login
+    _cloudSyncedUserId=currentUser.id;
+
+    let cloud=null;
+    try{
+      const{data,error}=await sb.from(CLOUD_TABLE)
+        .select('progress_log, day_stats, best_streak, streak_log')
+        .eq('user_id',currentUser.id)
+        .maybeSingle();
+      if(error)throw error;
+      cloud=data;
+    }catch(e){console.error('syncWithCloud load error:',e);return;}
+
+    if(cloud){
+      // Account already has saved results in the cloud — that becomes
+      // the source of truth for this browser.
+      if(cloud.progress_log)saveProgressLog(cloud.progress_log);
+      if(cloud.day_stats&&cloud.day_stats.date===todayKey()){
+        dayStats=cloud.day_stats;
+        saveDayStats(dayStats);
+      }
+      if(typeof cloud.best_streak==='number'&&cloud.best_streak>bestStreak){
+        bestStreak=cloud.best_streak;
+        try{localStorage.setItem(BEST_STREAK_KEY,String(bestStreak));}catch(e){}
+      }
+      if(cloud.streak_log){
+        // merge day-by-day, keeping whichever value (local vs cloud) is higher
+        const local=loadStreakLog();
+        const merged={...local};
+        Object.keys(cloud.streak_log).forEach(k=>{
+          merged[k]=Math.max(merged[k]||0,cloud.streak_log[k]);
+        });
+        saveStreakLog(merged);
+      }
+    }else{
+      // First time this account logs in on any device — upload whatever
+      // guest results already exist in this browser.
+      saveCloudProgress();
+    }
+    drawProgressChart();
+    drawStreakChart();
+    updateMeter();
+    updateStreakDisplay();
+  }
+
+  /* ===== gate the progress graph behind login — no graph is rendered
+     or visible in the DOM until `currentUser` (from auth.js) is set. ===== */
+  const progressLockedEl=$('#progressLocked'),progressUnlockedEl=$('#progressUnlocked'),progressLoginBtn=$('#progressLoginBtn');
+  function isLoggedIn(){return typeof currentUser!=='undefined'&&!!currentUser;}
+  function updateProgressAccess(){
+    if(!progressLockedEl||!progressUnlockedEl)return;
+    const loggedIn=isLoggedIn();
+    progressLockedEl.hidden=loggedIn;
+    progressUnlockedEl.hidden=!loggedIn;
+    if(loggedIn){drawProgressChart();drawStreakChart();}
+  }
+  if(progressLoginBtn){
+    progressLoginBtn.addEventListener('click',()=>{
+      // Defers to the site's shared account icon (#accountBtn) so this
+      // button opens exactly the same view as clicking it — logged out
+      // that's the login modal (see accountBtn.onclick in auth.js).
+      // NOTE: don't use a generic '#authRoot button' selector here — it
+      // matches the hidden #registerBtn (display:none but still in the
+      // DOM, and it comes before #accountBtn in the markup), which opens
+      // the premium modal instead of the login modal.
+      const authTrigger=document.querySelector('#accountBtn');
+      if(authTrigger)authTrigger.click();
+    });
+  }
+  updateProgressAccess();
+
+  if(typeof onPremiumStatusChange==='function')onPremiumStatusChange(()=>{updateProgressAccess();syncWithCloud();updateLeaderboardAccess();});
+
+  /* ===== Intuition Leaderboard (Supabase) — one row per user, only the
+     player's best score is kept; requires auth.js (`sb` + `currentUser`). ===== */
+  const HIGHSCORE_TABLE='intuition_highscores';
+  const lbLockedEl=$('#leaderboardLocked'),lbUnlockedEl=$('#leaderboardUnlocked');
+  const lbLoginBtn=$('#leaderboardLoginBtn');
+  const lbNameForm=$('#leaderboardNameForm'),playerNameInput=$('#playerName'),saveNameBtn=$('#saveNameBtn');
+  const lbNameMsg=$('#leaderboardNameMsg');
+  const lbGreetingEl=$('#leaderboardGreeting'),lbGreetingHintEl=$('#leaderboardGreetingHint');
+  const lbListEl=$('#leaderboardList'),lbEmptyEl=$('#leaderboardEmpty');
+  const streakLbListEl=$('#streakLeaderboardList'),streakLbEmptyEl=$('#streakLeaderboardEmpty');
+
+  let _lbPlayerName=null; // null = not fetched yet, '' = fetched but no name set
+
+  if(lbLoginBtn){
+    lbLoginBtn.addEventListener('click',()=>{
+      // same shared login modal used by the progress panel's login button
+      const authTrigger=document.querySelector('#accountBtn');
+      if(authTrigger)authTrigger.click();
+    });
+  }
+
+  function showLbNameMsg(text){
+    if(!lbNameMsg)return;
+    lbNameMsg.textContent=text;
+    lbNameMsg.hidden=false;
+  }
+
+  async function fetchPlayerName(){
+    if(!isLoggedIn())return null;
+    try{
+      const{data,error}=await sb.from('profiles')
+        .select('display_name')
+        .eq('user_id',currentUser.id)
+        .maybeSingle();
+      if(error)throw error;
+      _lbPlayerName=(data&&data.display_name)?data.display_name:'';
+    }catch(e){
+      console.error('fetchPlayerName error:',e);
+      // Don't blank out a name we already know about just because this
+      // particular fetch hiccuped — that would wrongly reopen the
+      // "choose a name" box even though a name is really saved.
+      if(!_lbPlayerName)_lbPlayerName='';
+    }
+    return _lbPlayerName;
+  }
+
+  function updateNameFormVisibility(){
+    if(!lbNameForm)return;
+    const hasName=isLoggedIn()&&!!_lbPlayerName;
+    // Once a name is saved, the input never reappears — changing it now
+    // only happens via the account icon's "Choose a display name" field.
+    lbNameForm.hidden=!(isLoggedIn()&&!_lbPlayerName);
+    if(lbGreetingEl)lbGreetingEl.hidden=!hasName;
+    if(lbGreetingHintEl)lbGreetingHintEl.hidden=!hasName;
+    if(hasName&&lbGreetingEl)lbGreetingEl.textContent='Hello, '+_lbPlayerName;
+  }
+
+  /* Keeps the name stored in the highscore table in sync with
+     profiles.display_name, so changing your name via the account icon
+     (anywhere on the site) rewrites it on the leaderboard too — even if
+     your score itself doesn't change. Always compares fresh against the
+     database (no local "already synced" cache) so a rename is never
+     silently missed, e.g. on the next login. */
+  async function syncPlayerNameToHighscore(){
+    if(!isLoggedIn()||!_lbPlayerName)return;
+    try{
+      const{data:existing,error:fetchErr}=await sb.from(HIGHSCORE_TABLE)
+        .select('player_name')
+        .eq('user_id',currentUser.id)
+        .maybeSingle();
+      if(fetchErr)throw fetchErr;
+      if(!existing)return; // no row yet — nothing to rename
+      if(existing.player_name===_lbPlayerName)return; // already matches
+      const{error:updateErr}=await sb.from(HIGHSCORE_TABLE)
+        .update({player_name:_lbPlayerName})
+        .eq('user_id',currentUser.id);
+      if(updateErr)throw updateErr;
+      loadLeaderboard();
+      loadStreakLeaderboard();
+    }catch(e){console.error('syncPlayerNameToHighscore error:',e);}
+  }
+
+  async function saveName(){
+    if(!isLoggedIn()||!saveNameBtn)return;
+    const raw=(playerNameInput&&playerNameInput.value)||'';
+    const name=raw.trim().slice(0,20);
+    if(!name){showLbNameMsg('Please enter a name.');return;}
+    saveNameBtn.disabled=true;
+    try{
+      const{error}=await sb.from('profiles')
+        .update({display_name:name})
+        .eq('user_id',currentUser.id);
+      if(error)throw error;
+      _lbPlayerName=name;
+      updateNameFormVisibility();
+      showLbNameMsg('Name saved!');
+      await syncPlayerNameToHighscore(); // rewrite it on any existing highscore row right away
+      loadLeaderboard();
+      loadStreakLeaderboard();
+      scheduleAutoSubmitHighscore(); // now that a name exists, sync today's score
+    }catch(e){
+      console.error('saveName error:',e);
+      showLbNameMsg('Could not save name \u2014 try again.');
+    }finally{
+      saveNameBtn.disabled=false;
+    }
+  }
+  if(saveNameBtn)saveNameBtn.addEventListener('click',saveName);
+
+  async function submitHighscore(){
+    if(!isLoggedIn())return;
+    if(dayStats.date!==todayKey())dayStats=loadDayStats();
+    if(dayStats.total<20)return;
+
+    const score=Math.round((dayStats.correct/dayStats.total)*100);
+
+    if(_lbPlayerName===null)await fetchPlayerName();
+    if(!_lbPlayerName){
+      updateNameFormVisibility();
+      return;
+    }
+
+    try{
+      const{data:existing,error:fetchErr}=await sb.from(HIGHSCORE_TABLE)
+        .select('score,best_streak')
+        .eq('user_id',currentUser.id)
+        .maybeSingle();
+      if(fetchErr)throw fetchErr;
+
+      if(!existing){
+        const{error:insertErr}=await sb.from(HIGHSCORE_TABLE).insert({
+          user_id:currentUser.id,
+          player_name:_lbPlayerName,
+          score:score,
+          best_streak:bestStreak,
+          achieved_at:new Date().toISOString()
+        });
+        if(insertErr)throw insertErr;
+      }else if(score>existing.score){
+        const{error:updateErr}=await sb.from(HIGHSCORE_TABLE).update({
+          player_name:_lbPlayerName,
+          score:score,
+          best_streak:Math.max(existing.best_streak||0,bestStreak),
+          achieved_at:new Date().toISOString()
+        }).eq('user_id',currentUser.id);
+        if(updateErr)throw updateErr;
+      }
+      loadLeaderboard();
+      loadStreakLeaderboard();
+    }catch(e){
+      console.error('submitHighscore error:',e);
+    }
+  }
+  async function loadLeaderboard(){
+    if(!lbListEl)return;
+    try{
+      const{data,error}=await sb.from(HIGHSCORE_TABLE)
+        .select('*')
+        .order('score',{ascending:false})
+        .limit(20);
+      if(error)throw error;
+      renderLeaderboard(data||[]);
+    }catch(e){console.error('loadLeaderboard error:',e);}
+  }
+
+  function renderLeaderboard(rows){
+    if(!lbListEl)return;
+    lbListEl.innerHTML='';
+    if(!rows.length){
+      if(lbEmptyEl)lbEmptyEl.hidden=false;
+      return;
+    }
+    if(lbEmptyEl)lbEmptyEl.hidden=true;
+    const medals=['\u{1F947}','\u{1F948}','\u{1F949}'];
+    rows.forEach((row,i)=>{
+      const rank=i+1;
+      const isMe=isLoggedIn()&&row.user_id===currentUser.id;
+      const li=document.createElement('li');
+      li.className='leaderboard-row'+(isMe?' lb-me':'');
+      let prefix='';
+      if(isMe)prefix+='\u2B50 ';
+      if(medals[i])prefix+=medals[i]+' ';
+      li.textContent=`${prefix}${rank}. ${row.player_name||'Player'} - ${row.score}%`;
+      lbListEl.appendChild(li);
+    });
+  }
+
+  /* ===== Best Streaks leaderboard — same table, same panel, sorted by
+     best_streak instead of score. Mirrors loadLeaderboard/renderLeaderboard
+     exactly so it always matches the existing look (glassmorphism, gold
+     highlight for the current user, medal system). ===== */
+  async function loadStreakLeaderboard(){
+    if(!streakLbListEl)return;
+    try{
+      const{data,error}=await sb.from(HIGHSCORE_TABLE)
+        .select('*')
+        .order('best_streak',{ascending:false})
+        .limit(20);
+      if(error)throw error;
+      renderStreakLeaderboard(data||[]);
+    }catch(e){console.error('loadStreakLeaderboard error:',e);}
+  }
+
+  function renderStreakLeaderboard(rows){
+    if(!streakLbListEl)return;
+    streakLbListEl.innerHTML='';
+    if(!rows.length){
+      if(streakLbEmptyEl)streakLbEmptyEl.hidden=false;
+      return;
+    }
+    if(streakLbEmptyEl)streakLbEmptyEl.hidden=true;
+    const medals=['\u{1F947}','\u{1F948}','\u{1F949}'];
+    rows.forEach((row,i)=>{
+      const rank=i+1;
+      const isMe=isLoggedIn()&&row.user_id===currentUser.id;
+      const li=document.createElement('li');
+      li.className='leaderboard-row'+(isMe?' lb-me':'');
+      let prefix='';
+      if(isMe)prefix+='\u2B50 ';
+      if(medals[i])prefix+=medals[i]+' ';
+      li.textContent=`${prefix}${rank}. ${row.player_name||'Player'} - ${row.best_streak||0}`;
+      streakLbListEl.appendChild(li);
+    });
+  }
+
+  async function updateLeaderboardAccess(){
+    if(!lbLockedEl||!lbUnlockedEl)return;
+    const loggedIn=isLoggedIn();
+    lbLockedEl.hidden=loggedIn;
+    lbUnlockedEl.hidden=!loggedIn;
+    if(loggedIn){
+      await fetchPlayerName();
+      console.log('[leaderboard] logged in, player name from profiles.display_name:',JSON.stringify(_lbPlayerName));
+      updateNameFormVisibility();
+      await syncPlayerNameToHighscore();
+    }else{
+      _lbPlayerName=null;
+    }
+    loadLeaderboard();
+    loadStreakLeaderboard();
+  }
+  updateLeaderboardAccess();
+  // Safety net: on some connections the Supabase session takes a beat
+  // longer to restore than this script's very first pass (which runs
+  // before auth.js has necessarily finished checking for an existing
+  // session). Re-checking shortly after catches that race so a name
+  // that's really saved doesn't get stuck showing the "choose a name"
+  // box on login. Cheap and safe to re-run — it just re-syncs state.
+  setTimeout(updateLeaderboardAccess,1500);
+
   function logProgress(){
     if(scoreTotal<=0)return;
     const percent=(scoreCorrect/scoreTotal)*100;
@@ -526,8 +1323,32 @@ body.ultra-low #cosmos{display:none}
     log[key]=entry;
     saveProgressLog(log);
     drawProgressChart();
+    saveCloudProgress();
   }
-  logProgressBtn.addEventListener('click',logProgress);
+
+  /* Progress now logs itself automatically — no manual button. A short
+     debounce after each counted guess means one log entry per natural
+     "session" of play (same shape the old manual button produced),
+     instead of writing on every single guess. */
+  let _autoLogTimer=null;
+  function scheduleAutoLog(){
+    clearTimeout(_autoLogTimer);
+    _autoLogTimer=setTimeout(logProgress,1500);
+  }
+
+  /* Auto-submits today's score to the highscore table a beat after the
+     last guess, so logged-in players with a leaderboard name never have
+     to press "Submit Today's Score" manually. Debounced so a burst of
+     guesses only triggers one write, not one per guess. submitHighscore()
+     itself already no-ops below 20 attempts and without a saved name. */
+  let _hsAutoSubmitTimer=null;
+  function scheduleAutoSubmitHighscore(){
+    if(!isLoggedIn())return;
+    clearTimeout(_hsAutoSubmitTimer);
+    _hsAutoSubmitTimer=setTimeout(()=>{
+      if(dayStats.total>=20&&_lbPlayerName)submitHighscore();
+    },1500);
+  }
 
   function drawProgressChart(){
     const canvas=$('#progressChart'),emptyEl=$('#progressEmpty');
@@ -628,8 +1449,212 @@ body.ultra-low #cosmos{display:none}
     });
   }
 
+  /* ===== separate daily-progress chart for What Comes Next — kept out of
+     the shared (turquoise) progress log since this game isn't counted
+     toward the combined meter/graph above. Same log shape as
+     PROGRESS_KEY ({sum,count} per day), but the baseline is always the
+     fixed 20% chance level instead of a per-day computed baseline. ===== */
+  function loadNextProgressLog(){
+    try{return JSON.parse(localStorage.getItem(NEXT_PROGRESS_KEY))||{};}catch(e){return{};}
+  }
+  function saveNextProgressLog(log){
+    try{localStorage.setItem(NEXT_PROGRESS_KEY,JSON.stringify(log));}catch(e){}
+  }
+  function logNextProgress(){
+    if(nextTotalCount<=0)return;
+    const percent=(nextCorrectCount/nextTotalCount)*100;
+    const log=loadNextProgressLog();
+    const key=todayKey();
+    const entry=log[key]||{sum:0,count:0};
+    entry.sum+=percent;
+    entry.count+=1;
+    log[key]=entry;
+    saveNextProgressLog(log);
+    drawNextChart();
+  }
+  let _nextAutoLogTimer=null;
+  function scheduleNextAutoLog(){
+    clearTimeout(_nextAutoLogTimer);
+    _nextAutoLogTimer=setTimeout(logNextProgress,1500);
+  }
+
+  function drawNextChart(){
+    const canvas=$('#nextProgressChart'),emptyEl=$('#nextProgressEmpty');
+    if(!canvas)return;
+    const log=loadNextProgressLog();
+    const days=Object.keys(log).sort();
+    if(days.length===0){
+      canvas.style.display='none';
+      if(emptyEl)emptyEl.style.display='block';
+      return;
+    }
+    canvas.style.display='block';
+    if(emptyEl)emptyEl.style.display='none';
+
+    const recentDays=days.slice(-14);
+    const values=recentDays.map(k=>{const e=log[k];return e.count?e.sum/e.count:0;});
+    const NEXT_BASELINE_PCT=20;
+
+    const dpr=window.devicePixelRatio||1;
+    const cssW=canvas.clientWidth||canvas.parentElement.clientWidth||600;
+    const cssH=180;
+    canvas.width=cssW*dpr;
+    canvas.height=cssH*dpr;
+    const ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+
+    const padL=34,padR=14,padT=14,padB=26;
+    const plotW=cssW-padL-padR,plotH=cssH-padT-padB;
+
+    ctx.strokeStyle='rgba(255,255,255,.14)';
+    ctx.fillStyle='#cfc3db';
+    ctx.font='10px Georgia, serif';
+    ctx.lineWidth=1;
+    [0,50,100].forEach(v=>{
+      const y=padT+plotH-(v/100)*plotH;
+      ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+plotW,y);ctx.stroke();
+      ctx.textAlign='right';ctx.textBaseline='middle';
+      ctx.fillText(v+'%',padL-6,y);
+    });
+
+    const n=values.length;
+    const stepX=n>1?plotW/(n-1):0;
+    const pts=values.map((v,i)=>({
+      x:padL+(n>1?i*stepX:plotW/2),
+      y:padT+plotH-(Math.max(0,Math.min(100,v))/100)*plotH
+    }));
+    const baseY=padT+plotH-(NEXT_BASELINE_PCT/100)*plotH;
+
+    if(n>1){
+      const grad=ctx.createLinearGradient(0,padT,0,padT+plotH);
+      grad.addColorStop(0,'rgba(201,168,255,.35)');
+      grad.addColorStop(1,'rgba(201,168,255,0)');
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x,padT+plotH);
+      pts.forEach(p=>ctx.lineTo(p.x,p.y));
+      ctx.lineTo(pts[n-1].x,padT+plotH);
+      ctx.closePath();
+      ctx.fillStyle=grad;
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle='rgba(207,195,219,.55)';
+    ctx.lineWidth=1.6;
+    ctx.moveTo(padL,baseY);
+    ctx.lineTo(padL+plotW,baseY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.strokeStyle='#c9a8ff';
+    ctx.lineWidth=2.4;
+    ctx.lineJoin='round';
+    pts.forEach((p,i)=>{i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);});
+    ctx.stroke();
+
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+    const labelEvery=Math.max(1,Math.ceil(n/8));
+    pts.forEach((p,i)=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,3.2,0,7);
+      ctx.fillStyle=i===n-1?'#c9a8ff':'#f3efe4';
+      ctx.fill();
+      if(n<=8||i%labelEvery===0||i===n-1){
+        ctx.fillStyle='#cfc3db';
+        ctx.font='9.5px Georgia, serif';
+        ctx.fillText(recentDays[i].slice(5).replace('-','/'),p.x,padT+plotH+6);
+      }
+    });
+  }
+
+  function drawStreakChart(){
+    const canvas=$('#streakChart'),emptyEl=$('#streakEmpty');
+    if(!canvas)return;
+    const log=loadStreakLog();
+    const days=Object.keys(log).sort();
+    if(days.length===0){
+      canvas.style.display='none';
+      if(emptyEl)emptyEl.style.display='block';
+      return;
+    }
+    canvas.style.display='block';
+    if(emptyEl)emptyEl.style.display='none';
+
+    const recentDays=days.slice(-14);
+    const values=recentDays.map(k=>log[k]||0);
+    const maxVal=Math.max(5,...values); // keep a sensible floor so a couple of short bars don't look huge
+
+    const dpr=window.devicePixelRatio||1;
+    const cssW=canvas.clientWidth||canvas.parentElement.clientWidth||600;
+    const cssH=180;
+    canvas.width=cssW*dpr;
+    canvas.height=cssH*dpr;
+    const ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+
+    const padL=28,padR=14,padT=14,padB=26;
+    const plotW=cssW-padL-padR,plotH=cssH-padT-padB;
+
+    // gridlines at 0 / half / max
+    const gridVals=[0,Math.round(maxVal/2),maxVal];
+    ctx.strokeStyle='rgba(255,255,255,.14)';
+    ctx.fillStyle='#cfc3db';
+    ctx.font='10px Georgia, serif';
+    ctx.lineWidth=1;
+    gridVals.forEach(v=>{
+      const y=padT+plotH-(v/maxVal)*plotH;
+      ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+plotW,y);ctx.stroke();
+      ctx.textAlign='right';ctx.textBaseline='middle';
+      ctx.fillText(String(v),padL-6,y);
+    });
+
+    const n=values.length;
+    const slot=plotW/n;
+    const barW=Math.max(6,Math.min(34,slot*0.55));
+
+    const barGrad=ctx.createLinearGradient(0,padT,0,padT+plotH);
+    barGrad.addColorStop(0,'#ffd98a');
+    barGrad.addColorStop(1,'#c9a8ff');
+
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+    const labelEvery=Math.max(1,Math.ceil(n/8));
+    values.forEach((v,i)=>{
+      const cx=padL+slot*i+slot/2;
+      const barH=(Math.max(0,v)/maxVal)*plotH;
+      const y=padT+plotH-barH;
+      ctx.fillStyle=barGrad;
+      const r=Math.min(5,barW/2);
+      ctx.beginPath();
+      ctx.moveTo(cx-barW/2,padT+plotH);
+      ctx.lineTo(cx-barW/2,y+r);
+      ctx.arcTo(cx-barW/2,y,cx-barW/2+r,y,r);
+      ctx.lineTo(cx+barW/2-r,y);
+      ctx.arcTo(cx+barW/2,y,cx+barW/2,y+r,r);
+      ctx.lineTo(cx+barW/2,padT+plotH);
+      ctx.closePath();
+      ctx.fill();
+
+      if(v>0){
+        ctx.fillStyle=i===n-1?'#ffd98a':'#f3efe4';
+        ctx.font='10px Georgia, serif';
+        ctx.fillText(String(v),cx,Math.max(padT,y-13));
+      }
+      if(n<=8||i%labelEvery===0||i===n-1){
+        ctx.fillStyle='#cfc3db';
+        ctx.font='9.5px Georgia, serif';
+        ctx.fillText(recentDays[i].slice(5).replace('-','/'),cx,padT+plotH+6);
+      }
+    });
+  }
+
   let _chartResizeT;
-  addEventListener('resize',()=>{clearTimeout(_chartResizeT);_chartResizeT=setTimeout(drawProgressChart,150)});
+  addEventListener('resize',()=>{clearTimeout(_chartResizeT);_chartResizeT=setTimeout(()=>{drawProgressChart();drawStreakChart();drawNextChart();},150)});
 
   /* ===== today's live intuition meter (correct vs the 50% odds) ===== */
   const DAY_STATS_KEY='intuitionCombinedDayStats';
@@ -638,9 +1663,9 @@ body.ultra-low #cosmos{display:none}
   function loadDayStats(){
     try{
       const raw=JSON.parse(localStorage.getItem(DAY_STATS_KEY));
-      if(raw&&raw.date===todayKey())return {chanceSum:0,...raw};
+      if(raw&&raw.date===todayKey())return {chanceSum:0,bestStreak:0,...raw};
     }catch(e){}
-    return {date:todayKey(),correct:0,total:0,chanceSum:0};
+    return {date:todayKey(),correct:0,total:0,chanceSum:0,bestStreak:0};
   }
   function saveDayStats(stats){
     try{localStorage.setItem(DAY_STATS_KEY,JSON.stringify(stats));}catch(e){}
@@ -668,27 +1693,37 @@ body.ultra-low #cosmos{display:none}
       meterMarker.style.left=Math.max(0,Math.min(100,baseline))+'%';
       meterMarkerLabel.textContent=`odds: ${baseline}%`;
     }
+    if(floatMeterFill)floatMeterFill.style.setProperty('--pct',Math.max(0,Math.min(100,percent)));
+    if(floatMeterMarker)floatMeterMarker.style.setProperty('--baseline',Math.max(0,Math.min(100,baseline)));
     meterLevel.textContent=lvl.label;
     meterDesc.textContent=lvl.desc;
     meterSub.textContent=total?`${percent}% correct today over ${total} guess${total===1?'':'es'} \u2014 pure chance would be about ${baseline}%`:'No guesses logged today yet';
   }
 
-  function recordGuess(correct,chance){
+  function recordGuess(correct,chance,opts){
     if(typeof chance!=='number')chance=.5;
-    scoreTotal++;
-    if(dayStats.date!==todayKey())dayStats=loadDayStats();
-    dayStats.total++;
-    dayStats.chanceSum=(dayStats.chanceSum||0)+chance;
-    if(correct){
-      scoreCorrect++;
-      dayStats.correct++;
+    // opts.countsForStats=false lets a mode (e.g. What Comes Next) give
+    // feedback/streak without feeding the meter, dayStats, or the
+    // progress graph (logProgress reads scoreCorrect/scoreTotal, and the
+    // meter reads dayStats — both stay untouched when this is false).
+    const countsForStats=!opts||opts.countsForStats!==false;
+    if(countsForStats){
+      scoreTotal++;
+      if(dayStats.date!==todayKey())dayStats=loadDayStats();
+      dayStats.total++;
+      dayStats.chanceSum=(dayStats.chanceSum||0)+chance;
+      if(correct){
+        scoreCorrect++;
+        dayStats.correct++;
+      }
+      saveDayStats(dayStats);
+      updateMeter();
+      syncScoreDisplay();
+      scheduleAutoLog();
+      saveCloudProgress();
+      scheduleAutoSubmitHighscore();
     }
-    saveDayStats(dayStats);
-    updateMeter();
     registerStreak(correct);
-    scoreCorrectEl.textContent=scoreCorrect;
-    scoreTotalEl.textContent=scoreTotal;
-    updateLogButtonState();
     if(navigator.vibrate){
       try{navigator.vibrate(correct?45:[30,50,30]);}catch(e){}
     }
@@ -775,6 +1810,128 @@ body.ultra-low #cosmos{display:none}
   optA.addEventListener('click',()=>chooseTile('A'));
   optB.addEventListener('click',()=>chooseTile('B'));
 
+  /* ---------- Place a Tile ---------- */
+  /* Images come from images/instruments/ (not images/instruments2/ like
+     Guess the Tile above) — same key list, since that folder also has
+     one instruments-KEY.png per key alongside its two unrelated
+     brick1.png/brick2.png tile-style preview thumbnails (excluded). */
+  function placeTileSrc(key){return `images/instruments/instruments-${key}.png`}
+  const placeStage=$('#placeStage'),placeImg=$('#placeImg'),placeLid=$('#placeLid'),placeArrow=$('#placeArrow');
+  const placeFeedback=$('#placeFeedback'),placeOptionsRow=$('#placeOptionsRow'),placeActionBtn=$('#placeActionBtn');
+  const placeOptA=$('#placeOptA'),placeOptB=$('#placeOptB'),placeOptAImg=$('#placeOptAImg'),placeOptBImg=$('#placeOptBImg');
+  let placePhase='idle'; // idle -> placed (choose a tile) -> swipe (drag the lid) -> revealed
+  let placeCorrectSide=null,placeChosenSide=null;
+  let placeDragging=false,placeDragPointerId=null,placeDragStartY=0,placeDragCurrentY=0,placeStageH=0;
+
+  placeLid.src=tileSVG(null); // same solid fill as the other games' blank/mystery tile — set once, never changes
+  placeImg.src=tileSVG(null);
+
+  function resetPlaceLid(){
+    placeLid.style.transition='none';
+    placeLid.style.transform='translateY(0)';
+    placeLid.style.opacity='1';
+    void placeLid.offsetWidth; /* force reflow so the next transition is picked up */
+    placeLid.style.transition='';
+  }
+
+  function newRoundPlace(){
+    placePhase='idle';
+    placeChosenSide=null;
+    placeFeedback.textContent='\u00A0';
+    placeFeedback.className='feedback';
+    placeOptionsRow.hidden=true;
+    placeOptA.disabled=placeOptB.disabled=false;
+    placeArrow.hidden=true;
+    placeImg.src=tileSVG(null);
+    resetPlaceLid();
+    placeActionBtn.textContent='PLACE A TILE';
+    placeActionBtn.disabled=false;
+  }
+
+  function placeTile(){
+    if(placePhase!=='idle')return;
+    const pool=[...instruments].sort(()=>Math.random()-.5);
+    const keyMain=pool[0],keyOther=pool[1];
+    placeImg.src=placeTileSrc(keyMain); // hidden under the lid — placed now, revealed later
+    placeCorrectSide=Math.random()<.5?'A':'B';
+    const mainImg=placeCorrectSide==='A'?placeOptAImg:placeOptBImg;
+    const otherImg=placeCorrectSide==='A'?placeOptBImg:placeOptAImg;
+    const mainBtn=placeCorrectSide==='A'?placeOptA:placeOptB;
+    const otherBtn=placeCorrectSide==='A'?placeOptB:placeOptA;
+    mainImg.src=placeTileSrc(keyMain);
+    otherImg.src=placeTileSrc(keyOther);
+    mainBtn.dataset.key=keyMain;
+    otherBtn.dataset.key=keyOther;
+    placeOptionsRow.hidden=false;
+    placeActionBtn.textContent='Press the tile you think is in the box';
+    placeActionBtn.disabled=true;
+    placePhase='placed';
+  }
+  placeActionBtn.addEventListener('click',placeTile);
+
+  function choosePlaceTile(side){
+    if(placePhase!=='placed')return;
+    placeChosenSide=side;
+    placeOptA.disabled=placeOptB.disabled=true;
+    placeActionBtn.textContent='SWIPE UP THE LID';
+    placeArrow.hidden=false;
+    placePhase='swipe';
+  }
+  placeOptA.addEventListener('click',()=>choosePlaceTile('A'));
+  placeOptB.addEventListener('click',()=>choosePlaceTile('B'));
+
+  function revealPlaceTile(){
+    placePhase='revealed';
+    placeArrow.hidden=true;
+    placeLid.style.transition='transform .4s ease, opacity .4s ease';
+    placeLid.style.transform=`translateY(-${placeStageH||160}px)`;
+    placeLid.style.opacity='0';
+    const correct=placeChosenSide===placeCorrectSide;
+    if(correct){
+      placeFeedback.textContent='YES, YOU GOT IT RIGHT!';
+      placeFeedback.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      placeFeedback.textContent='TRY AGAIN!';
+      placeFeedback.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundPlace,1500);
+  }
+
+  function placePointerDown(e){
+    if(placePhase!=='swipe')return;
+    placeDragging=true;
+    placeDragPointerId=e.pointerId;
+    placeDragStartY=e.clientY;
+    placeDragCurrentY=e.clientY;
+    placeStageH=placeStage.getBoundingClientRect().height;
+    placeLid.style.transition='none';
+    if(placeLid.setPointerCapture)placeLid.setPointerCapture(e.pointerId);
+  }
+  function placePointerMove(e){
+    if(!placeDragging||e.pointerId!==placeDragPointerId)return;
+    placeDragCurrentY=e.clientY;
+    const dy=Math.min(0,placeDragCurrentY-placeDragStartY); // upward only
+    placeLid.style.transform=`translateY(${dy}px)`;
+    placeLid.style.opacity=String(Math.max(.25,1-Math.abs(dy)/(placeStageH||160)*.7));
+  }
+  function placePointerUp(e){
+    if(!placeDragging||e.pointerId!==placeDragPointerId)return;
+    placeDragging=false;
+    const dy=Math.min(0,placeDragCurrentY-placeDragStartY);
+    if(Math.abs(dy)>(placeStageH||160)*.32){
+      revealPlaceTile();
+    }else{
+      resetPlaceLid();
+    }
+  }
+  placeLid.addEventListener('pointerdown',placePointerDown);
+  placeLid.addEventListener('pointermove',placePointerMove);
+  placeLid.addEventListener('pointerup',placePointerUp);
+  placeLid.addEventListener('pointercancel',placePointerUp);
+
   /* ---------- Guess the Side ---------- */
   const sideMysteryImg=$('#sideMysteryImg'),sideFeedback=$('#sideFeedback'),sidePressHint=$('#sidePressHint');
   const optLeft=$('#optLeft'),optRight=$('#optRight'),optLeftImg=$('#optLeftImg'),optRightImg=$('#optRightImg');
@@ -828,7 +1985,35 @@ body.ultra-low #cosmos{display:none}
   const optOne=$('#optOne'),optMany=$('#optMany'),optOneImg=$('#optOneImg'),optManyImg=$('#optManyImg');
   let correctDotsKind=null,answeredDots=false;
 
-  /* build a white tile with a single dot, a full-tile checkerboard pattern, or a blank mystery tile */
+  /* build a white tile with a single glossy 3D dot, a full-tile 3D checkerboard, or a blank mystery tile */
+  const DOTS_DEFS=`
+    <radialGradient id="dotGrad" cx="34%" cy="28%" r="80%">
+      <stop offset="0" stop-color="#ffe9ae"/>
+      <stop offset="30%" stop-color="#c99a2e"/>
+      <stop offset="62%" stop-color="#4a3410"/>
+      <stop offset="100%" stop-color="#120c04"/>
+    </radialGradient>
+    <linearGradient id="sqTeal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2d68f"/>
+      <stop offset="45%" stop-color="#a67a1e"/>
+      <stop offset="100%" stop-color="#2b1c04"/>
+    </linearGradient>
+    <linearGradient id="sqViolet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ecd08a"/>
+      <stop offset="45%" stop-color="#8a6115"/>
+      <stop offset="100%" stop-color="#1f1403"/>
+    </linearGradient>
+    <linearGradient id="sqBevel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe9ae" stop-opacity=".45"/>
+      <stop offset="35%" stop-color="#ffe9ae" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="dotsShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="3.5" stdDeviation="3.5" flood-color="#000" flood-opacity=".55"/>
+    </filter>
+    <radialGradient id="tileBG" cx="50%" cy="38%" r="75%">
+      <stop offset="0" stop-color="#fbf3e2"/>
+      <stop offset="100%" stop-color="#e7dcc2"/>
+    </radialGradient>`;
   function checkerboardSquares(){
     const cols=6,rows=8,cellW=200/cols,cellH=256/rows;
     let squares='';
@@ -836,7 +2021,8 @@ body.ultra-low #cosmos{display:none}
       for(let c=0;c<cols;c++){
         if((r+c)%2===0){
           const x=(c*cellW).toFixed(2),y=(r*cellH).toFixed(2);
-          squares+=`<rect x="${x}" y="${y}" width="${cellW.toFixed(2)}" height="${cellH.toFixed(2)}" fill="#241733"/>`;
+          const fill=(r+c)%4===0?'url(#sqTeal)':'url(#sqViolet)';
+          squares+=`<rect x="${x}" y="${y}" width="${cellW.toFixed(2)}" height="${cellH.toFixed(2)}" fill="${fill}" stroke="#ffd98a" stroke-width="1.4" stroke-opacity=".85"/><rect x="${x}" y="${y}" width="${cellW.toFixed(2)}" height="${cellH.toFixed(2)}" fill="url(#sqBevel)"/>`;
         }
       }
     }
@@ -845,11 +2031,11 @@ body.ultra-low #cosmos{display:none}
   function dotsSVG(kind){
     let content='';
     if(kind==='one'){
-      content='<circle cx="100" cy="128" r="27" fill="#241733"/>';
+      content='<circle cx="100" cy="128" r="30" fill="url(#dotGrad)" stroke="#ffd98a" stroke-width="4" filter="url(#dotsShadow)"/><ellipse cx="89" cy="115" rx="9" ry="6" fill="#ffe9ae" opacity=".55"/>';
     }else if(kind==='many'){
-      content=`<g clip-path="url(#dotsBoardClip)">${checkerboardSquares()}</g>`;
+      content=`<g clip-path="url(#dotsBoardClip)" filter="url(#dotsShadow)">${checkerboardSquares()}</g>`;
     }
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><defs><clipPath id="dotsBoardClip"><rect width="200" height="256" rx="14"/></clipPath></defs><rect width="200" height="256" rx="14" fill="#f3ead4"/>${content}</svg>`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><defs><clipPath id="dotsBoardClip"><rect width="200" height="256" rx="14"/></clipPath>${DOTS_DEFS}</defs><rect width="200" height="256" rx="14" fill="url(#tileBG)"/>${content}</svg>`;
     return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
   }
   optOneImg.src=dotsSVG('one');
@@ -1030,6 +2216,23 @@ body.ultra-low #cosmos{display:none}
   nextButtons.forEach(btn=>{btn.querySelector('img').src=symbolSVG(btn.dataset.symbol);});
   let correctSymbol=null,answeredNext=false;
 
+  /* own accuracy meter for What Comes Next — kept separate from the shared
+     meter above because chance here is 1-in-5 (20%), not 1-in-2 (50%).
+     nextMeterFill's height is driven by the *actual* correct/total ratio;
+     the white marker is pinned at the statistically-correct chance
+     baseline (20%) via CSS (bottom:20%), so the two only line up when the
+     player is guessing at pure chance. */
+  const nextMeterFill=$('#nextMeterFill'),nextMeterPct=$('#nextMeterPct'),nextMeterSub=$('#nextMeterSub');
+  const NEXT_CHANCE=1/symbolList.length; // 0.2 for 5 symbols
+  let nextCorrectCount=0,nextTotalCount=0;
+
+  function updateNextMeter(){
+    const pct=nextTotalCount?Math.round((nextCorrectCount/nextTotalCount)*100):0;
+    if(nextMeterFill)nextMeterFill.style.setProperty('--pct',Math.max(0,Math.min(100,pct)));
+    if(nextMeterPct)nextMeterPct.textContent=pct+'%';
+    if(nextMeterSub)nextMeterSub.textContent=`${nextCorrectCount}/${nextTotalCount}`;
+  }
+
   function newRoundNext(){
     answeredNext=false;
     nextFeedback.textContent='\u00A0';
@@ -1063,7 +2266,11 @@ body.ultra-low #cosmos{display:none}
       nextFeedback.textContent='TRY AGAIN!';
       nextFeedback.className='feedback wrong';
     }
-    recordGuess(correct,1/5);
+    recordGuess(correct,NEXT_CHANCE,{countsForStats:false});
+    nextTotalCount++;
+    if(correct)nextCorrectCount++;
+    updateNextMeter();
+    scheduleNextAutoLog();
     setTimeout(newRoundNext,1500);
   }
 
@@ -1074,7 +2281,11 @@ body.ultra-low #cosmos{display:none}
   newRoundSide();
   newRoundDots();
   newRoundNext();
+  updateNextMeter();
+  if(dayStats.bestStreak)recordDailyStreak(dayStats.bestStreak); // backfill today's entry if a streak was already set earlier today
   drawProgressChart();
+  drawStreakChart();
+  drawNextChart();
   updateMeter();
   updateStreakDisplay();
 })();
@@ -1136,7 +2347,7 @@ async function registerVisit() {
       },
       body: JSON.stringify({
         site: "holisticloader",
-        page: "intuition-loader",
+        page: "intuition",
         page_url: window.location.pathname,
         visitor_id: visitorId,
         country: country
