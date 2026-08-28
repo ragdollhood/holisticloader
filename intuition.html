@@ -418,11 +418,23 @@ body.ultra-low #cosmos{display:none}
 .leaderboard-name-msg{margin:0 0 16px;font-size:12px;color:var(--gold)}
 .leaderboard-greeting{margin:0 0 4px;font:600 14.5px Georgia;letter-spacing:.02em;color:var(--gold)}
 .leaderboard-greeting-hint{margin:0 0 16px;font-size:11.5px;color:#cfc3db}
-.leaderboard-list{list-style:none;margin:0 auto;padding:0;max-width:520px;text-align:left}
+.leaderboard-list{list-style:none;margin:0 auto;padding:0 4px 0 0;max-width:520px;text-align:left;max-height:150px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,217,138,.45) transparent}
+.leaderboard-list::-webkit-scrollbar{width:6px}
+.leaderboard-list::-webkit-scrollbar-track{background:transparent}
+.leaderboard-list::-webkit-scrollbar-thumb{background:rgba(255,217,138,.45);border-radius:3px}
 .leaderboard-columns{display:flex;gap:24px;align-items:flex-start;justify-content:center}
 .leaderboard-column{flex:1 1 0;min-width:0}
 .leaderboard-column .leaderboard-list{max-width:none}
-@media(max-width:560px){.leaderboard-columns{flex-direction:column;gap:0}.leaderboard-sublabel-streak{margin-top:22px}}
+@media(max-width:560px){
+  .leaderboard-columns{gap:10px}
+  .leaderboard-row{padding:7px 8px;margin:0 0 6px;font-size:11.5px;letter-spacing:.01em;border-radius:9px}
+  .leaderboard-sublabel{font-size:11px;letter-spacing:.08em;margin-bottom:7px}
+}
+@media(max-width:400px){
+  .leaderboard-columns{gap:6px}
+  .leaderboard-row{padding:6px 5px;font-size:10px}
+  .leaderboard-sublabel{font-size:9.5px}
+}
 .leaderboard-row{padding:10px 16px;margin:0 0 8px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font:500 14px Georgia;color:#f3efe4;letter-spacing:.02em}
 .leaderboard-row.lb-me{background:rgba(255,217,138,.16);border-color:var(--gold);box-shadow:0 0 18px rgba(255,217,138,.45);font-weight:700}
 .leaderboard-empty{margin:16px 0 4px;color:#cfc3db;font-size:13px}
@@ -472,10 +484,21 @@ body.ultra-low #cosmos{display:none}
   #topTabs a[href="terms.html"].mobile-extra{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
   .contact-email{padding:0 12px}
 }
+#rotateOverlay{display:none;position:fixed;inset:0;z-index:9999;background:#090712;align-items:center;justify-content:center;padding:20px}
+#rotateOverlay img{max-width:420px;width:82vw;height:auto}
+@media screen and (orientation:landscape) and (max-height:500px){
+  #rotateOverlay{display:flex}
+}
 </style>
 <link rel="stylesheet" href="auth-ui.css">
 </head>
 <body>
+<div id="rotateOverlay" aria-hidden="true">
+  <picture>
+    <source srcset="images/turn-your-phone-480.webp 480w, images/turn-your-phone-960.webp 960w" type="image/webp">
+    <img src="images/turn-your-phone-960.png" srcset="images/turn-your-phone-480.png 480w, images/turn-your-phone-960.png 960w" sizes="82vw" alt="Turn your phone to portrait mode" width="1672" height="940" loading="eager">
+  </picture>
+</div>
 <div id="stage"><div class="aurora"></div></div>
 <canvas id="cosmos"></canvas>
 
