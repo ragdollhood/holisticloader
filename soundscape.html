@@ -535,6 +535,16 @@
     font-size:11px;color:#8a8070;text-align:center;
     margin-top:26px;max-width:420px;line-height:1.6;letter-spacing:.02em;
   }
+  .soundscape-seo{
+    width:min(94vw,820px);margin:36px auto 60px;padding:28px clamp(18px,4vw,40px);
+    background:var(--panel);border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(6px);
+  }
+  .soundscape-seo h2{margin:0 0 14px;font:600 clamp(18px,3.4vw,24px) Georgia,serif;letter-spacing:.04em;
+    background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent;text-align:left}
+  .soundscape-seo h3{margin:22px 0 8px;font:600 16px Georgia,serif;color:var(--gold)}
+  .soundscape-seo h4{margin:16px 0 6px;font:600 14.5px Georgia,serif;color:var(--violet)}
+  .soundscape-seo p{margin:0 0 12px;line-height:1.65;color:#e9e3d6cc;font-size:14.5px}
+  .soundscape-seo a{color:var(--gold);text-decoration:underline}
 
   /* ===== shared tab navigation (same system as index.html) ===== */
   #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
@@ -1091,7 +1101,7 @@ isPremium = true;
 </div>
 
 <header id="topNav">
-  <h1 id="brand"><a href="index.html" aria-label="Holistic Loader — home"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
+  <div id="brand"><a href="index.html" aria-label="Holistic Loader — home"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></div>
   <nav id="topTabs" aria-label="Main sections">
     <a href="index.html" class="menu-logo-link mobile-extra"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
     <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
@@ -1477,6 +1487,35 @@ isPremium = true;
 <p class="note">
   Human hearing spans, at its best, roughly 20 Hz to 20,000 Hz. Start at a low volume, especially with headphones. And one cosmic truth: in real space nothing can be heard at all – sound needs air. These tones stay safely here with you.
 </p>
+
+<section class="soundscape-seo" aria-labelledby="soundscapeSeoHeading">
+  <h2 id="soundscapeSeoHeading">Design Your Own Sound Bath — At Your Own Frequency</h2>
+  <p>Most sound bath recordings hand you a fixed track and ask you to listen. Soundscape Creator works the other way around: you play a gong, crystal and Tibetan singing bowls, handpan, tongue drum, wind chimes, harp, sansula, monochord and pan flute yourself, and choose the exact Hz frequency for every single one — nothing is locked to a preset. It runs free, directly in the browser, with no app or sign-up.</p>
+
+  <h3>Why Choose Your Own Frequency</h3>
+  <p>Fixed sound baths are built once and played the same way for everyone. Here, each instrument has its own tuning control, so you can explore a specific tone for relaxation, focus, or meditation rather than accepting whatever a preset track gives you — and layer several instruments together at the frequencies you pick.</p>
+
+  <h3>Room Acoustics and Recording</h3>
+  <p>Beyond tuning, you can shape how the space itself sounds — dry, temple, cathedral, or cave — and hit record to capture whatever you play and download it as an audio file to keep or share. Combine a soundscape with the <a href="breathing.html">guided breathing circle</a> for a calmer session, or unwind with the instrument tones again inside <a href="mahjong.html">Mahjong Soundbath</a>.</p>
+
+  <h3>Frequently Asked Questions</h3>
+  <div class="soundscape-faq">
+    <h4>Can I play sound healing instruments online for free?</h4>
+    <p>Yes. Holistic Loader's sound healing page is free to use directly in your browser, with no app download and no sign-up required.</p>
+
+    <h4>Which instruments can I play?</h4>
+    <p>You can play a gong, crystal and Tibetan singing bowls, handpan, tongue drum, wind chimes, harp, sansula, monochord, pan flute and several other sound healing and percussion instruments.</p>
+
+    <h4>Can I design my own sound and choose my own frequency?</h4>
+    <p>Yes — that's what makes Holistic Loader different from a fixed sound bath recording. You freely choose the exact Hz frequency for the gong, singing bowls, handpan and every other instrument yourself, instead of only picking from preset tracks, so you can design a sound that's entirely your own.</p>
+
+    <h4>Can I tune the instruments to a specific frequency?</h4>
+    <p>Yes. Each instrument has its own tuning slider, so you choose the exact Hz frequency yourself rather than picking from a fixed list — letting you design and explore your own specific tones for relaxation, meditation or focus.</p>
+
+    <h4>Can I record what I play?</h4>
+    <p>Yes. The page includes a record button so you can capture your session and download it as an audio file.</p>
+  </div>
+</section>
 
 <script>
 (function(){
