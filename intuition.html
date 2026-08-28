@@ -87,7 +87,7 @@
 <!-- ========== /SEO ========== -->
 
 <style>
-:root{--gold:#ffd98a;--violet:#c9a8ff;--glass:rgba(13,9,22,.61);--ink:#f3efe4;--muted:#cfc3db;--line:rgba(255,255,255,.16);--bg:#090712;--glass-strong:rgba(19,14,28,.94)}*{box-sizing:border-box}html{background:#090712}html,body{margin:0;min-height:100%;font-family:-apple-system,system-ui,'Segoe UI',sans-serif;color:#f3efe4}body{padding-top:max(180px,calc(env(safe-area-inset-top) + 164px));overflow-x:hidden;user-select:none}.app{max-width:1140px;margin:auto;padding:16px}.panel{background:var(--glass);border:1px solid #ffffff26;backdrop-filter:blur(13px);box-shadow:0 18px 55px #0008;border-radius:24px}
+:root{--gold:#ffd98a;--violet:#c9a8ff;--glass:rgba(13,9,22,.61);--ink:#f3efe4;--muted:#cfc3db;--line:rgba(255,255,255,.16);--bg:#090712;--glass-strong:rgba(19,14,28,.94)}*{box-sizing:border-box}html{background:#090712}html,body{margin:0;min-height:100%;font-family:-apple-system,system-ui,'Segoe UI',sans-serif;color:#f3efe4}body{padding-top:calc(var(--navH,124px) + 6px);overflow-x:hidden;user-select:none}.app{max-width:1140px;margin:auto;padding:16px}.panel{background:var(--glass);border:1px solid #ffffff26;backdrop-filter:blur(13px);box-shadow:0 18px 55px #0008;border-radius:24px}
 
 /* ===== aurora backdrop ===== */
 #stage{position:fixed;inset:0;z-index:-3;overflow:hidden;background:linear-gradient(160deg,#221a38 0%,#2c1c42 40%,#241a36 70%,#180f26 100%)}
@@ -117,13 +117,11 @@ body.ultra-low #cosmos{display:none}
 #topTabs .tab.active{color:#ffd98a;background:rgba(231,201,162,.14);top:0;border-color:#ffd98a}
 #topTabs .tab:hover{color:#f3efe4}
 #topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#ffd98a 15%,#c9a8ff 50%,#ffd98a 85%,transparent)}
-.h1-frame{position:fixed;top:var(--navH,max(118px,calc(env(safe-area-inset-top) + 106px)));left:50%;transform:translateX(-50%);z-index:30;width:min(var(--tabsW,820px),94vw);padding:9px 24px;border:1.5px solid #ffd98a;border-top:0;border-radius:0 0 30px 30px;background:rgba(16,11,25,.72);backdrop-filter:blur(10px);text-align:center}
+.h1-frame{position:relative;margin:0 auto;z-index:20;width:min(var(--tabsW,820px),94vw);padding:9px 24px;border:1.5px solid #ffd98a;border-top:0;border-radius:0 0 30px 30px;background:rgba(16,11,25,.72);backdrop-filter:blur(10px);text-align:center}
 .h1-frame h1{margin:0;font:600 clamp(15px,4.2vw,20px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,#ffd98a,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
 .h1-frame .title-img{display:block;margin:0 auto;height:clamp(20.8px,5.12vw,33.6px);width:auto;max-width:100%}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-@media(max-width:720px){body{padding-top:calc(var(--navH,108px) + var(--titleH,50px) + 2px);padding-bottom:calc(var(--meterH,54px) + env(safe-area-inset-bottom) + 14px)}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.app{padding-top:4px}.intro-tagline{margin:0 auto 12px;line-height:1.5}}
-.h1-frame{transition:opacity .25s ease,visibility .25s ease}
-body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
+@media(max-width:720px){body{padding-top:calc(var(--navH,108px) + 4px);padding-bottom:calc(var(--meterH,54px) + env(safe-area-inset-bottom) + 14px)}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.app{padding-top:4px}.intro-tagline{margin:0 auto 12px;line-height:1.5}}
 
 /* ===== hamburger menu (mobile + desktop) ===== */
 #menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
@@ -190,6 +188,9 @@ body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
 .option-tile:disabled{cursor:default;opacity:.9}
 .option-tile img{width:100%;height:100%;object-fit:contain;pointer-events:none}
 .press-hint{color:#cfc3db;font-size:14px;margin:0}
+#figureMallBox.tarot-box{margin-bottom:11px!important}
+#figureMallBox+.feedback{min-height:16px;margin:1px 0 7px}
+#figureOptionsRow{margin-top:3px}
 .next-panel{text-align:center}
 .next-mystery{width:min(42vw,210px);aspect-ratio:.78;margin:0 auto 22px;padding:14px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 18px 45px #0008;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .next-mystery #nextMysteryQ{font:700 clamp(30px,8vw,46px) Georgia;background:linear-gradient(180deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
@@ -339,7 +340,7 @@ body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
 .meter-sub{margin:0;font-size:11px;color:#cfc3db;letter-spacing:.04em}
 
 /* ===== floating "today's meter" widget, in its own framed card — vertical bar on desktop ===== */
-#floatMeter{position:fixed;top:50%;right:32px;transform:translateY(-50%);z-index:48;display:flex;flex-direction:column;align-items:center;gap:10px;
+#floatMeter{position:fixed;top:calc(var(--navH,124px) + 6px);right:32px;transform:none;z-index:48;display:flex;flex-direction:column;align-items:center;gap:10px;
   padding:18px 16px 15px;border-radius:20px;background:var(--glass);border:1.5px solid #5eead4;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 45px #0008,0 0 0 1px rgba(94,234,212,.16)}
 #floatMeterInfo{display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -591,9 +592,9 @@ body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
 
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">SENSE THE FIGURE</p>
-      <div class="mall-box tarot-box"><img id="mallImg2" alt="Mystery tile"></div>
+      <div class="mall-box tarot-box" id="figureMallBox"><img id="mallImg2" alt="Mystery tile"></div>
       <p class="feedback" id="feedback2" aria-live="polite">&nbsp;</p>
-      <div class="options-row">
+      <div class="options-row" id="figureOptionsRow">
         <button class="option-tile" id="optA2" type="button" aria-label="Option A"><img id="optAImg2" alt="Tile option A"></button>
         <button class="option-tile" id="optB2" type="button" aria-label="Option B"><img id="optBImg2" alt="Tile option B"></button>
       </div>
@@ -766,25 +767,8 @@ body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
   document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(rafId)}else{last=performance.now();rafId=requestAnimationFrame(loop)}});
 })();
 
-/* ===== hide the h1-frame title image + its plaque once the page is
-   scrolled (all screen sizes), while leaving the nav bar, hamburger
-   menu, brand logo, and the floating meter fixed/visible as before. ===== */
-(function(){
-  const SCROLL_HIDE_AT=24;
-  let ticking=false;
-  function updateTitleVisibility(){
-    document.body.classList.toggle('title-hidden',window.scrollY>SCROLL_HIDE_AT);
-  }
-  function onScroll(){
-    if(ticking)return;
-    ticking=true;
-    requestAnimationFrame(()=>{updateTitleVisibility();ticking=false});
-  }
-  addEventListener('scroll',onScroll,{passive:true});
-  addEventListener('resize',updateTitleVisibility);
-  addEventListener('orientationchange',()=>setTimeout(updateTitleVisibility,60));
-  updateTitleVisibility();
-})();
+/* ===== the h1-frame title tab is now a normal in-flow element (position:relative),
+   so it scrolls up with the page instead of being hidden via JS. ===== */
 
 /* ===== hamburger menu toggle (mobile + desktop) ===== */
 (function(){
@@ -853,39 +837,8 @@ body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
   if(floatMeterEl)new ResizeObserver(syncNavH).observe(floatMeterEl);
 })();
 
-/* ===== desktop: align the floating meter's top edge with the top of the
-   game-card row (.triple-wrap), instead of it being vertically centered on
-   the viewport. Mobile keeps its own separate top-of-page positioning. ===== */
-(function(){
-  const meter=document.getElementById('floatMeter');
-  const anchor=document.querySelector('.triple-wrap');
-  if(!meter||!anchor) return;
-  function syncMeterTop(){
-    if(innerWidth<=720){ meter.style.top=''; meter.style.transform=''; return; }
-    const rect=anchor.getBoundingClientRect();
-    if(rect.width===0 && rect.height===0) return;
-    /* rect.top is viewport-relative (depends on current scroll position),
-       but this element is position:fixed, so its "top" must be a constant
-       distance from the top of the viewport regardless of scroll. Adding
-       scrollY converts it to the anchor's scroll-independent document
-       offset, so re-syncing (on resize/orientationchange/etc.) gives the
-       same correct value no matter where the page happens to be scrolled
-       when it fires — otherwise the meter could end up pinned above the
-       viewport and appear to vanish. */
-    meter.style.top=Math.round(rect.top+window.scrollY)+'px';
-    meter.style.transform='none';
-  }
-  function trySync(attemptsLeft){
-    syncMeterTop();
-    if(attemptsLeft>0) setTimeout(()=>trySync(attemptsLeft-1),150);
-  }
-  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>trySync(10));
-  else trySync(10);
-  addEventListener('load',()=>trySync(5));
-  addEventListener('resize',syncMeterTop);
-  addEventListener('orientationchange',()=>setTimeout(syncMeterTop,60));
-  if(window.ResizeObserver) new ResizeObserver(syncMeterTop).observe(anchor);
-})();
+/* ===== the floating meter's top position (fixed just under the top nav
+   line) is now handled purely by CSS via var(--navH); no JS override needed. ===== */
 
 /* ===== Intuition games: Guess the Tile, Place a Tile, Guess the Side, Guess the Direction ===== */
 /* Guess the Tile, Place a Tile, and Guess the Side share one SCORE, one daily intuition meter, and one daily progress graph. */
