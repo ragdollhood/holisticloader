@@ -34,7 +34,7 @@
      <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Holistic Loader — Visual  Tracker and Meal Planner">
+<meta property="og:image:alt" content="Holistic Loader — Visual Nutrition Tracker and Meal Planner">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="sv_SE">
 
@@ -42,10 +42,10 @@
      TWITTER / X CARD
 ════════════════════════════════════════════════ -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Holistic Loader —  Tracker & Body Nutrient Map">
-<meta name="twitter:description" content="Visual  tracker and meal planner from Holistic Loader. See exactly what nutrients you consume and how food affects your body.">
+<meta name="twitter:title" content="Holistic Loader — Nutrition Tracker & Body Nutrient Map">
+<meta name="twitter:description" content="Visual nutrition tracker and meal planner from Holistic Loader. See exactly what nutrients you consume and how food affects your body.">
 <meta name="twitter:image" content="https://holisticloader.com/images/preview-nutrition.jpg">
-<meta name="twitter:image:alt" content="Holistic Loader — Visual  Tracker and Meal Planner">
+<meta name="twitter:image:alt" content="Holistic Loader — Visual Nutrition Tracker and Meal Planner">
 
 <!-- ═══════════════════════════════════════════════
      FAVICONS & ICONS
@@ -64,11 +64,11 @@
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "Holistic Loader —  Tracker",
+  "name": "Holistic Loader — Nutrition Tracker",
   "url": "https://holisticloader.com/nutriloader.html",
   "logo": "https://holisticloader.com/images/nutri-icon.png",
   "image": "https://holisticloader.com/images/preview.jpg",
-  "description": "Holistic Loader's free, interactive  tracker and meal planner. Track your daily nutrient intake, plan meals by time of day, and learn how different foods affect your organs and body.",
+  "description": "Holistic Loader's free, interactive nutrition tracker and meal planner. Track your daily nutrient intake, plan meals by time of day, and learn how different foods affect your organs and body.",
   "applicationCategory": "HealthApplication",
   "operatingSystem": "All",
   "offers": {
@@ -115,10 +115,10 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What is Holistic Loader's  tracker?",
+      "name": "What is Holistic Loader's nutrition tracker?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It's a free, visual  tracker and meal planner from Holistic Loader. You can add foods to your daily plate, see a full nutrient breakdown, and learn how those nutrients affect different organs in your body."
+        "text": "It's a free, visual nutrition tracker and meal planner from Holistic Loader. You can add foods to your daily plate, see a full nutrient breakdown, and learn how those nutrients affect different organs in your body."
       }
     },
     {
@@ -131,7 +131,7 @@
     },
     {
       "@type": "Question",
-      "name": "Is the Holistic Loader  tracker free to use?",
+      "name": "Is the Holistic Loader nutrition tracker free to use?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Yes, it's completely free to use in your browser with no login required."
@@ -731,6 +731,14 @@ g.organ.sel .fillpart{filter:drop-shadow(0 0 5px rgba(166,79,71,.8))}
 }
 
 footer{max-width:1300px;margin:26px auto 0;padding:0 22px;text-align:center;color:var(--ink-soft);font-size:12.5px;line-height:1.6}
+.nutri-seo{max-width:820px;margin:36px auto 60px;padding:28px clamp(18px,4vw,40px);text-align:left;
+  background:#ffffffb3;border:1px solid #00000014;border-radius:18px;backdrop-filter:blur(6px)}
+.nutri-seo h2{margin:0 0 14px;font:600 clamp(18px,3.4vw,24px) Georgia,serif;letter-spacing:.02em;
+  background:linear-gradient(90deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
+.nutri-seo h3{margin:22px 0 8px;font:600 16px Georgia,serif;color:#9b7a1f}
+.nutri-seo h4{margin:16px 0 6px;font:600 14.5px Georgia,serif;color:#7a5fa8}
+.nutri-seo p{margin:0 0 12px;line-height:1.65;color:var(--ink-soft);font-size:14.5px}
+.nutri-seo a{color:#9b7a1f;text-decoration:underline}
 footer b{color:var(--rose-deep);letter-spacing:.05em}
 
 @media (max-width:1020px){
@@ -1354,7 +1362,7 @@ body.preset-active #menuToggle{display:none}
     </div>
 
     <header id="topNav">
-      <h1 id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></h1>
+      <div id="brand"><a href="index.html" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></div>
       <nav id="topTabs" aria-label="Main sections">
         <a href="index.html" class="menu-logo-link mobile-extra"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
         <a href="breathing.html" class="tab nav-sep">Guided Breathing</a>
@@ -1508,6 +1516,32 @@ body.preset-active #menuToggle{display:none}
 </div>
 
 <footer><b>HOLISTIC LOADER - DISCLAIMER</b><br><span data-i18n="footer">This page is about what food gives you — never about counting or restricting. Nutrient values are based on data from the USDA FoodData Central (fdc.nal.usda.gov), converted to a percentage of EU adult reference intakes per stated serving. Actual content varies by variety, ripeness and preparation, and this is not medical advice. The information provided on this website is for informational and educational purposes only. It should not be considered medical or professional advice and is not intended to replace consultation with a qualified healthcare provider. We strive to provide accurate and up-to-date information about nutrition and health, but we make no guarantees regarding the completeness, accuracy, or suitability of the information for any individual. Nutritional needs and physical conditions vary from person to person. Your use of the information on this website is at your own risk. We are not responsible for any decisions, actions, or consequences resulting from the use of this information. Always consult a qualified healthcare professional before making changes to your diet or lifestyle, especially if you have existing health conditions or specific dietary needs. By using this website, you agree to these terms. © 2026 Malin Larsson / NutriLoader. All rights reserved.\nDisclaimer\nThe information provided on this website is for informational and educational purposes only. It should not be considered medical or professional advice and is not intended to replace consultation with a qualified healthcare provider. We strive to provide accurate and up-to-date information about nutrition and health, but we make no guarantees regarding the completeness, accuracy, or suitability of the information for any individual. Nutritional needs and physical conditions vary from person to person. Your use of the information on this website is at your own risk. We are not responsible for any decisions, actions, or consequences resulting from the use of this information. Always consult a qualified healthcare professional before making changes to your diet or lifestyle, especially if you have existing health conditions or specific dietary needs. By using this website, you agree to these terms. © 2026 Malin Larsson / NutriLoader. All rights reserved. CONTACT: holisticloader@gmail.com</span><br><span style="opacity:.85">Nutrient data source: <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">USDA FoodData Central</a> (fdc.nal.usda.gov)</span></footer>
+
+<section class="panel nutri-seo" aria-labelledby="nutriSeoHeading">
+  <h2 id="nutriSeoHeading">A Free Nutrition Tracker That Shows What Food Gives You — Not What to Cut</h2>
+  <p>Most nutrition trackers focus on counting and restricting: calories in, calories out. Holistic Loader's nutrition tracker works from the opposite direction — you build a plate from real foods, and instantly see the vitamins, minerals and macronutrients that plate gives your body, then watch which organs actually benefit from what you ate. No sign-up, no calorie-counting pressure, just a visual picture of what your food is doing for you.</p>
+
+  <h3>Plan, Track and See the Effect</h3>
+  <p>The tracker follows three simple steps: plan your plate by dragging food from the pantry, see how it feeds your body as a visual organ map lights up with the nutrients you've provided, and review what you've given your whole body across the day — down to specific vitamins like B12 and D, and minerals like magnesium and zinc. It's built for daily use as a meal planner as much as a food diary.</p>
+
+  <h3>Pair It With the Rest of Your Routine</h3>
+  <p>A lot of people use the nutrition tracker alongside a calmer daily habit — a few minutes of <a href="breathing.html">guided breathing</a> or a session of <a href="yoga.html">yoga poses</a> — to cover both what they eat and how they feel in one place.</p>
+
+  <h3>Frequently Asked Questions</h3>
+  <div class="nutri-faq">
+    <h4>What is Holistic Loader's nutrition tracker?</h4>
+    <p>It's a free, visual nutrition tracker and meal planner from Holistic Loader. You can add foods to your daily plate, see a full nutrient breakdown, and learn how those nutrients affect different organs in your body.</p>
+
+    <h4>What nutrients does Holistic Loader track?</h4>
+    <p>Holistic Loader tracks macronutrients (protein, carbohydrates, fat, fiber, sugar) as well as micronutrients including vitamins (A, B1, B2, B6, B12, C, D, E, K, folate) and minerals (iron, calcium, magnesium, potassium, zinc, selenium).</p>
+
+    <h4>Is the Holistic Loader nutrition tracker free to use?</h4>
+    <p>Yes, it's completely free to use in your browser with no login required.</p>
+
+    <h4>How does Holistic Loader show how food affects my body?</h4>
+    <p>Holistic Loader features an interactive body map showing organs such as the heart, liver, kidneys, brain, and muscles. When you add food to your plate, the relevant organs light up to show which nutrients from that food benefit which parts of your body.</p>
+  </div>
+</section>
 
 <div id="toast"></div>
 <div id="celebrateOverlay" aria-hidden="true">
