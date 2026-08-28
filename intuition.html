@@ -431,11 +431,10 @@ body.ultra-low #cosmos{display:none}
 @media(min-width:901px){.lb-donate-wrap{max-width:1200px;gap:32px}.lb-donate-wrap .leaderboard-panel,.lb-donate-wrap .page-donate-row{flex:1 1 500px;min-width:400px}}
 
 /* ===== donation image, now paired with the leaderboard in .lb-donate-wrap ===== */
-.page-donate-row{max-width:820px;margin:8px auto 40px;padding:26px 22px;display:flex;align-items:center;justify-content:center;text-align:center}
-.page-donate-link{display:inline-block;max-width:min(92vw,420px);width:100%}
+.page-donate-row{max-width:820px;margin:8px auto 40px;display:flex;align-items:center;justify-content:center;text-align:center}
+.page-donate-link{display:inline-block;max-width:100%;width:100%}
 .page-donate-img{display:block;width:100%;height:auto;border:1.5px solid var(--gold);border-radius:16px;box-shadow:0 18px 45px #0008;transition:transform .15s ease}
 .page-donate-link:hover .page-donate-img{transform:scale(1.03)}
-@media(max-width:720px){.page-donate-row{padding:10px}}
 .h1-desktop{display:none}
 @media (min-width:721px){
   .h1-mobile{display:none}
@@ -515,11 +514,11 @@ body.ultra-low #cosmos{display:none}
     <p class="leaderboard-label">INTUITION LEADERBOARD</p>
 
     <div id="leaderboardLocked" class="leaderboard-locked">
-      <p class="leaderboard-locked-text">Log in to see the leaderboard and submit your score.</p>
+      <p class="leaderboard-locked-text">Log in to submit your own score to the leaderboard.</p>
       <button type="button" id="leaderboardLoginBtn" class="progress-login-btn">LOG IN</button>
     </div>
 
-    <div id="leaderboardUnlocked" hidden>
+    <div id="leaderboardUnlocked">
       <div id="leaderboardNameForm" class="leaderboard-name-form" hidden>
         <input type="text" id="playerName" class="leaderboard-name-input" maxlength="20" placeholder="Your leaderboard name">
         <button type="button" id="saveNameBtn" class="leaderboard-save-btn">Save Name</button>
@@ -538,7 +537,7 @@ body.ultra-low #cosmos{display:none}
     </div>
   </section>
 
-  <div class="panel page-donate-row">
+  <div class="page-donate-row">
     <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="page-donate-link">
       <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="page-donate-img">
     </a>
@@ -1300,16 +1299,14 @@ body.ultra-low #cosmos{display:none}
   async function updateLeaderboardAccess(){
     if(!lbLockedEl||!lbUnlockedEl)return;
     const loggedIn=isLoggedIn();
-    lbLockedEl.hidden=loggedIn;
-    lbUnlockedEl.hidden=!loggedIn;
     if(loggedIn){
       await fetchPlayerName();
       console.log('[leaderboard] logged in, player name from profiles.display_name:',JSON.stringify(_lbPlayerName));
-      updateNameFormVisibility();
       await syncPlayerNameToHighscore();
     }else{
       _lbPlayerName=null;
     }
+    updateNameFormVisibility();
     loadLeaderboard();
     loadStreakLeaderboard();
   }
