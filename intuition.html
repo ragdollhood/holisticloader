@@ -121,11 +121,9 @@ body.ultra-low #cosmos{display:none}
 .h1-frame h1{margin:0;font:600 clamp(15px,4.2vw,20px) Georgia;letter-spacing:.14em;background:linear-gradient(90deg,#ffd98a,#c9a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
 .h1-frame .title-img{display:block;margin:0 auto;height:clamp(20.8px,5.12vw,33.6px);width:auto;max-width:100%}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-@media(max-width:720px){body{padding-top:calc(var(--navH,108px) + var(--titleH,50px) + var(--meterH,54px) + 2px)}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.app{padding-top:4px}.intro-tagline{margin:0 auto 12px;line-height:1.5}}
-@media(max-width:720px){
-  .h1-frame{transition:opacity .25s ease,visibility .25s ease}
-  body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
-}
+@media(max-width:720px){body{padding-top:calc(var(--navH,108px) + var(--titleH,50px) + 2px);padding-bottom:calc(var(--meterH,54px) + env(safe-area-inset-bottom) + 14px)}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.app{padding-top:4px}.intro-tagline{margin:0 auto 12px;line-height:1.5}}
+.h1-frame{transition:opacity .25s ease,visibility .25s ease}
+body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
 
 /* ===== hamburger menu (mobile + desktop) ===== */
 #menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
@@ -360,13 +358,13 @@ body.ultra-low #cosmos{display:none}
 #floatMeterReset{flex:none;border-radius:999px;border:1.5px solid var(--gold);background:rgba(19,14,28,.88);color:var(--gold);font:700 13px Georgia;letter-spacing:.12em;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px #0008;padding:10px 22px;transition:background .15s ease,transform .15s ease;white-space:nowrap}
 #meterInfoBtn:hover,#floatMeterReset:hover{background:rgba(255,217,138,.18)}
 #floatMeterReset:active{transform:scale(.96)}
-/* ===== mobile: horizontal bar, flush edge-to-edge right under the title plaque ===== */
+/* ===== mobile: horizontal bar, fixed flush against the bottom of the screen ===== */
 @media(max-width:720px){
   #floatMeter{
     flex-direction:row;align-items:center;justify-content:space-between;gap:10px;
-    position:fixed;top:calc(var(--navH,108px) + var(--titleH,50px));left:50%;right:auto;
+    position:fixed;top:auto;bottom:0;left:50%;right:auto;
     transform:translateX(-50%);width:92vw;max-width:none;
-    padding:9px 14px;border-radius:0 0 18px 18px;border-top:0;
+    padding:9px 14px calc(9px + env(safe-area-inset-bottom));border-radius:18px 18px 0 0;border-bottom:0;
   }
   #floatMeterInfo{flex-direction:row;align-items:baseline;gap:6px;flex:none}
   #floatMeterScore{font-size:clamp(13px,3.8vw,16px)}
@@ -382,6 +380,7 @@ body.ultra-low #cosmos{display:none}
   #meterInfoBtn{width:25px;height:25px;font-size:12px}
   #floatMeterReset{padding:5px 12px;font-size:10px}
   .triple-wrap{padding-right:0}
+  .sound-toggle,.privacy-link{bottom:calc(var(--meterH,54px) + env(safe-area-inset-bottom) + 10px)}
 }
 
 
@@ -767,15 +766,13 @@ body.ultra-low #cosmos{display:none}
   document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(rafId)}else{last=performance.now();rafId=requestAnimationFrame(loop)}});
 })();
 
-/* ===== mobile only: hide the h1-frame title image + its plaque once the
-   page is scrolled, while leaving the nav bar, hamburger menu, brand
-   logo, and the floating meter fixed/visible as before. ===== */
+/* ===== hide the h1-frame title image + its plaque once the page is
+   scrolled (all screen sizes), while leaving the nav bar, hamburger
+   menu, brand logo, and the floating meter fixed/visible as before. ===== */
 (function(){
-  function isMobile(){return innerWidth<=720}
   const SCROLL_HIDE_AT=24;
   let ticking=false;
   function updateTitleVisibility(){
-    if(!isMobile()){document.body.classList.remove('title-hidden');return}
     document.body.classList.toggle('title-hidden',window.scrollY>SCROLL_HIDE_AT);
   }
   function onScroll(){
@@ -1874,8 +1871,6 @@ body.ultra-low #cosmos{display:none}
     'game-item-18djungle1','game-item-18djungle2','game-item-18djungle3','game-item-18djungle4','game-item-18djungle5',
     'game-item-19crystal1','game-item-19crystal2','game-item-19crystal3','game-item-19crystal4','game-item-19crystal5',
     'game-item-20rymd1','game-item-20rymd2','game-item-20rymd3','game-item-20rymd4','game-item-20rymd5',
-    'game-item-crystal1','game-item-crystal2','game-item-crystal3','game-item-crystal4','game-item-crystal5',
-    'game-item-plant1','game-item-plant2','game-item-plant3','game-item-plant4','game-item-plant5',
     'game-item17-plant1','game-item17-plant2','game-item17-plant3','game-item17-plant4','game-item17-plant5'
   ];
   const mallImg2=$('#mallImg2'),feedback2=$('#feedback2'),pressHint2=$('#pressHint2');
