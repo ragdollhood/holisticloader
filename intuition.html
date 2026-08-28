@@ -701,6 +701,16 @@ body.ultra-low #cosmos{display:none}
 
 
   <div class="duo-wrap">
+    <section class="panel game-panel tri-panel">
+      <p class="prompt-title">BLACK &amp; WHITE</p>
+      <div class="mall-box tarot-box"><img id="mallImgBW" alt="Mystery tile"></div>
+      <p class="feedback" id="feedbackBW" aria-live="polite">&nbsp;</p>
+      <div class="options-row">
+        <button class="option-tile" id="optBWA" type="button" aria-label="Option A"><img id="optBWAImg" alt="Black or white option A"></button>
+        <button class="option-tile" id="optBWB" type="button" aria-label="Option B"><img id="optBWBImg" alt="Black or white option B"></button>
+      </div>
+    </section>
+
     <section class="panel game-panel direction-panel">
       <p class="prompt-title">SENSE THE DIRECTION</p>
       <div class="direction-stage tarot-box" id="directionStage">
@@ -2023,6 +2033,52 @@ body.ultra-low #cosmos{display:none}
   optColorA.addEventListener('click',()=>chooseColor('A'));
   optColorB.addEventListener('click',()=>chooseColor('B'));
 
+  /* ---------- Sense the Black & White ---------- */
+  const bwKeys=['black','white'];
+
+  const mallImgBW=$('#mallImgBW'),feedbackBW=$('#feedbackBW');
+  const optBWA=$('#optBWA'),optBWB=$('#optBWB'),optBWAImg=$('#optBWAImg'),optBWBImg=$('#optBWBImg');
+  let correctBWSide=null,answeredBW=false;
+
+  function newRoundBW(){
+    answeredBW=false;
+    feedbackBW.textContent='\u00A0';
+    feedbackBW.className='feedback';
+    mallImgBW.src='images/lid.jpg';
+    optBWA.disabled=optBWB.disabled=false;
+
+    const pool=[...bwKeys].sort(()=>Math.random()-.5);
+    const keyA=pool[0],keyB=pool[1];
+    optBWAImg.src=colorSVG(keyA);
+    optBWBImg.src=colorSVG(keyB);
+    optBWA.dataset.key=keyA;
+    optBWB.dataset.key=keyB;
+    correctBWSide=Math.random()<.5?'A':'B';
+  }
+
+  function chooseBW(side){
+    if(answeredBW)return;
+    answeredBW=true;
+    optBWA.disabled=optBWB.disabled=true;
+    const correctKey=(correctBWSide==='A'?optBWA:optBWB).dataset.key;
+    mallImgBW.src=colorSVG(correctKey);
+    const correct=side===correctBWSide;
+    if(correct){
+      feedbackBW.textContent='YES, YOU GOT IT RIGHT!';
+      feedbackBW.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      feedbackBW.textContent='TRY AGAIN!';
+      feedbackBW.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundBW,1500);
+  }
+
+  optBWA.addEventListener('click',()=>chooseBW('A'));
+  optBWB.addEventListener('click',()=>chooseBW('B'));
+
   /* ---------- Place a Tile ---------- */
   /* Images come from images/instruments/ (not images/instruments2/ like
      Guess the Tile above) — same key list, since that folder also has
@@ -2493,6 +2549,7 @@ body.ultra-low #cosmos{display:none}
   newRoundTile();
   newRoundTile2();
   newRoundColor();
+  newRoundBW();
   newRoundSide();
   newRoundDots();
   newRoundNext();
