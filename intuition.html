@@ -295,13 +295,15 @@ body.ultra-low #cosmos{display:none}
 .place-lid:active{cursor:grabbing}
 .place-arrow{position:absolute;top:10px;left:50%;transform:translate(-50%,0);font-size:46px;font-weight:700;line-height:1;color:var(--gold);text-shadow:0 0 14px rgba(255,217,138,.95),0 0 30px rgba(255,217,138,.6),0 2px 6px #000c;pointer-events:none;animation:placeArrowBlink 1.1s ease-in-out infinite;z-index:3}
 @keyframes placeArrowBlink{0%,100%{opacity:.4;transform:translate(-50%,8px)}50%{opacity:1;transform:translate(-50%,-10px)}}
-.place-stage-row{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:11px}
-#placeStage.tarot-box{margin-bottom:0!important}
-.place-action-btn{flex:none;display:flex;align-items:center;justify-content:center;text-align:center;width:min(21vw,105px);aspect-ratio:.78;margin:0;font:600 11px Georgia;letter-spacing:.02em;color:var(--gold);background:transparent;border:1.5px solid var(--gold);border-radius:16px;padding:8px;cursor:pointer;transition:background .2s ease,color .2s ease,opacity .2s ease}
-@media (hover:hover) and (pointer:fine){
-  .place-action-btn:hover:not(:disabled){background:var(--gold);color:var(--bg)}
-}
+.place-stage-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin-bottom:11px}
+#placeStage.tarot-box{margin:0!important;border-radius:0 20px 20px 0}
+.place-action-btn{flex:none;display:flex;align-items:center;justify-content:center;text-align:center;width:min(21vw,105px);aspect-ratio:.78;margin:0;font:600 11px Georgia;letter-spacing:.02em;color:var(--bg);background:var(--gold);border:1.5px solid var(--gold);border-radius:16px 0 0 16px;padding:8px;cursor:pointer;transition:background .2s ease,color .2s ease,opacity .2s ease}
 .place-action-btn:disabled{cursor:default;opacity:.85}
+.place-action-btn .step3-desktop{display:none}
+@media (hover:hover) and (pointer:fine){
+  .place-action-btn .step3-mobile{display:none}
+  .place-action-btn .step3-desktop{display:inline}
+}
 @media(min-width:901px){
   .app{max-width:1600px}
   .triple-wrap{max-width:1560px;gap:32px}
@@ -622,7 +624,6 @@ body.ultra-low #cosmos{display:none}
         <button class="option-tile" id="optA" type="button" aria-label="Option A"><img id="optAImg" alt="Tile option A"></button>
         <button class="option-tile" id="optB" type="button" aria-label="Option B"><img id="optBImg" alt="Tile option B"></button>
       </div>
-      <p class="press-hint" id="pressHint">Choose one</p>
     </section>
 
     <section class="panel game-panel tri-panel">
@@ -633,24 +634,22 @@ body.ultra-low #cosmos{display:none}
         <button class="option-tile" id="optLeft" type="button" aria-label="Line is on the left"><img id="optLeftImg" alt="White tile with a line on the left"></button>
         <button class="option-tile" id="optRight" type="button" aria-label="Line is on the right"><img id="optRightImg" alt="White tile with a line on the right"></button>
       </div>
-      <p class="press-hint" id="sidePressHint">Choose one</p>
     </section>
 
     <section class="panel game-panel tri-panel">
-      <p class="prompt-title">SENSE THE PATTERN</p>
-      <div class="mall-box tarot-box"><img id="dotsMysteryImg" alt="Mystery tile"></div>
-      <p class="feedback" id="dotsFeedback" aria-live="polite">&nbsp;</p>
-      <div class="options-row">
-        <button class="option-tile" id="optOne" type="button" aria-label="One dot"><img id="optOneImg" alt="White tile with a single dot"></button>
-        <button class="option-tile" id="optMany" type="button" aria-label="Checkerboard pattern"><img id="optManyImg" alt="White tile filled with a checkerboard pattern"></button>
+      <p class="prompt-title">SENSE THE FIGURE</p>
+      <div class="mall-box tarot-box" id="figureMallBox"><img id="mallImg2" alt="Mystery tile"></div>
+      <p class="feedback" id="feedback2" aria-live="polite">&nbsp;</p>
+      <div class="options-row" id="figureOptionsRow">
+        <button class="option-tile" id="optA2" type="button" aria-label="Option A"><img id="optAImg2" alt="Tile option A"></button>
+        <button class="option-tile" id="optB2" type="button" aria-label="Option B"><img id="optBImg2" alt="Tile option B"></button>
       </div>
-      <p class="press-hint" id="dotsPressHint">Choose one</p>
     </section>
 
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">WHAT'S INSIDE?</p>
       <div class="place-stage-row">
-        <button type="button" class="place-action-btn" id="placeActionBtn">PLACE A TILE</button>
+        <button type="button" class="place-action-btn" id="placeActionBtn">Step 1. PLACE A TILE</button>
         <div class="mall-box tarot-box" id="placeStage">
           <img id="placeImg" class="place-img" alt="" aria-hidden="true">
           <img id="placeLid" class="place-lid" alt="" aria-hidden="true">
@@ -671,14 +670,13 @@ body.ultra-low #cosmos{display:none}
     </section>
 
     <section class="panel game-panel tri-panel">
-      <p class="prompt-title">SENSE THE FIGURE</p>
-      <div class="mall-box tarot-box" id="figureMallBox"><img id="mallImg2" alt="Mystery tile"></div>
-      <p class="feedback" id="feedback2" aria-live="polite">&nbsp;</p>
-      <div class="options-row" id="figureOptionsRow">
-        <button class="option-tile" id="optA2" type="button" aria-label="Option A"><img id="optAImg2" alt="Tile option A"></button>
-        <button class="option-tile" id="optB2" type="button" aria-label="Option B"><img id="optBImg2" alt="Tile option B"></button>
+      <p class="prompt-title">SENSE THE PATTERN</p>
+      <div class="mall-box tarot-box"><img id="dotsMysteryImg" alt="Mystery tile"></div>
+      <p class="feedback" id="dotsFeedback" aria-live="polite">&nbsp;</p>
+      <div class="options-row">
+        <button class="option-tile" id="optOne" type="button" aria-label="One dot"><img id="optOneImg" alt="White tile with a single dot"></button>
+        <button class="option-tile" id="optMany" type="button" aria-label="Checkerboard pattern"><img id="optManyImg" alt="White tile filled with a checkerboard pattern"></button>
       </div>
-      <p class="press-hint" id="pressHint2">Choose one</p>
     </section>
 
     <section class="panel game-panel tri-panel">
@@ -689,7 +687,6 @@ body.ultra-low #cosmos{display:none}
         <button class="option-tile" id="optColorA" type="button" aria-label="Option A"><img id="optColorAImg" alt="Color option A"></button>
         <button class="option-tile" id="optColorB" type="button" aria-label="Option B"><img id="optColorBImg" alt="Color option B"></button>
       </div>
-      <p class="press-hint" id="pressHintColor">Choose one</p>
     </section>
   </div>
 
@@ -1846,7 +1843,7 @@ body.ultra-low #cosmos{display:none}
 
   /* ---------- Guess the Tile ---------- */
   const instruments=['chimes','crystal_bowl','djembe','gong','handpan','harpa','monochord','native_american_fluit','ocean_drum','panflute','quartz_bowl','rainstick','sansula','shaman_drum','tam-tam_drum','thunder_drum','tibetansk_gong','tibetan_bowl','tonguedrum','triangle'];
-  const mallImg=$('#mallImg'),feedback=$('#feedback'),pressHint=$('#pressHint');
+  const mallImg=$('#mallImg'),feedback=$('#feedback');
   const optA=$('#optA'),optB=$('#optB'),optAImg=$('#optAImg'),optBImg=$('#optBImg');
   let correctTileSide=null,answeredTile=false;
 
@@ -1856,7 +1853,6 @@ body.ultra-low #cosmos{display:none}
     answeredTile=false;
     feedback.textContent='\u00A0';
     feedback.className='feedback';
-    pressHint.style.visibility='visible';
     mallImg.src='images/lid.jpg';
     optA.disabled=optB.disabled=false;
 
@@ -1873,7 +1869,6 @@ body.ultra-low #cosmos{display:none}
     if(answeredTile)return;
     answeredTile=true;
     optA.disabled=optB.disabled=true;
-    pressHint.style.visibility='hidden';
     const correctKey=(correctTileSide==='A'?optA:optB).dataset.key;
     mallImg.src=tileSrc(correctKey);
     const correct=side===correctTileSide;
@@ -1910,7 +1905,7 @@ body.ultra-low #cosmos{display:none}
     'game-item-20rymd1','game-item-20rymd2','game-item-20rymd3','game-item-20rymd4','game-item-20rymd5',
     'game-item17-plant1','game-item17-plant2','game-item17-plant3','game-item17-plant4','game-item17-plant5'
   ];
-  const mallImg2=$('#mallImg2'),feedback2=$('#feedback2'),pressHint2=$('#pressHint2');
+  const mallImg2=$('#mallImg2'),feedback2=$('#feedback2');
   const optA2=$('#optA2'),optB2=$('#optB2'),optAImg2=$('#optAImg2'),optBImg2=$('#optBImg2');
   let correctTileSide2=null,answeredTile2=false;
 
@@ -1920,7 +1915,6 @@ body.ultra-low #cosmos{display:none}
     answeredTile2=false;
     feedback2.textContent='\u00A0';
     feedback2.className='feedback';
-    pressHint2.style.visibility='visible';
     mallImg2.src='images/lid.jpg';
     optA2.disabled=optB2.disabled=false;
 
@@ -1937,7 +1931,6 @@ body.ultra-low #cosmos{display:none}
     if(answeredTile2)return;
     answeredTile2=true;
     optA2.disabled=optB2.disabled=true;
-    pressHint2.style.visibility='hidden';
     const correctKey=(correctTileSide2==='A'?optA2:optB2).dataset.key;
     mallImg2.src=tileSrc2(correctKey);
     const correct=side===correctTileSide2;
@@ -1978,7 +1971,7 @@ body.ultra-low #cosmos{display:none}
     return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
   }
 
-  const mallImgColor=$('#mallImgColor'),feedbackColor=$('#feedbackColor'),pressHintColor=$('#pressHintColor');
+  const mallImgColor=$('#mallImgColor'),feedbackColor=$('#feedbackColor');
   const optColorA=$('#optColorA'),optColorB=$('#optColorB'),optColorAImg=$('#optColorAImg'),optColorBImg=$('#optColorBImg');
   let correctColorSide=null,answeredColor=false;
 
@@ -1986,7 +1979,6 @@ body.ultra-low #cosmos{display:none}
     answeredColor=false;
     feedbackColor.textContent='\u00A0';
     feedbackColor.className='feedback';
-    pressHintColor.style.visibility='visible';
     mallImgColor.src='images/lid.jpg';
     optColorA.disabled=optColorB.disabled=false;
 
@@ -2003,7 +1995,6 @@ body.ultra-low #cosmos{display:none}
     if(answeredColor)return;
     answeredColor=true;
     optColorA.disabled=optColorB.disabled=true;
-    pressHintColor.style.visibility='hidden';
     const correctKey=(correctColorSide==='A'?optColorA:optColorB).dataset.key;
     mallImgColor.src=colorSVG(correctKey);
     const correct=side===correctColorSide;
@@ -2057,7 +2048,7 @@ body.ultra-low #cosmos{display:none}
     placeArrow.hidden=true;
     placeImg.src=tileSVG(null);
     resetPlaceLid();
-    placeActionBtn.textContent='PLACE A TILE';
+    placeActionBtn.textContent='Step 1. PLACE A TILE';
     placeActionBtn.disabled=false;
   }
 
@@ -2076,7 +2067,7 @@ body.ultra-low #cosmos{display:none}
     mainBtn.dataset.key=keyMain;
     otherBtn.dataset.key=keyOther;
     placeOptionsRow.classList.remove('awaiting');
-    placeActionBtn.textContent='Press the tile you think is in the box';
+    placeActionBtn.textContent='Step 2. Press the tile you think is in the box';
     placeActionBtn.disabled=true;
     placePhase='placed';
   }
@@ -2086,7 +2077,7 @@ body.ultra-low #cosmos{display:none}
     if(placePhase!=='placed')return;
     placeChosenSide=side;
     placeOptA.disabled=placeOptB.disabled=true;
-    placeActionBtn.textContent='SWIPE UP THE LID';
+    placeActionBtn.innerHTML='<span class="step3-mobile">Step 3. Swipe up the lid.</span><span class="step3-desktop">Step 3. Click on the eye.</span>';
     placeArrow.hidden=false;
     placePhase='swipe';
   }
@@ -2144,9 +2135,10 @@ body.ultra-low #cosmos{display:none}
   placeLid.addEventListener('pointermove',placePointerMove);
   placeLid.addEventListener('pointerup',placePointerUp);
   placeLid.addEventListener('pointercancel',placePointerUp);
+  placeLid.addEventListener('click',()=>{ if(placePhase==='swipe')revealPlaceTile(); });
 
   /* ---------- Guess the Side ---------- */
-  const sideMysteryImg=$('#sideMysteryImg'),sideFeedback=$('#sideFeedback'),sidePressHint=$('#sidePressHint');
+  const sideMysteryImg=$('#sideMysteryImg'),sideFeedback=$('#sideFeedback');
   const optLeft=$('#optLeft'),optRight=$('#optRight'),optLeftImg=$('#optLeftImg'),optRightImg=$('#optRightImg');
   let correctLineSide=null,answeredSide=false;
 
@@ -2164,7 +2156,6 @@ body.ultra-low #cosmos{display:none}
     answeredSide=false;
     sideFeedback.textContent='\u00A0';
     sideFeedback.className='feedback';
-    sidePressHint.style.visibility='visible';
     sideMysteryImg.src='images/lid.jpg';
     optLeft.disabled=optRight.disabled=false;
     correctLineSide=Math.random()<.5?'left':'right';
@@ -2174,7 +2165,6 @@ body.ultra-low #cosmos{display:none}
     if(answeredSide)return;
     answeredSide=true;
     optLeft.disabled=optRight.disabled=true;
-    sidePressHint.style.visibility='hidden';
     sideMysteryImg.src=tileSVG(correctLineSide);
     const correct=side===correctLineSide;
     if(correct){
@@ -2194,7 +2184,7 @@ body.ultra-low #cosmos{display:none}
   optRight.addEventListener('click',()=>chooseSide('right'));
 
   /* ---------- Guess the Dots ---------- */
-  const dotsMysteryImg=$('#dotsMysteryImg'),dotsFeedback=$('#dotsFeedback'),dotsPressHint=$('#dotsPressHint');
+  const dotsMysteryImg=$('#dotsMysteryImg'),dotsFeedback=$('#dotsFeedback');
   const optOne=$('#optOne'),optMany=$('#optMany'),optOneImg=$('#optOneImg'),optManyImg=$('#optManyImg');
   let correctDotsKind=null,answeredDots=false;
 
@@ -2258,7 +2248,6 @@ body.ultra-low #cosmos{display:none}
     answeredDots=false;
     dotsFeedback.textContent='\u00A0';
     dotsFeedback.className='feedback';
-    dotsPressHint.style.visibility='visible';
     dotsMysteryImg.src='images/lid.jpg';
     optOne.disabled=optMany.disabled=false;
     correctDotsKind=Math.random()<.5?'one':'many';
@@ -2268,7 +2257,6 @@ body.ultra-low #cosmos{display:none}
     if(answeredDots)return;
     answeredDots=true;
     optOne.disabled=optMany.disabled=true;
-    dotsPressHint.style.visibility='hidden';
     dotsMysteryImg.src=dotsSVG(correctDotsKind);
     const correct=kind===correctDotsKind;
     if(correct){
