@@ -431,7 +431,16 @@ body.ultra-low #cosmos{display:none}
 .lb-donate-wrap{display:flex;gap:24px;justify-content:center;align-items:stretch;flex-wrap:wrap;max-width:1200px;margin:24px auto 0}
 .lb-donate-wrap .leaderboard-panel{margin:0;flex:1 1 420px;max-width:560px;display:flex;flex-direction:column;justify-content:center}
 .lb-donate-wrap .page-donate-row{margin:0;flex:1 1 420px;max-width:560px}
-@media(max-width:820px){.lb-donate-wrap{flex-direction:column;align-items:center}.lb-donate-wrap .leaderboard-panel,.lb-donate-wrap .page-donate-row{max-width:560px;width:100%}}
+@media(max-width:820px){
+  .lb-donate-wrap{flex-direction:column;align-items:center;gap:20px}
+  .lb-donate-wrap .leaderboard-panel,.lb-donate-wrap .page-donate-row{max-width:560px;width:100%}
+  /* Match the 20px gap used between the game panels (.triple-wrap gap)
+     so the space above/below the donation box feels consistent on
+     mobile, instead of the larger desktop spacing (app padding +
+     .triple-wrap's own top margin). */
+  .app{padding-top:0}
+  .triple-wrap{margin-top:20px}
+}
 @media(min-width:901px){.lb-donate-wrap{max-width:1200px;gap:32px}.lb-donate-wrap .leaderboard-panel,.lb-donate-wrap .page-donate-row{flex:1 1 500px;min-width:400px}}
 
 /* ===== donation image, now paired with the leaderboard in .lb-donate-wrap ===== */
@@ -439,6 +448,16 @@ body.ultra-low #cosmos{display:none}
 .page-donate-link{display:inline-block;max-width:100%;width:100%}
 .page-donate-img{display:block;width:100%;height:auto;border:1.5px solid var(--gold);border-radius:16px;box-shadow:0 18px 45px #0008;transition:transform .15s ease}
 .page-donate-link:hover .page-donate-img{transform:scale(1.03)}
+/* Above 820px the leaderboard and donation box sit side by side
+   (.lb-donate-wrap has align-items:stretch), so here we make the
+   donation box match the leaderboard's rendered height exactly,
+   cropping the image with object-fit:cover as needed. Below that
+   width they stack, where a forced equal height doesn't apply. */
+@media(min-width:821px){
+  .lb-donate-wrap .page-donate-row{align-items:stretch}
+  .lb-donate-wrap .page-donate-link{display:block;height:100%}
+  .lb-donate-wrap .page-donate-img{height:100%;object-fit:cover}
+}
 .h1-desktop{display:none}
 @media (min-width:721px){
   .h1-mobile{display:none}
@@ -1237,10 +1256,13 @@ body.ultra-low #cosmos{display:none}
   async function loadLeaderboard(){
     if(!lbListEl)return;
     try{
+      // Logged-out visitors only get a teaser of the top 3; full top 20
+      // is loaded once they're logged in.
+      const limit=isLoggedIn()?20:3;
       const{data,error}=await sb.from(HIGHSCORE_TABLE)
         .select('*')
         .order('score',{ascending:false})
-        .limit(20);
+        .limit(limit);
       if(error)throw error;
       renderLeaderboard(data||[]);
     }catch(e){console.error('loadLeaderboard error:',e);}
@@ -1275,10 +1297,11 @@ body.ultra-low #cosmos{display:none}
   async function loadStreakLeaderboard(){
     if(!streakLbListEl)return;
     try{
+      const limit=isLoggedIn()?20:3;
       const{data,error}=await sb.from(HIGHSCORE_TABLE)
         .select('*')
         .order('best_streak',{ascending:false})
-        .limit(20);
+        .limit(limit);
       if(error)throw error;
       renderStreakLeaderboard(data||[]);
     }catch(e){console.error('loadStreakLeaderboard error:',e);}
@@ -1309,6 +1332,8 @@ body.ultra-low #cosmos{display:none}
   async function updateLeaderboardAccess(){
     if(!lbLockedEl||!lbUnlockedEl)return;
     const loggedIn=isLoggedIn();
+    lbLockedEl.hidden=loggedIn;
+    lbUnlockedEl.hidden=!loggedIn;
     if(loggedIn){
       await fetchPlayerName();
       console.log('[leaderboard] logged in, player name from profiles.display_name:',JSON.stringify(_lbPlayerName));
