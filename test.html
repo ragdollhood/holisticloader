@@ -589,6 +589,28 @@ body.ultra-low #cosmos{display:none}
         <button class="option-tile" id="placeOptB" type="button" aria-label="Tile option B"><img id="placeOptBImg" alt="Tile option B"></button>
       </div>
     </section>
+
+    <section class="panel game-panel tri-panel">
+      <p class="prompt-title">SENSE THE FIGURE</p>
+      <div class="mall-box tarot-box"><img id="mallImg2" alt="Mystery tile"></div>
+      <p class="feedback" id="feedback2" aria-live="polite">&nbsp;</p>
+      <div class="options-row">
+        <button class="option-tile" id="optA2" type="button" aria-label="Option A"><img id="optAImg2" alt="Tile option A"></button>
+        <button class="option-tile" id="optB2" type="button" aria-label="Option B"><img id="optBImg2" alt="Tile option B"></button>
+      </div>
+      <p class="press-hint" id="pressHint2">Choose one</p>
+    </section>
+
+    <section class="panel game-panel tri-panel">
+      <p class="prompt-title">SENSE THE COLOR</p>
+      <div class="mall-box tarot-box"><img id="mallImgColor" alt="Mystery tile"></div>
+      <p class="feedback" id="feedbackColor" aria-live="polite">&nbsp;</p>
+      <div class="options-row">
+        <button class="option-tile" id="optColorA" type="button" aria-label="Option A"><img id="optColorAImg" alt="Color option A"></button>
+        <button class="option-tile" id="optColorB" type="button" aria-label="Option B"><img id="optColorBImg" alt="Color option B"></button>
+      </div>
+      <p class="press-hint" id="pressHintColor">Choose one</p>
+    </section>
   </div>
 
 
@@ -650,7 +672,7 @@ body.ultra-low #cosmos{display:none}
       <section class="panel meter-panel">
         <p class="meter-title" id="meterInfoHeading">TODAY'S INTUITION LEVEL</p>
         <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
-        <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Place a Tile + Sense the Direction (What Comes Next isn&rsquo;t counted here)</p>
+        <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Figure + Sense the Color + Sense the Side + Sense the Pattern + What&rsquo;s Inside + Sense the Direction (What Comes Next isn&rsquo;t counted here)</p>
         <p class="streak-line">&#128293; Todays streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
         <div class="meter-score-actions">
           <button class="score-reset" id="scoreReset" type="button">Reset</button>
@@ -1837,6 +1859,124 @@ body.ultra-low #cosmos{display:none}
   optA.addEventListener('click',()=>chooseTile('A'));
   optB.addEventListener('click',()=>chooseTile('B'));
 
+  /* ---------- Sense the Tile (game11-20 set) ---------- */
+  /* Only files named game-item11.png .. game-item20.png inside
+     images/game11-20/ are used (any other images in that folder are
+     ignored). */
+  const gameItems11to20=['game-item11','game-item12','game-item13','game-item14','game-item15','game-item16','game-item17','game-item18','game-item19','game-item20'];
+  const mallImg2=$('#mallImg2'),feedback2=$('#feedback2'),pressHint2=$('#pressHint2');
+  const optA2=$('#optA2'),optB2=$('#optB2'),optAImg2=$('#optAImg2'),optBImg2=$('#optBImg2');
+  let correctTileSide2=null,answeredTile2=false;
+
+  function tileSrc2(key){return `images/game11-20/${key}.png`}
+
+  function newRoundTile2(){
+    answeredTile2=false;
+    feedback2.textContent='\u00A0';
+    feedback2.className='feedback';
+    pressHint2.style.visibility='visible';
+    mallImg2.src='images/lid.jpg';
+    optA2.disabled=optB2.disabled=false;
+
+    const pool=[...gameItems11to20].sort(()=>Math.random()-.5);
+    const keyA=pool[0],keyB=pool[1];
+    optAImg2.src=tileSrc2(keyA);
+    optBImg2.src=tileSrc2(keyB);
+    optA2.dataset.key=keyA;
+    optB2.dataset.key=keyB;
+    correctTileSide2=Math.random()<.5?'A':'B';
+  }
+
+  function chooseTile2(side){
+    if(answeredTile2)return;
+    answeredTile2=true;
+    optA2.disabled=optB2.disabled=true;
+    pressHint2.style.visibility='hidden';
+    const correctKey=(correctTileSide2==='A'?optA2:optB2).dataset.key;
+    mallImg2.src=tileSrc2(correctKey);
+    const correct=side===correctTileSide2;
+    if(correct){
+      feedback2.textContent='YES, YOU GOT IT RIGHT!';
+      feedback2.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      feedback2.textContent='TRY AGAIN!';
+      feedback2.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundTile2,1500);
+  }
+
+  optA2.addEventListener('click',()=>chooseTile2('A'));
+  optB2.addEventListener('click',()=>chooseTile2('B'));
+
+  /* ---------- Sense the Color ---------- */
+  const COLOR_DEFS={
+    black:'#161616',
+    white:'#f6f1e4',
+    red:'#e5484d',
+    green:'#3ecf8e',
+    yellow:'#f5c518',
+    blue:'#4f8ef7',
+    orange:'#ff8a3d',
+    turquoise:'#2dd4bf',
+    purple:'#a78bfa',
+    pink:'#f472b6'
+  };
+  const colorKeys=Object.keys(COLOR_DEFS);
+
+  function colorSVG(key){
+    const fill=(key&&COLOR_DEFS[key])?COLOR_DEFS[key]:'#3a2f4d';
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><rect width="200" height="256" rx="14" fill="${fill}"/><rect x="1.5" y="1.5" width="197" height="253" rx="12.5" fill="none" stroke="#00000030" stroke-width="2"/></svg>`;
+    return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+  }
+
+  const mallImgColor=$('#mallImgColor'),feedbackColor=$('#feedbackColor'),pressHintColor=$('#pressHintColor');
+  const optColorA=$('#optColorA'),optColorB=$('#optColorB'),optColorAImg=$('#optColorAImg'),optColorBImg=$('#optColorBImg');
+  let correctColorSide=null,answeredColor=false;
+
+  function newRoundColor(){
+    answeredColor=false;
+    feedbackColor.textContent='\u00A0';
+    feedbackColor.className='feedback';
+    pressHintColor.style.visibility='visible';
+    mallImgColor.src='images/lid.jpg';
+    optColorA.disabled=optColorB.disabled=false;
+
+    const pool=[...colorKeys].sort(()=>Math.random()-.5);
+    const keyA=pool[0],keyB=pool[1];
+    optColorAImg.src=colorSVG(keyA);
+    optColorBImg.src=colorSVG(keyB);
+    optColorA.dataset.key=keyA;
+    optColorB.dataset.key=keyB;
+    correctColorSide=Math.random()<.5?'A':'B';
+  }
+
+  function chooseColor(side){
+    if(answeredColor)return;
+    answeredColor=true;
+    optColorA.disabled=optColorB.disabled=true;
+    pressHintColor.style.visibility='hidden';
+    const correctKey=(correctColorSide==='A'?optColorA:optColorB).dataset.key;
+    mallImgColor.src=colorSVG(correctKey);
+    const correct=side===correctColorSide;
+    if(correct){
+      feedbackColor.textContent='YES, YOU GOT IT RIGHT!';
+      feedbackColor.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      feedbackColor.textContent='TRY AGAIN!';
+      feedbackColor.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundColor,1500);
+  }
+
+  optColorA.addEventListener('click',()=>chooseColor('A'));
+  optColorB.addEventListener('click',()=>chooseColor('B'));
+
   /* ---------- Place a Tile ---------- */
   /* Images come from images/instruments/ (not images/instruments2/ like
      Guess the Tile above) — same key list, since that folder also has
@@ -2308,6 +2448,8 @@ body.ultra-low #cosmos{display:none}
 
   /* ---------- init ---------- */
   newRoundTile();
+  newRoundTile2();
+  newRoundColor();
   newRoundSide();
   newRoundDots();
   newRoundNext();
