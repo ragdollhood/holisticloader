@@ -122,6 +122,10 @@ body.ultra-low #cosmos{display:none}
 .h1-frame .title-img{display:block;margin:0 auto;height:clamp(20.8px,5.12vw,33.6px);width:auto;max-width:100%}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:720px){body{padding-top:calc(var(--navH,108px) + var(--titleH,50px) + var(--meterH,54px) + 2px)}.h1-frame{width:92vw;border-radius:0 0 18px 18px}#brandLogo{max-height:clamp(37px,9.6vw,67px)}#topTabs .tab{padding:8px 9px;font-size:10px}.app{padding-top:4px}.intro-tagline{margin:0 auto 12px;line-height:1.5}}
+@media(max-width:720px){
+  .h1-frame{transition:opacity .25s ease,visibility .25s ease}
+  body.title-hidden .h1-frame{opacity:0;visibility:hidden;pointer-events:none}
+}
 
 /* ===== hamburger menu (mobile + desktop) ===== */
 #menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
@@ -192,6 +196,7 @@ body.ultra-low #cosmos{display:none}
 .next-mystery{width:min(42vw,210px);aspect-ratio:.78;margin:0 auto 22px;padding:14px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 18px 45px #0008;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .next-mystery #nextMysteryQ{font:700 clamp(30px,8vw,46px) Georgia;background:linear-gradient(180deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .next-mystery img{width:64%;height:64%;object-fit:contain;filter:drop-shadow(0 0 12px #c9a8ffaa)}
+.next-mystery img.mystery-lid{width:100%;height:100%;filter:drop-shadow(0 6px 14px #0007)}
 .next-stage-row{display:flex;align-items:stretch;justify-content:center;gap:16px;margin:0 auto 22px}
 .next-stage-row .next-mystery{margin:0}
 .next-meter-vert{display:flex;flex-direction:column;align-items:center;gap:7px;width:56px;flex:none}
@@ -221,7 +226,7 @@ body.ultra-low #cosmos{display:none}
 /* ===== tarot-card treatment for the game panels & mystery boxes ===== */
 .game-panel{position:relative;border:1px solid rgba(255,217,138,.38)}
 .game-panel::before{content:'';position:absolute;inset:6px;border:1px solid rgba(255,217,138,.16);border-radius:16px;pointer-events:none}
-/* ===== color-coded frames: turquoise links the four "sense" games + graphs + meter, violet marks "What Comes Next" as its own (uncounted) game ===== */
+/* ===== color-coded frames: turquoise links the five "sense" games + graphs + meter, violet marks "What Comes Next" as its own (uncounted) game ===== */
 .tri-panel,.direction-panel{border-color:#5eead4;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(94,234,212,.16)}
 .tri-panel::before,.direction-panel::before{border-color:rgba(94,234,212,.32)}
 .next-panel{border-color:#c9a8ff;box-shadow:0 18px 55px #0008,0 0 0 1px rgba(201,168,255,.16)}
@@ -281,6 +286,20 @@ body.ultra-low #cosmos{display:none}
 .score-log:hover:not(:disabled){transform:translateY(-2px)}
 .score-log:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:900px){.triple-wrap{flex-direction:column;align-items:center}.triple-wrap .game-panel{max-width:340px;width:100%}}
+/* ===== "Place a Tile" — a mystery tile sits under a solid-color lid
+   (same fill as the other games' blank/mystery tile, via tileSVG(null))
+   that must be dragged upward to reveal it. ===== */
+.place-img,.place-lid{position:absolute;top:14px;left:14px;right:14px;bottom:14px;object-fit:contain;filter:drop-shadow(0 6px 14px #0007)}
+.mall-box .place-img,.mall-box .place-lid{width:calc(100% - 28px);height:calc(100% - 28px)}
+.place-lid{cursor:grab;touch-action:none;will-change:transform,opacity}
+.place-lid:active{cursor:grabbing}
+.place-arrow{position:absolute;top:10px;left:50%;transform:translate(-50%,0);font-size:46px;font-weight:700;line-height:1;color:var(--gold);text-shadow:0 0 14px rgba(255,217,138,.95),0 0 30px rgba(255,217,138,.6),0 2px 6px #000c;pointer-events:none;animation:placeArrowBlink 1.1s ease-in-out infinite;z-index:3}
+@keyframes placeArrowBlink{0%,100%{opacity:.4;transform:translate(-50%,8px)}50%{opacity:1;transform:translate(-50%,-10px)}}
+.place-action-btn{display:block;width:100%;max-width:280px;margin:16px auto 0;font:600 12.5px Georgia;letter-spacing:.03em;color:var(--gold);background:transparent;border:1.5px solid var(--gold);border-radius:999px;padding:12px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,opacity .2s ease}
+@media (hover:hover) and (pointer:fine){
+  .place-action-btn:hover:not(:disabled){background:var(--gold);color:var(--bg)}
+}
+.place-action-btn:disabled{cursor:default;opacity:.85}
 @media(min-width:901px){
   .app{max-width:1600px}
   .triple-wrap{max-width:1560px;gap:32px}
@@ -484,8 +503,44 @@ body.ultra-low #cosmos{display:none}
   </picture>
 </div>
 
+<p class="intro-tagline">Train your intuition. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance. The graph below will let you monitor your progress over time.</p>
+
+<div class="lb-donate-wrap">
+  <section class="panel leaderboard-panel">
+    <p class="leaderboard-label">INTUITION LEADERBOARD</p>
+
+    <div id="leaderboardLocked" class="leaderboard-locked">
+      <p class="leaderboard-locked-text">Log in to see the leaderboard and submit your score.</p>
+      <button type="button" id="leaderboardLoginBtn" class="progress-login-btn">LOG IN</button>
+    </div>
+
+    <div id="leaderboardUnlocked" hidden>
+      <div id="leaderboardNameForm" class="leaderboard-name-form" hidden>
+        <input type="text" id="playerName" class="leaderboard-name-input" maxlength="20" placeholder="Your leaderboard name">
+        <button type="button" id="saveNameBtn" class="leaderboard-save-btn">Save Name</button>
+      </div>
+      <p id="leaderboardGreeting" class="leaderboard-greeting" hidden></p>
+      <p id="leaderboardGreetingHint" class="leaderboard-greeting-hint" hidden>Want to change your name? Use the account icon (top right) &rarr; &ldquo;Choose a display name&rdquo;.</p>
+      <p id="leaderboardNameMsg" class="leaderboard-name-msg" hidden></p>
+
+      <p class="leaderboard-sublabel">&#127942; BEST ACCURACY</p>
+      <ol id="leaderboardList" class="leaderboard-list"></ol>
+      <p id="leaderboardEmpty" class="leaderboard-empty" hidden>No scores yet &mdash; be the first on the board!</p>
+
+      <p class="leaderboard-sublabel leaderboard-sublabel-streak">&#128293; BEST STREAKS</p>
+      <ol id="streakLeaderboardList" class="leaderboard-list"></ol>
+      <p id="streakLeaderboardEmpty" class="leaderboard-empty" hidden>No streaks yet &mdash; be the first on the board!</p>
+    </div>
+  </section>
+
+  <div class="panel page-donate-row">
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="page-donate-link">
+      <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="page-donate-img">
+    </a>
+  </div>
+</div>
+
 <main class="app">
-  <p class="intro-tagline">Train your intuition. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance. The graph below will let you monitor your progress over time.</p>
   <div class="triple-wrap">
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">SENSE THE TILE</p>
@@ -510,7 +565,7 @@ body.ultra-low #cosmos{display:none}
     </section>
 
     <section class="panel game-panel tri-panel">
-      <p class="prompt-title">SENSE THE DOTS</p>
+      <p class="prompt-title">SENSE THE PATTERN</p>
       <div class="mall-box tarot-box"><img id="dotsMysteryImg" alt="Mystery tile"></div>
       <p class="feedback" id="dotsFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row">
@@ -519,7 +574,45 @@ body.ultra-low #cosmos{display:none}
       </div>
       <p class="press-hint" id="dotsPressHint">Choose one</p>
     </section>
+
+    <section class="panel game-panel tri-panel">
+      <p class="prompt-title">WHAT'S INSIDE?</p>
+      <div class="mall-box tarot-box" id="placeStage">
+        <img id="placeImg" class="place-img" alt="" aria-hidden="true">
+        <img id="placeLid" class="place-lid" alt="" aria-hidden="true">
+        <span class="place-arrow" id="placeArrow" aria-hidden="true" hidden>&#8593;</span>
+      </div>
+      <button type="button" class="place-action-btn" id="placeActionBtn">PLACE A TILE</button>
+      <p class="feedback" id="placeFeedback" aria-live="polite">&nbsp;</p>
+      <div class="options-row" id="placeOptionsRow" hidden>
+        <button class="option-tile" id="placeOptA" type="button" aria-label="Tile option A"><img id="placeOptAImg" alt="Tile option A"></button>
+        <button class="option-tile" id="placeOptB" type="button" aria-label="Tile option B"><img id="placeOptBImg" alt="Tile option B"></button>
+      </div>
+    </section>
+
+    <section class="panel game-panel tri-panel">
+      <p class="prompt-title">SENSE THE FIGURE</p>
+      <div class="mall-box tarot-box"><img id="mallImg2" alt="Mystery tile"></div>
+      <p class="feedback" id="feedback2" aria-live="polite">&nbsp;</p>
+      <div class="options-row">
+        <button class="option-tile" id="optA2" type="button" aria-label="Option A"><img id="optAImg2" alt="Tile option A"></button>
+        <button class="option-tile" id="optB2" type="button" aria-label="Option B"><img id="optBImg2" alt="Tile option B"></button>
+      </div>
+      <p class="press-hint" id="pressHint2">Choose one</p>
+    </section>
+
+    <section class="panel game-panel tri-panel">
+      <p class="prompt-title">SENSE THE COLOR</p>
+      <div class="mall-box tarot-box"><img id="mallImgColor" alt="Mystery tile"></div>
+      <p class="feedback" id="feedbackColor" aria-live="polite">&nbsp;</p>
+      <div class="options-row">
+        <button class="option-tile" id="optColorA" type="button" aria-label="Option A"><img id="optColorAImg" alt="Color option A"></button>
+        <button class="option-tile" id="optColorB" type="button" aria-label="Option B"><img id="optColorBImg" alt="Color option B"></button>
+      </div>
+      <p class="press-hint" id="pressHintColor">Choose one</p>
+    </section>
   </div>
+
 
   <div class="duo-wrap">
     <section class="panel game-panel direction-panel">
@@ -579,7 +672,7 @@ body.ultra-low #cosmos{display:none}
       <section class="panel meter-panel">
         <p class="meter-title" id="meterInfoHeading">TODAY'S INTUITION LEVEL</p>
         <p class="score-value meter-score-value"><span id="scoreCorrect">0</span> / <span id="scoreTotal">0</span></p>
-        <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Side + Sense the Dots + Sense the Direction (What Comes Next isn&rsquo;t counted here)</p>
+        <p class="score-sub">correct / attempts &mdash; Sense the Tile + Sense the Figure + Sense the Color + Sense the Side + Sense the Pattern + What&rsquo;s Inside + Sense the Direction (What Comes Next isn&rsquo;t counted here)</p>
         <p class="streak-line">&#128293; Todays streak: <span id="streakCurrent">0</span> &nbsp;&middot;&nbsp; Best streak: <span id="streakBest">0</span></p>
         <div class="meter-score-actions">
           <button class="score-reset" id="scoreReset" type="button">Reset</button>
@@ -637,43 +730,6 @@ body.ultra-low #cosmos{display:none}
   </div>
 </div>
 
-<div class="lb-donate-wrap">
-  <section class="panel leaderboard-panel">
-    <p class="leaderboard-label">INTUITION LEADERBOARD</p>
-
-    <div id="leaderboardLocked" class="leaderboard-locked">
-      <p class="leaderboard-locked-text">Log in to see the leaderboard and submit your score.</p>
-      <button type="button" id="leaderboardLoginBtn" class="progress-login-btn">LOG IN</button>
-    </div>
-
-    <div id="leaderboardUnlocked" hidden>
-      <div id="leaderboardNameForm" class="leaderboard-name-form" hidden>
-        <input type="text" id="playerName" class="leaderboard-name-input" maxlength="20" placeholder="Your leaderboard name">
-        <button type="button" id="saveNameBtn" class="leaderboard-save-btn">Save Name</button>
-      </div>
-      <p id="leaderboardGreeting" class="leaderboard-greeting" hidden></p>
-      <p id="leaderboardGreetingHint" class="leaderboard-greeting-hint" hidden>Want to change your name? Use the account icon (top right) &rarr; &ldquo;Choose a display name&rdquo;.</p>
-      <p id="leaderboardNameMsg" class="leaderboard-name-msg" hidden></p>
-
-      <p class="leaderboard-sublabel">&#127942; BEST ACCURACY</p>
-      <ol id="leaderboardList" class="leaderboard-list"></ol>
-      <p id="leaderboardEmpty" class="leaderboard-empty" hidden>No scores yet &mdash; be the first on the board!</p>
-
-      <p class="leaderboard-sublabel leaderboard-sublabel-streak">&#128293; BEST STREAKS</p>
-      <ol id="streakLeaderboardList" class="leaderboard-list"></ol>
-      <p id="streakLeaderboardEmpty" class="leaderboard-empty" hidden>No streaks yet &mdash; be the first on the board!</p>
-    </div>
-  </section>
-
-  <div class="panel page-donate-row">
-    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="page-donate-link">
-      <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="page-donate-img">
-    </a>
-  </div>
-</div>
-
-
-
 <section class="panel intuition-seo" aria-labelledby="seoHeading">
   <h2 id="seoHeading">Train Your Intuition, One Round at a Time</h2>
   <p>Intuition isn't something you either have or don't — it's a mental muscle, and like any muscle, it gets stronger with regular practice. Every time you play Intuition Loader, you're giving your brain a small, low-stakes chance to guess before you know: which tile, which side, which direction. Over days and weeks, many players notice their first instinct becomes quicker and more accurate — a sign that their intuitive sense is being trained rather than left dormant.</p>
@@ -709,6 +765,28 @@ body.ultra-low #cosmos{display:none}
   function loop(now){rafId=requestAnimationFrame(loop);if(perf<.7&&now-frame<33)return;frame=now;let dt=Math.min(50,now-last);last=now;x.clearRect(0,0,c.width,c.height);x.fillStyle='#f3ead4';stars.forEach(s=>{s.p+=dt*.001;x.globalAlpha=.25+.45*Math.abs(Math.sin(s.p));x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});x.globalAlpha=1}
   rafId=requestAnimationFrame(loop);
   document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(rafId)}else{last=performance.now();rafId=requestAnimationFrame(loop)}});
+})();
+
+/* ===== mobile only: hide the h1-frame title image + its plaque once the
+   page is scrolled, while leaving the nav bar, hamburger menu, brand
+   logo, and the floating meter fixed/visible as before. ===== */
+(function(){
+  function isMobile(){return innerWidth<=720}
+  const SCROLL_HIDE_AT=24;
+  let ticking=false;
+  function updateTitleVisibility(){
+    if(!isMobile()){document.body.classList.remove('title-hidden');return}
+    document.body.classList.toggle('title-hidden',window.scrollY>SCROLL_HIDE_AT);
+  }
+  function onScroll(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(()=>{updateTitleVisibility();ticking=false});
+  }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',updateTitleVisibility);
+  addEventListener('orientationchange',()=>setTimeout(updateTitleVisibility,60));
+  updateTitleVisibility();
 })();
 
 /* ===== hamburger menu toggle (mobile + desktop) ===== */
@@ -812,8 +890,8 @@ body.ultra-low #cosmos{display:none}
   if(window.ResizeObserver) new ResizeObserver(syncMeterTop).observe(anchor);
 })();
 
-/* ===== Intuition games: Guess the Tile, Guess the Side, Guess the Direction ===== */
-/* Guess the Tile and Guess the Side share one SCORE, one daily intuition meter, and one daily progress graph. */
+/* ===== Intuition games: Guess the Tile, Place a Tile, Guess the Side, Guess the Direction ===== */
+/* Guess the Tile, Place a Tile, and Guess the Side share one SCORE, one daily intuition meter, and one daily progress graph. */
 (function(){
   const $=s=>document.querySelector(s);
 
@@ -1745,7 +1823,7 @@ body.ultra-low #cosmos{display:none}
     feedback.textContent='\u00A0';
     feedback.className='feedback';
     pressHint.style.visibility='visible';
-    mallImg.src=tileSVG(null);
+    mallImg.src='images/lid.jpg';
     optA.disabled=optB.disabled=false;
 
     const pool=[...instruments].sort(()=>Math.random()-.5);
@@ -1781,6 +1859,260 @@ body.ultra-low #cosmos{display:none}
   optA.addEventListener('click',()=>chooseTile('A'));
   optB.addEventListener('click',()=>chooseTile('B'));
 
+  /* ---------- Sense the Figure (game11-20 set) ---------- */
+  /* Only files named game-item*.png inside images/game11-20/ are used.
+     Real filenames confirmed by the site owner (base name, no extension —
+     .png is used here; matching .webp files also exist per image but
+     aren't referenced to keep this simple). */
+  const gameItems11to20=[
+    'game-item-11troll1','game-item-11troll2','game-item-11troll3','game-item-11troll4','game-item-11troll5',
+    'game-item-12desert1','game-item-12desert2','game-item-12desert3','game-item-12desert4','game-item-12desert5',
+    'game-item-13forest1','game-item-13forest2','game-item-13forest3','game-item-13forest4','game-item-13forest5',
+    'game-item-14fox1','game-item-14fox2','game-item-14fox3','game-item-14fox4','game-item-14fox5',
+    'game-item-15glacier1','game-item-15glacier2','game-item-15glacier3','game-item-15glacier4','game-item-15glacier5',
+    'game-item-16magic1','game-item-16magic2','game-item-16magic3','game-item-16magic4','game-item-16magic5',
+    'game-item-18djungle1','game-item-18djungle2','game-item-18djungle3','game-item-18djungle4','game-item-18djungle5',
+    'game-item-19crystal1','game-item-19crystal2','game-item-19crystal3','game-item-19crystal4','game-item-19crystal5',
+    'game-item-20rymd1','game-item-20rymd2','game-item-20rymd3','game-item-20rymd4','game-item-20rymd5',
+    'game-item-crystal1','game-item-crystal2','game-item-crystal3','game-item-crystal4','game-item-crystal5',
+    'game-item-plant1','game-item-plant2','game-item-plant3','game-item-plant4','game-item-plant5',
+    'game-item17-plant1','game-item17-plant2','game-item17-plant3','game-item17-plant4','game-item17-plant5'
+  ];
+  const mallImg2=$('#mallImg2'),feedback2=$('#feedback2'),pressHint2=$('#pressHint2');
+  const optA2=$('#optA2'),optB2=$('#optB2'),optAImg2=$('#optAImg2'),optBImg2=$('#optBImg2');
+  let correctTileSide2=null,answeredTile2=false;
+
+  function tileSrc2(key){return `images/game11-20/${key}.png`}
+
+  function newRoundTile2(){
+    answeredTile2=false;
+    feedback2.textContent='\u00A0';
+    feedback2.className='feedback';
+    pressHint2.style.visibility='visible';
+    mallImg2.src='images/lid.jpg';
+    optA2.disabled=optB2.disabled=false;
+
+    const pool=[...gameItems11to20].sort(()=>Math.random()-.5);
+    const keyA=pool[0],keyB=pool[1];
+    optAImg2.src=tileSrc2(keyA);
+    optBImg2.src=tileSrc2(keyB);
+    optA2.dataset.key=keyA;
+    optB2.dataset.key=keyB;
+    correctTileSide2=Math.random()<.5?'A':'B';
+  }
+
+  function chooseTile2(side){
+    if(answeredTile2)return;
+    answeredTile2=true;
+    optA2.disabled=optB2.disabled=true;
+    pressHint2.style.visibility='hidden';
+    const correctKey=(correctTileSide2==='A'?optA2:optB2).dataset.key;
+    mallImg2.src=tileSrc2(correctKey);
+    const correct=side===correctTileSide2;
+    if(correct){
+      feedback2.textContent='YES, YOU GOT IT RIGHT!';
+      feedback2.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      feedback2.textContent='TRY AGAIN!';
+      feedback2.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundTile2,1500);
+  }
+
+  optA2.addEventListener('click',()=>chooseTile2('A'));
+  optB2.addEventListener('click',()=>chooseTile2('B'));
+
+  /* ---------- Sense the Color ---------- */
+  const COLOR_DEFS={
+    black:'#161616',
+    white:'#f6f1e4',
+    red:'#e5484d',
+    green:'#3ecf8e',
+    yellow:'#f5c518',
+    blue:'#4f8ef7',
+    orange:'#ff8a3d',
+    turquoise:'#2dd4bf',
+    purple:'#a78bfa',
+    pink:'#f472b6'
+  };
+  const colorKeys=Object.keys(COLOR_DEFS);
+
+  function colorSVG(key){
+    const fill=(key&&COLOR_DEFS[key])?COLOR_DEFS[key]:'#3a2f4d';
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 256"><rect width="200" height="256" rx="14" fill="${fill}"/><rect x="1.5" y="1.5" width="197" height="253" rx="12.5" fill="none" stroke="#00000030" stroke-width="2"/></svg>`;
+    return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+  }
+
+  const mallImgColor=$('#mallImgColor'),feedbackColor=$('#feedbackColor'),pressHintColor=$('#pressHintColor');
+  const optColorA=$('#optColorA'),optColorB=$('#optColorB'),optColorAImg=$('#optColorAImg'),optColorBImg=$('#optColorBImg');
+  let correctColorSide=null,answeredColor=false;
+
+  function newRoundColor(){
+    answeredColor=false;
+    feedbackColor.textContent='\u00A0';
+    feedbackColor.className='feedback';
+    pressHintColor.style.visibility='visible';
+    mallImgColor.src='images/lid.jpg';
+    optColorA.disabled=optColorB.disabled=false;
+
+    const pool=[...colorKeys].sort(()=>Math.random()-.5);
+    const keyA=pool[0],keyB=pool[1];
+    optColorAImg.src=colorSVG(keyA);
+    optColorBImg.src=colorSVG(keyB);
+    optColorA.dataset.key=keyA;
+    optColorB.dataset.key=keyB;
+    correctColorSide=Math.random()<.5?'A':'B';
+  }
+
+  function chooseColor(side){
+    if(answeredColor)return;
+    answeredColor=true;
+    optColorA.disabled=optColorB.disabled=true;
+    pressHintColor.style.visibility='hidden';
+    const correctKey=(correctColorSide==='A'?optColorA:optColorB).dataset.key;
+    mallImgColor.src=colorSVG(correctKey);
+    const correct=side===correctColorSide;
+    if(correct){
+      feedbackColor.textContent='YES, YOU GOT IT RIGHT!';
+      feedbackColor.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      feedbackColor.textContent='TRY AGAIN!';
+      feedbackColor.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundColor,1500);
+  }
+
+  optColorA.addEventListener('click',()=>chooseColor('A'));
+  optColorB.addEventListener('click',()=>chooseColor('B'));
+
+  /* ---------- Place a Tile ---------- */
+  /* Images come from images/instruments/ (not images/instruments2/ like
+     Guess the Tile above) — same key list, since that folder also has
+     one instruments-KEY.png per key alongside its two unrelated
+     brick1.png/brick2.png tile-style preview thumbnails (excluded). */
+  function placeTileSrc(key){return `images/instruments/instruments-${key}.png`}
+  const placeStage=$('#placeStage'),placeImg=$('#placeImg'),placeLid=$('#placeLid'),placeArrow=$('#placeArrow');
+  const placeFeedback=$('#placeFeedback'),placeOptionsRow=$('#placeOptionsRow'),placeActionBtn=$('#placeActionBtn');
+  const placeOptA=$('#placeOptA'),placeOptB=$('#placeOptB'),placeOptAImg=$('#placeOptAImg'),placeOptBImg=$('#placeOptBImg');
+  let placePhase='idle'; // idle -> placed (choose a tile) -> swipe (drag the lid) -> revealed
+  let placeCorrectSide=null,placeChosenSide=null;
+  let placeDragging=false,placeDragPointerId=null,placeDragStartY=0,placeDragCurrentY=0,placeStageH=0;
+
+  placeLid.src='images/lid.jpg'; // set once, never changes
+  placeImg.src=tileSVG(null);
+
+  function resetPlaceLid(){
+    placeLid.style.transition='none';
+    placeLid.style.transform='translateY(0)';
+    placeLid.style.opacity='1';
+    void placeLid.offsetWidth; /* force reflow so the next transition is picked up */
+    placeLid.style.transition='';
+  }
+
+  function newRoundPlace(){
+    placePhase='idle';
+    placeChosenSide=null;
+    placeFeedback.textContent='\u00A0';
+    placeFeedback.className='feedback';
+    placeOptionsRow.hidden=true;
+    placeOptA.disabled=placeOptB.disabled=false;
+    placeArrow.hidden=true;
+    placeImg.src=tileSVG(null);
+    resetPlaceLid();
+    placeActionBtn.textContent='PLACE A TILE';
+    placeActionBtn.disabled=false;
+  }
+
+  function placeTile(){
+    if(placePhase!=='idle')return;
+    const pool=[...instruments].sort(()=>Math.random()-.5);
+    const keyMain=pool[0],keyOther=pool[1];
+    placeImg.src=placeTileSrc(keyMain); // hidden under the lid — placed now, revealed later
+    placeCorrectSide=Math.random()<.5?'A':'B';
+    const mainImg=placeCorrectSide==='A'?placeOptAImg:placeOptBImg;
+    const otherImg=placeCorrectSide==='A'?placeOptBImg:placeOptAImg;
+    const mainBtn=placeCorrectSide==='A'?placeOptA:placeOptB;
+    const otherBtn=placeCorrectSide==='A'?placeOptB:placeOptA;
+    mainImg.src=placeTileSrc(keyMain);
+    otherImg.src=placeTileSrc(keyOther);
+    mainBtn.dataset.key=keyMain;
+    otherBtn.dataset.key=keyOther;
+    placeOptionsRow.hidden=false;
+    placeActionBtn.textContent='Press the tile you think is in the box';
+    placeActionBtn.disabled=true;
+    placePhase='placed';
+  }
+  placeActionBtn.addEventListener('click',placeTile);
+
+  function choosePlaceTile(side){
+    if(placePhase!=='placed')return;
+    placeChosenSide=side;
+    placeOptA.disabled=placeOptB.disabled=true;
+    placeActionBtn.textContent='SWIPE UP THE LID';
+    placeArrow.hidden=false;
+    placePhase='swipe';
+  }
+  placeOptA.addEventListener('click',()=>choosePlaceTile('A'));
+  placeOptB.addEventListener('click',()=>choosePlaceTile('B'));
+
+  function revealPlaceTile(){
+    placePhase='revealed';
+    placeArrow.hidden=true;
+    placeLid.style.transition='transform .4s ease, opacity .4s ease';
+    placeLid.style.transform=`translateY(-${placeStageH||160}px)`;
+    placeLid.style.opacity='0';
+    const correct=placeChosenSide===placeCorrectSide;
+    if(correct){
+      placeFeedback.textContent='YES, YOU GOT IT RIGHT!';
+      placeFeedback.className='feedback correct';
+      fanfare();
+      confettiBurst();
+    }else{
+      placeFeedback.textContent='TRY AGAIN!';
+      placeFeedback.className='feedback wrong';
+    }
+    recordGuess(correct);
+    setTimeout(newRoundPlace,1500);
+  }
+
+  function placePointerDown(e){
+    if(placePhase!=='swipe')return;
+    placeDragging=true;
+    placeDragPointerId=e.pointerId;
+    placeDragStartY=e.clientY;
+    placeDragCurrentY=e.clientY;
+    placeStageH=placeStage.getBoundingClientRect().height;
+    placeLid.style.transition='none';
+    if(placeLid.setPointerCapture)placeLid.setPointerCapture(e.pointerId);
+  }
+  function placePointerMove(e){
+    if(!placeDragging||e.pointerId!==placeDragPointerId)return;
+    placeDragCurrentY=e.clientY;
+    const dy=Math.min(0,placeDragCurrentY-placeDragStartY); // upward only
+    placeLid.style.transform=`translateY(${dy}px)`;
+    placeLid.style.opacity=String(Math.max(.25,1-Math.abs(dy)/(placeStageH||160)*.7));
+  }
+  function placePointerUp(e){
+    if(!placeDragging||e.pointerId!==placeDragPointerId)return;
+    placeDragging=false;
+    const dy=Math.min(0,placeDragCurrentY-placeDragStartY);
+    if(Math.abs(dy)>(placeStageH||160)*.32){
+      revealPlaceTile();
+    }else{
+      resetPlaceLid();
+    }
+  }
+  placeLid.addEventListener('pointerdown',placePointerDown);
+  placeLid.addEventListener('pointermove',placePointerMove);
+  placeLid.addEventListener('pointerup',placePointerUp);
+  placeLid.addEventListener('pointercancel',placePointerUp);
+
   /* ---------- Guess the Side ---------- */
   const sideMysteryImg=$('#sideMysteryImg'),sideFeedback=$('#sideFeedback'),sidePressHint=$('#sidePressHint');
   const optLeft=$('#optLeft'),optRight=$('#optRight'),optLeftImg=$('#optLeftImg'),optRightImg=$('#optRightImg');
@@ -1801,7 +2133,7 @@ body.ultra-low #cosmos{display:none}
     sideFeedback.textContent='\u00A0';
     sideFeedback.className='feedback';
     sidePressHint.style.visibility='visible';
-    sideMysteryImg.src=tileSVG(null);
+    sideMysteryImg.src='images/lid.jpg';
     optLeft.disabled=optRight.disabled=false;
     correctLineSide=Math.random()<.5?'left':'right';
   }
@@ -1895,7 +2227,7 @@ body.ultra-low #cosmos{display:none}
     dotsFeedback.textContent='\u00A0';
     dotsFeedback.className='feedback';
     dotsPressHint.style.visibility='visible';
-    dotsMysteryImg.src=dotsSVG(null);
+    dotsMysteryImg.src='images/lid.jpg';
     optOne.disabled=optMany.disabled=false;
     correctDotsKind=Math.random()<.5?'one':'many';
   }
@@ -2087,8 +2419,10 @@ body.ultra-low #cosmos{display:none}
     nextFeedback.textContent='\u00A0';
     nextFeedback.className='feedback';
     nextPressHint.style.visibility='visible';
-    nextMysteryQ.style.display='block';
-    nextMysteryImg.hidden=true;
+    nextMysteryQ.style.display='none';
+    nextMysteryImg.src='images/lid.jpg';
+    nextMysteryImg.classList.add('mystery-lid');
+    nextMysteryImg.hidden=false;
     nextButtons.forEach(b=>{b.disabled=false;b.classList.remove('correct-glow','wrong-glow');});
     correctSymbol=symbolList[Math.floor(Math.random()*symbolList.length)];
   }
@@ -2100,6 +2434,7 @@ body.ultra-low #cosmos{display:none}
     nextButtons.forEach(b=>b.disabled=true);
     nextPressHint.style.visibility='hidden';
     nextMysteryQ.style.display='none';
+    nextMysteryImg.classList.remove('mystery-lid');
     nextMysteryImg.src=symbolSVG(correctSymbol);
     nextMysteryImg.hidden=false;
     const correct=symbol===correctSymbol;
@@ -2127,6 +2462,8 @@ body.ultra-low #cosmos{display:none}
 
   /* ---------- init ---------- */
   newRoundTile();
+  newRoundTile2();
+  newRoundColor();
   newRoundSide();
   newRoundDots();
   newRoundNext();
