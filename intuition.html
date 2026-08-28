@@ -178,7 +178,13 @@ body.ultra-low #cosmos{display:none}
 .feedback.wrong{color:#ff8a8a}
 .options-row{display:flex;justify-content:center;gap:24px;margin:6px 0 16px;flex-wrap:wrap}
 .option-tile{width:min(32vw,175px);aspect-ratio:.78;padding:10px;border:1.5px solid rgba(220,190,130,.35);border-radius:18px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
-.option-tile:hover:not(:disabled){transform:translateY(-5px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+/* Scoped to real pointers (mouse/trackpad) only — on touch devices
+   :hover has no real "leave" event, so a tapped option's gold hover
+   border used to stay stuck on it (looking like a permanent
+   "last picked" ring) until the next tap elsewhere. */
+@media (hover:hover) and (pointer:fine){
+  .option-tile:hover:not(:disabled){transform:translateY(-5px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+}
 .option-tile:disabled{cursor:default;opacity:.9}
 .option-tile img{width:100%;height:100%;object-fit:contain;pointer-events:none}
 .press-hint{color:#cfc3db;font-size:14px;margin:0}
@@ -204,7 +210,9 @@ body.ultra-low #cosmos{display:none}
 .next-row-break{display:none}
 @media(max-width:480px){.next-row-break{display:block;flex-basis:100%;width:0;height:0}}
 .next-option{width:min(15vw,74px);aspect-ratio:1;padding:12px;border:1.5px solid rgba(220,190,130,.35);border-radius:16px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
-.next-option:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+@media (hover:hover) and (pointer:fine){
+  .next-option:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+}
 .next-option:disabled{cursor:default;opacity:.9}
 .next-option img{width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 6px #c9a8ff88)}
 .next-option.correct-glow{border-color:#7af0d0;box-shadow:0 0 22px #7af0d0aa}
@@ -253,7 +261,9 @@ body.ultra-low #cosmos{display:none}
 .direction-arrow.right{right:10px}
 .direction-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:6px 0 16px}
 .sense-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:min(15vw,74px);aspect-ratio:1;padding:12px;border:1.5px solid rgba(220,190,130,.35);border-radius:16px;background:rgba(255,255,255,.06);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;font:600 11px Georgia;letter-spacing:.05em;color:#f3efe4}
-.sense-btn:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+@media (hover:hover) and (pointer:fine){
+  .sense-btn:hover:not(:disabled){transform:translateY(-4px);border-color:var(--gold);box-shadow:0 14px 32px #0007}
+}
 .sense-btn:disabled{cursor:not-allowed;opacity:.4;transform:none}
 .sense-btn svg{width:30%;height:30%;filter:drop-shadow(0 0 6px #c9a8ff88)}
 .meter-score-value{font-size:clamp(28px,6vw,40px);margin:0}
