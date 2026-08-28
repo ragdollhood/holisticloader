@@ -196,6 +196,7 @@ body.ultra-low #cosmos{display:none}
 .next-mystery{width:min(42vw,210px);aspect-ratio:.78;margin:0 auto 22px;padding:14px;border:1.5px solid var(--gold);border-radius:20px;background:rgba(16,11,25,.55);box-shadow:0 18px 45px #0008;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .next-mystery #nextMysteryQ{font:700 clamp(30px,8vw,46px) Georgia;background:linear-gradient(180deg,var(--gold),var(--violet));background-clip:text;-webkit-background-clip:text;color:transparent}
 .next-mystery img{width:64%;height:64%;object-fit:contain;filter:drop-shadow(0 0 12px #c9a8ffaa)}
+.next-mystery img.mystery-lid{width:100%;height:100%;filter:drop-shadow(0 6px 14px #0007)}
 .next-stage-row{display:flex;align-items:stretch;justify-content:center;gap:16px;margin:0 auto 22px}
 .next-stage-row .next-mystery{margin:0}
 .next-meter-vert{display:flex;flex-direction:column;align-items:center;gap:7px;width:56px;flex:none}
@@ -502,6 +503,8 @@ body.ultra-low #cosmos{display:none}
   </picture>
 </div>
 
+<p class="intro-tagline">Train your intuition. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance. The graph below will let you monitor your progress over time.</p>
+
 <div class="lb-donate-wrap">
   <section class="panel leaderboard-panel">
     <p class="leaderboard-label">INTUITION LEADERBOARD</p>
@@ -538,7 +541,6 @@ body.ultra-low #cosmos{display:none}
 </div>
 
 <main class="app">
-  <p class="intro-tagline">Train your intuition. Don&rsquo;t think it through &mdash; trust your first instinct, then see how it stacks up against pure chance. The graph below will let you monitor your progress over time.</p>
   <div class="triple-wrap">
     <section class="panel game-panel tri-panel">
       <p class="prompt-title">SENSE THE TILE</p>
@@ -574,18 +576,18 @@ body.ultra-low #cosmos{display:none}
     </section>
 
     <section class="panel game-panel tri-panel">
-      <p class="prompt-title">PLACE A TILE</p>
+      <p class="prompt-title">WHAT'S INSIDE?</p>
       <div class="mall-box tarot-box" id="placeStage">
         <img id="placeImg" class="place-img" alt="" aria-hidden="true">
         <img id="placeLid" class="place-lid" alt="" aria-hidden="true">
         <span class="place-arrow" id="placeArrow" aria-hidden="true" hidden>&#8593;</span>
       </div>
+      <button type="button" class="place-action-btn" id="placeActionBtn">PLACE A TILE</button>
       <p class="feedback" id="placeFeedback" aria-live="polite">&nbsp;</p>
       <div class="options-row" id="placeOptionsRow" hidden>
         <button class="option-tile" id="placeOptA" type="button" aria-label="Tile option A"><img id="placeOptAImg" alt="Tile option A"></button>
         <button class="option-tile" id="placeOptB" type="button" aria-label="Tile option B"><img id="placeOptBImg" alt="Tile option B"></button>
       </div>
-      <button type="button" class="place-action-btn" id="placeActionBtn">PLACE A TILE</button>
     </section>
   </div>
 
@@ -1799,7 +1801,7 @@ body.ultra-low #cosmos{display:none}
     feedback.textContent='\u00A0';
     feedback.className='feedback';
     pressHint.style.visibility='visible';
-    mallImg.src=tileSVG(null);
+    mallImg.src='images/lid.jpg';
     optA.disabled=optB.disabled=false;
 
     const pool=[...instruments].sort(()=>Math.random()-.5);
@@ -1977,7 +1979,7 @@ body.ultra-low #cosmos{display:none}
     sideFeedback.textContent='\u00A0';
     sideFeedback.className='feedback';
     sidePressHint.style.visibility='visible';
-    sideMysteryImg.src=tileSVG(null);
+    sideMysteryImg.src='images/lid.jpg';
     optLeft.disabled=optRight.disabled=false;
     correctLineSide=Math.random()<.5?'left':'right';
   }
@@ -2071,7 +2073,7 @@ body.ultra-low #cosmos{display:none}
     dotsFeedback.textContent='\u00A0';
     dotsFeedback.className='feedback';
     dotsPressHint.style.visibility='visible';
-    dotsMysteryImg.src=dotsSVG(null);
+    dotsMysteryImg.src='images/lid.jpg';
     optOne.disabled=optMany.disabled=false;
     correctDotsKind=Math.random()<.5?'one':'many';
   }
@@ -2263,8 +2265,10 @@ body.ultra-low #cosmos{display:none}
     nextFeedback.textContent='\u00A0';
     nextFeedback.className='feedback';
     nextPressHint.style.visibility='visible';
-    nextMysteryQ.style.display='block';
-    nextMysteryImg.hidden=true;
+    nextMysteryQ.style.display='none';
+    nextMysteryImg.src='images/lid.jpg';
+    nextMysteryImg.classList.add('mystery-lid');
+    nextMysteryImg.hidden=false;
     nextButtons.forEach(b=>{b.disabled=false;b.classList.remove('correct-glow','wrong-glow');});
     correctSymbol=symbolList[Math.floor(Math.random()*symbolList.length)];
   }
@@ -2276,6 +2280,7 @@ body.ultra-low #cosmos{display:none}
     nextButtons.forEach(b=>b.disabled=true);
     nextPressHint.style.visibility='hidden';
     nextMysteryQ.style.display='none';
+    nextMysteryImg.classList.remove('mystery-lid');
     nextMysteryImg.src=symbolSVG(correctSymbol);
     nextMysteryImg.hidden=false;
     const correct=symbol===correctSymbol;
