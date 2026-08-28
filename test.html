@@ -81,11 +81,56 @@
     .eyebrow{text-transform:uppercase;letter-spacing:.22em;color:var(--gold);font-size:12px;font-weight:700}.hero h1{font-family:var(--serif);font-size:clamp(48px,8vw,92px);line-height:.93;max-width:950px;margin:18px auto;background:linear-gradient(105deg,#fff,#f2d69f 45%,#d2b4fa 85%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;text-wrap:balance}.lead{max-width:660px;margin:0 auto;color:var(--muted);font-size:clamp(17px,2.2vw,21px);line-height:1.65}.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 22px;border-radius:999px;text-decoration:none;font-weight:700}.btn-primary{color:#21170b;background:linear-gradient(135deg,#fff1cf,#d9ab62);box-shadow:0 12px 36px rgba(215,171,98,.22)}.btn-secondary{border:1px solid var(--line);background:rgba(255,255,255,.045)}.micro{margin-top:14px;color:var(--faint);font-size:13px}
 
     section{padding:70px 0;scroll-margin-top:92px}.section-head{text-align:center;max-width:720px;margin:0 auto 34px}.section-head h2{font-family:var(--serif);font-size:clamp(36px,5vw,58px);line-height:1;margin:8px 0 14px}.section-head p{color:var(--muted);line-height:1.65;margin:0}
-    .goal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}.goal{min-height:360px;border-radius:var(--radius);position:relative;overflow:hidden;text-decoration:none;background-size:cover;background-position:center;box-shadow:var(--shadow);isolation:isolate;transition:transform .3s}.goal:hover{transform:translateY(-7px)}.goal::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,4,4,.92) 0%,rgba(5,4,4,.67) 48%,rgba(5,4,4,.12) 78%);z-index:-1}.goal::after{content:"";position:absolute;inset:0;border:1px solid rgba(241,212,158,.5);border-radius:inherit;pointer-events:none}.goal-content{height:100%;width:58%;padding:34px;display:flex;flex-direction:column;align-items:flex-start}.icon{font-size:30px;width:58px;height:58px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.28);border-radius:50%;background:rgba(0,0,0,.34)}.goal h3{font-family:var(--serif);font-size:34px;line-height:1;margin:24px 0 10px}.goal p{color:#eee6d9;line-height:1.55;margin:0}.open{margin-top:auto;color:var(--gold);font-weight:700}
+    .goal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;position:relative}.goal{min-height:360px;border-radius:var(--radius);position:relative;overflow:hidden;text-decoration:none;background-size:cover;background-position:center;box-shadow:var(--shadow);isolation:isolate;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease}.goal:hover{transform:translateY(-7px)}.goal::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,4,4,.92) 0%,rgba(5,4,4,.67) 48%,rgba(5,4,4,.12) 78%);z-index:-1}.goal::after{content:"";position:absolute;inset:0;border:1px solid rgba(241,212,158,.5);border-radius:inherit;pointer-events:none}.goal-content{height:100%;width:58%;padding:34px;display:flex;flex-direction:column;align-items:flex-start}.icon{font-size:30px;width:58px;height:58px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.28);border-radius:50%;background:rgba(0,0,0,.34)}.goal h3{font-family:var(--serif);font-size:34px;line-height:1;margin:24px 0 10px}.goal p{color:#eee6d9;line-height:1.55;margin:0}.open{margin-top:auto;color:var(--gold);font-weight:700}
+
+    /* ---- ambient color glow behind the 4 goal tiles, spilling into the page,
+       plus a matching colored glow that radiates outward from each card on hover
+       (same mechanic as the mood-tinted tiles on index.html) ---- */
+    .goal-glow{position:absolute;z-index:0;pointer-events:none;filter:blur(64px);opacity:.6;transition:opacity .6s ease,filter .6s ease}
+    .goal-glow--sleep{grid-column:1;grid-row:1;inset:-120px -70px -120px -38vw;background:radial-gradient(60% 60% at 30% 42%,rgba(135,150,255,.56),transparent 66%),radial-gradient(48% 48% at 52% 54%,rgba(196,168,255,.32),transparent 68%)}
+    .goal-glow--stress{grid-column:2;grid-row:1;inset:-120px -38vw -120px -70px;background:radial-gradient(60% 60% at 70% 42%,rgba(183,123,235,.54),transparent 66%),radial-gradient(48% 48% at 48% 54%,rgba(232,192,122,.28),transparent 68%)}
+    .goal-glow--energy{grid-column:1;grid-row:2;inset:-120px -70px -120px -38vw;background:radial-gradient(60% 60% at 30% 48%,rgba(255,168,72,.58),transparent 66%),radial-gradient(48% 48% at 52% 54%,rgba(255,120,64,.28),transparent 68%)}
+    .goal-glow--eat{grid-column:2;grid-row:2;inset:-120px -38vw -120px -70px;background:radial-gradient(60% 60% at 70% 48%,rgba(122,214,138,.54),transparent 66%),radial-gradient(48% 48% at 48% 54%,rgba(178,214,110,.28),transparent 68%)}
+    .goal-grid:has(>.goal[data-tint="sleep"]:hover,>.goal[data-tint="sleep"]:focus-visible) .goal-glow--sleep,
+    .goal-grid:has(>.goal[data-tint="stress"]:hover,>.goal[data-tint="stress"]:focus-visible) .goal-glow--stress,
+    .goal-grid:has(>.goal[data-tint="energy"]:hover,>.goal[data-tint="energy"]:focus-visible) .goal-glow--energy,
+    .goal-grid:has(>.goal[data-tint="eat"]:hover,>.goal[data-tint="eat"]:focus-visible) .goal-glow--eat{opacity:.9;filter:blur(74px)}
+    .goal[data-tint="sleep"]:hover,.goal[data-tint="sleep"]:focus-visible{box-shadow:0 30px 68px rgba(0,0,0,.5),0 0 58px -9px rgba(130,150,255,.46),0 0 82px -13px rgba(190,150,255,.36)}
+    .goal[data-tint="stress"]:hover,.goal[data-tint="stress"]:focus-visible{box-shadow:0 30px 68px rgba(0,0,0,.5),0 0 58px -9px rgba(185,125,235,.48),0 0 82px -13px rgba(240,209,159,.32)}
+    .goal[data-tint="energy"]:hover,.goal[data-tint="energy"]:focus-visible{box-shadow:0 30px 68px rgba(0,0,0,.5),0 0 58px -9px rgba(255,180,84,.52),0 0 82px -13px rgba(255,138,77,.34)}
+    .goal[data-tint="eat"]:hover,.goal[data-tint="eat"]:focus-visible{box-shadow:0 30px 68px rgba(0,0,0,.5),0 0 58px -9px rgba(154,223,158,.48),0 0 82px -13px rgba(226,238,150,.32)}
+    @media(max-width:760px){
+      .goal-glow{inset:-90px -46px -90px -46px;filter:blur(46px)}
+      .goal-glow--sleep{grid-column:1;grid-row:1;inset:-95px -50px -80px -38vw}
+      .goal-glow--stress{grid-column:1;grid-row:2;inset:-80px -38vw -80px -50px}
+      .goal-glow--energy{grid-column:1;grid-row:3;inset:-80px -50px -80px -38vw}
+      .goal-glow--eat{grid-column:1;grid-row:4;inset:-95px -38vw -95px -50px}
+    }
 
     .proof{padding:22px 0}.proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.proof-card{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:28px 32px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.035)}.quote{font-family:var(--serif);font-size:24px;line-height:1.35}.quote small{display:block;font:500 13px var(--sans);color:var(--muted);margin-top:8px}.stars{color:var(--gold);white-space:nowrap}
 
-    .feature-grid,.game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}.visual-card{display:block;position:relative;min-height:360px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);transition:.3s}.visual-card:hover{transform:translateY(-6px);border-color:var(--gold)}.visual-card img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}.visual-card span{position:absolute;left:18px;bottom:18px;padding:9px 14px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid var(--line);font-weight:700}
+    .feature-grid,.game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;position:relative}.visual-card{display:block;position:relative;min-height:360px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease,border-color .3s ease}.visual-card:hover{transform:translateY(-6px);border-color:var(--gold)}.visual-card img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}.visual-card span{position:absolute;left:18px;bottom:18px;padding:9px 14px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid var(--line);font-weight:700}
+
+    /* ---- same ambient/radiating glow mechanic, applied to the 4 remaining
+       tiles: Intuition, Mahjong, Mergico and the second game ---- */
+    .visual-glow{position:absolute;z-index:0;pointer-events:none;filter:blur(64px);opacity:.6;transition:opacity .6s ease,filter .6s ease}
+    .visual-glow--intuition{grid-column:1;grid-row:1;inset:-110px -60px -110px -32vw;background:radial-gradient(60% 70% at 30% 50%,rgba(199,166,245,.56),transparent 66%),radial-gradient(48% 55% at 52% 50%,rgba(150,120,255,.3),transparent 68%)}
+    .visual-glow--mahjong{grid-column:2;grid-row:1;inset:-110px -32vw -110px -60px;background:radial-gradient(60% 70% at 70% 50%,rgba(110,210,195,.52),transparent 66%),radial-gradient(48% 55% at 48% 50%,rgba(90,170,220,.28),transparent 68%)}
+    .visual-glow--mergico{grid-column:1;grid-row:1;inset:-110px -60px -110px -32vw;background:radial-gradient(60% 70% at 30% 50%,rgba(255,196,110,.56),transparent 66%),radial-gradient(48% 55% at 52% 50%,rgba(255,150,80,.3),transparent 68%)}
+    .visual-glow--mergico2{grid-column:2;grid-row:1;inset:-110px -32vw -110px -60px;background:radial-gradient(60% 70% at 70% 50%,rgba(255,140,150,.5),transparent 66%),radial-gradient(48% 55% at 48% 50%,rgba(255,180,120,.28),transparent 68%)}
+    .feature-grid:has(>.visual-card[data-glow="intuition"]:hover,>.visual-card[data-glow="intuition"]:focus-visible) .visual-glow--intuition,
+    .feature-grid:has(>.visual-card[data-glow="mahjong"]:hover,>.visual-card[data-glow="mahjong"]:focus-visible) .visual-glow--mahjong,
+    .game-grid:has(>.visual-card[data-glow="mergico"]:hover,>.visual-card[data-glow="mergico"]:focus-visible) .visual-glow--mergico,
+    .game-grid:has(>.visual-card[data-glow="mergico2"]:hover,>.visual-card[data-glow="mergico2"]:focus-visible) .visual-glow--mergico2{opacity:.9;filter:blur(74px)}
+    .visual-card[data-glow="intuition"]:hover,.visual-card[data-glow="intuition"]:focus-visible{border-color:var(--lav);box-shadow:0 30px 68px rgba(0,0,0,.5),0 0 58px -9px rgba(150,120,255,.5),0 0 82px -13px rgba(199,166,245,.34)}
+    .visual-card[data-glow="mahjong"]:hover,.visual-card[data-glow="mahjong"]:focus-visible{border-color:#7ee0cc;box-shadow:0 30px 68px rgba(0,0,0,.5),0 0 58px -9px rgba(110,210,195,.5),0 0 82px -13px rgba(90,170,220,.32)}
+    .visual-card[data-glow="mergico"]:hover,.visual-card[data-glow="mergico"]:focus-visible{box-shadow:0 30px 68px rgba(0,0,0,.5),0 0 58px -9px rgba(255,196,110,.52),0 0 82px -13px rgba(255,150,80,.34)}
+    .visual-card[data-glow="mergico2"]:hover,.visual-card[data-glow="mergico2"]:focus-visible{border-color:#ff9fa8;box-shadow:0 30px 68px rgba(0,0,0,.5),0 0 58px -9px rgba(255,140,150,.48),0 0 82px -13px rgba(255,180,120,.32)}
+    @media(max-width:760px){
+      .visual-glow{inset:-80px -40px -80px -40px;filter:blur(46px)}
+      .visual-glow--intuition,.visual-glow--mergico{grid-column:1;grid-row:1;inset:-85px -44px -70px -32vw}
+      .visual-glow--mahjong,.visual-glow--mergico2{grid-column:1;grid-row:2;inset:-70px -32vw -85px -44px}
+    }
 
     .story{display:grid;grid-template-columns:.9fr 1.1fr;gap:54px;align-items:start}.story h2{font-family:var(--serif);font-size:clamp(38px,5vw,60px);line-height:1;margin:0;position:sticky;top:120px}.copy{color:var(--muted);font-size:17px;line-height:1.82}.copy h3{color:var(--ink);font-family:var(--serif);font-size:30px;margin:32px 0 8px}.copy p{margin:0 0 18px}
     .faq{max-width:820px;margin:auto}.faq details{border-top:1px solid var(--line);padding:20px 0}.faq details:last-child{border-bottom:1px solid var(--line)}.faq summary{cursor:pointer;font-weight:700;font-size:18px}.faq p{color:var(--muted);line-height:1.7}
@@ -148,10 +193,14 @@
       <div class="shell">
         <div class="section-head"><div class="eyebrow">Start with your goal</div><h2>How do you want to feel today?</h2><p>Choose one simple path. Holistic Loader takes you straight to a focused tool without clutter or complicated setup.</p></div>
         <div class="goal-grid">
-          <a class="goal" href="/breathing" style="background-image:url('images/start-sleep.jpg')"><div class="goal-content"><span class="icon">🌙</span><h3>Sleep Better Tonight</h3><p>Slow down with guided breathing and restful soundscapes.</p><span class="open">Start your wind-down →</span></div></a>
-          <a class="goal" href="/soundscape" style="background-image:url('images/start-stress.jpg')"><div class="goal-content"><span class="icon">🎵</span><h3>Reduce Stress</h3><p>Create a calming soundscape that fits the moment.</p><span class="open">Build a soundscape →</span></div></a>
-          <a class="goal" href="/yoga" style="background-image:url('images/start-energy.jpg')"><div class="goal-content"><span class="icon">⚡</span><h3>Boost Energy</h3><p>Use gentle movement, yoga and breath to reset your body.</p><span class="open">Move and breathe →</span></div></a>
-          <a class="goal" href="/nutriloader" style="background-image:url('images/start-bowl.jpg')"><div class="goal-content"><span class="icon">🥗</span><h3>Eat Better Today</h3><p>Track nutrition and build healthier habits with less friction.</p><span class="open">Open Nutrition Tracker →</span></div></a>
+          <div class="goal-glow goal-glow--sleep" aria-hidden="true"></div>
+          <a class="goal" data-tint="sleep" href="/breathing" style="background-image:url('images/start-sleep.jpg')"><div class="goal-content"><span class="icon">🌙</span><h3>Sleep Better Tonight</h3><p>Slow down with guided breathing and restful soundscapes.</p><span class="open">Start your wind-down →</span></div></a>
+          <div class="goal-glow goal-glow--stress" aria-hidden="true"></div>
+          <a class="goal" data-tint="stress" href="/soundscape" style="background-image:url('images/start-stress.jpg')"><div class="goal-content"><span class="icon">🎵</span><h3>Reduce Stress</h3><p>Create a calming soundscape that fits the moment.</p><span class="open">Build a soundscape →</span></div></a>
+          <div class="goal-glow goal-glow--energy" aria-hidden="true"></div>
+          <a class="goal" data-tint="energy" href="/yoga" style="background-image:url('images/start-energy.jpg')"><div class="goal-content"><span class="icon">⚡</span><h3>Boost Energy</h3><p>Use gentle movement, yoga and breath to reset your body.</p><span class="open">Move and breathe →</span></div></a>
+          <div class="goal-glow goal-glow--eat" aria-hidden="true"></div>
+          <a class="goal" data-tint="eat" href="/nutriloader" style="background-image:url('images/start-bowl.jpg')"><div class="goal-content"><span class="icon">🥗</span><h3>Eat Better Today</h3><p>Track nutrition and build healthier habits with less friction.</p><span class="open">Open Nutrition Tracker →</span></div></a>
         </div>
       </div>
     </section>
@@ -167,8 +216,10 @@
       <div class="shell">
         <div class="section-head"><div class="eyebrow">Featured experiences</div><h2>Wellness can be playful, too.</h2><p>Explore intuitive tools and sound-inspired games created to bring focus, curiosity and calm into your day.</p></div>
         <div class="feature-grid">
-          <a class="visual-card" href="/intuition" aria-label="Open Intuition Loader"><img src="images/preview-intuition.jpg" alt="Intuition Loader preview" loading="lazy"><span>Explore Intuition Loader →</span></a>
-          <a class="visual-card" href="/mahjong" aria-label="Play Mahjong Soundbath"><img src="images/preview-mahjong.jpg" alt="Mahjong Soundbath preview" loading="lazy"><span>Play Mahjong Soundbath →</span></a>
+          <div class="visual-glow visual-glow--intuition" aria-hidden="true"></div>
+          <a class="visual-card" data-glow="intuition" href="/intuition" aria-label="Open Intuition Loader"><img src="images/preview-intuition.jpg" alt="Intuition Loader preview" loading="lazy"><span>Explore Intuition Loader →</span></a>
+          <div class="visual-glow visual-glow--mahjong" aria-hidden="true"></div>
+          <a class="visual-card" data-glow="mahjong" href="/mahjong" aria-label="Play Mahjong Soundbath"><img src="images/preview-mahjong.jpg" alt="Mahjong Soundbath preview" loading="lazy"><span>Play Mahjong Soundbath →</span></a>
         </div>
       </div>
     </section>
@@ -193,8 +244,10 @@
       <div class="shell">
         <div class="section-head"><div class="eyebrow">More to discover</div><h2>Play in the Holistic Loader world.</h2></div>
         <div class="game-grid">
-          <a class="visual-card" href="/game" aria-label="Play Mergico"><img src="images/game-preview.jpg" alt="Mergico game preview" loading="lazy"><span>Play Mergico →</span></a>
-          <a class="visual-card" href="/game2" aria-label="Play the second featured game"><img src="images/game2-preview.jpg" alt="Featured game preview" loading="lazy"><span>Discover another game →</span></a>
+          <div class="visual-glow visual-glow--mergico" aria-hidden="true"></div>
+          <a class="visual-card" data-glow="mergico" href="/game" aria-label="Play Mergico"><img src="images/game-preview.jpg" alt="Mergico game preview" loading="lazy"><span>Play Mergico →</span></a>
+          <div class="visual-glow visual-glow--mergico2" aria-hidden="true"></div>
+          <a class="visual-card" data-glow="mergico2" href="/game2" aria-label="Play the second featured game"><img src="images/game2-preview.jpg" alt="Featured game preview" loading="lazy"><span>Discover another game →</span></a>
         </div>
       </div>
     </section>
