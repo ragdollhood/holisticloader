@@ -18,7 +18,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="canonical" id="canonicalLink" href="https://holisticloader.com/">
+<link rel="canonical" id="canonicalLink" href="https://holisticloader.com/breathing.html">
 <link rel="icon" type="image/png" href="images/icon-holistic.png">
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon-holistic.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/icon-holistic.png">
@@ -36,7 +36,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Holistic Loader preview">
-<meta property="og:url" id="ogUrl" content="https://holisticloader.com/">
+<meta property="og:url" id="ogUrl" content="https://holisticloader.com/breathing.html">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter -->
@@ -52,7 +52,7 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "Holistic Loader",
-  "url": "https://holisticloader.com/",
+  "url": "https://holisticloader.com/breathing.html",
   "description": "An online wellness space with a guided breathing circle, interactive  instruments, healing sound frequencies (Solfeggio, planetary and singing-bowl tones) and calming nature scenes for relaxation, focus and sleep.",
   "applicationCategory": "HealthApplication",
   "operatingSystem": "Any (web browser)",
@@ -80,8 +80,9 @@
   var base=loc.replace(/[^/]*$/,'');
   var img=base+'images/preview-breathing.jpg';
   var set=function(id,prop,val){var el=document.getElementById(id);if(!el)return;if(prop==='href')el.href=val;else el.content=val;};
-  // canonical and og:url are intentionally left as the static https://holisticloader.com/
-  // declared in <head> — they must always point to the one true URL, not whatever
+  // canonical and og:url are intentionally left as the static
+  // https://holisticloader.com/breathing.html declared in <head> — they must
+  // always point to the one true URL, not whatever
   // address the page happened to be loaded from (query strings, alternate domains, etc.),
   // or search engines lose the signal for which copy is canonical.
   set('ogImage','content',img);
