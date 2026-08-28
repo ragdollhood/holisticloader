@@ -96,7 +96,13 @@
     .menu .nav-contact-email a{display:inline;width:auto;padding:0;color:var(--gold)}
     .menu .nav-contact-email a:hover{text-decoration:underline;background:none;color:var(--gold)}
 
-    .hero{min-height:620px;display:grid;place-items:center;text-align:center;padding:86px 0 58px;position:relative}.hero::after{content:"";position:absolute;inset:8% 10% 4%;z-index:-1;background:radial-gradient(circle,rgba(255,210,132,.15),transparent 62%);filter:blur(25px)}
+    .hero{min-height:620px;display:grid;place-items:center;text-align:center;padding:86px 0 58px;position:relative;overflow:hidden}.hero::after{content:"";position:absolute;inset:8% 10% 4%;z-index:-1;background:radial-gradient(circle,rgba(255,210,132,.15),transparent 62%);filter:blur(25px)}
+    /* ---- corner spotlight beams: soft turquoise (left) and gold (right)
+       glow sweeping in from the top corners toward the headline ---- */
+    .hero-spotlight{position:absolute;top:-18%;z-index:-1;width:70%;height:78%;pointer-events:none;mix-blend-mode:screen;filter:blur(60px)}
+    .hero-spotlight--turq{left:-18%;transform:rotate(28deg);background:linear-gradient(115deg,rgba(64,224,208,.4) 0%,rgba(64,224,208,.16) 38%,transparent 70%)}
+    .hero-spotlight--gold{right:-18%;transform:rotate(-28deg) scaleX(-1);background:linear-gradient(115deg,rgba(241,212,158,.42) 0%,rgba(241,212,158,.16) 38%,transparent 70%)}
+    @media(max-width:760px){.hero-spotlight{width:110%;height:60%;filter:blur(42px)}}
     .eyebrow{text-transform:uppercase;letter-spacing:.22em;color:var(--gold);font-size:12px;font-weight:700}.hero h1{font-family:var(--serif);font-size:clamp(48px,8vw,92px);line-height:.93;max-width:950px;margin:18px auto;background:linear-gradient(105deg,#fff,#f2d69f 45%,#d2b4fa 85%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent;text-wrap:balance}.lead{max-width:660px;margin:0 auto;color:var(--muted);font-size:clamp(17px,2.2vw,21px);line-height:1.65}.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 22px;border-radius:999px;text-decoration:none;font-weight:700}.btn-primary{color:#21170b;background:linear-gradient(135deg,#fff1cf,#d9ab62);box-shadow:0 12px 36px rgba(215,171,98,.22)}.btn-secondary{border:1px solid var(--line);background:rgba(255,255,255,.045)}.micro{margin-top:14px;color:var(--faint);font-size:13px}
 
     section{padding:70px 0;scroll-margin-top:92px}.section-head{text-align:center;max-width:720px;margin:0 auto 34px}.section-head h2{font-family:var(--serif);font-size:clamp(36px,5vw,58px);line-height:1;margin:8px 0 14px}.section-head p{color:var(--muted);line-height:1.65;margin:0}
@@ -197,6 +203,8 @@
 
   <main id="main">
     <section class="hero shell">
+      <div class="hero-spotlight hero-spotlight--turq" aria-hidden="true"></div>
+      <div class="hero-spotlight hero-spotlight--gold" aria-hidden="true"></div>
       <div>
         <div class="eyebrow">Your calm wellness space</div>
         <h1>Feel better, one small ritual at a time.</h1>
