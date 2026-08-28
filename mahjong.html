@@ -168,6 +168,11 @@ body.ultra-low #stage .aurora{filter:blur(14px);animation:none;transform:none}
 .nav-contact-email a:hover{text-decoration:underline}
 @media(max-width:720px){
   .mobile-extra{display:block!important}
+  /* .nav-contact-email is also .mobile-extra, but it must stay
+     collapsed until "Contact" is tapped (JS toggles its `hidden`
+     attribute) — this overrides the !important above for it
+     specifically, since [hidden] adds enough specificity to win. */
+  .nav-contact-email.mobile-extra[hidden]{display:none!important}
   #topTabs .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
   .nav-contact-email{padding:0 12px}
 }
