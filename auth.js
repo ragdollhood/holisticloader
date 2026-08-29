@@ -664,7 +664,7 @@ function _wireAuthDom() {
 
     try {
       const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + "/reset-password.html"
+        redirectTo: window.location.origin + "/reset-password"
       });
       if (error) throw error;
       showAuthMessage("Check your email for a password reset link.", "success");

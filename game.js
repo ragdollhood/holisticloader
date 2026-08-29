@@ -1611,7 +1611,7 @@ function getItem(level) {
       if (!nextKey) {
         showToast("Island cleared!");
         syncToCloud(false, true);
-        setTimeout(() => { window.location.href = "game2.html"; }, 1100);
+        setTimeout(() => { window.location.href = "/game2"; }, 1100);
         return true;
       }
 
