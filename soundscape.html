@@ -545,6 +545,7 @@
   .soundscape-seo h4{margin:16px 0 6px;font:600 14.5px Georgia,serif;color:var(--violet)}
   .soundscape-seo p{margin:0 0 12px;line-height:1.65;color:#e9e3d6cc;font-size:14.5px}
   .soundscape-seo a{color:var(--gold);text-decoration:underline}
+  .ad-slot{width:min(94vw,820px);margin:0 auto 40px}
 
   /* ===== shared tab navigation (same system as index.html) ===== */
   #topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
@@ -996,46 +997,28 @@ body.preset-active #menuToggle{display:none}
   .tab-row{display:flex;align-items:center;gap:4px}
 }
 
-/* ===== donation popup — image with a thick gold frame + big "×" close
-   sitting on the image's own top-right corner; same treatment as
-   breathing.html. Backdrop is a light dim, not a heavy blur, so the
-   page behind stays visible through it. ===== */
-#sessionDonateOverlay{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;padding:24px;
-  background:rgba(6,7,10,.38);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
-#sessionDonateOverlay.show{display:flex}
-.session-donate-frame{position:relative;display:inline-block;max-width:min(92vw,480px)}
-.session-donate-link{display:block;max-width:100%;max-height:80vh}
-.session-donate-img{display:block;width:100%;height:auto;max-height:80vh;object-fit:contain;
-  border:8px solid var(--gold);border-radius:14px;box-shadow:0 25px 70px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.35)}
-.session-donate-close{position:absolute;top:-20px;right:-20px;z-index:2;width:48px;height:48px;
-  display:flex;align-items:center;justify-content:center;background:rgba(13,9,22,.94);
-  border:2px solid var(--gold);border-radius:50%;color:#fff;font-size:32px;line-height:1;cursor:pointer;
-  font-family:Georgia,"Times New Roman",serif;box-shadow:0 8px 22px rgba(0,0,0,.55);
-  transition:color .15s ease,transform .15s ease,background .15s ease}
-.session-donate-close:hover{color:var(--gold);transform:scale(1.08)}
-@media(max-width:480px){.session-donate-close{width:38px;height:38px;font-size:24px;top:-14px;right:-14px}}
+/* ===== donation image — sits fixed on the right side of the viewport
+   next to the instruments, instead of a blocking popup. Desktop only
+   (matches the .stage instrument-grid breakpoint at 900px); on
+   narrower screens there isn't room beside the instruments, so it's
+   hidden rather than overlapping them. ===== */
+.donate-row{display:none}
+@media (min-width:1440px){
+  .donate-row{
+    display:block;position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:15;
+    width:min(11vw,140px);
+  }
+  .donate-row a{display:block}
+  .donate-row img{
+    display:block;width:100%;height:auto;border-radius:12px;
+    border:3px solid var(--gold);box-shadow:0 14px 34px rgba(0,0,0,.45);
+    transition:transform .18s ease;
+  }
+  .donate-row a:hover img{transform:scale(1.03)}
+}
 </style>
 </head>
 <body>
-  <div id="sessionDonateOverlay" aria-hidden="true">
-    <div class="session-donate-frame">
-      <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer" class="session-donate-link">
-        <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader" class="session-donate-img">
-      </a>
-      <button type="button" id="sessionDonateClose" class="session-donate-close" aria-label="Close">&times;</button>
-    </div>
-  </div>
-  <script>
-  (function(){
-    var closeBtn=document.getElementById('sessionDonateClose'), ov=document.getElementById('sessionDonateOverlay');
-    if(!ov)return;
-    function hide(){ov.classList.remove('show');ov.setAttribute('aria-hidden','true');}
-    if(closeBtn)closeBtn.addEventListener('click',hide);
-    ov.addEventListener('click',function(e){if(e.target===ov)hide();});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape')hide();});
-    ov.classList.add('show');ov.setAttribute('aria-hidden','false');
-  })();
-  </script>
   <button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs menuToggleDesktopPanel" aria-label="Meny">
     <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
   </button>
@@ -1177,6 +1160,9 @@ isPremium = true;
 </div>
 <p class="sub"><span class="h1-desktop">CLICK · DOUBLE CLICK & DRAG</span><span class="h1-mobile">TAP · DOUBLE TAP & SWEEP</span></p>
 <div class="donate-row">
+  <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener noreferrer">
+    <img src="images/donation-holistic-loader.jpg" alt="Support Holistic Loader">
+  </a>
 </div>
 
 <div class="stage" id="stage">
@@ -1516,6 +1502,16 @@ isPremium = true;
     <p>Yes. The page includes a record button so you can capture your session and download it as an audio file.</p>
   </div>
 </section>
+
+<div class="ad-slot">
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-1322447721565676"
+       data-ad-slot="2324086986"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 
 <script>
 (function(){
