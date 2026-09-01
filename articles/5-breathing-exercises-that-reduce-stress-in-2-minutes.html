@@ -137,11 +137,72 @@ body::before{
 a{color:inherit}
 img{max-width:100%;display:block}
 
-header.site-head{
-  position:relative;z-index:1;padding:22px 20px 8px;display:flex;align-items:center;justify-content:center;
+#brand{margin:0 0 8px;pointer-events:none}
+#brandLink{display:inline-flex;pointer-events:auto;cursor:pointer}
+#brandLogo{display:inline-block;max-height:clamp(38px,7vw,64px);height:auto;width:auto;max-width:80vw;object-fit:contain;filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
+
+#topNav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;flex-direction:column;align-items:center;
+  padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));
+  pointer-events:none;
+  background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
+#topTabs{display:flex;flex-wrap:wrap;justify-content:center;pointer-events:auto}
+#topTabs .tab{font-family:var(--ui);font-weight:500;font-size:12.5px;letter-spacing:.04em;
+  padding:9px 18px;color:var(--soft);text-decoration:none;white-space:nowrap;
+  background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
+  border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
+#topTabs .tab:hover{color:var(--ink)}
+#topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
+.mobile-extra{display:none!important}
+#topTabs .contact-tab{cursor:pointer;display:block;width:100%;background:none;border:0;margin:0}
+.nav-contact-email{margin:2px 0 4px;text-align:center;font-size:12px}
+.nav-contact-email a{color:var(--gold);text-decoration:none}
+.nav-contact-email a:hover{text-decoration:underline}
+@media(max-width:720px){
+  .mobile-extra{display:block!important}
+  .mobile-extra[hidden]{display:none!important}
+  #topTabs .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  .nav-contact-email{padding:0 12px}
 }
-.brand{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.02em;text-decoration:none;color:var(--ink)}
-.brand span{color:var(--gold)}
+#topNavLine{position:absolute;left:0;right:0;bottom:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--gold) 15%,var(--violet) 50%,var(--gold) 85%,transparent);
+  opacity:.55}
+
+#menuToggle{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:14px;z-index:50;align-items:center;justify-content:center;width:36px;height:36px;padding:0;background:rgba(19,14,28,.85);border:1px solid rgba(220,190,130,.4);border-radius:12px;color:#f3efe4;cursor:pointer;pointer-events:auto}
+#menuToggle svg{width:17px;height:17px;flex:none}
+#menuToggle svg line{stroke:#ffd98a;stroke-width:2;stroke-linecap:round}
+.tab-row{display:contents}
+.menu-logo-link{display:flex;width:100%;align-items:center;justify-content:center;padding:4px 4px 10px;text-decoration:none;box-sizing:border-box}
+.menu-logo-img{max-height:34px;width:auto;display:block}
+#menuToggleDesktopPanel{display:none}
+@media(min-width:721px){
+  #menuToggleDesktopPanel{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;z-index:52;
+    display:flex;flex-direction:column;gap:4px;width:min(72vw,240px);max-height:calc(100vh - 90px);overflow-y:auto;
+    background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;
+    box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);
+    transition:opacity .18s ease,transform .18s ease;pointer-events:none}
+  body.tabs-open #menuToggleDesktopPanel{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #menuToggleDesktopPanel .tab{border:1px solid transparent;border-radius:10px;background:transparent;color:var(--soft);
+    text-decoration:none;text-align:left;margin:0;padding:9px 12px;font-family:var(--ui);
+    font-weight:500;font-size:13px;letter-spacing:.04em;display:block;box-sizing:border-box;cursor:pointer}
+  #menuToggleDesktopPanel .tab:hover{color:var(--ink);background:rgba(244,241,234,.06)}
+  #menuToggleDesktopPanel .tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold)}
+  #menuToggleDesktopPanel .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
+  #menuToggleDesktopPanel .nav-contact-email{margin:2px 0 4px;padding:0 12px;text-align:left;font-size:12px}
+  #menuToggleDesktopPanel .nav-contact-email a{color:var(--gold);text-decoration:none}
+  #menuToggleDesktopPanel .nav-contact-email a:hover{text-decoration:underline}
+  #menuToggleDesktopPanel .tab-row{display:flex;align-items:center;gap:4px}
+}
+@media(max-width:720px){
+  #topTabs{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 46px);left:14px;right:auto;flex-direction:column;align-items:stretch;gap:4px;background:rgba(13,9,22,.97);border:1px solid rgba(220,190,130,.3);border-radius:14px;padding:8px;width:min(72vw,260px);max-height:calc(100vh - 90px);overflow-y:auto;box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:52}
+  body.tabs-open #topTabs{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  #topTabs .tab{border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;top:0;margin:0;padding:11px 12px;font-size:13px;display:block;flex:1 1 auto;width:100%;box-sizing:border-box}
+  #topTabs .tab.active{background:rgba(231,201,162,.14);border-color:#ffd98a}
+  #topNavLine{display:none}
+  #brandLogo{max-height:clamp(37px,9.6vw,67px)!important}
+  .tab-row{display:flex;align-items:center;gap:4px}
+}
+main{padding-top:calc(var(--navH,96px) + 20px)!important}
 
 main{position:relative;z-index:1;width:100%;max-width:720px;margin:0 auto;padding:20px 24px 70px}
 
@@ -251,8 +312,43 @@ footer.site-foot{
 <div class="page-spotlight page-spotlight--turq" aria-hidden="true"></div>
 <div class="page-spotlight page-spotlight--gold" aria-hidden="true"></div>
 
-<header class="site-head">
-  <a class="brand" href="/">Holistic <span>Loader</span></a>
+<button id="menuToggle" type="button" aria-expanded="false" aria-controls="topTabs menuToggleDesktopPanel" aria-label="Meny">
+  <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="2" y1="5" x2="18" y2="5"></line><line x1="2" y1="10" x2="18" y2="10"></line><line x1="2" y1="15" x2="18" y2="15"></line></svg>
+</button>
+<nav id="menuToggleDesktopPanel" aria-label="Main sections (menu)">
+  <a href="/" class="menu-logo-link"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+  <a href="/breathing" class="tab nav-sep">Guided Breathing</a>
+  <a href="/soundscape" class="tab">Soundscape Creator</a>
+  <a href="/nutriloader" class="tab">Nutrition Tracker</a>
+  <a href="/yoga" class="tab">Yoga Loader</a>
+  <a href="/mahjong" class="tab">Mahjong Soundbath</a>
+  <a href="/intuition" class="tab">Intuition Loader</a>
+  <a href="/shop" class="tab">Shop</a>
+  <a href="/terms" class="tab nav-sep">Terms &amp; Conditions</a>
+  <a href="/about" class="tab">About</a>
+  <button type="button" id="menuDesktopContactTab" class="tab contact-tab" aria-expanded="false" aria-controls="menuDesktopContactEmail">Contact</button>
+  <p id="menuDesktopContactEmail" class="nav-contact-email" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+  <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener" class="tab nav-sep">Support Holistic Loader</a>
+</nav>
+
+<header id="topNav">
+  <div id="brand"><a href="/" id="brandLink"><img src="images/logga-holistictitel.png" alt="Holistic Loader" id="brandLogo"></a></div>
+  <nav id="topTabs" aria-label="Main sections">
+    <a href="/" class="menu-logo-link mobile-extra"><img src="images/title-holistic-menu.png" alt="Holistic Loader" class="menu-logo-img"></a>
+    <a href="/breathing" class="tab nav-sep">Guided Breathing</a>
+    <a href="/soundscape" class="tab">Soundscape Creator</a>
+    <a href="/nutriloader" class="tab">Nutrition Tracker</a>
+    <a href="/yoga" class="tab">Yoga Loader</a>
+    <a href="/mahjong" class="tab">Mahjong Soundbath</a>
+    <a href="/intuition" class="tab">Intuition Loader</a>
+    <a href="/shop" class="tab">Shop</a>
+    <a href="/terms" class="tab mobile-extra nav-sep">Terms &amp; Conditions</a>
+    <a href="/about" class="tab mobile-extra">About</a>
+    <button type="button" id="navContactTab" class="tab mobile-extra contact-tab" aria-expanded="false" aria-controls="navContactEmail">Contact</button>
+    <p id="navContactEmail" class="nav-contact-email mobile-extra" hidden><a href="mailto:holisticloader@gmail.com">holisticloader@gmail.com</a></p>
+    <a href="https://buy.stripe.com/9B614f2Ru4oQc36dW20kE04" target="_blank" rel="noopener" class="tab mobile-extra nav-sep">Support Holistic Loader</a>
+  </nav>
+  <div id="topNavLine"></div>
 </header>
 
 <main>
@@ -493,5 +589,51 @@ footer.site-foot{
   <p class="footSub">Holistic Loader exists to make breathing, sound healing, movement and healthy habits easier to access in everyday life.</p>
 </footer>
 
+<script>
+(function(){
+  var mt=document.getElementById('menuToggle'), tabs=document.getElementById('topTabs'), dPanel=document.getElementById('menuToggleDesktopPanel');
+  function closeTabs(){document.body.classList.remove('tabs-open'); if(mt)mt.setAttribute('aria-expanded','false');}
+  function openTabs(){document.body.classList.add('tabs-open'); if(mt)mt.setAttribute('aria-expanded','true');}
+  if(mt&&tabs){
+    mt.addEventListener('click',function(e){e.stopPropagation(); document.body.classList.contains('tabs-open')?closeTabs():openTabs();});
+    tabs.addEventListener('click',function(e){ var a=e.target.closest('a'); if(a)closeTabs(); });
+    if(dPanel)dPanel.addEventListener('click',function(e){ if(e.target.closest('a'))closeTabs(); });
+    document.addEventListener('click',function(e){ if(document.body.classList.contains('tabs-open')&&!tabs.contains(e.target)&&!mt.contains(e.target)&&!(dPanel&&dPanel.contains(e.target)))closeTabs(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape')closeTabs(); });
+  }
+  (function(){
+    var btn=document.getElementById('navContactTab'), email=document.getElementById('navContactEmail');
+    if(!btn||!email)return;
+    btn.addEventListener('click',function(){
+      var showing=!email.hidden;
+      email.hidden=showing;
+      btn.setAttribute('aria-expanded',String(!showing));
+    });
+  })();
+  (function(){
+    var btn=document.getElementById('menuDesktopContactTab'), email=document.getElementById('menuDesktopContactEmail');
+    if(!btn||!email)return;
+    btn.addEventListener('click',function(){
+      var showing=!email.hidden;
+      email.hidden=showing;
+      btn.setAttribute('aria-expanded',String(!showing));
+    });
+  })();
+  function syncMobileNavH(){
+    var nav=document.getElementById('topNav');
+    if(nav)document.documentElement.style.setProperty('--navH',nav.getBoundingClientRect().height+'px');
+  }
+  syncMobileNavH();
+  addEventListener('resize',syncMobileNavH);
+  addEventListener('orientationchange',function(){setTimeout(syncMobileNavH,60)});
+  document.addEventListener('DOMContentLoaded',syncMobileNavH);
+  var bl=document.getElementById('brandLogo');
+  if(bl){ if(bl.complete)syncMobileNavH(); else bl.addEventListener('load',syncMobileNavH); }
+  if(window.ResizeObserver){
+    var nav=document.getElementById('topNav');
+    if(nav)new ResizeObserver(syncMobileNavH).observe(nav);
+  }
+})();
+</script>
 </body>
 </html>
