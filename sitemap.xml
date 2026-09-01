@@ -71,6 +71,14 @@
     <priority>0.8</priority>
   </url>
 
+  
+         <url>
+    <loc>https://holisticloader.com/articles/index</loc>
+    <lastmod>2026-08-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
          <url>
     <loc>https://holisticloader.com/articles/why-you-cant-relax-and-how-to-fix-it</loc>
     <lastmod>2026-08-25</lastmod>
