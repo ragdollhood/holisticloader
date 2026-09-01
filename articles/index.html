@@ -48,6 +48,13 @@
       "url": "https://holisticloader.com/articles/5-breathing-exercises-that-reduce-stress-in-2-minutes",
       "image": "https://holisticloader.com/images/meny-btn-breathe.jpg",
       "datePublished": "2026-09-01"
+    },
+    {
+      "@type": "Article",
+      "headline": "How to Calm Your Nervous System Fast",
+      "url": "https://holisticloader.com/articles/how-to-calm-your-nervous-system-fast",
+      "image": "https://holisticloader.com/images/breathing.jpg",
+      "datePublished": "2026-09-01"
     }
   ]
 }
@@ -105,9 +112,6 @@ h1{
   transition:transform .2s ease,border-color .2s ease;
 }
 .article-card:hover{transform:translateY(-4px);border-color:var(--gold)}
-.article-card .thumb{aspect-ratio:16/9;overflow:hidden;background:var(--glass)}
-.article-card .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
-.article-card:hover .thumb img{transform:scale(1.04)}
 .article-card .card-body{padding:22px}
 .card-cat{font-family:var(--ui);font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
 .card-title{font-family:var(--display);font-weight:600;font-size:21px;line-height:1.28;color:var(--ink);margin-bottom:10px}
@@ -151,12 +155,6 @@ footer.site-foot{
   <div class="article-grid">
 
     <a class="article-card" href="/articles/5-breathing-exercises-that-reduce-stress-in-2-minutes">
-      <div class="thumb">
-        <picture>
-          <source srcset="../images/meny-btn-breathe.webp" type="image/webp">
-          <img src="../images/meny-btn-breathe.jpg" alt="Guided breathing exercises for stress relief" loading="lazy">
-        </picture>
-      </div>
       <div class="card-body">
         <p class="card-cat">Breathing &amp; Meditation</p>
         <h2 class="card-title">5 Breathing Exercises That Reduce Stress in 2 Minutes</h2>
@@ -165,9 +163,18 @@ footer.site-foot{
       </div>
     </a>
 
+    <a class="article-card" href="/articles/how-to-calm-your-nervous-system-fast">
+      <div class="card-body">
+        <p class="card-cat">Breathing &amp; Meditation</p>
+        <h2 class="card-title">How to Calm Your Nervous System Fast</h2>
+        <p class="card-excerpt">How the vagus nerve influences stress and relaxation, plus simple breathing patterns to calm your nervous system in just a few minutes.</p>
+        <p class="card-meta">September 1, 2026 · 4 min read</p>
+      </div>
+    </a>
+
     <!--
       To add a new article card, copy the <a class="article-card">…</a>
-      block above and update: href, image, card-cat, card-title,
+      block above and update: href, card-cat, card-title,
       card-excerpt and card-meta. Also add a matching entry to the
       "hasPart" array in the CollectionPage JSON-LD above.
     -->
