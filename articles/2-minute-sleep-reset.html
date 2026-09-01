@@ -128,6 +128,12 @@ body::before{
   background:radial-gradient(700px 500px at 12% -6%,rgba(201,168,255,.14),transparent 60%),
              radial-gradient(700px 500px at 100% 8%,rgba(231,201,162,.12),transparent 60%);
 }
+/* ---- corner spotlight beams: soft turquoise (left) and gold (right)
+   glow sweeping in from the top corners ---- */
+.page-spotlight{position:fixed;top:-18%;z-index:0;width:70%;height:78%;pointer-events:none;mix-blend-mode:screen;filter:blur(60px)}
+.page-spotlight--turq{left:-18%;transform:rotate(28deg);background:linear-gradient(115deg,rgba(64,224,208,.4) 0%,rgba(64,224,208,.16) 38%,transparent 70%)}
+.page-spotlight--gold{right:-18%;transform:rotate(-28deg) scaleX(-1);background:linear-gradient(115deg,rgba(241,212,158,.42) 0%,rgba(241,212,158,.16) 38%,transparent 70%)}
+@media(max-width:760px){.page-spotlight{width:110%;height:60%;filter:blur(42px)}}
 a{color:inherit}
 img{max-width:100%;display:block}
 
@@ -239,6 +245,9 @@ footer.site-foot{
 </style>
 </head>
 <body>
+
+<div class="page-spotlight page-spotlight--turq" aria-hidden="true"></div>
+<div class="page-spotlight page-spotlight--gold" aria-hidden="true"></div>
 
 <header class="site-head">
   <a class="brand" href="/">Holistic <span>Loader</span></a>
