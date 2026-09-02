@@ -133,8 +133,9 @@
 <style>
 :root{
   --bg:#0c0e13; --ink:#f4f1ea; --muted:rgba(244,241,234,.72); --faint:rgba(244,241,234,.5);
-  --gold:#e7c9a2; --gold-soft:#d9b98a; --soft:#b3a98f; --violet:#c9a8ff;
+  --gold:#f0a941; --gold-soft:#f5bd63; --soft:#b3a98f; --violet:#b26cff;
   --glass:rgba(16,18,24,.5); --glass-strong:rgba(13,15,21,.78); --line:rgba(244,241,234,.15);
+  --nav-ink:#f4f1ea; --nav-soft:#cbbfae;
   --display:'Cormorant Garamond',Georgia,serif; --ui:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -146,14 +147,15 @@ body{
 }
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(700px 500px at 12% -6%,rgba(201,168,255,.14),transparent 60%),
-             radial-gradient(700px 500px at 100% 8%,rgba(231,201,162,.12),transparent 60%);
+  background:radial-gradient(800px 600px at 12% -6%,rgba(154,77,232,.22),transparent 62%),
+             radial-gradient(800px 600px at 100% 8%,rgba(232,149,46,.24),transparent 62%),
+             radial-gradient(900px 700px at 50% 110%,rgba(64,208,190,.18),transparent 65%);
 }
-/* ---- corner spotlight beams: soft turquoise (left) and gold (right)
-   glow sweeping in from the top corners ---- */
+/* ---- corner spotlight beams: turquoise (left) and gold (right)
+   glow sweeping in from the top corners, stronger and more colorful ---- */
 .page-spotlight{position:fixed;top:-18%;z-index:0;width:70%;height:78%;pointer-events:none;mix-blend-mode:screen;filter:blur(60px)}
-.page-spotlight--turq{left:-18%;transform:rotate(28deg);background:linear-gradient(115deg,rgba(64,224,208,.4) 0%,rgba(64,224,208,.16) 38%,transparent 70%)}
-.page-spotlight--gold{right:-18%;transform:rotate(-28deg) scaleX(-1);background:linear-gradient(115deg,rgba(241,212,158,.42) 0%,rgba(241,212,158,.16) 38%,transparent 70%)}
+.page-spotlight--turq{left:-18%;transform:rotate(28deg);background:linear-gradient(115deg,rgba(64,224,208,.55) 0%,rgba(64,224,208,.22) 40%,transparent 72%)}
+.page-spotlight--gold{right:-18%;transform:rotate(-28deg) scaleX(-1);background:linear-gradient(115deg,rgba(255,181,90,.58) 0%,rgba(255,181,90,.24) 40%,transparent 72%)}
 @media(max-width:760px){.page-spotlight{width:110%;height:60%;filter:blur(42px)}}
 a{color:inherit}
 img{max-width:100%;display:block}
@@ -168,11 +170,11 @@ img{max-width:100%;display:block}
   background:linear-gradient(to bottom,rgba(6,4,9,.97) 0%,rgba(6,4,9,.97) 92%,rgba(6,4,9,.8) 100%)}
 #topTabs{display:flex;flex-wrap:wrap;justify-content:center;pointer-events:auto}
 #topTabs .tab{font-family:var(--ui);font-weight:500;font-size:12.5px;letter-spacing:.04em;
-  padding:9px 18px;color:var(--soft);text-decoration:none;white-space:nowrap;
-  background:rgba(243,239,228,.04);border:1px solid var(--line);border-bottom:none;
+  padding:9px 18px;color:var(--nav-soft);text-decoration:none;white-space:nowrap;
+  background:rgba(243,239,228,.04);border:1px solid rgba(244,241,234,.15);border-bottom:none;
   border-radius:12px 12px 0 0;margin:0 -1px;position:relative;top:1px;
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .25s ease,background .25s ease}
-#topTabs .tab:hover{color:var(--ink)}
+#topTabs .tab:hover{color:var(--nav-ink)}
 #topTabs .tab.active{color:var(--gold);background:rgba(231,201,162,.14);top:0;box-shadow:0 -8px 22px rgba(0,0,0,.28);z-index:2;border-color:var(--gold)}
 .mobile-extra{display:none!important}
 #topTabs .contact-tab{cursor:pointer;display:block;width:100%;background:none;border:0;margin:0}
@@ -203,10 +205,10 @@ img{max-width:100%;display:block}
     box-shadow:0 18px 45px #000a;opacity:0;visibility:hidden;transform:translateY(-8px);
     transition:opacity .18s ease,transform .18s ease;pointer-events:none}
   body.tabs-open #menuToggleDesktopPanel{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
-  #menuToggleDesktopPanel .tab{border:1px solid transparent;border-radius:10px;background:transparent;color:var(--soft);
+  #menuToggleDesktopPanel .tab{border:1px solid transparent;border-radius:10px;background:transparent;color:var(--nav-soft);
     text-decoration:none;text-align:left;margin:0;padding:9px 12px;font-family:var(--ui);
     font-weight:500;font-size:13px;letter-spacing:.04em;display:block;box-sizing:border-box;cursor:pointer}
-  #menuToggleDesktopPanel .tab:hover{color:var(--ink);background:rgba(244,241,234,.06)}
+  #menuToggleDesktopPanel .tab:hover{color:var(--nav-ink);background:rgba(244,241,234,.06)}
   #menuToggleDesktopPanel .tab.active{color:var(--gold);background:rgba(231,201,162,.14);border-color:var(--gold)}
   #menuToggleDesktopPanel .tab.nav-sep{border-top:1px solid rgba(220,190,130,.2);margin-top:4px;padding-top:13px}
   #menuToggleDesktopPanel .nav-contact-email{margin:2px 0 4px;padding:0 12px;text-align:left;font-size:12px}
@@ -245,10 +247,11 @@ h1{
 
 .article-card{
   display:flex;flex-direction:column;border-radius:20px;overflow:hidden;border:1px solid var(--line);
-  background:rgba(244,241,234,.03);text-decoration:none;color:inherit;
-  transition:transform .2s ease,border-color .2s ease;
+  background:rgba(244,241,234,.04);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  text-decoration:none;color:inherit;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
 }
-.article-card:hover{transform:translateY(-4px);border-color:var(--gold)}
+.article-card:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 16px 36px rgba(240,169,65,.16)}
 .article-card .card-body{padding:22px}
 .card-cat{font-family:var(--ui);font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
 .card-title{font-family:var(--display);font-weight:600;font-size:21px;line-height:1.28;color:var(--ink);margin-bottom:10px}
